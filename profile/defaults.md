@@ -41,7 +41,7 @@ Postgres is the default for anything relational. I've used DynamoDB, Firestore, 
 I don't design much by hand anymore. Agents go straight to code, and that's fine as long as the result has taste.
 
 - **Product screens:** refined and minimal. Clear hierarchy, quiet surfaces, color used as an accent rather than decoration, small purposeful motion. [OpenPacks](https://backpacks-app.vercel.app/) shows the floor: AI-built and deliberately kept neutral. Clean is the minimum; aim for more character than that when the product allows it.
-- **Personal and landing pages:** more personality. A little animated, cute, and pretty, like this site's landing page, while still clean.
+- **Personal and landing pages:** more character, still restrained. [My portfolio](https://www.ducktommy.com/) is the main reference: a big editorial serif, a dark, quiet palette, one focal visual with a soft glow and slow motion, small uppercase labels, and room to breathe. This site's landing page shows the more playful end: a little cute, a little animated.
 - **References:** Mobbin for real-world patterns, Framer for polish and motion ideas.
 
 Default framework styling shipped as-is isn't a design. Neither is decoration that fights the content.
