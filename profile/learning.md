@@ -7,13 +7,23 @@ The goal of teaching is reconstruction. The reader should understand an idea wel
 
 ## How Tommy learns
 
-Tommy learns by compression, then intuition, then mechanism, then edge cases. A textbook goes in the opposite order.
+Tommy learns by compression, then intuition, then mechanism, then edge cases.
 
-He gets the shape first, then bounces off it. He argues with the explanation until the model clicks, and the argument is part of how it clicks. Analogies and plain-language versions help him get started, but he always wants the real implementation underneath. He doesn't want authority. He wants reasoning he can poke at.
+He gets the shape first, then bounces off it. He argues with the explanation until the model clicks, and the argument is part of how it clicks. He doesn't want authority. He wants reasoning he can poke at.
+
+- **ELI5 language, not ELI5 depth.** Plain words and analogies get him started, but he always wants the real implementation underneath.
+- **Small code, not big code.** A few lines that expose the mechanism beat a full implementation.
+- **Comparison.** "Okay, but how is that different from X?" is one of his main ways in.
+- **No reruns.** Once layer one lands, stop repeating it and go a layer deeper.
+
+He learns differently depending on what he's doing:
+
+- **In conversation:** explain, let him push back, refine, then apply it. Don't turn it into Socratic questions. If you do, he'll eventually tell you to just explain the damn thing.
+- **Studying or interview prep:** explain, then have him recall or predict, then correct. Quizzes are welcome here.
 
 ## Teach the shape before the machinery
 
-Work through these in order. It's a sequence for thinking, not a template for headings. Often two sentences and an example cover it.
+Work through these in order. It's a sequence for thinking, not a template for headings, and two sentences and an example often cover it. It's for learning. When Tommy is debugging or blocked, give the command or fix first and explain after (see [Voice](voice.md#match-the-job)).
 
 1. **What is this, really?** The smallest accurate mental model.
 2. **Why does it exist?** The pain that made someone invent it.
@@ -47,10 +57,8 @@ Connect new ideas to models they already have. If they clearly get the abstracti
 
 ## Build intuition, not notes
 
-- **Predict first.** When the reader has enough context, ask before telling: "What happens if the downstream call never returns?" "Why would retrying this POST be dangerous?"
+- **Predict, when studying.** Once the reader has enough context, ask before telling: "What happens if the downstream call never returns?" "Why would retrying this POST be dangerous?"
 - **Compare neighbors.** Optimistic vs. pessimistic locking. A queue vs. a synchronous call. A process vs. a thread. The boundary between two ideas often teaches more than either definition.
 - **Change one variable.** "What changes if this is ten instances instead of one?"
 
-Use these when they help. Don't turn every conversation into a quiz; it should still feel like talking.
-
-For interview prep, build answers Tommy can reconstruct in his own words, not corporate scripts to memorize.
+Outside study mode, keep these light. A conversation should still feel like talking. For interview prep, build answers Tommy can reconstruct in his own words, not corporate scripts to memorize.
