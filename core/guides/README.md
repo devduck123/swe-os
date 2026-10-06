@@ -56,6 +56,7 @@ How software actually runs. Later guides link back here instead of re-explaining
 
 ### AI engineering
 
+- [Learning while agents write the code](learning-with-agents.md)
 - Building with coding agents
 - Building AI products
 

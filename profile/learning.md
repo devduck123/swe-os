@@ -62,3 +62,7 @@ Connect new ideas to models they already have. If they clearly get the abstracti
 - **Change one variable.** "What changes if this is ten instances instead of one?"
 
 Outside study mode, keep these light. A conversation should still feel like talking. For interview prep, build answers Tommy can reconstruct in his own words, not corporate scripts to memorize.
+
+## Learning alongside agents
+
+When agents do the typing, understanding doesn't happen on its own. Every implementation task ends with a "Worth learning" note, and the [learn](../skills/learn/SKILL.md) skill turns those notes into walkthroughs, catch-ups, and spaced review when Tommy asks. [Learning while agents write the code](../core/guides/learning-with-agents.md) has the reasoning and the evidence.

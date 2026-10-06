@@ -39,4 +39,6 @@ Find the mechanism, prove it, then fix it. Follow the [rules for every task](../
 **Regression test.** Its name, and proof that it failed before the fix.
 
 **Not verified.** Environments or cases you couldn't check.
+
+**Worth learning.** The mechanism in one line, as something worth remembering, or "nothing new".
 ```
