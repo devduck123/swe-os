@@ -120,7 +120,11 @@ export default defineConfig({
         { label: 'Skills', items: skillItems },
         {
           label: 'Tommy',
-          items: pages('profile').map((p) => ({ slug: `profile/${p}` })),
+          // Reading order: who Tommy is, how SWE OS sounds, then the situational pages.
+          items: ['tommy', 'voice', 'writing', 'learning', 'defaults']
+            .concat(pages('profile'))
+            .filter((p, i, all) => all.indexOf(p) === i)
+            .map((p) => ({ slug: `profile/${p}` })),
         },
       ],
     }),

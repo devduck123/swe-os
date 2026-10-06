@@ -24,8 +24,10 @@ One pair is one noisy data point. Repeat a scenario three times before trusting 
 | [Settings page](scenarios/settings.md)              | build-feature |
 | [Flaky weather API](scenarios/flaky-api.md)         | build-feature |
 | [Image upload endpoint](scenarios/uploads.md)       | review-change |
+| [AI feature review](scenarios/ai-feature.md)        | review-change |
 | [Database migration](scenarios/migration.md)        | review-change |
 | [Circuit breakers](scenarios/explain.md)            | explain       |
+| [Pushback, two variants](scenarios/pushback.md)     | voice         |
 
 ## Rubric
 
@@ -42,4 +44,4 @@ Score each dimension 0 to 3. Mark N/A when it doesn't apply. Don't reward length
 
 Record serious flaws (data loss, leaked secrets, an auth bypass, a fake verification claim) separately. They can't be averaged away.
 
-**Bar for v0.0:** across all seven scenarios, B beats A by at least 0.5 on average, with no new serious flaws and no habit of overbuilding. If it doesn't, change the guidance, not the bar.
+**Bar for v0.0:** across all nine scenarios, B beats A by at least 0.5 on average, with no new serious flaws and no habit of overbuilding. If it doesn't, change the guidance, not the bar.

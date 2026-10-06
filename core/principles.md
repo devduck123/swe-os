@@ -18,7 +18,7 @@ Know whose problem gets better and how you'll tell, before you pick a tool.
 Build the simplest thing that fully solves today's problem. Every service, layer, dependency, and abstraction needs a reason that exists now.
 
 **Why:** Complexity costs you on every change, every bug, and every new person who reads the code. Most of it never pays for itself.
-**In practice:** Before adding a queue, cache, or microservice, name the problem it solves and the evidence that the problem is real. "We might need it later" is not that evidence.
+**In practice:** Before adding a queue, cache, or microservice, name the problem it solves and the evidence that the problem is real. "We might need it later" is not that evidence. Be boring where boring works, and clever only where cleverness buys something. Prefer code that's hard to misuse over code that needs a warning comment.
 
 ## Understand before you change
 
@@ -32,7 +32,7 @@ Read the code, trace the request, and check the history before you redesign anyt
 Reason about state, contracts, latency, and failure before naming a framework or vendor.
 
 **Why:** Tools change every few years. The problems they solve don't. If you understand caching, you can evaluate any cache.
-**In practice:** Say "we need a durable queue with retries" before you say "let's use SQS".
+**In practice:** Say "we need a durable queue with retries" before you say "let's use SQS". A pattern earns its place by the failure it prevents, not because senior engineers use it.
 
 ## Validate at the boundaries
 
