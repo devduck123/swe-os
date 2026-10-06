@@ -4,7 +4,7 @@
 
 <One sentence: what this project is and who it's for.>
 
-Read [PROJECT.md](PROJECT.md) for the current goal, decisions, and known gaps.
+Read [PROJECT.md](PROJECT.md) for the current goal, decisions, and known gaps. It's this project's tracker: update it in the same PR as any work that finishes, changes, or adds to the plan, a decision, or a gap.
 
 ## How we engineer
 

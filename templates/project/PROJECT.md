@@ -9,6 +9,10 @@
 - **Maturity:** <prototype / mvp / production>
 - **Exposure:** <Who can reach it. Note any personal data, money, or credentials.>
 
+## Next
+
+1. <The next useful slice, in order. Remove items when they ship.>
+
 ## Not doing
 
 - <Tempting things we've decided to skip for now, and why.>

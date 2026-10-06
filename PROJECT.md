@@ -13,12 +13,13 @@ Done when:
 
 ## Next
 
-1. Tommy reviews the drafted content and rewrites anything that doesn't sound like him.
-2. Dogfood: use `build-feature` on one real side-project feature. Keep notes on friction.
-3. Run the [evals](evals/README.md). Change or delete guidance based on what they show.
-4. Write the next few guides, picked by the questions that actually come up.
-5. Add a `debug` eval scenario once the skill has been used on a real bug.
-6. Later, if usage justifies them: recipes, a tech radar, and `bootstrap-project` and `drill` skills.
+1. Start the `learn` trial: on every real side-project PR for two weeks, run "walk me through this PR" before merging. Note what stuck and what was annoying.
+2. Dogfood: use `build-feature` on one real side-project feature. Keep notes on friction, and act on anything rule 11 flags.
+3. Run the [evals](evals/README.md), starting with pushback and the AI feature review. Change or delete guidance based on what they show.
+4. Before going public: pick a license, delete `.archive/`, and have Tommy rewrite the guides and concern pages in his own words.
+5. Write the next few guides, picked by the concepts `learn` keeps surfacing.
+6. Add a `debug` eval scenario once the skill has been used on a real bug.
+7. Later, if usage justifies them: recipes, a full tech radar (`defaults.md` holds the 2026-10-06 research for now), and a `bootstrap-project` skill.
 
 ## Decisions
 
@@ -37,11 +38,12 @@ Done when:
 
 ## Gaps
 
-| Gap                                                         | State    | Revisit when                                                                                  |
-| ----------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
-| Content beyond the voice files is AI-drafted and unreviewed | Deferred | Before any public launch                                                                      |
-| No evidence yet that SWE OS improves agent results          | Unknown  | After the first eval runs                                                                     |
-| The learn loop is untested on Tommy                         | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
-| No domain, hosting, or license chosen                       | Deferred | Before going public                                                                           |
-| Only one guide exists                                       | Deferred | After dogfooding shows which next                                                             |
-| Codex's first version is in `.archive/codex-v0/`, untracked | Deferred | Tommy deletes it once he's compared                                                           |
+| Gap                                                                                  | State    | Revisit when                                                                                  |
+| ------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------- |
+| Guides and concern pages are AI-drafted; the profile is reviewed as a starting point | Deferred | Before any public launch                                                                      |
+| No evidence yet that SWE OS improves agent results                                   | Unknown  | After the first eval runs                                                                     |
+| The learn loop is untested on Tommy                                                  | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
+| No domain, hosting, or license chosen                                                | Deferred | Before going public                                                                           |
+| Windows paths and line endings are handled in code but never run on Windows          | Unknown  | First Windows contributor or CI runner                                                        |
+| Only two guides exist                                                                | Deferred | As `learn` surfaces recurring concepts                                                        |
+| Codex's first version is in `.archive/codex-v0/`, untracked                          | Deferred | Tommy deletes it once he's compared                                                           |

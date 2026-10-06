@@ -18,7 +18,7 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 4. **Build the smallest complete path.** Reuse the project's patterns and components. If a UI has no design direction yet, start from Tommy's [UI taste](../../profile/defaults.md#ui-taste). If Tommy said he wants to own part of this, leave its core decision as a `TODO(human)` with a failing test that defines done (see [learn](../learn/SKILL.md#own-a-piece)). Verify everything around it, and report the TODO as left for Tommy, not handled. Cover the states your concerns call for: empty, loading, error, no permission, double submit, slow network.
 5. **Verify it.** Run checks that prove the outcome from step 2, including at least one important failure path. For UI, open the rendered page at phone and desktop widths and use it with only a keyboard. Read the actual output. Don't infer it.
 6. **Cut it down.** Reread your diff once. Delete anything speculative: unused options, a layer with one caller, config nobody asked for, comments that repeat the code.
-7. **Write down what's deferred.** Add each deferred gap to the project's `PROJECT.md` with its risk and what would make you revisit it.
+7. **Update the plan.** Add each deferred gap to the project's `PROJECT.md` with its risk and what would make you revisit it. If this work finishes, changes, or creates a planned item, update `PROJECT.md` in the same change.
 
 ## Stop rules
 
