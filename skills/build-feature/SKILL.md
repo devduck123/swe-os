@@ -15,11 +15,10 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 1. **Read before you write.** Read the project's `AGENTS.md` and `PROJECT.md`. Find the code and tests the feature touches. Trace the current behavior end to end.
 2. **Write the outcome.** In one or two sentences, say who can do what, and the checks that will prove it. If you can't write this, part of the request still needs [shaping](../shape-project/SKILL.md). Ask one question or shape that part first.
 3. **Pick the concerns.** Match the feature against the [concerns table](../../core/concerns/README.md#pick-the-concerns). Decide the depth for each. Read each picked concern's page, plus any guide it links that you need. Say in one line which concerns you picked and why.
-4. **Build the smallest complete path.** Reuse the project's patterns and components. If a UI has no design direction yet, start from Tommy's [UI taste](../../profile/defaults.md#ui-taste). Cover the states your concerns call for: empty, loading, error, no permission, double submit, slow network.
+4. **Build the smallest complete path.** Reuse the project's patterns and components. If a UI has no design direction yet, start from Tommy's [UI taste](../../profile/defaults.md#ui-taste). If Tommy said he wants to own part of this, leave its core decision as a `TODO(human)` with a failing test that defines done (see [learn](../learn/SKILL.md#own-a-piece)). Verify everything around it, and report the TODO as left for Tommy, not handled. Cover the states your concerns call for: empty, loading, error, no permission, double submit, slow network.
 5. **Verify it.** Run checks that prove the outcome from step 2, including at least one important failure path. For UI, open the rendered page at phone and desktop widths and use it with only a keyboard. Read the actual output. Don't infer it.
 6. **Cut it down.** Reread your diff once. Delete anything speculative: unused options, a layer with one caller, config nobody asked for, comments that repeat the code.
-7. **Leave Tommy's piece if he asked for one.** If he said he wants to own part of this, leave the core decision as a `TODO(human)` (see [learn](../learn/SKILL.md#own-a-piece)) instead of writing it.
-8. **Write down what's deferred.** Add each deferred gap to the project's `PROJECT.md` with its risk and what would make you revisit it.
+7. **Write down what's deferred.** Add each deferred gap to the project's `PROJECT.md` with its risk and what would make you revisit it.
 
 ## Stop rules
 

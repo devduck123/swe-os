@@ -43,7 +43,7 @@ Every concern page has two levels. Meet the **minimum bar** for every concern yo
 - The change is hard to undo: it deletes or rewrites data, sends email, charges money, or changes a public contract.
 - The project's PROJECT.md says production.
 
-**Floors** ignore all of that. Credentials, auth, personal data, payments, destructive data changes, and models that can take actions always get the "when stakes rise" treatment, even in a weekend prototype. A prototype that leaks an API key is still a leak.
+**Floors** ignore all of that. Credentials, auth, personal data, payments, destructive data changes, models that can take actions, and models that read untrusted content alongside private data always get the "when stakes rise" treatment, even in a weekend prototype. A prototype that leaks an API key is still a leak.
 
 A missing fact is **unknown**, not low risk. Ask about it if the answer would change what you build. Otherwise write down a careful assumption and keep going.
 

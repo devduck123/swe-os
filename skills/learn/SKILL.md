@@ -46,11 +46,11 @@ A good time to run this is while agents are working.
 
 ## Own a piece
 
-When Tommy says he wants to own an area, the agent building it leaves the core decision for him. That's one `TODO(human)` in the code, with the context, the task, and the constraints. Do it at most once per feature, and only where it's worth his time. Safety-floor areas pay off most. When he's done, review his code and give him one useful insight.
+When Tommy says he wants to own an area, the agent building it leaves the core decision for him. That's one `TODO(human)` in the code, with the context, the task, the constraints, and a failing test that defines done. Do it at most once per feature, and only where it's worth his time. Safety-floor areas pay off most. When he's done, review his code and give him one useful insight.
 
 ## Records
 
-Keep records in `LEARNING.md` at the project root. Only this skill writes to it, because parallel agents writing to the same file collide. Write a record only when Tommy shows understanding: he answered a question correctly, explained something back without being asked, or had a misconception corrected. Covering a topic isn't learning it.
+Keep records in `LEARNING.md` at the project root. Only this skill writes to it, because parallel agents writing to the same file collide. If the repo is public, ask Tommy once whether to commit it or keep it local and gitignored, and note his answer at the top of the file. Write a record only when Tommy shows understanding: he answered a question correctly, explained something back without being asked, or had a misconception corrected. Covering a topic isn't learning it.
 
 ```
 ## 2026-10-06: Idempotency keys for retried POSTs

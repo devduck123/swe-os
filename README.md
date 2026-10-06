@@ -10,7 +10,7 @@ There's nothing to install. Point your agent at the entry page:
 
 > Use Tommy's SWE OS for this: start at `skills/README.md` in this repo (or `/skills/README.md` on the site).
 
-The agent picks a skill (shape, build, debug, review, or explain), then loads only the concerns and guides the task needs.
+The agent picks a skill (shape, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs.
 
 ## What's inside
 
