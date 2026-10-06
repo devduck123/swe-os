@@ -1,0 +1,36 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const skills = await getCollection('skills');
+  return skills.map((skill) => ({
+    params: { name: skill.data.name },
+    props: { skill },
+  }));
+}
+
+const { skill } = Astro.props;
+const { Content, headings } = await render(skill);
+const { name, description, metadata } = skill.data;
+---
+
+<StarlightPage
+  frontmatter={{ title: metadata.title, description }}
+  headings={headings}
+>
+  <div class="skill-card not-content">
+    <p class="skill-card__desc">{description}</p>
+    <p class="skill-card__try">
+      <span class="skill-card__label">Try saying</span>
+      <q>{metadata.example}</q>
+    </p>
+    <p class="skill-card__raw">
+      Agents read this page as{' '}
+      <a href={`/${skill.filePath}`}>
+        <code>skills/{name}/SKILL.md</code>
+      </a>
+    </p>
+  </div>
+  <Content />
+</StarlightPage>

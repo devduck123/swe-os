@@ -1,0 +1,4 @@
+{
+  "tableOfContents.overview": "Top",
+  "search.devWarning": "Search only works in a built site. Run `npm run build && npm run preview` to try it."
+}

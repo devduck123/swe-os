@@ -1,0 +1,50 @@
+---
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+
+const { entry } = Astro.locals.starlightRoute;
+const data = entry.data as typeof entry.data & {
+  domain?: string;
+  stage?: string;
+  freshness?: string;
+  status?: 'draft' | 'reviewed';
+  reviewed?: Date;
+};
+// Skill pages are built by StarlightPage, which reports a placeholder path under
+// src/content/docs/ (a Starlight internal). Those pages show their own raw link instead.
+const raw =
+  entry.filePath && !entry.filePath.startsWith('src/')
+    ? `/${entry.filePath}`
+    : undefined;
+const chips = (
+  [
+    ['Domain', data.domain],
+    ['Stage', data.stage],
+    ['Freshness', data.freshness],
+  ] as const
+).filter(([, value]) => value);
+const reviewed = data.reviewed?.toISOString().slice(0, 10);
+---
+
+<Default />
+{(chips.length > 0 || data.status || raw) && (
+  <div class="page-meta not-content">
+    {chips.map(([label, value]) => (
+      <span class="chip">
+        <span class="sr-only">{label}: </span>
+        {value}
+      </span>
+    ))}
+    {reviewed && <span class="chip chip--quiet">checked {reviewed}</span>}
+    {raw && (
+      <a class="chip chip--link" href={raw}>
+        view as Markdown
+      </a>
+    )}
+  </div>
+)}
+{data.status === 'draft' && (
+  <p class="draft-note not-content" role="note">
+    <strong>Draft.</strong> An agent wrote this and Tommy hasn't reviewed it
+    yet. Check the claims against the sources before relying on them.
+  </p>
+)}

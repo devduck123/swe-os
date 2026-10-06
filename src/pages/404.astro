@@ -1,0 +1,28 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import Logo from '../components/Logo.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Page not found', template: 'splash' }}>
+  <div class="not-found">
+    <Logo size={96} class="not-found__logo" />
+    <p>
+      This page doesn't exist. Maybe it was deferred, or maybe it was never
+      planned. Search above, or head back to the start.
+    </p>
+    <p>
+      <a href="/">Go home</a> · <a href="/guides/">Browse the guides</a>
+    </p>
+  </div>
+</StarlightPage>
+
+<style>
+  .not-found {
+    text-align: center;
+    max-width: 32rem;
+    margin: 2rem auto;
+  }
+  .not-found :global(.not-found__logo) {
+    transform: rotate(-12deg);
+  }
+</style>

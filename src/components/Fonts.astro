@@ -1,0 +1,18 @@
+---
+// Font faces for every page. On slow connections a preload competes with the CSS and
+// delays first paint, so only the landing page preloads (its headline is the hero).
+// Measured on slow 4G: docs pages paint ~200ms sooner without preloads, with no layout shift.
+import { Font } from 'astro:assets';
+
+interface Props {
+  /** Preload the headline and body faces for the first screen. */
+  display?: boolean;
+}
+const { display = false } = Astro.props;
+const latin = [{ style: 'normal', subset: 'latin' }] as const;
+---
+
+<Font cssVariable="--font-fraunces" preload={display ? [...latin] : false} />
+<Font cssVariable="--font-dm-sans" preload={display ? [...latin] : false} />
+<Font cssVariable="--font-jetbrains-mono" />
+<Font cssVariable="--font-caveat" />

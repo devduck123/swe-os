@@ -1,0 +1,69 @@
+---
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 32, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['logo', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path
+    class="logo__body"
+    d="M32 4c13 0 24 5 26 16 2 9 2 15 0 24-2 11-13 16-26 16S8 55 6 44c-2-9-2-15 0-24C8 9 19 4 32 4Z"
+  ></path>
+  <g class="logo__eyes">
+    <ellipse cx="23" cy="30" rx="4.2" ry="5.4" fill="#fff"></ellipse>
+    <ellipse cx="41" cy="30" rx="4.2" ry="5.4" fill="#fff"></ellipse>
+    <circle cx="24" cy="31.5" r="2.4" fill="#241e36"></circle>
+    <circle cx="42" cy="31.5" r="2.4" fill="#241e36"></circle>
+  </g>
+  <path
+    d="M26 42c3.5 3.2 8.5 3.2 12 0"
+    fill="none"
+    stroke="#241e36"
+    stroke-width="3"
+    stroke-linecap="round"
+  ></path>
+  <circle cx="15" cy="40" r="3" fill="#ff9e8a" opacity=".7"></circle>
+  <circle cx="49" cy="40" r="3" fill="#ff9e8a" opacity=".7"></circle>
+  <path
+    class="logo__spark"
+    d="M52 6l1.6 4.4L58 12l-4.4 1.6L52 18l-1.6-4.4L46 12l4.4-1.6Z"
+  ></path>
+</svg>
+
+<style>
+  .logo__body {
+    fill: var(--swe-coral, #ff6f59);
+  }
+  .logo__spark {
+    fill: var(--swe-butter, #ffd66b);
+    transform-origin: 52px 12px;
+  }
+  .logo__eyes {
+    transform-origin: 32px 30px;
+    animation: blink 6s infinite;
+  }
+  @keyframes blink {
+    0%,
+    94%,
+    100% {
+      transform: scaleY(1);
+    }
+    96% {
+      transform: scaleY(0.1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .logo__eyes {
+      animation: none;
+    }
+  }
+</style>

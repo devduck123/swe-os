@@ -1,0 +1,645 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Logo from '../components/Logo.astro';
+import HeroArt from '../components/HeroArt.astro';
+import Fonts from '../components/Fonts.astro';
+import '../styles/tokens.css';
+import '../styles/landing.css';
+
+const docs = await getCollection('docs');
+const skills = await getCollection('skills');
+const concerns = docs
+  .filter((d) => d.id.startsWith('concerns/'))
+  .map((d) => ({ id: d.id.replace('concerns/', ''), title: d.data.title }));
+const concernIds = new Set(concerns.map((c) => c.id));
+const guides = docs.filter((d) => d.id.startsWith('guides/'));
+const principles = (await getEntry('docs', 'principles'))!
+  .body!.split('\n')
+  .filter((line) => line.startsWith('## '))
+  .map((line) => line.slice(3));
+
+// The concern order follows the routing table, roughly from the user's view inward.
+const order = [
+  'product-ux',
+  'accessibility',
+  'responsive',
+  'visual-design',
+  'components',
+  'api-contracts',
+  'security',
+  'privacy',
+  'data',
+  'migrations',
+  'concurrency',
+  'reliability',
+  'performance',
+  'observability',
+  'testing',
+  'deployment',
+  'cost',
+];
+for (const { id } of concerns) {
+  if (!order.includes(id))
+    throw new Error(`Add concern "${id}" to the landing page order.`);
+}
+const sortedConcerns = [...concerns].sort(
+  (a, b) => order.indexOf(a.id) - order.indexOf(b.id),
+);
+
+const demos = [
+  {
+    label: 'Build a feature',
+    request: 'Add avatar uploads to user profiles.',
+    skill: 'build-feature',
+    concerns: [
+      'product-ux',
+      'accessibility',
+      'responsive',
+      'visual-design',
+      'security',
+      'privacy',
+      'data',
+      'performance',
+      'testing',
+      'cost',
+    ],
+    report: [
+      [
+        'handled',
+        'Security',
+        'The server takes the user from the session and checks the real image bytes. The overwrite test passes.',
+      ],
+      [
+        'handled',
+        'Accessibility',
+        'A labelled native file input. Errors sit next to it and get announced.',
+      ],
+      [
+        'deferred',
+        'Cost',
+        'No upload rate limit yet. Logged in PROJECT.md for before launch.',
+      ],
+      ['n/a', 'Migrations', 'Avatars are stored by user ID. No schema change.'],
+      [
+        'unknown',
+        'Privacy',
+        'Does the image library strip GPS data from photos? Checking its defaults next.',
+      ],
+    ],
+  },
+  {
+    label: 'Shape an idea',
+    request: 'I want to build an AI meal planner for busy people.',
+    skill: 'shape-project',
+    concerns: ['product-ux', 'privacy', 'cost'],
+    report: [
+      [
+        'problem',
+        'Who',
+        'Busy adults who lose an hour every Sunday deciding what to cook.',
+      ],
+      [
+        'challenge',
+        'Assumption',
+        'Maybe the grocery list is the valuable part, not the AI. Test it with three friends and a spreadsheet first.',
+      ],
+      [
+        'scope',
+        'First version',
+        'Pick five dinners, get one grocery list. No accounts, no recipes database.',
+      ],
+      [
+        'stack',
+        'Last, not first',
+        'A static site and one serverless function, chosen after the journey was clear.',
+      ],
+    ],
+  },
+  {
+    label: 'Review a change',
+    request: 'Review this migration before we ship it.',
+    skill: 'review-change',
+    concerns: ['migrations', 'data', 'deployment', 'testing'],
+    report: [
+      [
+        'critical',
+        'Migration',
+        'It adds a NOT NULL column to 2 million rows in one transaction. It either fails or locks the table.',
+      ],
+      [
+        'high',
+        'Rollback',
+        'It drops display_name while old servers still read it. Redeploying cannot bring the data back.',
+      ],
+      [
+        'fix',
+        'Instead',
+        'Add the column, backfill in batches, switch reads, and drop the old column in a later release.',
+      ],
+    ],
+  },
+  {
+    label: 'Explain a concept',
+    request: "Explain circuit breakers like I'm a frontend dev.",
+    skill: 'explain',
+    concerns: ['reliability'],
+    report: [
+      [
+        'model',
+        'In one line',
+        "Stop calling a service that's clearly down, so your app fails fast instead of piling up waiting requests.",
+      ],
+      [
+        'when',
+        'Use it when',
+        'Lots of calls hit one flaky dependency. Skip it for a hobby app that calls once per page.',
+      ],
+      [
+        'fails',
+        'Watch out',
+        'Bad thresholds trip on normal blips, or never trip at all.',
+      ],
+      [
+        'deeper',
+        'Go deeper',
+        'Links the timeouts, retries, and idempotency guide.',
+      ],
+    ],
+  },
+];
+for (const demo of demos) {
+  for (const id of demo.concerns)
+    if (!concernIds.has(id))
+      throw new Error(`Landing demo uses unknown concern ${id}`);
+}
+const first = demos[0]!;
+
+const cards = [
+  {
+    href: '/principles/',
+    title: 'Principles',
+    count: `${principles.length} rules`,
+    body: "Short rules of judgment. Start simple. Verify, don't assume. Design for failure.",
+    tone: 'butter',
+    icon: 'compass',
+  },
+  {
+    href: '/concerns/',
+    title: 'Concerns',
+    count: `${concerns.length} risks`,
+    body: 'What a feature can get wrong, and how deep to go on each one.',
+    tone: 'coral',
+    icon: 'radar',
+  },
+  {
+    href: '/guides/',
+    title: 'Guides',
+    count: `${guides.length} written, more coming`,
+    body: "Concepts explained the way I'd want them explained to me.",
+    tone: 'mint',
+    icon: 'book',
+  },
+  {
+    href: '/skills/',
+    title: 'Skills',
+    count: `${skills.length} workflows`,
+    body: 'Shape, build, review, explain. The playbooks your agent follows.',
+    tone: 'sky',
+    icon: 'spark',
+  },
+  {
+    href: '/profile/workflow/',
+    title: 'Tommy',
+    count: 'preferences',
+    body: 'My voice, my defaults, how I like to work. Labeled as preferences, not laws.',
+    tone: 'lilac',
+    icon: 'heart',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tommy's SWE OS: engineering judgment for people and their agents</title>
+    <meta
+      name="description"
+      content="How Tommy engineers software, written once for two readers: people who want to learn real engineering, and the coding agents that work with them."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Fonts display />
+    <script is:inline>
+      // Share the theme choice with the docs pages, which use the same storage key.
+      // Also restore a paused-motion choice before first paint.
+      (() => {
+        let stored = '';
+        try {
+          stored = localStorage.getItem('starlight-theme') || '';
+          if (localStorage.getItem('swe-motion') === 'paused')
+            document.documentElement.classList.add('motion-paused');
+        } catch {}
+        const dark = stored
+          ? stored === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      Skip to content
+    </a>
+
+    <header class="nav">
+      <a class="brand" href="/">
+        <Logo size={36} />
+        <span class="brand__name">
+          <span class="sr-only">Tommy's </span>swe <em>os</em>
+        </span>
+      </a>
+      <nav aria-label="Main">
+        <ul class="nav__links">
+          <li>
+            <a href="/guides/">Guides</a>
+          </li>
+          <li>
+            <a href="/principles/">Principles</a>
+          </li>
+          <li class="nav__hide-sm">
+            <a href="/concerns/">Concerns</a>
+          </li>
+          <li class="nav__hide-sm">
+            <a href="/skills/">Skills</a>
+          </li>
+        </ul>
+      </nav>
+      <button
+        class="icon-btn"
+        type="button"
+        data-motion-toggle
+        aria-pressed="false"
+        aria-label="Pause animations"
+      >
+        <svg class="motion__pause" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6v12M15 6v12"></path>
+        </svg>
+        <svg class="motion__play" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 5.5v13l10.5-6.5Z"></path>
+        </svg>
+      </button>
+      <button
+        class="icon-btn theme"
+        type="button"
+        data-theme-toggle
+        aria-label="Switch color theme"
+      >
+        <svg class="theme__sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5"></circle>
+          <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"></path>
+        </svg>
+        <svg class="theme__moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 7.5 7.5 0 1 0 20 14.5Z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__copy">
+          <p class="eyebrow pill">
+            v0.0 · a work in progress, like all good software
+          </p>
+          <h1 id="hero-title">
+            AI made code cheap.{' '}
+            <span class="hl">
+              Judgment
+              <svg
+                viewBox="0 0 220 24"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path d="M3 15c30-9 62 4 96-3s68-10 118-1"></path>
+              </svg>
+            </span>{' '}
+            is still the expensive part.
+          </h1>
+          <p class="hero__lede">
+            SWE OS is how I build software, written once for two readers. You
+            read it to learn what separates a vibe-coder from a software
+            engineer. Your coding agent reads the same pages and does better
+            work.
+          </p>
+          <div class="hero__ctas">
+            <a class="btn btn--primary" href="/guides/">
+              Start learning <span aria-hidden="true">→</span>
+            </a>
+            <a class="btn btn--ghost" href="#agent">
+              Point your agent here
+            </a>
+          </div>
+          <p class="hand hero__note" aria-hidden="true">
+            same pages, two readers
+            <svg viewBox="0 0 60 40">
+              <path d="M4 6c14 2 30 10 40 26m0 0-9-2m9 2 1-9"></path>
+            </svg>
+          </p>
+        </div>
+        <div class="hero__art">
+          <HeroArt />
+        </div>
+      </section>
+
+      <section class="section how" aria-labelledby="how-title">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">
+          Ask for a feature. Get the parts you forgot to ask for.
+        </h2>
+        <ol class="steps">
+          <li class="step reveal">
+            <span class="step__num">1</span>
+            <h3>You ask, like normal</h3>
+            <p>
+              "Build avatar uploads." No special syntax. Your agent reads the
+              entry page and picks the skill that fits.
+            </p>
+          </li>
+          <li class="step reveal">
+            <span class="step__num">2</span>
+            <h3>It finds what could go wrong</h3>
+            <p>
+              The skill checks the feature against {concerns.length} concerns,
+              keeps the few that apply, and decides how deep to go on each.
+            </p>
+          </li>
+          <li class="step reveal">
+            <span class="step__num">3</span>
+            <h3>It shows its work</h3>
+            <p>
+              Every concern ends up handled, deferred, not applicable, or
+              unknown. With evidence, not vibes.
+            </p>
+          </li>
+        </ol>
+
+        <div class="demo reveal" data-demo>
+          <div class="demo__tabs" role="tablist" aria-label="Example requests">
+            {demos.map((demo, i) => (
+              <button
+                type="button"
+                role="tab"
+                id={`demo-tab-${i}`}
+                aria-controls="demo-panel"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+                data-index={i}
+              >
+                {demo.label}
+              </button>
+            ))}
+          </div>
+          <div
+            class="demo__panel"
+            id="demo-panel"
+            role="tabpanel"
+            aria-labelledby="demo-tab-0"
+          >
+            <div class="demo__flow">
+              <div class="demo__ask">
+                <span class="demo__label">You</span>
+                <p class="bubble">
+                  <span class="sr-only" data-request-sr>
+                    {first.request}
+                  </span>
+                  <span aria-hidden="true" data-request>
+                    {first.request}
+                  </span>
+                </p>
+              </div>
+              <div class="demo__skill">
+                <span class="demo__label">Skill</span>
+                <a
+                  class="skill-tag"
+                  data-skill
+                  href={`/skills/${first.skill}/`}
+                >
+                  {first.skill}
+                </a>
+              </div>
+            </div>
+            <div class="demo__concerns">
+              <span class="demo__label">Concerns it picked</span>
+              <ul class="concern-grid" data-concerns>
+                {sortedConcerns.map((c) => (
+                  <li
+                    class:list={[
+                      'concern',
+                      { 'is-on': first.concerns.includes(c.id) },
+                    ]}
+                    data-id={c.id}
+                  >
+                    <span class="sr-only">
+                      {first.concerns.includes(c.id) ? 'Picked: ' : 'Skipped: '}
+                    </span>
+                    {c.title}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="demo__report">
+              <span class="demo__label">What it reports</span>
+              <ul class="report" data-report>
+                {first.report.map(([kind, title, text]) => (
+                  <li class="report__line">
+                    <span class={`badge badge--${kind!.replace('/', '')}`}>
+                      {kind}
+                    </span>
+                    <span>
+                      <strong>{title}.</strong> {text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <p class="sr-only" aria-live="polite" data-demo-status></p>
+          <script
+            is:inline
+            type="application/json"
+            id="demo-data"
+            set:html={JSON.stringify(demos)}
+          />
+        </div>
+      </section>
+
+      <section class="section readers" aria-labelledby="readers-title">
+        <p class="eyebrow">One source</p>
+        <h2 id="readers-title">Same page. Two readers.</h2>
+        <p class="section__lede">
+          Every page here is a plain Markdown file in the repo. The site renders
+          it for you. Your agent loads the raw file. Nobody maintains two
+          versions, so they never drift apart.
+        </p>
+        <div class="readers__grid">
+          <figure class="reader reader--human reveal">
+            <figcaption class="hand">what you see</figcaption>
+            <div class="mini-page">
+              <span class="mini-page__chips">
+                <span>reliability</span>
+                <span>design</span>
+                <span>durable</span>
+              </span>
+              <p class="mini-page__title">Timeouts, retries, and idempotency</p>
+              <p>
+                When you call something over a network, three things can happen.
+                It answers. It fails. Or it never answers at all.
+              </p>
+              <p class="mini-page__h">A timeout doesn't mean it failed</p>
+              <p>
+                You send "charge $20". The request times out. Did the charge
+                happen?
+              </p>
+            </div>
+          </figure>
+          <div class="readers__equals" aria-hidden="true">
+            =
+          </div>
+          <figure class="reader reader--agent reveal">
+            <figcaption class="hand">what your agent loads</figcaption>
+            <pre class="mini-raw"><code><span class="t-dim">---</span>
+<span class="t-key">title:</span> Timeouts, retries, and idempotency
+<span class="t-key">domain:</span> reliability
+<span class="t-key">concerns:</span> [reliability, concurrency]
+<span class="t-dim">---</span>
+
+When you call something over a network,
+three things can happen...
+
+<span class="t-head">## A timeout doesn't mean it failed</span></code></pre>
+          </figure>
+        </div>
+        <p class="readers__link">
+          <a href="/guides/timeouts-retries-idempotency/">
+            Read the real thing
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="/core/guides/timeouts-retries-idempotency.md">
+            see the raw Markdown
+          </a>
+        </p>
+      </section>
+
+      <section class="section inside" aria-labelledby="inside-title">
+        <p class="eyebrow">What's inside</p>
+        <h2 id="inside-title">Small on purpose.</h2>
+        <p class="section__lede">
+          Good engineering isn't using every tool. It's knowing which ones the
+          problem deserves. Same goes for this site.
+        </p>
+        <ul class="cards">
+          {cards.map((card) => (
+            <li class={`card card--${card.tone} reveal`}>
+              <a href={card.href}>
+                <span class="card__icon" aria-hidden="true">
+                  {card.icon === 'compass' && (
+                    <svg viewBox="0 0 32 32">
+                      <circle cx="16" cy="16" r="12" />
+                      <path d="m20 12-2.5 6.5L11 21l2.5-6.5Z" />
+                    </svg>
+                  )}
+                  {card.icon === 'radar' && (
+                    <svg viewBox="0 0 32 32">
+                      <circle cx="16" cy="16" r="12" />
+                      <circle cx="16" cy="16" r="6" />
+                      <path d="M16 16 25 8" />
+                    </svg>
+                  )}
+                  {card.icon === 'book' && (
+                    <svg viewBox="0 0 32 32">
+                      <path d="M5 7c4-1.5 7.5-1 11 1.5V26C12.5 23.5 9 23 5 24.5ZM27 7c-4-1.5-7.5-1-11 1.5V26c3.5-2.5 7-3 11-1.5Z" />
+                    </svg>
+                  )}
+                  {card.icon === 'spark' && (
+                    <svg viewBox="0 0 32 32">
+                      <path d="m16 4 2.6 8.4L27 15l-8.4 2.6L16 26l-2.6-8.4L5 15l8.4-2.6Z" />
+                    </svg>
+                  )}
+                  {card.icon === 'heart' && (
+                    <svg viewBox="0 0 32 32">
+                      <path d="M16 26S5 19.5 5 12.5A5.5 5.5 0 0 1 16 10a5.5 5.5 0 0 1 11 2.5C27 19.5 16 26 16 26Z" />
+                    </svg>
+                  )}
+                </span>
+                <span class="card__count">{card.count}</span>
+                <span class="card__title">{card.title}</span>
+                <span class="card__body">{card.body}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Plain text on purpose: moving links are hard to focus. The nav and the Principles card link there. */}
+      <section
+        class="ribbon"
+        aria-label={`The ${principles.length} principles`}
+      >
+        <div class="ribbon__track">
+          {[0, 1].map((copy) => (
+            <ul
+              class="ribbon__list"
+              aria-hidden={copy === 1 ? 'true' : undefined}
+            >
+              {principles.map((p) => (
+                <li>{p}</li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </section>
+
+      <section class="section agent" id="agent" aria-labelledby="agent-title">
+        <div class="agent__card reveal">
+          <p class="eyebrow">No install</p>
+          <h2 id="agent-title">Point your agent here.</h2>
+          <p>
+            No plugin, no package, no setup script. Paste this into Claude Code,
+            Codex, Cursor, or whatever you use:
+          </p>
+          <div class="prompt">
+            <code data-prompt>
+              Use Tommy's SWE OS for this task. Start at{' '}
+              <span data-origin>/skills/README.md</span> and follow the skill
+              that fits.
+            </code>
+            <button type="button" class="btn btn--small" data-copy>
+              Copy
+            </button>
+          </div>
+          <p class="agent__status" role="status" data-copy-status></p>
+          <p class="agent__more">
+            Agents can also read the whole index at{' '}
+            <a href="/llms.txt">
+              <code>/llms.txt</code>
+            </a>
+            .
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <Logo size={28} />
+      <p>
+        Made by Tommy, with a lot of help from agents. Facts link to sources.
+        Opinions are labeled as mine.
+      </p>
+    </footer>
+
+    <script>
+      import { setupLanding } from '../scripts/landing';
+      setupLanding();
+    </script>
+  </body>
+</html>

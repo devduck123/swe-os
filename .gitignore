@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+playwright-report/
+test-results/
+.DS_Store
+.env*
+!.env.example
+# Codex's first draft, kept locally for comparison. Delete when done.
+.archive/

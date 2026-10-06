@@ -1,0 +1,143 @@
+---
+// The hero drawing: one notebook of knowledge, read by a person and loaded by an agent.
+---
+
+<svg class="art" viewBox="0 0 520 440" role="img" aria-labelledby="art-title">
+  <title id="art-title">A notebook in the middle, with a person reading it on one side and a small robot loading it on the other.</title>
+
+  <g class="art__bg">
+    <path
+      class="art__blob art__blob--peach"
+      d="M268 52c92 0 168 56 172 148 4 98-70 176-176 178-104 2-184-60-184-162S170 52 268 52Z"
+    ></path>
+    <path
+      class="art__blob art__blob--lilac"
+      d="M118 70c40-18 92 6 98 48s-26 70-70 72-74-26-74-62 12-46 46-58Z"
+    ></path>
+  </g>
+
+  <g class="float float--a">
+    <path
+      class="art__star"
+      d="m78 120 5 14 14 5-14 5-5 14-5-14-14-5 14-5Z"
+    ></path>
+  </g>
+  <g class="float float--b">
+    <circle class="art__ring" cx="462" cy="112" r="11"></circle>
+  </g>
+  <g class="float float--c">
+    <path
+      class="art__squiggle"
+      d="M394 54c8-10 16 10 24 0s16 10 24 0 16 10 24 0"
+    ></path>
+  </g>
+  <g class="float float--a">
+    <circle class="art__dot" cx="470" cy="300" r="5"></circle>
+    <circle class="art__dot art__dot--mint" cx="40" cy="250" r="6"></circle>
+  </g>
+
+  <!-- Flow from the notebook to each reader -->
+  <path class="art__flow" d="M228 286c-24 46-70 58-110 40"></path>
+  <path class="art__flow art__flow--b" d="M294 286c24 46 70 58 110 40"></path>
+
+  <!-- Notebook -->
+  <g class="book">
+    <path
+      class="art__page"
+      d="M150 140c38-14 74-12 108 8v148c-34-20-70-22-108-8Z"
+    ></path>
+    <path
+      class="art__page"
+      d="M366 140c-38-14-74-12-108 8v148c34-20 70-22 108-8Z"
+    ></path>
+    <path class="art__spine" d="M258 148v148"></path>
+    <path class="art__line art__line--head" d="M170 166c22-6 44-5 68 3"></path>
+    <path class="art__line" d="M170 186c22-6 44-5 68 3"></path>
+    <path class="art__line" d="M170 204c22-6 44-5 68 3"></path>
+    <path class="art__line" d="M170 222c14-4 28-4 42 1"></path>
+    <path class="art__line" d="M170 246c22-6 44-5 68 3"></path>
+    <path class="art__line" d="M170 264c16-4 32-4 48 1"></path>
+    <path class="art__line art__line--code" d="M280 168c22-8 44-9 66-5"></path>
+    <path class="art__line" d="M280 188c22-8 44-9 66-5"></path>
+    <circle class="art__check" cx="292" cy="226" r="11"></circle>
+    <path class="art__tick" d="m286 226 4.5 4.5 8-9"></path>
+    <path class="art__line" d="M310 226c12-4 24-5 36-3"></path>
+    <path class="art__line" d="M280 256c22-8 44-9 66-5"></path>
+  </g>
+
+  <!-- Person -->
+  <g class="person">
+    <rect
+      class="art__shirt"
+      x="66"
+      y="322"
+      width="76"
+      height="86"
+      rx="34"
+    ></rect>
+    <circle class="art__face" cx="104" cy="292" r="30"></circle>
+    <path
+      class="art__hair"
+      d="M74 290c-2-24 14-36 32-36 20 0 34 12 30 34-10-10-26-14-40-12-8 1-16 6-22 14Z"
+    ></path>
+    <circle class="art__eye" cx="94" cy="296" r="3.2"></circle>
+    <circle class="art__eye" cx="114" cy="296" r="3.2"></circle>
+    <path class="art__mouth" d="M96 308c5 4 11 4 16 0"></path>
+    <circle class="art__cheek" cx="86" cy="306" r="4"></circle>
+    <circle class="art__cheek" cx="122" cy="306" r="4"></circle>
+  </g>
+
+  <!-- Agent -->
+  <g class="robot">
+    <path class="art__antenna" d="M418 250v-20"></path>
+    <circle class="art__bulb" cx="418" cy="224" r="8"></circle>
+    <rect
+      class="art__head"
+      x="382"
+      y="250"
+      width="72"
+      height="58"
+      rx="18"
+    ></rect>
+    <rect
+      class="art__visor"
+      x="392"
+      y="262"
+      width="52"
+      height="28"
+      rx="12"
+    ></rect>
+    <rect
+      class="art__eye art__eye--bot"
+      x="402"
+      y="269"
+      width="9"
+      height="13"
+      rx="4"
+    ></rect>
+    <rect
+      class="art__eye art__eye--bot"
+      x="425"
+      y="269"
+      width="9"
+      height="13"
+      rx="4"
+    ></rect>
+    <rect
+      class="art__body"
+      x="388"
+      y="314"
+      width="60"
+      height="86"
+      rx="22"
+    ></rect>
+    <circle class="art__light" cx="418" cy="346" r="7"></circle>
+  </g>
+
+  <text class="art__label" x="104" y="432" text-anchor="middle">
+    you read it
+  </text>
+  <text class="art__label" x="418" y="432" text-anchor="middle">
+    your agent loads it
+  </text>
+</svg>
