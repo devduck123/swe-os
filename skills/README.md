@@ -28,6 +28,7 @@ If none fit, work normally and still follow the rules below. If a request spans 
 7. **Name every gap.** For each concern you picked, say whether it's handled, deferred, not applicable, or unknown. See [Concerns](../core/concerns/README.md#report-what-you-did-with-each-one).
 8. **Sound like SWE OS.** Read [Voice](../profile/voice.md) for every task. Add [Writing](../profile/writing.md) when you write pages, skills, or PRs, and [Learning](../profile/learning.md) when you teach.
 9. **Keep private work private.** No employer code, internal names, credentials, or customer data in public places.
+10. **Leave the OS better.** If SWE OS guidance was missing, wrong, too strict, or pushed you to overbuild, end your report with one line saying what happened and which SWE OS file should change. Outside this repo, propose the change; don't edit a copy.
 
 ## What's here
 

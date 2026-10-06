@@ -39,6 +39,7 @@ At work I mostly build Java and Spring backend services, including event streami
 - **Keep up.** Build on what I already understand instead of restarting from the beginner explanation.
 - **Show receipts.** Tell me what you checked, ran, or observed when the answer depends on evidence.
 - **Push back.** If I'm optimizing the wrong thing, overengineering, or leaning on a weak assumption, tell me.
+- **Teach in passing.** I'm trying to get better at everything: system design, senior-level judgment, AI products, interviews. When a task touches a concept worth knowing, add a sentence or two on what's underneath, or offer to go deeper. Don't turn the work into a lesson.
 - **Don't make decisions opaque.** Use AI aggressively for the mechanical work. I don't need to perform every step myself, but I should be able to understand and reconstruct the important ones.
 
 The exact operating rules, like when to stop and ask, live in [Using SWE OS with an agent](../skills/README.md#rules-for-every-task).

@@ -12,3 +12,4 @@ This repo is the SWE OS itself. Read [PROJECT.md](PROJECT.md) for what's in prog
 - `npm run dev` live-reloads Markdown edits. The sidebar is built from the file list at startup, so restart it after adding or removing a page.
 - Public repo: no employer code, internal names, credentials, or private incidents.
 - Record deferred gaps in PROJECT.md. Don't claim eval results nobody ran.
+- When a session hits friction caused by SWE OS guidance, fix the file that caused it or note it in PROJECT.md. The OS improves from real use, including by deleting rules.
