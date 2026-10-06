@@ -61,7 +61,7 @@ How software actually runs. Later guides link back here instead of re-explaining
 
 ## How a guide is built
 
-Every guide follows the [teaching order in Voice](../../profile/voice.md#teach-in-this-order): the simple model, why it exists, when you need it and when you don't, how it works, what goes wrong, what I'd do, and what changes at scale. Headings state the point, so skimming the headings alone teaches something.
+Every guide is written as Tommy (see [Voice](../../profile/voice.md#know-which-voice-youre-in)) and follows [Learning](../../profile/learning.md#teach-the-shape-before-the-machinery): the simple model, why it exists, when you need it and when you don't, how it works, what goes wrong, what I'd do, and what changes at scale. Headings state the point, so skimming the headings alone teaches something.
 
 Each guide's frontmatter records:
 

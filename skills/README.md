@@ -10,7 +10,8 @@ If you're an agent, start here. If you're a person, this is the page to point yo
 | The request sounds like...                                                | Use                                     |
 | ------------------------------------------------------------------------- | --------------------------------------- |
 | "I want to build X." A new app, product idea, or big change in direction. | [shape-project](shape-project/SKILL.md) |
-| "Build X", "add X", "fix X". Any change to working code.                  | [build-feature](build-feature/SKILL.md) |
+| "Build X", "add X", "change X". New or changed behavior.                  | [build-feature](build-feature/SKILL.md) |
+| "It's broken", "why is X doing Y", a crash, a failing test.               | [debug](debug/SKILL.md)                 |
 | "Review this." A diff, a PR, or a plan.                                   | [review-change](review-change/SKILL.md) |
 | "Explain X", "how does X work", "why would I use X".                      | [explain](explain/SKILL.md)             |
 
@@ -25,7 +26,7 @@ If none fit, work normally and still follow the rules below. If a request spans 
 5. **Stop and ask before** destructive data changes, force-pushing shared branches, permission or IAM changes, production secret changes, new paid services, production deploys nobody asked for, or growing the agreed scope.
 6. **Never delete or weaken a meaningful test** to get green.
 7. **Name every gap.** For each concern you picked, say whether it's handled, deferred, not applicable, or unknown. See [Concerns](../core/concerns/README.md#report-what-you-did-with-each-one).
-8. **Write like Tommy.** Follow [Voice](../profile/voice.md). Short, plain, specific.
+8. **Sound like SWE OS.** Read [Voice](../profile/voice.md) for every task. Add [Writing](../profile/writing.md) when you write pages, skills, or PRs, and [Learning](../profile/learning.md) when you teach.
 9. **Keep private work private.** No employer code, internal names, credentials, or customer data in public places.
 
 ## What's here
@@ -33,5 +34,5 @@ If none fit, work normally and still follow the rules below. If a request spans 
 - [Principles](../core/principles.md): fourteen rules of judgment. Read one when a trade-off needs a tiebreaker.
 - [Concerns](../core/concerns/README.md): which engineering concerns a task triggers and how deep to go.
 - [Guides](../core/guides/README.md): concept explanations. Concern pages link to the ones you need.
-- [How I work](../profile/workflow.md) and [Defaults](../profile/defaults.md): Tommy's preferences and starting tech choices.
+- [Tommy](../profile/tommy.md) and [Defaults](../profile/defaults.md): how Tommy thinks and works, and his starting tech choices.
 - [Project templates](../templates/project/AGENTS.md): starter `AGENTS.md` and `PROJECT.md` for a new repo.

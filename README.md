@@ -10,7 +10,7 @@ There's nothing to install. Point your agent at the entry page:
 
 > Use Tommy's SWE OS for this: start at `skills/README.md` in this repo (or `/skills/README.md` on the site).
 
-The agent picks a skill (shape, build, review, or explain), then loads only the concerns and guides the task needs.
+The agent picks a skill (shape, build, debug, review, or explain), then loads only the concerns and guides the task needs.
 
 ## What's inside
 
@@ -20,7 +20,7 @@ The agent picks a skill (shape, build, review, or explain), then loads only the 
 | [core/principles.md](core/principles.md)          | Fourteen rules of engineering judgment.                        |
 | [core/concerns/](core/concerns/README.md)         | What a feature can get wrong, and how deep to go on each risk. |
 | [core/guides/](core/guides/README.md)             | Concept guides for people and agents.                          |
-| [profile/](profile/workflow.md)                   | My preferences, voice, and default tech choices.               |
+| [profile/](profile/voice.md)                      | My voice, how I learn and work, and default tech choices.      |
 | [templates/project/](templates/project/AGENTS.md) | Starter `AGENTS.md` and `PROJECT.md` for new projects.         |
 | [evals/](evals/README.md)                         | A/B scenarios that test whether this improves agent work.      |
 | `src/`                                            | The Astro site that renders all of the above.                  |
