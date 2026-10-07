@@ -4,7 +4,8 @@ description: Why one app and one database beat what an agent proposes by default
 domain: architecture
 stage: design
 freshness: durable
-status: draft
+status: reviewed
+reviewed: 2026-10-06
 track: 4
 concerns: [performance, reliability, cost, dependencies]
 ---

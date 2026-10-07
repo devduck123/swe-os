@@ -4,7 +4,7 @@ description: Why delegating to AI can quietly stop you from learning, what the e
 domain: ai
 stage: improve
 freshness: evolving
-status: draft
+status: reviewed
 track: 21
 reviewed: 2026-10-06
 concerns: []

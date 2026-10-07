@@ -55,6 +55,15 @@ test('landing: skip link, demo tabs, and copy prompt work from the keyboard', as
   await expect(page.locator('[data-origin]')).toContainText(
     '/skills/README.md',
   );
+
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.getByRole('button', { name: 'Copy the clone command' }).click();
+  await expect(page.locator('[data-copy-status]')).toHaveText(
+    'Copied to your clipboard.',
+  );
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    'git clone https://github.com/devduck123/swe-os ~/swe-os',
+  );
 });
 
 test('every page offers its raw Markdown, and agents get an index', async ({

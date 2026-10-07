@@ -4,7 +4,7 @@ description: 'Error tracking, structured logs, a health check, and a few outcome
 domain: reliability
 stage: operate
 freshness: evolving
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 18
 concerns: [observability, reliability]

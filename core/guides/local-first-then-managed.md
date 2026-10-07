@@ -4,7 +4,7 @@ description: Start on your laptop with fast feedback, then add hosted services o
 domain: infrastructure
 stage: build
 freshness: evolving
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 8
 concerns: [deployment, cost, data, security]

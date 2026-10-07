@@ -4,7 +4,7 @@ description: One click on a Next.js app traced from the browser to Postgres and 
 domain: foundations
 stage: understand
 freshness: durable
-status: draft
+status: reviewed
 track: 2
 reviewed: 2026-10-06
 concerns: [performance, reliability, security]

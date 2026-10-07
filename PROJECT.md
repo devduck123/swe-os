@@ -6,25 +6,33 @@
 
 Done when:
 
-- A newcomer can land on the site and follow the track from "what's the difference?" to "here's the stack I'd ship, and why". Every stop on the track has been reviewed by Tommy, and cut where it didn't earn its place.
-- `start-project` sets up a real side project that passes its own checks, with secrets protected, on the first run.
-- The secrets and dependency evals show agents catching what the new guidance targets.
-- The site is live on a domain, under a license, with no private details anywhere.
+- A newcomer can land on the site and follow the track from "what's the difference?" to "here's the stack I'd ship, and why". Every stop has been reviewed by Tommy. Done; tuning comes after launch.
+- Claude Code and Codex both pick and follow the right skill when pointed at SWE OS, from the site and from a local clone.
+- The site is live on Vercel, under a license, with no private details in the repo or its history.
+
+`start-project` on a real project and the first eval runs moved to after launch. Until evals run, nothing claims agents do better with SWE OS.
 
 ## Next
 
-1. Tommy reviews the whole track, cuts what doesn't earn its place, and marks the rest reviewed.
-2. Test `start-project` on one real side project, and fix what it gets wrong.
-3. Run the evals in `evals/`, starting with `overhead`, `secrets`, `dependency`, and `pushback`.
-4. Launch decisions: license, domain, hosting (Vercel per defaults), and the `site` URL for the sitemap and `llms.txt`.
-5. Before launch: re-check every fast-moving claim, and do a final review of the public README and landing page.
-6. After launch: the two-week `learn` trial, dogfooding `build-feature`, and guides picked by what `learn` keeps surfacing.
+1. Tommy creates the Vercel project from the repo. The site goes live on its `vercel.app` domain.
+2. Test both agent paths with Claude Code and Codex from a fresh session in an unrelated folder, and fix what breaks.
+3. Before the repo goes public: secret-scan every branch's history, grep for private names, and delete stale branches.
+4. Tommy makes the repo public.
+5. After launch:
+   - tune the track (its own thread)
+   - run the evals, starting with `overhead`, `secrets`, `dependency`, and `pushback`
+   - run `start-project` on a real side project
+   - the two-week `learn` trial
+   - a custom domain, when wanted
 
 ## Decisions
 
 | Decision                                                                                                 | Why                                                                                                                                                                                               | Revisit when                                                                     |
 | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | No installer. Agents read the repo or site.                                                              | Nothing to sync or version per project. A project's AGENTS.md records which version it follows.                                                                                                   | Reading over the network proves too slow or flaky.                               |
+| Two agent paths: raw Markdown from the site with curl, or a local clone                                  | Claude Code's web fetch passes pages through a small model, so rules can come back paraphrased. Codex's default sandbox has no network. A clone gives exact text offline.                         | Tests show one path is enough.                                                   |
+| Hosted on Vercel Hobby at the `vercel.app` domain                                                        | Free, a preview per PR, and no domain needed to launch. The site URL comes from Vercel's production domain at build time; `SITE_URL` overrides it.                                                | A custom domain, or anything commercial (Hobby is non-commercial).               |
+| Writing under CC BY 4.0; code and templates under MIT                                                    | CC licenses aren't meant for code. Templates get copied into projects, so they shouldn't need credit.                                                                                             | Never.                                                                           |
 | One Markdown file per concern, instead of a JSON registry and script                                     | Agents read Markdown directly, and people can learn from it. The script added ceremony, not judgment.                                                                                             | Agents keep misrouting concerns in evals.                                        |
 | The site renders the source files as they are, with no copy step                                         | One source, no drift. Raw `.md` sits at the same path for agents.                                                                                                                                 | Never, ideally.                                                                  |
 | Astro and Starlight, with a custom landing page                                                          | Static, fast, good search. Starlight handles docs pages; the landing page shows personality.                                                                                                      | Starlight blocks the design we want.                                             |
@@ -46,11 +54,10 @@ Done when:
 
 | Gap                                                                                       | State    | Revisit when                                                                                  |
 | ----------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
-| Guides and concern pages are AI-drafted; the profile is reviewed as a starting point      | Deferred | Before any public launch                                                                      |
+| Concern pages and skills are AI-drafted and only spot-reviewed by Tommy                   | Deferred | Evals or real use show agents missing what they should catch                                  |
+| The agent paths are untested from outside this repo                                       | Unknown  | Next step 2                                                                                   |
 | No evidence yet that SWE OS improves agent results                                        | Unknown  | After the first eval runs                                                                     |
 | The learn loop is untested on Tommy                                                       | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
-| No domain, hosting, or license chosen                                                     | Deferred | Before going public                                                                           |
 | Windows paths and line endings are handled in code but never run on Windows               | Unknown  | First Windows contributor or CI runner                                                        |
-| The 22-stop track is agent-drafted and unreviewed                                         | Deferred | v0.1 launch                                                                                   |
 | Drizzle snippets target stable 0.45; 1.0 changes `casing` and relational `where`          | Deferred | Drizzle 1.0 ships stable                                                                      |
 | Local-first setup relies on a `pg_isready` healthcheck, but no compose template ships one | Deferred | First real run of `start-project`                                                             |

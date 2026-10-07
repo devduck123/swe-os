@@ -4,7 +4,7 @@ description: How API keys, tokens, and data leak when agents help write your cod
 domain: security
 stage: build
 freshness: evolving
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 12
 concerns: [security, ai-features, dependencies, deployment]

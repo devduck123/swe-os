@@ -4,7 +4,7 @@ description: Why "it matches the screenshot" isn't done, and the states, forms, 
 domain: frontend
 stage: build
 freshness: durable
-status: draft
+status: reviewed
 track: 9
 reviewed: 2026-10-06
 concerns: [product-ux, accessibility, ui-quality, performance]

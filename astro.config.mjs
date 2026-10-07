@@ -93,7 +93,16 @@ const fonts = [
   google('Caveat', '--font-caveat', ['cursive'], { weights: ['700'] }),
 ];
 
+// The public URL, for the sitemap, absolute llms.txt links, and share cards. SITE_URL wins (set it
+// when a custom domain arrives); otherwise Vercel's production domain, which Vercel exposes at build time.
+const site =
+  process.env.SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL &&
+    `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`);
+const ogImage = site ? new URL('/og.png', site).href : '/og.png';
+
 export default defineConfig({
+  site,
   output: 'static',
   fonts,
   markdown: { processor: unified({ remarkPlugins: [remarkRepoLinks] }) },
@@ -101,6 +110,20 @@ export default defineConfig({
     starlight({
       title: "Tommy's SWE OS",
       description: 'Engineering judgment for people and their coding agents.',
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/devduck123/swe-os',
+        },
+      ],
+      head: [
+        { tag: 'meta', attrs: { property: 'og:image', content: ogImage } },
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image:alt', content: "Tommy's SWE OS" },
+        },
+      ],
       customCss: ['./src/styles/tokens.css', './src/styles/docs.css'],
       // Wrap long lines so code blocks never need a keyboard-unreachable horizontal scroll.
       expressiveCode: { defaultProps: { wrap: true } },

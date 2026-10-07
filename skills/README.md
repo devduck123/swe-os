@@ -3,7 +3,9 @@ title: Using SWE OS with an agent
 description: The entry point for coding agents. Pick a skill, follow the shared rules, and load only what the task needs.
 ---
 
-If you're an agent, start here. If you're a person, this is the page to point your agent at.
+If you're an agent, start here. Links are relative: resolve them against this file's path or URL, and read the raw Markdown.
+
+If you're a person, this is the page to point your agent at. [Two ways to do it](https://github.com/devduck123/swe-os#use-it-with-an-agent). Not Tommy? Your own instructions and your project's `AGENTS.md` override everything here, and you can fork the repo and rewrite `profile/` to make it yours.
 
 ## Pick a skill
 

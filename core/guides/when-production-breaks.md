@@ -4,7 +4,7 @@ description: Stop the damage first, debug from evidence, tell people, and restor
 domain: reliability
 stage: operate
 freshness: durable
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 19
 concerns: [reliability, data, observability]

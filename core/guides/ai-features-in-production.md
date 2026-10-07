@@ -4,7 +4,7 @@ description: "What changes when your product calls a language model: output you 
 domain: ai
 stage: build
 freshness: evolving
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 11
 concerns: [ai-features, security, cost, reliability]

@@ -14,6 +14,12 @@ const concerns = docs
 const concernIds = new Set(concerns.map((c) => c.id));
 // Stops on the learning track, guides and recipes alike.
 const trackStops = docs.filter((d) => d.data.track).length;
+const repo = 'https://github.com/devduck123/swe-os';
+const title =
+  "Tommy's SWE OS: engineering judgment for people and their agents";
+const description =
+  'How Tommy engineers software, written once for two readers: people who want to learn real engineering, and the coding agents that work with them.';
+const ogImage = new URL('/og.png', Astro.site ?? Astro.url).href;
 const principles = (await getEntry('docs', 'principles'))!
   .body!.split('\n')
   .filter((line) => line.startsWith('## '))
@@ -221,11 +227,17 @@ const cards = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tommy's SWE OS: engineering judgment for people and their agents</title>
-    <meta
-      name="description"
-      content="How Tommy engineers software, written once for two readers: people who want to learn real engineering, and the coding agents that work with them."
-    />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {Astro.site && <link rel="canonical" href={Astro.site.href} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tommy's SWE OS" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {Astro.site && <meta property="og:url" content={Astro.site.href} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="Tommy's SWE OS" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <Fonts display />
     <script is:inline>
@@ -307,7 +319,7 @@ const cards = [
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__copy">
           <p class="eyebrow pill">
-            v0.0 · a work in progress, like all good software
+            v0.1 · a work in progress, like all good software
           </p>
           <h1 id="hero-title">
             AI made code cheap.{' '}
@@ -326,8 +338,8 @@ const cards = [
           <p class="hero__lede">
             SWE OS is how I build software, written once for two readers. You
             read it to learn what separates a vibe coder from a software
-            engineer. Your coding agent reads the same pages and does better
-            work.
+            engineer. Your coding agent reads the same pages as its
+            instructions.
           </p>
           <div class="hero__ctas">
             <a class="btn btn--primary" href="/guides/">
@@ -603,16 +615,54 @@ three things can happen...
           <p class="eyebrow">No install</p>
           <h2 id="agent-title">Point your agent here.</h2>
           <p>
-            No plugin, no package, no setup script. Paste this into Claude Code,
-            Codex, Cursor, or whatever you use:
+            No plugin, no package, no setup script. Paste a prompt into Claude
+            Code, Codex, Cursor, or whatever you use.
           </p>
+          <h3 class="agent__way">Quick: read it from this site</h3>
           <div class="prompt">
             <code data-prompt>
-              Use Tommy's SWE OS for this task. Start at{' '}
-              <span data-origin>/skills/README.md</span> and follow the skill
-              that fits.
+              Use Tommy's SWE OS for this task. Download{' '}
+              <span data-origin>/skills/README.md</span> as raw text with curl,
+              follow the skill that fits, and fetch each file it links the same
+              way.
             </code>
-            <button type="button" class="btn btn--small" data-copy>
+            <button
+              type="button"
+              class="btn btn--small"
+              data-copy
+              aria-label="Copy the quick prompt"
+            >
+              Copy
+            </button>
+          </div>
+          <h3 class="agent__way">Best: keep a copy on your machine</h3>
+          <p class="agent__hint">
+            Exact text, works offline and in sandboxes without network access
+            (like Codex's default). Clone it once, and <code>git pull</code> now
+            and then.
+          </p>
+          <div class="prompt">
+            <code data-prompt>git clone {repo} ~/swe-os</code>
+            <button
+              type="button"
+              class="btn btn--small"
+              data-copy
+              aria-label="Copy the clone command"
+            >
+              Copy
+            </button>
+          </div>
+          <div class="prompt">
+            <code data-prompt>
+              Use Tommy's SWE OS at ~/swe-os for this task. Start at
+              skills/README.md and follow the skill that fits.
+            </code>
+            <button
+              type="button"
+              class="btn btn--small"
+              data-copy
+              aria-label="Copy the local prompt"
+            >
               Copy
             </button>
           </div>
@@ -632,7 +682,9 @@ three things can happen...
       <Logo size={28} />
       <p>
         Made by Tommy, with a lot of help from agents. Fast-moving facts are
-        dated and sourced. Opinions are labeled as mine.
+        dated and sourced. Opinions are labeled as mine. Writing under{' '}
+        <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>,
+        code under MIT. <a href={repo}>Source on GitHub</a>.
       </p>
     </footer>
 

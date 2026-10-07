@@ -4,7 +4,7 @@ description: 'Constraints, transactions, and indexes: let the database remember 
 domain: data
 stage: design
 freshness: durable
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 5
 concerns: [data, concurrency, performance]
