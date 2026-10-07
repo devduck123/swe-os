@@ -26,20 +26,20 @@ The track follows the lifecycle of real work, from understanding the problem to 
 
 ### Build
 
-8. [What a complete frontend feature includes](complete-frontend-features.md): why "matches the screenshot" isn't done.
-9. [Accessibility in practice](accessibility-in-practice.md): keyboards, screen readers, zoom, and the five-minute check.
-10. [AI features in production](ai-features-in-production.md): untrusted output, prompt injection, cost, and quality you can measure.
-11. [Secrets and safety when agents write your code](secrets-and-agent-safety.md): keeping keys, data, and your bill out of trouble.
-12. [Background jobs and webhooks](background-jobs-and-webhooks.md): work outside the request, without running it twice or never.
+8. [Local first, then managed services](local-first-then-managed.md): run everything on your laptop on day one, then add free tiers one service at a time.
+9. [What a complete frontend feature includes](complete-frontend-features.md): why "matches the screenshot" isn't done.
+10. [Accessibility in practice](accessibility-in-practice.md): keyboards, screen readers, zoom, and the five-minute check.
+11. [AI features in production](ai-features-in-production.md): untrusted output, prompt injection, cost, and quality you can measure.
+12. [Secrets and safety when agents write your code](secrets-and-agent-safety.md): keeping keys, data, and your bill out of trouble.
+13. [Background jobs and webhooks](background-jobs-and-webhooks.md): work outside the request, without running it twice or never.
 
 ### Verify
 
-13. [How you know it works](how-you-know-it-works.md): tests that buy confidence, not coverage numbers.
-14. [Reading and reviewing code you didn't write](reading-and-reviewing-code.md): including everything your agents wrote.
+14. [How you know it works](how-you-know-it-works.md): tests that buy confidence, not coverage numbers.
+15. [Reading and reviewing code you didn't write](reading-and-reviewing-code.md): including everything your agents wrote.
 
 ### Ship
 
-15. [Local first, then managed services](local-first-then-managed.md): from your laptop to free tiers to paying, one service at a time.
 16. [Shipping changes you can undo](shipping-changes-you-can-undo.md): CI, previews, flags, and rollbacks.
 17. [Database changes without downtime](database-changes-without-downtime.md): because rolling back code doesn't roll back data.
 

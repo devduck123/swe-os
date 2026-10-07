@@ -17,12 +17,12 @@ Find the mechanism, prove it, then fix it. Follow the [rules for every task](../
 3. **Build a fast loop.** Turn the reproduction into one command, test, or script that shows the bug in seconds, then tighten it. Every later step runs through this loop, so a fast loop makes everything after it fast.
 4. **Name the most likely mechanism first.** State it in one or two sentences, with the evidence for it: "The pagination is the bug. We delete rows while paging, so later offsets shift." Keep at most two runner-up hypotheses. Don't list fifteen possibilities.
 5. **Run the experiment that rules out the most.** Bisect: `git bisect`, disable half the code path, log at the boundary between two components. Change one thing at a time. Expand the search only when the evidence sends you there.
-6. **Fix the cause, not the symptom.** First write a test that fails for the right reason. Then fix the code and watch the test pass. A retry or a catch-all that hides the bug is not a fix.
+6. **Fix the cause, not the symptom.** First write a test that fails for the right reason. Then fix the code and watch the test pass. For a config or infrastructure bug no test can reach, say why and rerun the reproduction instead. A retry or a catch-all that hides the bug is not a fix.
 7. **Check the neighbors.** Look for the same pattern elsewhere, and remove the debug logging you added.
 
 ## Stop rules
 
-- If three hypotheses in a row are wrong, stop. Write down what you've ruled out, and ask before trying a fourth.
+- If three hypotheses in a row are wrong, stop and write down what you've ruled out. Ask if someone's there to ask. Otherwise, report and pause.
 - If you can't explain the mechanism, you haven't found the cause. Say so instead of shipping a fix you can't explain.
 - Don't let a bug fix turn into a refactor. Note the refactor in PROJECT.md and stay on the bug.
 - Production data, prod deploys, and anything destructive follow the stop-and-ask list in the [rules for every task](../README.md#rules-for-every-task).
@@ -36,7 +36,7 @@ Find the mechanism, prove it, then fix it. Follow the [rules for every task](../
 
 **Fix.** What changed, and why it fixes the cause, not just the symptom.
 
-**Regression test.** Its name, and proof that it failed before the fix.
+**Regression test.** Its name, and proof that it failed before the fix. Or "not testable, because…" for a config or infrastructure bug.
 
 **Not verified.** Environments or cases you couldn't check.
 

@@ -10,9 +10,7 @@ reviewed: 2026-10-06
 concerns: [performance, cost]
 ---
 
-Performance work is finding the one slow thing and fixing that thing. Cost work is the same discipline applied to the bill. Both start with a number, not a hunch.
-
-A slow app usually has one or two real bottlenecks, and everything else is noise. Optimize the wrong thing and you add complexity to a page that's exactly as slow as before. Skip the cost math and you find out at the end of the month.
+Performance work is finding the one slow thing and fixing that thing. Cost work is the same discipline applied to the bill. Both start with a number, not a hunch. Optimize the wrong thing and you add complexity to a page that's exactly as slow as before. Skip the cost math and you find out at the end of the month.
 
 ## The cache that would have hidden the bug
 
@@ -24,15 +22,9 @@ Redis would have made the second visit fast and left the first one slow. It woul
 
 ## Slow is a number, not a feeling
 
-For what users feel in the browser, Google's Core Web Vitals are the common yardstick. Each is judged at the 75th percentile of page loads, split by mobile and desktop:
+In the browser, Google's Core Web Vitals are the yardstick, judged at the 75th percentile of page loads: the main content shows within 2.5 seconds (LCP), every tap gets a response within 200 milliseconds (INP), and layout shift stays at 0.1 or less (CLS). Lighthouse is fine for before-and-after checks, but field data from real phones is what counts. Vercel Speed Insights shows it once you have traffic.
 
-- **Largest Contentful Paint (LCP):** the main content shows up within 2.5 seconds.
-- **Interaction to Next Paint (INP):** the page responds to clicks and taps within 200 milliseconds. INP replaced First Input Delay as a Core Web Vital in 2024. It measures every interaction on the page, not just the first.
-- **Cumulative Layout Shift (CLS):** 0.1 or less, meaning content doesn't jump around as it loads.
-
-Lighthouse runs on your machine and is good for before-and-after comparisons. Field data from real users on real phones is what counts. Vercel Speed Insights or PageSpeed Insights show it once you have traffic.
-
-For the server, measure latency per route at p95, not the average. An average of 200ms can hide one user in twenty waiting three seconds. To see where the time goes inside a request, add a `Server-Timing` header. The browser's Network panel shows it next to the request:
+On the server, measure each route at p95, not the average. An average of 200ms can hide one user in twenty waiting three seconds. To see where the time goes, add a `Server-Timing` header, which the browser's Network panel shows next to the request:
 
 ```ts
 const start = performance.now();
@@ -43,18 +35,14 @@ return Response.json(projects, {
 });
 ```
 
-## When to care, and when not to
-
-Before launch, avoid the obvious traps in the misses list below and stop there. You can't tune for traffic you don't have.
-
-Start real performance work when a number crosses a line you care about: a Core Web Vital goes red, a route's p95 passes your budget, or users complain. Start cost work earlier. Before you ship anything usage-billed, know what it costs and what stops it from costing more.
+Start performance work when a number crosses a line you care about. Start cost work before you ship anything usage-billed.
 
 ## The bottleneck is usually one of four things
 
-- **A database query.** A missing index, so Postgres reads the whole table. An N+1, where code loops over rows and queries for each. `SELECT *` pulling large text or JSON columns you never display.
-- **A huge payload.** An API that returns 5,000 rows when the screen shows 20, or every field of every object.
-- **An unoptimized image.** A 4 MB photo resized by CSS on a phone. `next/image` serves a resized version. See [complete frontend features](complete-frontend-features.md#reserve-space-so-nothing-jumps).
-- **Too much client JavaScript.** A big charting, date, or editor library shipped to every page, which delays both LCP and INP.
+- **A database query.** A missing index, so Postgres reads the whole table. An N+1. `SELECT *` pulling big JSON columns you never display.
+- **A huge payload.** 5,000 rows returned when the screen shows 20.
+- **An unoptimized image.** A 4 MB photo resized by CSS on a phone. `next/image` serves a resized version. See [complete frontend features](complete-frontend-features.md).
+- **Too much client JavaScript.** A big chart or editor library shipped to every page.
 
 For a slow query, ask Postgres how it runs it:
 
@@ -68,69 +56,54 @@ CREATE INDEX invoices_team_created_idx ON invoices (team_id, created_at DESC);
 -- Run EXPLAIN ANALYZE again. You want an Index Scan that touches about 50 rows.
 ```
 
-For an N+1, fetch related rows in the same query with a join, or with Drizzle's relational queries, which compile to one SQL statement. To find one, log queries in development and count them per page. If the count grows with the rows on screen, that's it. [Data that stays correct](data-that-stays-correct.md) covers indexes.
+To find an N+1, log queries in development and count them per page. If the count grows with the rows on screen, that's it. Fix it with a join, or with Drizzle's relational queries, which compile to one SQL statement.
 
 ## Every cache is a bet on staleness
 
-A cache saves work by serving an old answer. Each layer trades freshness for speed.
+A cache saves work by serving an old answer. Before adding one, answer two questions. How stale can this data be before someone gets hurt? What invalidates it? If you can't answer the second, you're shipping a stale-data bug on a timer.
 
-- **Browser.** `Cache-Control: max-age` lets the browser skip the request. Great for hashed static assets. You can't take it back until it expires.
-- **CDN.** `s-maxage` caches at the edge for everyone. Never do this for a personalized response, or one user's dashboard gets served to the next. Mark those `private`.
-- **Framework cache.** In Next.js 16, `fetch` isn't cached by default, but a page that reads no request data can still be prerendered at build time. You opt in to data caching with `'use cache'` or `fetch` options and invalidate with tags. The cost is remembering to invalidate on every write path.
-- **An in-memory store like Redis.** Fast and flexible, and another stateful service to run, secure, and pay for.
-- **The database itself.** An index or a materialized view is often the cheapest "cache", because it stays correct.
+In Next.js 16, data isn't cached unless you opt in with Cache Components: set `cacheComponents: true` in `next.config.ts`, mark a function `'use cache'`, and give it a `cacheTag`. Then every write that changes the data has to invalidate that tag, with `updateTag` in a server action or `revalidateTag` in a route handler. Miss one write path and users see old data.
 
-Before adding a cache, answer two questions. How stale can this data be before someone gets hurt? What invalidates it? If you can't answer the second, you're shipping a stale-data bug on a timer. [Simple first](simple-first.md) is the longer argument.
+Never cache a personalized response somewhere it's shared, or one user's dashboard gets served to the next. Often the cheapest "cache" is an index, because it stays correct. [Simple first](simple-first.md) covers when Redis earns its place.
 
 ## Bound the work
 
-- **Paginate every list.** `LIMIT` and `OFFSET` are fine to start. Deep pages get slower, because Postgres still reads and throws away every skipped row. Switch to keyset pagination (`WHERE created_at < $cursor ORDER BY created_at DESC LIMIT 50`) when people actually page deep.
-- **Select only the columns you show.** Especially on tables with big text or JSON columns.
-- **Watch the bundle.** Run `next experimental-analyze` (Next.js 16.1 and later). Check a library's size before adding it. Do heavy rendering like Markdown or syntax highlighting in Server Components, so the library never ships to the browser.
-- **Put compute next to your data.** A function running at the edge near the user, talking to a database in one region, pays a cross-continent round trip on every query. Run your functions in the same region as your database. Vercel now recommends Node.js over its Edge runtime, and Next.js 16.3 dropped `runtime = 'edge'`.
+- **Paginate every list.** `LIMIT` and `OFFSET` are fine to start. Switch to keyset pagination (`WHERE created_at < $cursor ORDER BY created_at DESC LIMIT 50`) when people page deep, because `OFFSET` still reads every skipped row.
+- **Watch the bundle.** Run `next analyze` to see what ships to each route. Render heavy things like Markdown or syntax highlighting in Server Components, so the library never reaches the browser.
+- **Put compute next to your data.** A function near the user, talking to a database in another region, pays a cross-continent round trip on every query. Run functions in the database's region. Next.js has deprecated `runtime = 'edge'`: it still runs, with a warning, and Node.js is the default.
 
 ## Know what you're billed for
 
-**List the billed resources** for each feature: function time, bandwidth, image optimizations, database compute and storage, file storage and egress, emails, and AI tokens. The [cost concern](../concerns/cost.md) has the checklist.
+**List the billed resources** for each feature: function time, bandwidth, image optimizations, database compute and storage, file storage, emails, and AI tokens. The [cost concern](../concerns/cost.md) has the checklist. Free tiers end abruptly, and the [cliffs in my stack](../recipes/side-project-stack.md#what-it-costs) are in the recipe.
 
-**Know the cliffs.** Free tiers end abruptly: a project pauses, a feature stops, or you're forced onto a per-seat plan. The ones in my stack are under [cliffs worth knowing](../../profile/defaults.md#cliffs-worth-knowing).
+**Set a cap that actually stops spending.** An alert email at 2 a.m. doesn't stop a runaway bill. Vercel's Spend Management on Pro can pause production when you hit a budget. It checks every few minutes, so set it below your real ceiling. Anthropic's Console lets you set a monthly spend limit, and requests fail once you reach it. Check whether each provider's limit is a hard stop or just an email.
 
-**Set a cap that actually stops spending.** An alert email at 2 a.m. doesn't stop a runaway bill. Vercel's Spend Management on Pro can pause your production deployments when you hit a budget. It checks every few minutes, so set the budget below your real ceiling. Anthropic's Console lets you set a monthly spend limit below your tier's cap, and requests fail once you reach it. Check whether your provider's limit is a hard stop or just a notification.
+**Assume someone will find your AI endpoint.** An open route that calls a model API lets strangers spend your money. Require a session, [rate-limit it](trust-boundaries.md), cap input size and `max_tokens`, and keep a provider spend limit as the backstop.
 
-**Assume someone will find your AI endpoint.** An unauthenticated route that calls a model API is a way for strangers to spend your money. Require a session, rate-limit per user, cap input size and `max_tokens`, and keep a provider spend limit as the backstop. [AI features in production](ai-features-in-production.md) goes deeper.
-
-**Estimate at 10x before you need to.** Multiply it out: users, times actions per user per day, times 30, times the cost per action from the pricing page. Say 200 users each run 5 AI summaries a day. That's 30,000 calls a month. Now do 2,000 users. Then do the bad month: one bot sending 10 requests a second for a day is 864,000 calls. If either number scares you, add the limit now.
+**Estimate at 10x before you need to.** Users, times actions per user per day, times 30, times the cost per action. Say 200 users each run 5 AI summaries a day. That's 30,000 calls a month. Now do 2,000 users. Then do the bad month: one bot sending 10 requests a second for a day is 864,000 calls. If either number scares you, add the limit now.
 
 ## What the vibe-coded version misses
 
 - **A cache before a measurement.** The real bottleneck stays, and now there's stale data too.
 - **N+1 queries hidden by an ORM.** Fine with 5 rows in dev, 500 queries per page in production.
-- **`SELECT *` of large rows.** Megabytes of JSON leave the database for a list that shows names.
 - **No pagination.** The endpoint is fast until a customer has 50,000 records, then it times out for them alone.
-- **A big client library on every page.** The whole app pays for a chart on one screen.
 - **No spend cap on a model API.** One scraper can burn a month's budget overnight.
 - **Finding the bill at the end of the month.** By then the money's gone, and you can't tell which feature spent it.
 
 ## What I'd do
 
-I'd start with Vercel Speed Insights for real-user Web Vitals, `Server-Timing` on slow routes, and query logging in development. When something's slow, I'd read the query plan and fix the query before touching caching. Functions go in the same region as the Neon or Supabase database. Before shipping anything usage-billed, I'd put the 10x estimate in the PR, set the provider's spend limit, and turn on Vercel Spend Management once I'm on Pro.
+I'd start with Vercel Speed Insights, `Server-Timing` on slow routes, and query logging in development. When something's slow, I'd read the query plan and fix the query before touching caching. Before shipping anything usage-billed, I'd put the 10x estimate in the PR, set the provider's spend limit, and turn on Vercel Spend Management once I'm on Pro.
 
-I'd add a cache when a measured hot path is still too slow after the query is fixed, and the data can be stale for a known window. I'd add Redis only when the framework's cache and the database can't do the job.
-
-## What changes at scale
-
-- **Performance budgets in CI.** Bundle size and Lighthouse scores checked on every PR, so regressions fail before they ship.
-- **Load testing** before big launches, to find what breaks first.
-- **Read replicas** once reads, not your code, are what the database is drowning in.
-- **Cost per customer.** Attribute spend to features and customers, so you can price plans on real numbers.
+I'd add a cache when a measured hot path is still too slow after the query is fixed, and the data can be stale for a known window.
 
 ## Sources
 
 - [web.dev: Web Vitals](https://web.dev/articles/vitals)
 - [MDN: Server-Timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Server-Timing)
 - [Drizzle: Relational queries](https://orm.drizzle.team/docs/rqb)
-- [Next.js: Caching without Cache Components](https://nextjs.org/docs/app/guides/caching-without-cache-components)
-- [Next.js: Optimizing package bundling](https://nextjs.org/docs/app/guides/package-bundling)
-- [Vercel: Edge runtime](https://vercel.com/docs/functions/runtimes/edge)
+- [Next.js: `use cache`](https://nextjs.org/docs/app/api-reference/directives/use-cache)
+- [Next.js: `updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag)
+- [Next.js CLI: `next analyze`](https://nextjs.org/docs/app/api-reference/cli/next#next-analyze-options)
+- [Next.js: Edge runtime deprecated](https://nextjs.org/docs/messages/edge-runtime-deprecated)
 - [Vercel: Spend Management](https://vercel.com/docs/spend-management)
 - [Anthropic: Rate limits and spend limits](https://platform.claude.com/docs/en/api/rate-limits)

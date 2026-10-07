@@ -11,11 +11,9 @@ concerns: [product-ux]
 
 Shaping is deciding what to build, for whom, and how you'll know it worked, before anyone writes code. It fits on half a page: who has the problem, what they do today, the smallest slice that helps, how you'll check it's done, what you're not building, and what would tell you to keep going or stop.
 
-It matters more with agents, not less. An agent builds exactly what you ask for, fast, including the wrong thing. Shaping is how you make sure what you ask for is worth building.
-
 ## "Build me a habit tracker"
 
-Say you type that into an agent. In an hour you have sign-up with email and Google, habits with categories and colors, streaks, a stats page with charts, push reminders, a friends feed, and an "AI coach" that writes motivational messages. It looks impressive. It's also a pile of decisions you never made. What counts as "today" for someone who checks in at 11:50 p.m.? Does a missed day reset the streak? Who sees the friends feed? Each answer is now code you have to review, own, or delete.
+Type that into an agent, and in an hour you have sign-up with email and Google, habits with categories and colors, streaks, charts, push reminders, a friends feed, and an "AI coach". It looks impressive. It's also a pile of decisions you never made. What counts as "today" for someone who checks in at 11:50 p.m.? Does a missed day reset the streak? Who sees the friends feed? Each answer is now code you have to review, own, or delete.
 
 Here's the same idea, shaped:
 
@@ -49,37 +47,35 @@ isn't tracking.
 
 That fits in a prompt. It also fits in the project's `PROJECT.md`, where the next agent session finds it.
 
-## Why it matters more with agents
-
-Building used to be slow, and that slowness hid some free thinking time. While you built the habits table by hand, you'd wonder about time zones or whether anyone wanted a friends feed. Now an agent turns a vague sentence into forty files before you've had that thought.
+## A vague request gets the average app
 
 When a request is vague, an agent fills the gaps with the most common pattern it has seen. For "habit tracker", that's the average habit tracker: every feature every other one has. It won't ask who it's for, because you didn't give it a way to.
 
-Shaping fixes both sides. The slice and the non-goals keep the agent from building what you didn't ask for. The acceptance criteria give it a way to check its own work, and give you a way to tell "done" from "the agent says it's done." That's most of what [start with the user's problem](../principles.md#start-with-the-users-problem) and [AI speeds up implementation, not judgment](../principles.md#ai-speeds-up-implementation-not-judgment) mean in practice.
+Shaping fixes both sides. The slice and the non-goals keep the agent from building what you didn't ask for. The acceptance criteria give it a way to check its own work, and give you a way to tell "done" from "the agent says it's done."
 
-## When to shape, and how long it takes
+## Shape when the stakes justify it
 
 Shape anything new that someone besides you will use, anything that would take an agent more than a session, and anything that touches a floor: auth, money, personal data, or deleting things.
 
 The depth scales with the stakes. A new feature in an existing app takes five minutes: one sentence for the outcome, three to five acceptance criteria, and a line of non-goals. A new product deserves an hour, mostly spent on the first two questions.
 
-Skip it for a bug with a clear reproduction, a copy change, or a throwaway experiment where the experiment is the shaping. If you're building something just to learn a tool, the learning is the goal and nothing else needs to be shaped.
+Skip it for a bug with a clear reproduction, a copy change, or an experiment where building is the shaping, like learning a tool.
 
 ## Six questions, in order
 
 Each answer constrains the next one, so the order matters.
 
-**1. Who has the problem?** A specific person, not "users." "Me and two friends trying to stretch every morning" tells you the scale (three people), the device (phones, in the morning), and who you can ask. "Health-conscious millennials" tells you nothing you can build against.
+**1. Who has the problem?** A specific person, not "users." "Me and two friends trying to stretch every morning" tells you the scale, the device, and who you can ask.
 
-**2. What do they do today?** Their current workaround is your real competition. If the Notes checklist works fine, an app won't beat it. If you can't name what's painful about the workaround, stop here. There's no product yet.
+**2. What do they do today?** Their current workaround is your real competition. If you can't name what's painful about it, there's no product yet.
 
-**3. What's the smallest slice that helps?** One complete journey, thin: sign in, do the one thing, see that it worked. It goes through every layer, from the UI to the database to deployed on a real URL. "Design the database schema first" isn't a slice, because nobody can use a schema. The slice should feel almost embarrassingly small.
+**3. What's the smallest slice that helps?** One complete journey, thin, through every layer to a real URL. "Design the schema first" isn't a slice, because nobody can use a schema.
 
-**4. How will you check it's done?** Write acceptance criteria as behavior someone can observe. "Tapping twice records one check-in" is checkable. "Clean UI" and "fast" aren't. Include at least one edge case and one error case, because those are exactly what an agent skips when nobody names them. Criteria like these turn into tests almost directly. See [how you know it works](how-you-know-it-works.md).
+**4. How will you check it's done?** Behavior someone can observe, including at least one edge case and one error case, because those are what an agent skips when nobody names them. Criteria like these turn into tests almost directly. See [how you know it works](how-you-know-it-works.md).
 
-**5. What are you not building?** Write the non-goals down. They're what you tell the agent to leave out, and what you tell yourself when "it'd only take ten minutes to add reminders" comes up. Every unlisted feature is fair game for scope creep, from you or from an eager agent.
+**5. What are you not building?** Write the non-goals down. They're what you tell the agent to leave out, and what you tell yourself when "it'd only take ten minutes to add reminders" comes up.
 
-**6. What tells you to keep going, and what tells you to stop?** Decide this before you build, while you're still honest. Once you've spent a month on something, every result starts to look like a reason to continue. A kill signal is a gift to your future self.
+**6. What tells you to keep going, and what tells you to stop?** Decide this before you build, while you're still honest. After a month of work, every result starts to look like a reason to continue.
 
 ## The AI part is rarely the product
 
@@ -89,11 +85,10 @@ Before building it, try a manual version: write the coaching messages yourself a
 
 ## What the vibe-coded version misses
 
-- **The stack before the problem.** The first prompt is "Next.js, Supabase, Stripe, and OpenAI," and the first question about the user comes three weeks later, or never.
-- **No definition of done.** The agent says it's finished, and you have nothing to check that against except a vibe. Bugs become arguments about what was intended.
-- **Ten features in v1.** Each one is half-finished, none is tested, and you can't tell which one people actually use. Ten features also means ten times the edge cases and ten times the review.
-- **No non-goals, so scope creeps.** The agent adds a settings page and dark mode "while it was there," and now you maintain them.
-- **Only the happy path in the criteria.** Nobody wrote down the double tap, the time zone, or the empty state, so nobody built them.
+- **The stack before the problem.** The first prompt is "Next.js, Supabase, Stripe, and OpenAI," and the first question about the user comes three weeks later, or never. By then you've built for someone who doesn't exist.
+- **No definition of done.** The agent says it's finished, and you have nothing to check that against except a vibe. Bugs turn into arguments about what was intended.
+- **Ten features in v1.** Each one is half-finished, none is tested, and you can't tell which one people actually use. You pay ten times the review for one useful feature.
+- **Only the happy path in the criteria.** Nobody wrote down the double tap, the time zone, or the empty state, so nobody built them. The first real user finds all three in a day.
 - **The AI part treated as the product.** Weeks go into prompts and models for a feature nobody asked for, while the boring part people needed is still rough.
 - **No kill signal.** The project never fails, it just fades, and you keep paying for its database.
 
@@ -105,9 +100,3 @@ Before building it, try a manual version: write the coaching messages yourself a
 - Ship the slice to a real URL, use it for a week, and only then shape the next slice.
 
 If someone hands me a real spec, at work or from a client, I don't redo it. I add whatever acceptance criteria and non-goals are missing, because those are what an agent needs most.
-
-## What changes at scale
-
-- On a team, the shaped slice becomes a one-page brief or design doc, and the non-goals protect you from stakeholders as much as from agents.
-- Success and kill signals become product analytics and experiments instead of "the three of us kept using it."
-- Slices ship behind feature flags so you can test them with a few users first. See [shipping changes you can undo](shipping-changes-you-can-undo.md).

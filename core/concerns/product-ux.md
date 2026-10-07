@@ -3,14 +3,13 @@ title: Product and UX
 description: Does the feature actually solve the user's problem, from first click to done?
 ---
 
-**Triggered by:** any change to what a user sees or can do.
+**Triggered by:** a new user-facing feature, or a change to a user journey.
 
 ## Minimum bar
 
 - Write the outcome in one sentence: who can do what, and how you'll know it worked.
 - Walk the whole journey once: how the user gets there, does the thing, and knows it worked.
-- Design the empty, loading, success, and error states. The first time a user sees your feature, it's probably empty.
-- Error messages say what happened and what to do next, in the user's words.
+- Use the user's words in labels and messages, not your data model's.
 
 ## When stakes rise
 
@@ -20,13 +19,12 @@ description: Does the feature actually solve the user's problem, from first clic
 
 ## Common misses
 
-- A form with no feedback after submit, so users click twice.
-- An empty state that's a blank screen.
-- "Something went wrong" with no next step.
 - Solving the request as written instead of the problem behind it.
+- "Something went wrong" with no next step.
 
 ## Learn more
 
 - [Start with the user's problem](../principles.md#start-with-the-users-problem)
-- [What a complete frontend feature includes](../guides/complete-frontend-features.md)
+- [UI quality](ui-quality.md), for the empty, loading, and error states
 - [Shape before you build](../guides/shape-before-you-build.md)
+- [What a complete frontend feature includes](../guides/complete-frontend-features.md)

@@ -10,7 +10,7 @@ description: Evidence that the behavior works, including the ways it should fail
 - Prove the acceptance behavior with a check you actually ran.
 - Test the most important failure path, not just the happy one.
 - Report what you ran and what it showed. Never claim a test you didn't run.
-- Never delete or weaken a meaningful test to get green. Fix the code or explain why the test was wrong.
+- If a test fails, fix the code or explain why the test was wrong. See the [rules for every task](../../skills/README.md#rules-for-every-task).
 
 ## When stakes rise
 

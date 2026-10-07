@@ -5,6 +5,8 @@ description: Every package, SDK, GitHub Action, MCP server, or outside service y
 
 **Triggered by:** adding a package, SDK, CLI, GitHub Action, MCP server, or third-party service.
 
+Run the full check on anything unfamiliar or suggested by an agent. A well-known package like `zod` or `react` only needs to be the right name and actually needed.
+
 ## Minimum bar
 
 - **Make sure it's the real thing.** Check the exact name, the publisher, the linked repo, and recent downloads before installing. Agents sometimes invent plausible package names, and attackers register those names. Typosquats work the same way.
@@ -34,3 +36,4 @@ description: Every package, SDK, GitHub Action, MCP server, or outside service y
 
 - [Security](security.md) and [cost](cost.md)
 - [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)
+- [Simple first: when complexity earns its place](../guides/simple-first.md)

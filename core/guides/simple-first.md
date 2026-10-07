@@ -1,116 +1,74 @@
 ---
 title: 'Simple first: when complexity earns its place'
-description: Why one app and one database beat a diagram full of boxes, what queues, caches, microservices, and Kubernetes actually buy, and the trigger that justifies each.
+description: Why one app and one database beat what an agent proposes by default, what a separate API, a state store, extra layers, caches, and queues actually buy, and the trigger that justifies each.
 domain: architecture
 stage: design
 freshness: durable
 status: draft
 track: 4
-concerns: [performance, reliability, cost]
+concerns: [performance, reliability, cost, dependencies]
 ---
 
-Build the simplest thing that fully solves today's problem. For most new web apps, that's one app talking to one database. Every piece you add after that, like a cache, a queue, or another service, has to name the problem it solves and point at evidence that the problem is real.
+Build the simplest thing that fully solves today's problem. For most new web apps, that's one app talking to one database. Every piece you add after that, whether it's a service, a layer, a store, or a package, has to name the problem it solves and point at evidence that the problem is real. Each piece is something to deploy, secure, upgrade, keep in sync, and debug at 2 a.m., and you pay that every day whether or not it earns it.
 
-The reason is cost, and it isn't the hosting bill. Every piece is something to deploy, monitor, secure, upgrade, pay for, and debug at 2 a.m. You pay that every day, whether or not the piece ever earns it.
+## The 50-user app an agent overbuilds
 
-## The 50-user app with seven boxes
+You're building a booking app for a friend's yoga studio. About 50 regulars book classes, cancel, and get a confirmation email. You ask an agent to set it up properly. What comes back looks like a lot of tutorials. Go piece by piece and ask what each one solves for this app.
 
-You're building a booking app for a friend's yoga studio. About 50 regulars book classes, cancel, and get a confirmation email. You ask an agent to design the architecture, and it comes back with:
+- **A separate Express or tRPC API next to Next.js.** Next.js already runs server code. Server components read the database, and server actions handle writes. A second server means two deploys, CORS, and types that drift between them.
+- **A Zustand store that copies bookings from the API.** Bookings live in Postgres. A client copy is a second source of truth, and every mutation has to update both or someone sees a class that's already full.
+- **`BookingRepository`, `BookingService`, and `BookingController`, each with an interface.** Every change touches four files, and an agent reads three before finding the query. Each interface has one implementation, and you're never swapping Postgres out.
+- **Upstash Redis to rate-limit every route.** Nobody has abused the app, so the limiter is sized for traffic nobody has seen. It's another account, another secret, and another network hop on every request. The limits you do need from day one, on sign-in and AI routes, are in [trust boundaries](trust-boundaries.md).
+- **Docker Compose running Postgres, Redis, and the API.** Production is Vercel and Neon. A container stack that only exists on your laptop drifts from what actually runs. One Postgres container for local dev is fine ([local first, then managed](local-first-then-managed.md)).
+- **Twelve packages for the booking form.** Each one is code you didn't read, can break on update, and ships to the browser if a client component imports it. A native date input and one date library cover this form.
 
-- a Next.js frontend and a separate API service
-- an auth microservice and a booking microservice
-- Redis to cache the class schedule
-- a queue and workers to send emails
-- an event bus so services can react to "booking created"
-- all of it on Kubernetes
+The right architecture is one Next.js app on Vercel, Postgres on Neon, and an email provider, with a folder per feature like `bookings/` and `email/`, each holding one file of queries that checks who's asking.
 
-None of that is wrong in general. Large companies run exactly this. So go box by box and ask what problem each one solves for this app.
+## Every piece adds a way to fail
 
-- **Redis for the schedule.** The schedule is a few dozen rows. Postgres returns that in about the time of one network round trip. Nothing has been measured as slow, so there's nothing for a cache to fix, and now there's a second copy of the schedule that can go stale.
-- **A queue for emails.** Sending one confirmation through an email API is one HTTP call. If you don't want the user waiting on it, Next.js's `after()` runs work after the response is sent. A queue would buy durable retries, and a missed yoga confirmation isn't worth a new system.
-- **Microservices.** There's one developer. Splitting auth from bookings turns a function call into a network call that can time out, and a database transaction into something you have to coordinate by hand.
-- **An event bus.** There's one thing that reacts to a booking: the email. You can call it directly.
-- **Kubernetes.** Running a cluster is a job, and nobody here has that job. Vercel already runs the app.
+Two servers means a network between them, so you need timeouts, retries, and a plan for when one is down. A cache or a client store means two copies of the truth that can disagree. A queue means work can run twice or sit stuck.
 
-The right architecture is one Next.js app on Vercel, Postgres on Neon, and an email provider. It's three pieces, and two of them are managed by someone else.
+Layers and packages cost less each but add up. A layer is one more file to read before the code that matters, for you and every agent after you. A package is a dependency to keep current and trust ([dependencies](../concerns/dependencies.md)).
 
-## What complexity actually costs
+Dan McKinley's "Choose Boring Technology" puts it well: adding a technology is easy, and living with it is hard. Spend your few "innovation tokens" on what makes your product different.
 
-Every extra piece adds failure modes the simple version doesn't have. Two services means a network between them, so you need timeouts, retries, and a plan for when one is up and the other is down. A cache means two copies of the truth, so you need a plan for when they disagree. A queue means work can run twice or sit stuck, so you need idempotent consumers and something watching the backlog.
+## Adding is cheap later, removing is a rewrite
 
-Dan McKinley's "Choose Boring Technology" makes the same argument from the operations side. Adding a technology is easy, and living with it is hard. He suggests thinking of a team as having only a few "innovation tokens" to spend on unfamiliar things, so spend them on what makes your product different, not on plumbing. Boring tools have failure modes that are already documented, searchable, and known to your agent.
-
-Reversibility settles it. Adding a cache to a working app is a small, contained change you can make the week you need it. Removing microservices you didn't need is a rewrite. When you're unsure, take the path you can still change cheaply (see [prefer reversible decisions](../principles.md#prefer-reversible-decisions)).
-
-## One app and one database go further than you think
-
-A monolith is one deployable app. It isn't the same as a mess. You can keep clean modules inside it, like `bookings/`, `auth/`, and `email/`, with clear boundaries between folders instead of between servers. Martin Fowler's "MonolithFirst" points out that you rarely know the right service boundaries at the start, and that boundaries are much cheaper to move inside one codebase.
-
-Postgres covers more than people expect. It has JSON columns, full-text search, and row locking that can run a basic job queue:
-
-```sql
--- Each worker claims one pending job. SKIP LOCKED means two workers
--- never grab the same row, and neither waits on the other.
-UPDATE jobs SET status = 'running', started_at = now()
-WHERE id = (
-  SELECT id FROM jobs
-  WHERE status = 'pending'
-  ORDER BY created_at
-  FOR UPDATE SKIP LOCKED
-  LIMIT 1
-)
-RETURNING *;
-```
-
-That isn't a reason to never use a real queue. It's a reason to wait until you know what you need from one.
+Adding a cache to a working app is a small change you can make the week you need it. Folding a separate API back into the app, or deleting three layers from every feature, touches everything. When you're unsure, take the path you can still change cheaply ([prefer reversible decisions](../principles.md#prefer-reversible-decisions)). Martin Fowler's "MonolithFirst" adds that you rarely know the right boundaries at the start, and they're much cheaper to move between folders than between servers.
 
 ## What each piece buys, and what earns it
 
-Each of these is the right answer to a specific problem. Add it when you have that problem, and you can point at the evidence.
+Add a piece when you have its problem and can point at the evidence.
 
-| Piece         | What it actually buys                                                               | The trigger that earns it                                                                                      |
-| ------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Cache         | Skips repeating expensive work for data that's read often and can be a little stale | A read you measured as slow, after you checked the query plan and indexes, that's hot and tolerates staleness  |
-| Queue         | Moves work out of the request, retries it until it succeeds, smooths out spikes     | Work that's slow or unreliable, doesn't need to finish before the response, and must not be lost               |
-| Microservices | Teams that deploy and scale their part without coordinating with everyone else      | Several teams stepping on each other in one codebase, or one part with very different scaling or runtime needs |
-| Kubernetes    | Scheduling, scaling, and restarting many containers on infrastructure you control   | Many services, people whose job is running the platform, and needs a managed host can't meet                   |
-| Event bus     | Many consumers reacting to one event without the producer knowing about them        | Several independent consumers of the same event, owned by different people                                     |
+| Piece               | What it actually buys                                                     | The trigger that earns it                                                                                      |
+| ------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Cache               | Skips repeating expensive work for data that's read often                 | A read you measured as slow after checking indexes, that's hot and tolerates staleness                         |
+| Queue or job system | Moves work out of the request and retries it until it succeeds            | Work that's slow or flaky, doesn't need to finish before the response, and must not be lost                    |
+| Separate API        | A stable contract for clients that aren't your web app                    | A native mobile app or outside developers calling it, and route handlers in the same app no longer fit         |
+| Client state store  | Shared state that only exists in the browser                              | Client-only state used across distant components, like an editor or canvas. Never a copy of server data        |
+| Repository layers   | One place to change how data is fetched                                   | The same query copied in three places, or a second data source you actually have                               |
+| Microservices       | Teams that deploy and scale their part without coordinating with everyone | Several teams stepping on each other in one codebase, or one part with very different runtime or scaling needs |
 
-Notice how many triggers mention teams. Microservices and Kubernetes mostly solve organizational problems: many people changing one system at once. If you're one person with an agent, you don't have that problem yet.
-
-Notice also that every trigger is a measurement or a fact about today. "We might get big" isn't one. See [scale from evidence](../principles.md#scale-from-evidence).
+Microservices mostly solve an organizational problem: many people changing one system at once. Kubernetes is the same story one level down. If you're one person with an agent, you don't have that problem. And every trigger is a measurement or a fact about today. "We might get big" isn't one ([scale from evidence](../principles.md#scale-from-evidence)).
 
 ## What the vibe-coded version misses
 
-- **Architecture for a company you don't have.** Agents have read a lot of big-company architecture posts, so they suggest big-company architecture. You get the operating cost of a platform team without the team.
-- **A cache before anyone measured.** The slow page was a missing index. Now you have the missing index and a stale-data bug, and you're debugging two systems instead of one.
-- **Microservices sharing one database.** Every service reads and writes the same tables, so a schema change still needs every service to deploy together. You've kept all the coupling and added network calls. That's a distributed monolith, the worst of both.
-- **A queue without idempotent consumers.** Most queues deliver at least once. A worker crashes after sending the email but before acknowledging the message, the message is redelivered, and the customer gets two emails or two charges. See [background jobs and webhooks](background-jobs-and-webhooks.md).
-- **Kubernetes for a side project.** Weekends go into YAML, ingress controllers, and certificate renewals instead of the product, and the cluster costs money even when nobody's using the app.
-- **An event bus that hides the flow.** "What happens when someone books a class?" no longer has an answer you can read in one file. You have to trace it through subscribers.
-- **Redis as a second source of truth.** Data gets written to the cache and not the database, and a restart or eviction loses it.
+- **Server data copied into a client store.** After a failed mutation the store and the database disagree, and a user books a class that's already full. You debug it by diffing two copies of the truth.
+- **A separate API for a single web app.** Every feature is two PRs and two deploys, and the types drift until a renamed field breaks production.
+- **A cache before anyone measured.** The slow page was a missing index. Now you have the index and a stale-data bug, in two systems instead of one.
+- **Packages for what the platform already does.** Each one is a supply-chain risk and a heavier page, and its next major version breaks a form you haven't touched in months.
 
 ## What I'd do
 
-My default for a new project is in the [side-project stack](../recipes/side-project-stack.md): one Next.js app on Vercel, Postgres on Neon with Drizzle, and managed services for email and auth. Background work that can be lost, like analytics, goes in `after()`. Before I add anything else, I write down the problem it solves and the number that proves the problem is real, and I put that note in `PROJECT.md`.
+My default is the [side-project stack](../recipes/side-project-stack.md): one Next.js app on Vercel, Postgres on Neon with Drizzle, managed email and auth, server actions instead of a separate API, and one data access file per feature instead of three layers. Before I add anything else, I write the problem it solves and the number that proves it in `PROJECT.md`.
 
-Here's what would change my mind:
+What would change my mind:
 
-- **A cache,** once a measured read is slow after indexing and is hit far more than it changes. I'd start with Next.js caching (`'use cache'`, or `'use cache: remote'` when instances need to share it) before running a separate Redis.
-- **A queue,** once there's work that takes longer than a request should, or has to survive a crash and retry, like processing uploads or syncing with a flaky API. I'd start with a jobs table or a managed queue, never a self-hosted broker.
-- **A second service,** once one part needs a different runtime or scales completely differently, like a Python worker for a model, or once more than one team is working in the codebase.
-- **Kubernetes,** basically never on my own projects. If managed hosting can't do what I need, that's the time to re-shape the problem first.
-
-## What changes at scale
-
-- Services split along team lines, because the real cost becomes coordination between people, not computers.
-- Caches and queues stop being exceptions and become standard parts of the system, with owners, dashboards, and alerts.
-- A platform team makes Kubernetes cheap per service, so the math that ruled it out for you flips for them.
-- Not splitting starts to cost more than splitting: slow builds, risky deploys, and many people blocked on one codebase.
+- **A cache,** once a measured read is slow after indexing. Next.js caching first, Redis after.
+- **A job system,** once work outlasts a request or has to survive a crash. [Background jobs and webhooks](background-jobs-and-webhooks.md) covers which one.
+- **A second service,** once one part needs a different runtime, like a Python worker for a model.
 
 ## Sources
 
 - [Dan McKinley, "Choose Boring Technology" (2015)](https://mcfunley.com/choose-boring-technology)
 - [Martin Fowler, "MonolithFirst" (2015)](https://martinfowler.com/bliki/MonolithFirst.html)
-- [PostgreSQL: SELECT, the locking clause and SKIP LOCKED](https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE)
-- [Next.js: `after`](https://nextjs.org/docs/app/api-reference/functions/after)

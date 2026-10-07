@@ -10,9 +10,11 @@ description: Who can do what, what input you trust, and where secrets live.
 
 - Name the trust boundaries: where does data come from someone you don't control?
 - Validate on the server. The UI is a convenience, not a control.
-- Check authorization on every protected action: is this user allowed to touch _this_ record?
+- Check authorization in every server action and route handler: is this user allowed to touch _this_ record? Each one is a public endpoint, so a check only in middleware or the proxy isn't enough. See [trust boundaries](../guides/trust-boundaries.md).
+- Verify webhook signatures before parsing the body.
+- On Supabase, turn on row-level security (RLS) for every exposed table, and keep the `service_role` key out of client code. That key bypasses RLS.
 - Keep secrets out of client code, logs, error messages, Git, and agent chats. Load them from the environment. Variables with a public prefix (`NEXT_PUBLIC_`, `VITE_`) ship to the browser.
-- Give agents and tools their own scoped, dev-only keys. Production keys live only in the hosting platform.
+- Give agents and tools their own scoped, dev-only keys. Production keys live only in the hosting platform. See [secrets and agent safety](../guides/secrets-and-agent-safety.md).
 - Use parameterized queries and the framework's escaping. Never build SQL or HTML by string concatenation.
 
 ## When stakes rise

@@ -22,10 +22,8 @@ const principles = (await getEntry('docs', 'principles'))!
 // The concern order follows the routing table, roughly from the user's view inward.
 const order = [
   'product-ux',
+  'ui-quality',
   'accessibility',
-  'responsive',
-  'visual-design',
-  'components',
   'api-contracts',
   'ai-features',
   'security',
@@ -55,14 +53,11 @@ const demos = [
     request: 'Add avatar uploads to user profiles.',
     skill: 'build-feature',
     concerns: [
-      'product-ux',
+      'ui-quality',
       'accessibility',
-      'responsive',
-      'visual-design',
       'security',
       'privacy',
       'data',
-      'performance',
       'testing',
       'cost',
     ],
@@ -330,7 +325,7 @@ const cards = [
           </h1>
           <p class="hero__lede">
             SWE OS is how I build software, written once for two readers. You
-            read it to learn what separates a vibe-coder from a software
+            read it to learn what separates a vibe coder from a software
             engineer. Your coding agent reads the same pages and does better
             work.
           </p>
@@ -535,10 +530,11 @@ three things can happen...
 
       <section class="section inside" aria-labelledby="inside-title">
         <p class="eyebrow">What's inside</p>
-        <h2 id="inside-title">Small on purpose.</h2>
+        <h2 id="inside-title">Plenty here. Load only what you need.</h2>
         <p class="section__lede">
-          Good engineering isn't using every tool. It's knowing which ones the
-          problem deserves. Same goes for this site.
+          A {trackStops}-stop track, plus the principles, concerns, and skills
+          your agent works from. Nobody reads it all at once, your agent
+          included. Each task pulls in only the pages it needs.
         </p>
         <ul class="cards">
           {cards.map((card) => (
@@ -635,8 +631,8 @@ three things can happen...
     <footer class="footer">
       <Logo size={28} />
       <p>
-        Made by Tommy, with a lot of help from agents. Facts link to sources.
-        Opinions are labeled as mine.
+        Made by Tommy, with a lot of help from agents. Fast-moving facts are
+        dated and sourced. Opinions are labeled as mine.
       </p>
     </footer>
 
