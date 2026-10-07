@@ -1,0 +1,27 @@
+#!/bin/sh
+# This repo is public. Block commits that would publish a secret or a private term.
+# Enabled by `npm ci` (the prepare script). Bypassing it with --no-verify defeats the point.
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --no-banner || exit 1
+else
+  echo "pre-commit: gitleaks isn't installed, so secrets weren't checked (brew install gitleaks). CI still scans." >&2
+fi
+
+# Private terms (an employer, internal tool names, a home city...) live outside the repo,
+# one per line, in .git/info/private-terms. The list itself is never committed.
+terms="$(git rev-parse --git-common-dir)/info/private-terms"
+if [ -s "$terms" ]; then
+  patterns=$(mktemp)
+  grep -v -e '^[[:space:]]*$' -e '^#' "$terms" > "$patterns"
+  if [ -s "$patterns" ]; then
+    files=$(git grep --cached -I -l -i -F -f "$patterns")
+    if [ -n "$files" ]; then
+      rm -f "$patterns"
+      echo "pre-commit: these staged files contain a term from .git/info/private-terms:" >&2
+      echo "$files" >&2
+      exit 1
+    fi
+  fi
+  rm -f "$patterns"
+fi
