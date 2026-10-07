@@ -13,7 +13,7 @@ prev:
   label: 'Track 21: Learning while agents write the code'
 ---
 
-This is the stack I'd use to build a real web app alone: one Next.js app on Vercel, Postgres on Neon through Drizzle, auth, file storage, email, payments, and error tracking. Every piece is managed, starts free, and can grow a long way before you'd want to replace it. It's also where the track comes together: each stop taught one idea, and this page shows where it lives.
+This is the stack I'd use to build a real web app alone: one Next.js app on Vercel, Postgres on Neon through Drizzle, auth, file storage, email, payments, and error tracking. Every piece is managed, starts free, and grows a long way before you'd want to replace it. You'll see why each one is here and exactly where its free tier ends, because those limits end abruptly. It's also where the track comes together: each stop taught one idea, and here's where it lives.
 
 ## The whole thing on one page
 
@@ -36,16 +36,16 @@ This is the stack I'd use to build a real web app alone: one Next.js app on Verc
                 Clerk
 ```
 
-Two arrows are worth a closer look:
+Two arrows need a closer look:
 
-- **Session:** "who is this?" on every request that needs a user. With Better Auth, that's a session lookup in your own Postgres. With Clerk, the server checks the signature on a short-lived session token locally, with no call to Clerk per request. The token lasts 60 seconds, and Clerk's browser SDK refreshes it in the background.
+- **Session:** "who is this?" on every request that needs a user. Better Auth looks the session up in your own Postgres. With Clerk, your server checks the signature on a short-lived session token locally, without calling Clerk. The token lasts 60 seconds, and Clerk's browser SDK refreshes it in the background.
 - **Stripe:** you create a Checkout session, and Stripe tells you it was paid through a signed webhook.
 
 ## Why each piece is here
 
-**Next.js on Vercel.** One app holds the UI, the server code, and the API routes, so there's one repo, one deploy, and one place to look. Every PR gets a preview, with instant rollback in production. If the app were mostly client-side and URL-driven, I'd look at TanStack Start instead.
+**Next.js on Vercel.** One app holds the UI, the server code, and the API routes: one repo, one deploy, one place to look. Every PR gets a preview, and production gets instant rollback. If the app were mostly client-side and URL-driven, I'd look at TanStack Start instead.
 
-**Postgres on Neon, through Drizzle.** Postgres's constraints and transactions do the remembering your code forgets ([data that stays correct](../guides/data-that-stays-correct.md)). Neon scales to zero when idle and branches the database per preview. Drizzle keeps the schema in TypeScript and generates migrations as plain SQL. If I wanted auth, storage, and realtime from one vendor, I'd pick Supabase instead.
+**Postgres on Neon, through Drizzle.** Postgres's constraints and transactions do the remembering your code forgets ([data that stays correct](../guides/data-that-stays-correct.md)). Neon scales to zero when idle and branches the database per preview. Drizzle keeps the schema in TypeScript and generates migrations as plain SQL. If I wanted auth, storage, and realtime from one vendor, I'd pick Supabase instead, knowing its free projects pause after a week without activity.
 
 **Better Auth or Clerk.** Never hand-roll auth. Better Auth is a free library that keeps users in your own Postgres. Clerk is hosted, with ready-made sign-in UI, and is faster to start, but its free plan has no MFA or passkeys. Either way, every query still checks that the user owns the row ([trust boundaries](../guides/trust-boundaries.md)).
 
@@ -82,7 +82,7 @@ Migrations are the exception. They run over the direct URL, from the Vercel buil
 
 ## Rate-limit auth in the database
 
-Login, sign-up, and password reset need rate limits from day one ([trust boundaries](../guides/trust-boundaries.md)). Better Auth's limiter keeps counts in memory by default, which its docs say may not suit serverless: each function instance counts on its own. Store the counts in Postgres, and run Better Auth's migration to create the table:
+Login, sign-up, and password reset need rate limits from day one ([trust boundaries](../guides/trust-boundaries.md)). Better Auth's limiter counts in memory by default, which its docs say may not suit serverless, because each function instance counts on its own. Store the counts in Postgres, and run Better Auth's migration to create the table:
 
 ```ts
 export const auth = betterAuth({
@@ -95,25 +95,27 @@ export const auth = betterAuth({
 
 Checked 2026-10-06. "Monthly users" is a rough stand-in for usage, so trust your own dashboards over any column.
 
-| Piece                   | 0 users (building)                                      | ~1,000 monthly users                                                     | ~10,000 monthly users                                                                 |
-| ----------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| Vercel                  | Hobby, $0                                               | Hobby $0 if non-commercial. Pro $20/mo if not.                           | Pro $20/mo, which includes $20 of usage credit                                        |
-| Neon                    | Free: 1 GB storage, 100 CU-hours a month per project    | Free only if it sleeps most of the day. Awake all month: Launch, ~$19/mo | Launch: $0.106 per CU-hour plus $0.35 per GB-month, no minimum                        |
-| Better Auth             | $0                                                      | $0                                                                       | $0                                                                                    |
-| Clerk, if chosen        | Free: up to 50,000 monthly retained users per app       | Free                                                                     | Free, or Pro at $25/mo ($20/mo billed yearly) for MFA and passkeys                    |
-| Vercel Blob             | Hobby: 1 GB storage, 10 GB transfer, 2,000 advanced ops | Hobby limits, or Pro usage                                               | Pro: storage and operations billed by usage. Transfer falls under Pro's flat-rate CDN |
-| Stripe                  | Test mode, $0                                           | No monthly fee, a fee per live charge                                    | Same                                                                                  |
-| Sentry                  | Developer, $0: 1 user, 5,000 errors per month           | Developer, $0                                                            | Team from $26/mo (billed yearly)                                                      |
-| **Total, before usage** | **$0**                                                  | **$0 to about $40/mo, depending on Vercel's terms and Neon's hours**     | **$20/mo plus Neon usage, plus Clerk Pro and Sentry Team if you need them**           |
+| Piece                   | 0 users (building)                                      | ~1,000 monthly users                                                                     | ~10,000 monthly users                                                                    |
+| ----------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Vercel                  | Hobby, $0                                               | Hobby $0 if non-commercial. Pro $20/mo if not.                                           | Pro $20/mo, which includes $20 of usage credit                                           |
+| Neon                    | Free: 1 GB storage, 100 CU-hours a month per project    | Free only if it sleeps most of the day. Awake all month: Launch, about $19/mo (estimate) | Launch: $0.106 per CU-hour plus $0.35 per GB-month, no minimum                           |
+| Better Auth             | $0                                                      | $0                                                                                       | $0                                                                                       |
+| Clerk, if chosen        | Free: up to 50,000 monthly retained users per app       | Free                                                                                     | Free, or Pro at $25/mo ($20/mo billed yearly) for MFA and passkeys                       |
+| Vercel Blob             | Hobby: 1 GB storage, 10 GB transfer, 2,000 advanced ops | Hobby limits, or Pro usage                                                               | Pro: storage and operations billed by usage. Transfer falls under Pro's flat-rate CDN    |
+| Email (Resend)          | Free: 3,000 emails a month, 100 a day                   | Free, while sign-ups stay under 100 a day                                                | Pro $20/mo for 50,000 a month                                                            |
+| Stripe                  | Test mode, $0                                           | 2.9% + 30¢ per US card charge, no monthly fee                                            | Same                                                                                     |
+| Sentry                  | Developer, $0: 1 user, 5,000 errors per month           | Developer, $0                                                                            | Team from $26/mo (billed yearly)                                                         |
+| **Total, before usage** | **$0**                                                  | **$0 to about $40/mo, depending on Vercel's terms and Neon's hours**                     | **$20/mo plus Neon usage, plus Resend Pro, Clerk Pro, and Sentry Team if you need them** |
 
 Pro's flat-rate CDN, once you turn it on in billing, covers 1 TB of transfer a month, including Blob downloads. Apps where media or file downloads are most of the bandwidth don't qualify.
 
 The cliffs, in the order I'd expect to hit them:
 
-- **Neon Free's 100 CU-hours run out if the database never sleeps.** Every branch's compute counts toward the same allowance. Scale-to-zero after 5 idle minutes keeps a quiet app well inside it, but anything that queries every few minutes keeps it awake: a health check that hits the database, a polling cron, a dashboard left open. The smallest compute, 0.25 CU, awake all month uses about 182 CU-hours, so it runs out around day 17. Then Neon suspends compute until the next billing period, and every query fails. On Launch, that same compute costs about $19 a month (182.5 × $0.106) plus storage.
-- **Vercel Hobby is non-commercial only.** Taking payments, showing ads, or getting paid to build the site count as commercial. Hobby also can't pay for overages: go over a limit and that feature stops until 30 days have passed.
+- **Neon Free's 100 CU-hours run out if the database never sleeps.** Every branch's compute counts toward it. Neon suspends a database after 5 idle minutes, which keeps a quiet app well inside, unless something queries every few minutes: a health check that hits the database, a polling cron, a dashboard left open. The smallest compute (0.25 CU) awake all month uses about 182 CU-hours and runs out around day 17. Then Neon suspends compute until the next billing period, and every query fails. On Launch, that compute comes to about $19 a month by my math (182.5 × $0.106), plus storage.
+- **Vercel Hobby is non-commercial only.** Taking payments, showing ads, or getting paid to build the site all count as commercial. Hobby also can't pay for overages: go over a limit and that feature stops until 30 days have passed.
 - **Vercel Hobby cron runs once a day,** anywhere within the hour you set. A more frequent schedule fails the deploy.
 - **Vercel Blob Hobby allows 2,000 advanced operations a month.** Every `put()`, `copy()`, and `list()` counts, and so does browsing the store in the dashboard. That's about 66 uploads a day. Go over and Blob is unavailable until 30 days have passed.
+- **Resend Free sends 100 emails a day.** A good launch day can use that up, and verification emails fail until the quota resets.
 - **Neon Free keeps 6 hours of restore history.** Once it's real users' data, that's the first upgrade I'd make ([when production breaks](../guides/when-production-breaks.md)).
 - **Vercel Pro alerts on spend; it doesn't stop it** unless you set an action. See [performance and cost](../guides/performance-and-cost.md).
 
@@ -130,23 +132,21 @@ No separate API, queue, Redis, microservices, Kubernetes, or staging environment
 
 ## What the vibe-coded version misses
 
-- **A new database client per request.** Every request opens connections and none get reused. Under load the database runs out, and connections left open leak when the instance suspends.
+- **A new database client per request.** Nothing gets reused, so under load the database runs out of connections, and the ones left open leak when the instance suspends.
 - **No idea where the free tier ends.** The database goes dark on day 17, or uploads stop for a month, and you find out from users.
-- **A paid product on Vercel Hobby.** It breaks the terms, and when a limit hits, there's no option to pay your way out.
 - **Calling `list()` to render a gallery.** Every page view spends an advanced operation. Store each file's URL in Postgres and query that.
-- **Better Auth's in-memory rate limiter on serverless.** Requests spread across instances, and each instance counts on its own, so a credential-stuffing run can stay under the limit everywhere.
+- **Better Auth's in-memory rate limiter on serverless.** Each instance counts on its own, so a credential-stuffing run can stay under the limit everywhere.
 
 ## What I'd do
 
 This stack, with nothing added until something real asks for it. Upgrades come one at a time, each for a reason I can name:
 
-- Vercel Pro the day it makes money, or the day I need cron more than once a day.
+- Vercel Pro the day it makes money, needs cron more than once a day, or gets anywhere near 2,000 uploads a month.
 - Neon Launch the day real users' data matters, or the database has to stay awake.
-- Vercel Pro for Blob before uploads get anywhere near 2,000 a month.
 - Sentry Team when 5,000 errors a month isn't enough, which usually means I should fix the noisy bug first.
 - Better Auth over Clerk Pro if I need MFA or passkeys.
 
-Before each upgrade, I'd know how I'd leave: Postgres exports with `pg_dump`, Blob files are plain objects, and Drizzle doesn't care who hosts the database.
+Before each upgrade, I'd know how I'd leave: `pg_dump` exports Postgres, Blob files are plain objects, and Drizzle doesn't care who hosts the database.
 
 ## Sources
 
@@ -161,6 +161,8 @@ Checked 2026-10-06.
 - [Neon pricing](https://neon.com/pricing), [plans (CU-hours, suspension, branches)](https://neon.com/docs/introduction/plans), and [connection pooling](https://neon.com/docs/connect/connection-pooling)
 - [Clerk: How Clerk works (session tokens)](https://clerk.com/docs/guides/how-clerk-works/overview) and [pricing](https://clerk.com/pricing)
 - [Better Auth: Rate limit](https://www.better-auth.com/docs/concepts/rate-limit)
+- [Supabase pricing (free project pausing)](https://supabase.com/pricing)
+- [Resend pricing](https://resend.com/pricing)
 - [Stripe pricing](https://stripe.com/pricing) and [Stripe CLI](https://docs.stripe.com/stripe-cli/use-cli)
 - [Sentry pricing](https://sentry.io/pricing/)
 - [Tommy's defaults](../../profile/defaults.md)

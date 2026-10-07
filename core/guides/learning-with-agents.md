@@ -23,11 +23,11 @@ The interesting part is how people used the AI. The ones who scored under 40% de
 
 So the fix isn't using less AI. It's adding a comprehension step after the AI does the work.
 
-There's a second problem: you can't feel it. In METR's study, experienced developers were 19% slower with AI on their own repos while believing they were about 20% faster. Your gut won't tell you you're falling behind, so the check has to come from outside your own judgment.
+There's a second problem: you can't feel it. In METR's study, experienced developers took 19% longer with AI on their own repos, yet afterward believed AI had made them about 20% faster. Your gut won't tell you you're falling behind, so the check has to come from outside your own judgment.
 
 ## Spend learning time where it compounds
 
-It matters for anything you'll have to debug, extend, or defend: your main projects, the areas you want to grow in, and especially the risky parts, like auth, data, money, and models that take actions. If you can't explain how auth works in your own app, you can't review an agent's change to it.
+Learning matters for anything you'll have to debug, extend, or defend: your main projects, the areas you want to grow in, and especially the risky parts, like auth, data, money, and models that take actions. If you can't explain how auth works in your own app, you can't review an agent's change to it.
 
 It doesn't matter for throwaway prototypes, boilerplate, or tools you'll never touch again.
 

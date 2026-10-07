@@ -16,7 +16,7 @@ A network call can answer, fail, or never answer. **Timeouts** handle "never ans
 
 Your **Buy** button calls a server action that creates a Stripe Checkout Session. The network is slow, nothing seems to happen, and the user clicks again. Now there are two sessions for one order, and if they finish both, two charges.
 
-stripe-node already protects you from part of this. It retries a failed request once by default and adds an idempotency key so the retry can't create a duplicate. But that only covers one call. It has no way to know two clicks are one purchase. You do, so tell Stripe:
+stripe-node already covers part of this. It retries a failed request once by default and adds an idempotency key so the retry can't create a duplicate. But that covers one call, and it can't know two clicks are one purchase. You do, so tell Stripe:
 
 ```ts
 const session = await stripe.checkout.sessions.create(
@@ -30,7 +30,7 @@ const session = await stripe.checkout.sessions.create(
 );
 ```
 
-Stripe returns the first result for that key to every repeat, so the second click gets the same session. Both clicks have to resolve to the same order, so find or create it with a unique constraint ([data that stays correct](data-that-stays-correct.md)). The parameters have to match too, because Stripe rejects a reused key with different ones. Disabling the button is nice UX, not the guard.
+Stripe saves the first result for that key and returns it to every repeat, so the second click gets the same session. If it lands while the first is still running, Stripe returns a conflict error instead, which is safe to retry. Both clicks have to resolve to the same order, so find or create it with a unique constraint ([data that stays correct](data-that-stays-correct.md)). The parameters have to match too, because Stripe rejects a reused key with different ones. Disabling the button is nice UX, not the guard.
 
 ## A timeout doesn't mean it failed
 
@@ -38,7 +38,7 @@ A request times out. Did it happen? Maybe it never arrived, or maybe it worked a
 
 ## The defaults wait far too long
 
-Nothing here waits forever, but the defaults don't help. Node's `fetch` runs on undici, which waits up to 5 minutes for response headers and another 5 minutes between body chunks. Vercel's `maxDuration`, which defaults to 300 seconds with Fluid compute, is the real outer limit. So a hung API holds your user on a spinner for minutes, then Vercel kills the function mid-work.
+Node's `fetch` runs on undici, which waits up to 5 minutes for response headers and another 5 minutes between body chunks. Vercel's `maxDuration`, the longest a function may run, defaults to 300 seconds with Fluid compute. That's the real outer limit: a hung API holds your user on a spinner for minutes, then Vercel kills the function mid-work.
 
 Set the deadline from the caller's patience, not the dependency's speed. If the page should respond in 3 seconds, every call inside it shares those 3 seconds:
 
@@ -62,7 +62,7 @@ If a user is watching a spinner, your retry just makes them wait longer for the 
 
 Know the retries your SDKs already do, so you don't stack yours on top. stripe-node retries once. The AI SDK retries twice by default, so a slow model call that fails can cost three attempts' worth of waiting before the user hears anything. For chat, I'd lower `maxRetries` and pass the request's abort signal through; [AI features in production](ai-features-in-production.md) covers the rest.
 
-Retry at one layer only. If the browser, your route, and your client library each retry 3 times, one click becomes 27 calls during an outage.
+Retry at one layer only. If the browser, your route, and your client library each make 3 attempts, one click becomes 27 calls during an outage.
 
 ## Retry in the background, and only what's temporary
 

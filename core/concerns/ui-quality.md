@@ -8,7 +8,7 @@ description: Does the UI hold up on any screen, show every state, look like it b
 ## Minimum bar
 
 - Check a phone width (about 375px) and a desktop width with real content. No horizontal scrolling or clipped buttons. Long names and empty values don't break the layout.
-- Make touch targets at least 24 by 24px, the WCAG 2.2 AA minimum. Apple recommends 44px, a good size for primary actions on touch.
+- Make touch targets at least 24 by 24px, the WCAG 2.2 AA minimum. Apple recommends 44 by 44 points, a good size for primary actions on touch.
 - Make one thing on the screen obviously most important.
 - Reuse the project's components and its spacing, type, and color tokens. If there are none, pick a small set and stick to it.
 - Make interactive elements look interactive, with hover, focus, active, and disabled states.

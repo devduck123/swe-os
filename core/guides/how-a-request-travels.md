@@ -25,17 +25,17 @@ browser ──▶ CDN (near the user) ──▶ function (one region) ──▶ 
 
 1. **Getting there.** DNS turns your domain into an IP, and TLS proves the server is really yours. Both are cached after the first visit.
 2. **CDN.** Vercel's network near the user serves static files and cached pages without touching your code.
-3. **Function and database.** Anything dynamic runs in a function in one region. It queries Postgres and streams back HTML, which the browser paints and makes interactive.
+3. **Function and database.** Anything dynamic runs in a function in one region. It queries Postgres and streams back HTML plus the RSC payload, React's compact description of the rendered components. The browser paints the HTML first, then makes it interactive.
 
 ## Put the function next to the database
 
-Round trips matter far more than how fast your code is. New Vercel projects run functions in Washington, D.C. (`iad1`) by default. If your Neon database is in Frankfurt, a dashboard that runs five queries in a row crosses the Atlantic ten times before the user sees anything. Matching the function region to the database fixes more than any code tuning.
+Round trips cost more than slow code. New Vercel projects run functions in Washington, D.C. (`iad1`) by default. If your Neon database is in Frankfurt, a dashboard that runs five queries in a row crosses the Atlantic ten times before the user sees anything. Moving the function next to the database beats any code tuning.
 
 ## Your code runs in two places, and one of them is public
 
 In the App Router, components are **server components** by default. They run in the function, can read the database and secrets, and send only their rendered output to the browser.
 
-A file marked `'use client'` is a **client component**. Its JavaScript ships to the browser so it can respond to clicks, along with everything it imports.
+A file marked `'use client'` is a **client component**. Its JavaScript ships to the browser, along with everything it imports, so it can respond to clicks.
 
 Anything that ships to the browser is public. That's how a `NEXT_PUBLIC_` variable leaks a key ([secrets and agent safety](secrets-and-agent-safety.md)). It runs the other way too: [server actions are public endpoints](trust-boundaries.md) anyone can call.
 
@@ -55,13 +55,13 @@ Put `import 'server-only'` at the top of any module that touches the database or
 | Next.js `use cache` entries  | Until they expire   | No, scoped per deploy | Everyone whose request hits the same key |
 | The database                 | Yes                 | Yes                   | Only your server code                    |
 
-Server memory is the tricky row. Instances come and go, so an in-memory counter quietly resets. And on Vercel's Fluid compute, on by default, several requests share one instance at once. A module-level `let currentUser` is shared between users who land on the same instance. Keep per-request data inside the request, and anything you'd miss in the database.
+Server memory is the tricky row. Instances come and go, so an in-memory counter quietly resets. And Vercel's Fluid compute, on by default for new projects, runs several requests on one instance at once. A module-level `let currentUser` is shared between users who land on the same instance. Keep per-request data inside the request, and anything you'd miss in the database.
 
 ## Caching happens at every hop
 
 - **The browser** keeps responses according to `Cache-Control: max-age`.
-- **The CDN** keeps responses marked with `s-maxage`. Vercel skips the cache when the request carries an `Authorization` header, or the response sets a cookie, is marked `private`, or sends `Vary: Cookie`. A session cookie on the request alone doesn't stop it.
-- **Next.js** caches what you mark `'use cache'`, once `cacheComponents: true` is set in `next.config.ts`. The function's arguments become the key, and on serverless the entries live in per-instance memory.
+- **The CDN** keeps responses whose `Cache-Control` sets `s-maxage`, the lifetime for shared caches. Vercel skips the cache when the request carries an `Authorization` header, or the response sets a cookie, is marked `private`, or sends `Vary: Cookie`. A session cookie on the request alone doesn't stop it.
+- **Next.js** caches what you mark `'use cache'`, once `cacheComponents: true` is set in `next.config.ts`. The key includes the function's arguments and the build ID, so every deploy starts empty. By default, entries live in one instance's memory, which the next request may never reach.
 
 Stale data is almost always a cache you forgot. Check the `x-vercel-cache` response header to see whether the CDN answered, then work inward.
 

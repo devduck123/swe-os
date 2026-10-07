@@ -3,7 +3,7 @@ title: Observability
 description: When it breaks, can you tell what broke and why, without guessing?
 ---
 
-**Triggered by:** calls to outside services, background work, deployments, payments.
+**Triggered by:** calls to services you don't own, and background or scheduled work.
 
 ## Minimum bar
 

@@ -54,7 +54,7 @@ export const orders = pgTable(
 
 Now the 51st hoodie fails: the `CHECK` rejects stock going to `-1`. The foreign key refuses to delete a product that orders still point at. Per relationship, you choose to block (the default), cascade, or set null.
 
-This schema leaves column names out, so `userId` becomes a column literally named `"userId"`. To get `user_id`, pass `casing: 'snake_case'` to both `drizzle()` and `drizzle.config.ts` (Drizzle 1.0 uses `snakeCase.table()` instead).
+This schema leaves column names out, so `userId` becomes a column literally named `"userId"`. To get `user_id`, pass `casing: 'snake_case'` to both `drizzle()` and `drizzle.config.ts`. Drizzle 1.0, still a release candidate, replaces that option with `snakeCase.table()`.
 
 ## Uniqueness is a constraint, not a check
 
@@ -99,15 +99,15 @@ await db.transaction(async (tx) => {
 });
 ```
 
-The conditional `UPDATE` locks the product row until the transaction commits. Two buyers racing for the last hoodie go one after the other, and the second updates zero rows. If the order insert fails or the function dies, the stock change rolls back too.
+The conditional `UPDATE` locks the product row until the transaction commits. Two buyers racing for the last hoodie go one after the other: the second waits, rechecks `stock > 0`, and updates zero rows. If the order insert fails or the function dies, the stock change rolls back too.
 
-Because the lock lasts until commit, keep transactions short. Don't call Stripe or send email inside one: everyone else waits on your network call, and the email can't roll back ([what to do instead](timeouts-retries-idempotency.md)). This pattern is safe at Postgres's default isolation level. Rules that span rows, like "no overlapping room bookings," need an exclusion constraint or `SERIALIZABLE`.
+Because the lock lasts until commit, keep transactions short. Don't call Stripe or send email inside one: everyone else waits on your network call, and the email can't roll back ([what to do instead](timeouts-retries-idempotency.md)). This pattern is safe with Postgres's default settings. Rules that span rows, like "no overlapping room bookings," need an exclusion constraint or `SERIALIZABLE` isolation.
 
 Neon's HTTP driver can't run interactive transactions like this one. The [side-project stack](../recipes/side-project-stack.md) picks a driver that can.
 
 ## With Stripe Checkout, reserve stock before payment
 
-Decrement only when `checkout.session.completed` arrives, and two people can pay for the last hoodie. Instead, reserve with the transaction above when you create the Checkout Session, and set its `expires_at` (Stripe's minimum is 30 minutes). If it expires unpaid, Stripe sends `checkout.session.expired` and your webhook puts the stock back. `checkout.session.completed` marks the order paid. Either event can arrive twice, so [dedupe by event ID](background-jobs-and-webhooks.md).
+If you decrement only when `checkout.session.completed` arrives, two people can pay for the last hoodie. Instead, reserve with the transaction above when you create the Checkout Session, and set its `expires_at` (30 minutes at the earliest, 24 hours at the latest). If it expires unpaid, Stripe sends `checkout.session.expired` and your webhook puts the stock back. `checkout.session.completed` marks the order paid. Either event can arrive twice, so [dedupe by event ID](background-jobs-and-webhooks.md).
 
 ## Index the queries you actually run
 
@@ -115,7 +115,7 @@ An index lets Postgres jump to matching rows instead of reading the whole table.
 
 Check with `EXPLAIN ANALYZE`: a `Seq Scan` on a big table is the problem. With 20 rows in dev the planner scans anyway, so seed a few thousand rows before you trust a plan.
 
-The other classic is **N+1**: load 50 orders, then fetch each product in a loop: 51 round trips to a hosted database. Use a join, `inArray`, or Drizzle's relational `with`.
+The other classic is **N+1**: load 50 orders, then fetch each order's product in a loop. That's 51 round trips to a hosted database. Use a join, `inArray`, or Drizzle's relational `with`.
 
 ## Small choices that are expensive to change later
 

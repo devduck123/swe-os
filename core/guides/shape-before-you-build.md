@@ -9,7 +9,7 @@ track: 3
 concerns: [product-ux]
 ---
 
-Shaping is deciding what to build, for whom, and how you'll know it worked, before anyone writes code. It fits on half a page: who has the problem, what they do today, the smallest slice that helps, how you'll check it's done, what you're not building, and what would tell you to keep going or stop.
+Shaping is deciding what to build, for whom, and how you'll know it worked, before anyone writes code. Skip it and an agent decides for you. It fits on half a page: who has the problem, what they do today, the smallest slice that helps, how you'll check it's done, what you're not building, and what would tell you to keep going or stop.
 
 ## "Build me a habit tracker"
 
@@ -51,7 +51,7 @@ That fits in a prompt. It also fits in the project's `PROJECT.md`, where the nex
 
 When a request is vague, an agent fills the gaps with the most common pattern it has seen. For "habit tracker", that's the average habit tracker: every feature every other one has. It won't ask who it's for, because you didn't give it a way to.
 
-Shaping fixes both sides. The slice and the non-goals keep the agent from building what you didn't ask for. The acceptance criteria give it a way to check its own work, and give you a way to tell "done" from "the agent says it's done."
+Shaping fixes both problems. The slice and the non-goals keep the agent from building what you didn't ask for. The acceptance criteria give it a way to check its own work, and give you a way to tell "done" from "the agent says it's done."
 
 ## Shape when the stakes justify it
 
@@ -63,7 +63,7 @@ Skip it for a bug with a clear reproduction, a copy change, or an experiment whe
 
 ## Six questions, in order
 
-Each answer constrains the next one, so the order matters.
+Each answer narrows the next one, so the order matters.
 
 **1. Who has the problem?** A specific person, not "users." "Me and two friends trying to stretch every morning" tells you the scale, the device, and who you can ask.
 

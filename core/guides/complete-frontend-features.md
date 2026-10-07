@@ -72,7 +72,7 @@ Filters, tabs, search, and the page number belong in the query string (`?status=
 
 ## Show times where the user is
 
-Vercel functions run in UTC, so `toLocaleString()` during server rendering prints UTC. In a server component, every user sees a time that's hours off. In a client component, the browser formats it again in local time, React sees different text, and you get a hydration error too. Store `timestamptz`, then format with the user's saved time zone (`Intl.DateTimeFormat` with `timeZone`), or format only in the browser after mount.
+The server formats dates in its own time zone, not the user's, and on Vercel you can't change it (`TZ` is a reserved variable). In a server component, `toLocaleString()` shows most users a time that's hours off. In a client component, the browser formats it again in local time, React sees different text, and you get a hydration error too. Store `timestamptz` (Postgres's time-zone-aware type), then format with the user's saved time zone (`Intl.DateTimeFormat` with `timeZone`), or format only in the browser after mount.
 
 ## Reserve space so nothing jumps
 
@@ -98,7 +98,7 @@ Use a skeleton that holds the shape of what's loading. A full-page spinner hides
 - **Input wiped on error.** The user retypes a long form, or gives up and you never hear why.
 - **A Submit that stays disabled until valid.** The user can't tell which field is wrong, so the form looks broken and they leave.
 - **Filters kept in component state.** Refresh resets them, and the link someone shares opens the wrong view.
-- **Server-formatted times.** Every user outside UTC sees the wrong time, and the hydration error hides other bugs in the console noise.
+- **Server-formatted times.** Every user outside the server's time zone sees the wrong time, and the hydration error hides other bugs in the console noise.
 
 ## What I'd do
 

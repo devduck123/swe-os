@@ -10,9 +10,9 @@ track: 17
 concerns: [migrations, data, deployment]
 ---
 
-Code is easy to undo. You redeploy the old version and it's back in seconds. Data isn't. A migration changes the one thing every version of your app shares, and there's no redeploy button for a dropped column.
+Code is easy to undo: redeploy the old version and it's back in seconds. Data isn't. A migration changes the one thing every version of your app shares, and there's no redeploy button for a dropped column.
 
-The mental model: during every deploy, old code and new code run against the same database at the same time. So every schema change has to work for both versions. Big changes get split into small ones spread across several releases, each safe on its own.
+The mental model: during every deploy, old code and new code run against the same database at the same time, so every schema change has to work for both. Big changes get split into small ones across several releases, each safe on its own.
 
 ## Why a rename takes down a working app
 
@@ -24,14 +24,14 @@ You need the slow way once real users are on the app, for anything that renames,
 
 ## Expand, migrate, switch, contract
 
-Here's the rename done safely, as separate releases:
+The safe rename is four separate releases:
 
 1. **Expand.** Add `display_name` as a nullable column. Deploy code that writes to both `name` and `display_name`, and still reads `name`. Old code ignores the new column, so both versions work.
 2. **Migrate.** Backfill `display_name` from `name` for existing rows, in batches (below).
 3. **Switch.** Deploy code that reads `display_name`. Keep writing both for a release, so rolling back still finds `name` up to date.
 4. **Contract.** Once you're sure you won't roll back, stop writing `name`. In a later release, drop it.
 
-It's four deploys instead of one. Every step but the last is reversible, and by the time you drop anything, nothing has read it for days. Type changes, table splits, and data moves follow the same shape: add, copy, switch, drop.
+That's four deploys instead of one. Every step but the last is reversible, and by the time you drop anything, nothing has read it for days. Type changes, table splits, and data moves follow the same shape: add, copy, switch, drop.
 
 ## Know what lock you're taking
 
@@ -61,7 +61,7 @@ Foreign keys can use the same `NOT VALID` then `VALIDATE` trick.
 
 ## Backfill in small batches you can stop
 
-One `UPDATE users SET display_name = name` on a big table is one giant transaction. It locks every row it touches until it commits, bloats the table, and can't be paused halfway. Do it in batches:
+One `UPDATE users SET display_name = name` on a big table is one giant transaction. It locks every row it touches until it commits, leaves a dead copy of every row behind (bloat), and can't be paused halfway. Do it in batches:
 
 ```sql
 UPDATE users SET display_name = name
@@ -85,7 +85,7 @@ So: `push` against your local or branch database while you iterate, then `genera
 
 ## Rehearse on a branch first
 
-A database branch is a copy you can wreck. Neon branches include the parent's data by default, so you can run and time a migration and backfill against production-shaped data. Supabase branches start empty, so seed them if you want to rehearse against something real.
+A database branch is a copy you can wreck. Neon branches include the parent's data by default, so you can run and time a migration and backfill against production-shaped data. Supabase branches start empty by default, so seed them if you want to rehearse against something real.
 
 Before any destructive step, [restore a backup into a branch and check it](when-production-breaks.md).
 

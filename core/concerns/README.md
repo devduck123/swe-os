@@ -4,7 +4,7 @@ description: How to tell which engineering concerns a feature triggers, and how 
 freshness: durable
 ---
 
-A concern is something a feature can get wrong that the happy path won't show you: security, accessibility, data loss, cost. This page helps you pick the few that matter for a task and skip the rest. It's a routing table, not a checklist.
+A concern is something a feature can get wrong that the happy path won't show you: security, accessibility, data loss, cost. Use the table below to pick the few that matter for a task and skip the rest. It's a routing table, not a checklist.
 
 ## Pick the concerns
 
@@ -37,7 +37,7 @@ Match what the feature actually does, after you've read the code it touches. One
 
 If nothing matches an implementation task, look again. Pure explanations and copy edits can match nothing. Code changes rarely do.
 
-**Small changes.** For a change under about 20 lines that doesn't hit a new trigger, report only security and testing, in one line each.
+**Small changes.** If a change is under about 20 lines and matches no row except "changes any behavior", report only security and testing, in one line each. A copy or typo fix that changes no logic needs no concern report at all.
 
 ## Decide how deep to go
 

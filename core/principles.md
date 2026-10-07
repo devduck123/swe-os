@@ -80,7 +80,7 @@ Add scale when a measurement or a real requirement says so.
 
 Tests, logs, rendered UI, and measurements beat confidence. "It compiles" is not evidence.
 
-**Why:** AI-written code always looks plausible. Whether it works is a separate question.
+**Why:** AI-written code looks plausible by default. Whether it works is a separate question.
 **In practice:** Run it, and watch it fail when it should. For UI, look at the page at phone width.
 
 ## Make it operable

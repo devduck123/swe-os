@@ -10,9 +10,9 @@ track: 8
 concerns: [deployment, cost, data, security]
 ---
 
-This is the first Build stop, and it's day-one setup. Build on your laptop, where a change shows up in a second and nothing costs money. Add a hosted service only when a feature needs it, one at a time, on its free tier.
+This is day-one setup. Build on your laptop, where a change shows up in a second and nothing costs money. Add a hosted service only when a feature needs it, one at a time, on its free tier.
 
-Every service you add is another account, another set of keys, another environment to keep in sync, and another pricing cliff. Adding them as features ask for them keeps each one cheap to understand and cheap to undo.
+Every service you add is another account, another set of keys, another environment to keep in sync, and another pricing cliff. Adding them only as features ask keeps each one cheap to understand and to undo.
 
 ## Your laptop is the fastest feedback loop you'll ever have
 
@@ -22,7 +22,7 @@ So day one is Next.js and Postgres on your machine, plus a seed script that fill
 
 ## A fresh clone should run without calling you
 
-The test of a good local setup is that a fresh clone runs on another machine, or in an agent's sandbox, from the README alone. Five things make that true:
+A good local setup lets a fresh clone run on another machine, or in an agent's sandbox, from the README alone. Five things make that true:
 
 - **A pinned runtime.** `.nvmrc` says which Node to use.
 - **A committed lockfile,** installed with `npm ci`, so every machine gets the same versions.
@@ -33,7 +33,7 @@ The test of a good local setup is that a fresh clone runs on another machine, or
 ```json
 {
   "scripts": {
-    "setup": "npm ci && docker compose up -d db && npm run db:migrate && npm run db:seed",
+    "setup": "npm ci && docker compose up --wait db && npm run db:migrate && npm run db:seed",
     "dev": "next dev",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx scripts/seed.ts",
@@ -42,7 +42,7 @@ The test of a good local setup is that a fresh clone runs on another machine, or
 }
 ```
 
-Agents benefit from this more than people do. An agent that can run `npm run setup` and `npm run check` can verify its own work. An agent that has to ask you for a database URL can't.
+`--wait` blocks until the `db` healthcheck (`pg_isready`) passes, so migrations don't race Postgres's startup. Agents benefit from this setup more than people do. An agent that can run `npm run setup` and `npm run check` can verify its own work. An agent that has to ask you for a database URL can't.
 
 ## Add services in the order features need them
 
@@ -66,13 +66,13 @@ Each one has a local stand-in and a managed free tier:
 | Errors   | Off locally, since the console is right there | Sentry                          |
 | Payments | Stripe test mode with the Stripe CLI          | Stripe test mode, then live     |
 
-Two of these need a word. Supabase local runs the whole stack in containers, so it needs Docker or a compatible runtime like OrbStack. And Stripe webhooks reach your laptop through `stripe listen --forward-to localhost:3000/api/webhooks/stripe`, which prints the signing secret to put in `.env`.
+Supabase local runs the whole stack in containers, so it needs Docker or a compatible runtime like OrbStack. And Stripe webhooks reach your laptop through `stripe listen --forward-to localhost:3000/api/webhooks/stripe`, which prints the signing secret to put in `.env`.
 
 ## Dev, preview, and prod get separate data and separate keys
 
-On Vercel, every environment variable is scoped to Development, Preview, or Production, and every PR gets a preview deploy. Previews need a database, and this is where branching earns its keep. A Neon branch is a copy-on-write clone, so creating one is instant and only the changes take up space. Neon's Vercel integration can create a branch for each preview deployment. Two limits on Neon Free shape this: a project gets 10 branches, and every branch's compute counts toward the project's 100 CU-hours a month. Turn on the integration's cleanup of old preview branches, or you'll hit the branch limit. On Supabase, preview branches start with no data unless you seed them, and branch usage is billed by the hour outside the spend cap.
+On Vercel, every environment variable is scoped to Development, Preview, or Production, and every PR gets a preview deploy. Previews need a database, which is where branching earns its keep. A Neon branch is a copy-on-write clone: it shares its parent's data and stores only what changes, so creating one is instant. Neon's Vercel integration creates a branch for each preview deployment. Two limits on Neon Free shape this: a project gets 10 branches, and every branch's compute counts toward the project's 100 CU-hours a month. Turn on the integration's cleanup of old preview branches, or you'll hit the branch limit. On Supabase, preview branches start with no data unless you seed them, and branch usage is billed by the hour outside the spend cap.
 
-Never point a preview at production data. Preview code hasn't been reviewed, preview URLs get shared, and if your build runs migrations, a preview runs them against whatever database it's given. The quieter version of the same mistake: a Neon branch copies its parent's data, so previews branched off production hold real users' personal data. Branch previews from a seeded dev branch instead.
+Never point a preview at production data. Preview code hasn't been reviewed, preview URLs get shared, and if your build runs migrations, a preview runs them against whatever database it's given. The quieter version of the same mistake: a branch copies its parent's data, and the integration always branches from the project's default branch, usually production. Once you have real users, previews hold their personal data, so branch previews in CI from a seeded dev branch instead. Neon's GitHub Action takes a `parent_branch`.
 
 Free tiers have cliffs, and the one that hurts is rarely the obvious limit. Read [the side-project stack's cliffs](../recipes/side-project-stack.md#what-it-costs) before you sign up, and upgrade when it lists a reason you can name.
 
@@ -87,7 +87,7 @@ Free tiers have cliffs, and the one that hurts is rarely the obvious limit. Read
 
 ## What I'd do
 
-Laptop first: Next.js, Postgres in Docker, Drizzle, a seed script, and a `check` script. [start-project](../../skills/start-project/SKILL.md) sets up that half. Then I connect Vercel for previews and add Neon with the Vercel integration, branching previews from a seeded dev branch. After that, each managed service arrives with the feature that needs it, in the order above. [The side-project stack](../recipes/side-project-stack.md) puts the whole thing together.
+Laptop first: Next.js, Postgres in Docker, Drizzle, a seed script, and a `check` script. [start-project](../../skills/start-project/SKILL.md) sets up that half. Then Vercel for previews and Neon through its Vercel integration, moving preview branching to CI once real users arrive. After that, each managed service arrives with the feature that needs it, in the order above. [The side-project stack](../recipes/side-project-stack.md) puts the whole thing together.
 
 I'd pick Supabase instead of Neon when I want its auth and storage too, and I'd run `supabase start` locally to match.
 
@@ -96,6 +96,8 @@ I'd pick Supabase instead of Neon when I want its auth and storage too, and I'd 
 - [Supabase: Local development with the CLI](https://supabase.com/docs/guides/local-development/cli/getting-started)
 - [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching) and [branching usage and billing](https://supabase.com/docs/guides/platform/manage-your-usage/branching)
 - [Neon: Branching](https://neon.com/docs/introduction/branching) and [plans (branch and compute limits)](https://neon.com/docs/introduction/plans)
-- [Neon: Neon-managed Vercel integration](https://neon.com/docs/guides/neon-managed-vercel-integration)
+- [Neon: Neon-managed Vercel integration](https://neon.com/docs/guides/neon-managed-vercel-integration) and [default branch behavior](https://neon.com/docs/manage/branches)
+- [Neon: Create branch GitHub Action (`parent_branch`)](https://github.com/neondatabase/create-branch-action)
 - [Vercel: Environment variables](https://vercel.com/docs/environment-variables)
 - [Stripe CLI reference](https://docs.stripe.com/stripe-cli/use-cli)
+- [Docker: `docker compose up --wait`](https://docs.docker.com/reference/cli/docker/compose/up/)

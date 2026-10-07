@@ -44,12 +44,14 @@ Done when:
 
 ## Gaps
 
-| Gap                                                                                  | State    | Revisit when                                                                                  |
-| ------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------- |
-| Guides and concern pages are AI-drafted; the profile is reviewed as a starting point | Deferred | Before any public launch                                                                      |
-| No evidence yet that SWE OS improves agent results                                   | Unknown  | After the first eval runs                                                                     |
-| The learn loop is untested on Tommy                                                  | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
-| No domain, hosting, or license chosen                                                | Deferred | Before going public                                                                           |
-| Windows paths and line endings are handled in code but never run on Windows          | Unknown  | First Windows contributor or CI runner                                                        |
-| The 22-stop track is agent-drafted and unreviewed                                    | Deferred | v0.1 launch                                                                                   |
-| Codex's first version is in `.archive/codex-v0/`, untracked                          | Deferred | Tommy deletes it once he's compared                                                           |
+| Gap                                                                                       | State    | Revisit when                                                                                  |
+| ----------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| Guides and concern pages are AI-drafted; the profile is reviewed as a starting point      | Deferred | Before any public launch                                                                      |
+| No evidence yet that SWE OS improves agent results                                        | Unknown  | After the first eval runs                                                                     |
+| The learn loop is untested on Tommy                                                       | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
+| No domain, hosting, or license chosen                                                     | Deferred | Before going public                                                                           |
+| Windows paths and line endings are handled in code but never run on Windows               | Unknown  | First Windows contributor or CI runner                                                        |
+| The 22-stop track is agent-drafted and unreviewed                                         | Deferred | v0.1 launch                                                                                   |
+| Codex's first version is in `.archive/codex-v0/`, untracked                               | Deferred | Tommy deletes it once he's compared                                                           |
+| Drizzle snippets target stable 0.45; 1.0 changes `casing` and relational `where`          | Deferred | Drizzle 1.0 ships stable                                                                      |
+| Local-first setup relies on a `pg_isready` healthcheck, but no compose template ships one | Deferred | First real run of `start-project`                                                             |

@@ -10,7 +10,7 @@ reviewed: 2026-10-06
 concerns: []
 ---
 
-A vibe coder asks "does it work?" An engineer asks "what happens when it doesn't?" Both use AI, and both can ship a feature in an afternoon. The difference is the questions they ask before calling it done. AI made code cheap. Judgment, knowing what to build, what can go wrong, and how you'd know, is still expensive, and an agent won't do it unless you ask.
+A vibe coder asks "does it work?" An engineer asks "what happens when it doesn't?" Both use AI, and both can ship a feature in an afternoon. The difference is the questions they ask before calling it done. AI made code cheap. Judgment is still expensive: knowing what to build, what can go wrong, and how you'd know. An agent won't do that part unless you ask.
 
 ## The same feature, built twice
 
@@ -94,7 +94,7 @@ Asking is one more sentence in the prompt. Not asking is expensive, because the 
 
 ## Vibe coding is fine, until it crosses a floor
 
-Andrej Karpathy coined "vibe coding" in early 2025 for building by prompt and never really reading the code. It's great for prototypes, throwaway tools, and weekend experiments. Simon Willison's test is a good one: could anyone be harmed if this is wrong, by losing money or data or reputation? If not, speed wins.
+Andrej Karpathy coined "vibe coding" in February 2025 for building by prompt and never really reading the code. It's great for prototypes, throwaway tools, and weekend experiments. Simon Willison's test is a good one: if this has a bug or a security hole, could anyone be harmed, through lost money, a damaged reputation, or worse? If not, speed wins.
 
 Some things never get a pass, even in a prototype. I call these the floors:
 
@@ -104,7 +104,7 @@ Some things never get a pass, even in a prototype. I call these the floors:
 - **Personal data:** emails, photos, health, location.
 - **Destructive changes:** deleting data, rewriting rows, dropping columns.
 
-What these have in common is that you can't take them back. A leaked key is leaked the moment it's pushed. A double charge has already hit someone's card. A dropped column doesn't come back with a redeploy. A prototype that leaks a key is still a leak.
+You can't take any of these back. A leaked key is leaked the moment it's pushed. A double charge has already hit someone's card. A dropped column doesn't come back with a redeploy. A prototype that leaks a key is still a leak.
 
 ## What the vibe-coded version misses
 

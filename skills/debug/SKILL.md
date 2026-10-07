@@ -25,7 +25,7 @@ Find the mechanism, prove it, then fix it. Follow the [rules for every task](../
 - If three hypotheses in a row are wrong, stop and write down what you've ruled out. Ask if someone's there to ask. Otherwise, report and pause.
 - If you can't explain the mechanism, you haven't found the cause. Say so instead of shipping a fix you can't explain.
 - Don't let a bug fix turn into a refactor. Note the refactor in PROJECT.md and stay on the bug.
-- Production data, prod deploys, and anything destructive follow the stop-and-ask list in the [rules for every task](../README.md#rules-for-every-task).
+- Before touching production data, deploying to production, or doing anything destructive, ask first, as the [rules for every task](../README.md#rules-for-every-task) say.
 
 ## Report
 

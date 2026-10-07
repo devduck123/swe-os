@@ -10,7 +10,7 @@ track: 13
 concerns: [concurrency, reliability, observability]
 ---
 
-A background job is work you promise to do later, outside the request that asked for it. The request answers fast, and something else does the work, retries it, and tells you when it gives up. A webhook is someone else's background job calling you. Both arrive late, twice, or not at all. Background work runs **at least once**, so it has to be safe to run again.
+A background job is work you promise to do later, outside the request that asked for it. The request answers fast, and something else does the work, retries it, and tells you when it gives up. A webhook is someone else's background job calling you. Both can show up late, twice, or never, so design for **at least once**: every job has to be safe to run again, and every failure needs somewhere to land.
 
 ## The import that died at row 3,100
 
@@ -30,11 +30,11 @@ Work leaves the request when it's **slow** like this, when it should be **retrie
 
 **Cron** is weaker than it looks on this stack. On Hobby, a cron job runs **at most once a day**, anywhere within the hour you picked. Anything more frequent fails to deploy. Pro allows once a minute, but polling every minute keeps Neon from ever scaling to zero (it suspends after 5 idle minutes), so it burns compute hours around the clock. Vercel also says a failed run isn't retried, a run can be delivered twice, and a slow run can overlap the next. Protect the route with `CRON_SECRET`, because it's a public URL.
 
-**A hosted job service** like Inngest, Trigger.dev, or Vercel Workflows stores the job, retries it with backoff, runs steps that outlast one function, and shows you what failed. Postgres queues like pg-boss need a long-running worker, which serverless doesn't have. Brokers are a different scale of problem ([simple first](simple-first.md)).
+**A hosted job service** like Inngest, Trigger.dev, or Vercel Workflows stores the job, retries it with backoff (a longer wait before each try), runs steps that outlast one function, and shows you what failed. Postgres queues like pg-boss need a long-running worker, which serverless doesn't have. Message brokers like Kafka are a different scale of problem ([simple first](simple-first.md)).
 
 ## Every job will eventually run twice
 
-A worker finishes the job, then crashes before reporting success. From outside, that looks the same as a crash before doing anything, so the job runs again. So make every job idempotent: running it twice leaves the world the same as running it once. [Timeouts, retries, and idempotency](timeouts-retries-idempotency.md) covers the patterns. For the import, each row gets a status, and the write lands once even if the API call repeats:
+A worker finishes the job, then crashes before reporting success. From outside, that looks the same as a crash before doing anything, so the job runs again. Make every job idempotent: running it twice leaves the world the same as running it once. [Timeouts, retries, and idempotency](timeouts-retries-idempotency.md) covers the patterns. For the import, each row gets a status, and the write lands once even if the API call repeats:
 
 ```sql
 UPDATE contacts SET status = 'done', company = $2
@@ -42,11 +42,11 @@ WHERE id = $1 AND status = 'pending';
 -- 0 rows updated means a previous run already handled it.
 ```
 
-Keep jobs small, too. One job per 100 rows beats one for 5,000, because a killed function then loses one batch, not progress you can't locate.
+Keep jobs small, too. One job per 100 rows beats one for 5,000, because a killed function loses one batch instead of progress you can't locate.
 
 ## Webhooks: verify, record, acknowledge, then work
 
-A webhook endpoint is a public URL that changes your data, like marking a subscription paid. Here's the order that holds up:
+A webhook endpoint is a public URL that changes your data, like marking a subscription paid. This order holds up:
 
 ```ts
 export async function POST(req: Request) {
@@ -88,7 +88,7 @@ To test locally, `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
 
 ## Stop a sweep from overlapping itself
 
-If a cron run takes longer than its interval, a second instance can start while the first is still going. Both pick up the same pending rows. A lease row in Postgres fixes it. (Not an advisory lock: those break under transaction pooling.)
+If a cron run takes longer than its interval, a second instance can start while the first is still going, and both grab the same pending rows. A lease row in Postgres fixes it. (Not a session advisory lock: Neon's connection pooler doesn't support those.)
 
 ```sql
 UPDATE job_locks SET locked_until = now() + interval '10 minutes'

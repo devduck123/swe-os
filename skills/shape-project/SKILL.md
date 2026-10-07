@@ -25,7 +25,7 @@ Turn an idea into a small, testable first version, and only then pick tools. Fol
 
 ## Stop rules
 
-- No framework or vendor names before step 4.
+- No framework or vendor names before step 5.
 - Don't wait on a long questionnaire. Give useful reasoning with stated assumptions, then ask the one or two questions that matter most.
 - Shaping alone doesn't authorize deploying, signing up for services, or spending money.
 

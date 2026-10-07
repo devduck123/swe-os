@@ -58,7 +58,7 @@ try {
 
 The first error means the text didn't match the schema. The second means the call ended with no usable output. Three failures look like success unless you check:
 
-- **Refusals.** You get a normal `200` with `finishReason: 'content-filter'` (Anthropic's raw API says `stop_reason: "refusal"`). For prose, the apology arrives as ordinary text, so check `finishReason` before you show or save it.
+- **Refusals.** A blocked reply is still a `200`. Anthropic's safety classifiers return `stop_reason: "refusal"`, which the AI SDK reports as `finishReason: 'content-filter'`, so check it before you show or save prose. A polite "I can't help with that" ends in `'stop'` like any answer, but it fails a schema.
 - **Truncation.** At the token limit, `finishReason` is `'length'`, and the summary stops mid-sentence.
 - **Chatty JSON.** Raw `JSON.parse` throws the first time the model adds "Sure! Here's the JSON:". The schema call handles it.
 
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
 }
 ```
 
-The input cap fixes the 40-page contract: reject it, or summarize the first part and say so. Streaming lets the user start reading right away. And know your retries: the AI SDK retries twice by default, which triples your worst-case wait. [Timeouts, retries, and idempotency](timeouts-retries-idempotency.md) has the budget math. If a call regularly outlasts a request, move it to a [background job](background-jobs-and-webhooks.md).
+The input cap fixes the 40-page contract: reject it, or summarize the first part and say so. Streaming lets the user start reading right away. The AI SDK also retries twice by default, so one failing call can take three attempts, and the abort signal caps the total. [Timeouts, retries, and idempotency](timeouts-retries-idempotency.md) has the budget math. If a call regularly outlasts a request, move it to a [background job](background-jobs-and-webhooks.md).
 
 ## Evals tell you whether a change helped
 
@@ -113,12 +113,12 @@ When you tweak a prompt or switch models, some outputs get better and some get w
 ## Run it like a dependency you'll have to debug
 
 - **Log every call:** prompt version, model ID, latency, tokens, cost, finish reason, and an internal user ID. Leave out the email contents.
-- **Pin a dated model version in one file.** Every feature goes through `lib/ai.ts`, so a model upgrade is a one-file code change that runs the evals first.
+- **Pin the model in one file.** Use a fixed snapshot ID, not a `-latest` alias. Every feature goes through `lib/ai.ts`, so a model upgrade is a one-file change that runs the evals first.
 
 ## What the vibe-coded version misses
 
 - **No input cap.** One huge paste runs until the platform kills it, the user retries, and you pay twice for nothing.
-- **A refusal saved as the answer.** Nobody checked `finishReason`, so "I can't help with that" is now the summary in your database.
+- **A blocked reply saved as the answer.** Nobody checked `finishReason`, so a reply the filter cut off is now the summary in your database.
 - **Truncation treated as complete.** The action-item list stops at item six, and the user misses the deadline in item seven.
 - **No abort signal.** The user closes the tab, and the model keeps writing an answer nobody reads, on your bill.
 - **Logs full of email bodies.** Your debug table is now the most sensitive data you hold, with no retention rule.
@@ -138,4 +138,4 @@ I'd add a second provider once outages hurt users, and a cheaper model for easy 
 - [AI SDK: Generating structured data](https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data), [`NoObjectGeneratedError`](https://ai-sdk.dev/docs/reference/ai-sdk-errors/ai-no-object-generated-error), and [`NoOutputGeneratedError`](https://ai-sdk.dev/docs/reference/ai-sdk-errors/ai-no-output-generated-error)
 - [AI SDK: `streamText` reference (finish reasons)](https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-text) and [Stopping streams](https://ai-sdk.dev/docs/advanced/stopping-streams)
 - [`@ai-sdk/anthropic`: stop reason mapping (`refusal` to `content-filter`)](https://github.com/vercel/ai/blob/main/packages/anthropic/src/map-anthropic-stop-reason.ts)
-- [Anthropic: Handling stop reasons](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons)
+- [Anthropic: Handling stop reasons](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons) and [Models overview (pinned model IDs)](https://platform.claude.com/docs/en/about-claude/models/overview)

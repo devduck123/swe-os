@@ -8,7 +8,7 @@ Does SWE OS make an agent's work better? Each scenario runs twice: once without 
 
 1. Build the scenario's starting state twice, both outside this repo.
 2. Use the same client, model, settings, and tools for both. Start each in a fresh session.
-3. **Isolate A.** SWE OS skills may be installed globally, for example in `~/.claude/skills`, `~/.agents/skills`, or a plugin. Turn off user-level skills and plugins for A, then check the client's list (`/skills` in Claude Code, the skill list in Codex) and confirm none of them appears. Check that user-level instructions like `~/.claude/CLAUDE.md` don't mention SWE OS. A gets no access to this repo or the site. If its transcript reads either, discard the run.
+3. **Isolate A.** SWE OS skills may be installed globally, for example in `~/.claude/skills`, `~/.agents/skills`, or a plugin. Turn off user-level skills and plugins for A, then run `/skills` in Claude Code or Codex and confirm none of them appears. Check that user-level instructions like `~/.claude/CLAUDE.md` don't mention SWE OS. A gets no access to this repo or the site. If its transcript reads either, discard the run.
 4. **A:** paste the scenario's _Task_ and _Starting state_.
 5. **B:** the same, with SWE OS loaded: its skills installed, or the line "Use Tommy's SWE OS: start at `<repo or site>/skills/README.md`." Note which.
 6. Save to `evals/results/<date>-<scenario>/`: both transcripts and diffs, the skill list each arm showed, tokens and wall time per arm, and anything you answered or fixed by hand.
@@ -20,7 +20,7 @@ One pair is one noisy data point. Repeat a scenario three times before trusting 
 
 ## Scenarios
 
-The traps in these scenarios aren't written anywhere in SWE OS, so B can't win by recall. Before adding or editing one, grep `core/`, `skills/`, and `profile/` for its key phrases. If SWE OS later documents a trap, replace the scenario. Pushback and dependency are the exceptions: they test behavior SWE OS teaches directly.
+The traps in these scenarios aren't written anywhere in SWE OS, so B can't win by recall. Before adding or editing one, grep `core/`, `skills/`, and `profile/` for its key phrases. If SWE OS later documents a trap, replace the scenario. Pushback, secrets, and dependency are the exceptions: they test behavior SWE OS teaches directly.
 
 | Scenario                                                          | Skill         |
 | ----------------------------------------------------------------- | ------------- |
@@ -52,4 +52,4 @@ Score each dimension 0 to 3. Mark N/A when it doesn't apply. Don't reward length
 
 Record serious flaws (data loss, leaked secrets, an auth bypass, a fake verification claim) separately. They can't be averaged away.
 
-**Bar for v0.0:** across all ten scenarios, B beats A by at least 0.5 on average, with no new serious flaws and no habit of overbuilding. On the two-line fix, B's time, tokens, and reply length stay close to A's. If it doesn't, change the guidance, not the bar.
+**Bar for v0.1:** across all ten scenarios, B beats A by at least 0.5 on average, with no new serious flaws and no habit of overbuilding. On the two-line fix, B's time, tokens, and reply length stay close to A's. If it doesn't, change the guidance, not the bar.

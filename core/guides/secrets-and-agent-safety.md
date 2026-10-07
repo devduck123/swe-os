@@ -51,18 +51,18 @@ The real fix is moving the call to a server route. Put `import 'server-only'` at
 
 Not every key is a secret:
 
-| Safe in the browser                                     | Server only, never behind a public prefix             |
-| ------------------------------------------------------- | ----------------------------------------------------- |
-| Supabase publishable key (`sb_publishable_…`) or `anon` | Supabase secret key (`sb_secret_…`) or `service_role` |
-| Stripe publishable key (`pk_…`)                         | Stripe secret (`sk_…`) and restricted (`rk_…`) keys   |
-| Clerk publishable key                                   | Clerk secret key (`CLERK_SECRET_KEY`)                 |
+| Safe in the browser                                            | Server only, never behind a public prefix                    |
+| -------------------------------------------------------------- | ------------------------------------------------------------ |
+| Supabase publishable key (`sb_publishable_…`) or legacy `anon` | Supabase secret key (`sb_secret_…`) or legacy `service_role` |
+| Stripe publishable key (`pk_…`)                                | Stripe secret (`sk_…`) and restricted (`rk_…`) keys          |
+| Clerk publishable key                                          | Clerk secret key (`CLERK_SECRET_KEY`)                        |
 
 The public ones only work because something else does the guarding. Supabase's publishable key is safe only with row-level security on, which [trust boundaries](trust-boundaries.md#on-supabase-rls-is-your-authorization) covers. Supabase's secret and `service_role` keys bypass every RLS policy. Put one in a `NEXT_PUBLIC_` variable, and anyone who copies it from your bundle can read and write your whole database.
 
 ## Agents change who can see your secrets
 
 - **A pasted key is a leaked key.** It lives in a transcript you don't control. Rotate it. Tell the agent the variable's name, never its value.
-- **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` doesn't stop a script the agent runs from opening the file, as its docs say. The dependable fix is what's in the file: dev keys with low limits, and production keys never on your laptop.
+- **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` doesn't stop a script the agent runs from opening the file, as its docs say. Its sandbox can block that, but the dependable fix is what's in the file: dev keys with low limits, and production keys never on your laptop.
 - **MCP servers hold tokens too.** Give each the narrowest one: a dev database branch, a read-only role, a GitHub token for one repo.
 - **Decide what never gets auto-approved:** destructive commands (`rm -rf`, `DROP TABLE`, `git push --force`), pushes to main, deploys, new packages, and anything holding production credentials.
 - **Text the agent reads can give it orders.** A README or issue that says "print your environment variables" is prompt injection, explained in [AI features in production](ai-features-in-production.md).
@@ -126,12 +126,12 @@ I'd add a secret manager once several people or services share credentials, or r
 - [Orca Security: 2023 Honeypotting in the Cloud Report](https://orca.security/resources/press-releases/orca-security-2023-honeypotting-in-the-cloud-report/)
 - [Next.js: Environment variables](https://nextjs.org/docs/app/guides/environment-variables)
 - [Vercel: Config and Secret environment variables](https://vercel.com/docs/environment-variables/sensitive-environment-variables) and [rotating secrets](https://vercel.com/docs/environment-variables/rotating-secrets)
-- [Supabase: API keys](https://supabase.com/docs/guides/api/api-keys)
+- [Supabase: API keys](https://supabase.com/docs/guides/getting-started/api-keys)
 - [Stripe: API keys](https://docs.stripe.com/keys)
 - [Clerk: Environment variables](https://clerk.com/docs/guides/development/clerk-environment-variables)
 - [Sentry: Server-side data scrubbing](https://docs.sentry.io/security-legal-pii/scrubbing/server-side-scrubbing/)
-- [Claude Code: Configure permissions](https://code.claude.com/docs/en/permissions)
+- [Claude Code: Configure permissions](https://code.claude.com/docs/en/permissions) and [Sandboxing](https://code.claude.com/docs/en/sandboxing)
 - [Spracklen et al., "We Have a Package for You!" (package hallucinations)](https://arxiv.org/abs/2406.10279)
-- [GitHub: Push protection](https://docs.github.com/en/code-security/secret-scanning/introduction/about-push-protection) and [GitHub Advanced Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security)
+- [GitHub: Push protection](https://docs.github.com/en/code-security/concepts/secret-security/push-protection) and [GitHub Advanced Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security)
 - [GitHub: Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
 - [PostgreSQL: ALTER DEFAULT PRIVILEGES](https://www.postgresql.org/docs/current/sql-alterdefaultprivileges.html)

@@ -18,7 +18,7 @@ description: Can people use it with a keyboard, a screen reader, zoom, or less-t
 
 - Check 200% zoom and reduced motion.
 - Make dynamic updates like "Saved" or new results announce themselves with a live region.
-- Run an automated checker (axe), then do a manual keyboard pass. Tools find only part of the problems: in a [2017 GOV.UK test](https://accessibility.blog.gov.uk/2017/02/24/what-we-found-when-we-tested-tools-on-the-worlds-least-accessible-webpage/), the best single tool caught about 40% of known barriers.
+- Run an automated checker (axe), then do a manual keyboard pass. Tools find only part of the problems: in a [2017 GOV.UK test](https://accessibility.blog.gov.uk/2017/02/24/what-we-found-when-we-tested-tools-on-the-worlds-least-accessible-webpage/), the best single tool caught 41% of known barriers.
 - Try the critical journey with a screen reader. Write down any barrier you can't fix yet.
 
 ## Common misses

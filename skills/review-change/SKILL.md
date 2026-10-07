@@ -1,6 +1,6 @@
 ---
 name: review-change
-description: Review a diff, PR, or proposed plan for real defects, unnecessary complexity, and user or operational impact. Read-only unless the user asks for fixes.
+description: Review a diff, PR, or proposed plan for real defects, unnecessary complexity, and user or operational impact. Use when asked to review a change. Read-only unless the user asks for fixes. Not for building, debugging, or quizzing Tommy on a PR (use learn).
 metadata:
   title: Review a change
   example: 'Review this upload endpoint before we turn it on. Use my SWE OS.'
@@ -16,7 +16,7 @@ Find the problems that matter, and prove them. Follow the [rules for every task]
 2. **Pick the concerns.** Use the [concerns table](../../core/concerns/README.md#pick-the-concerns) on what the change actually does. Read the pages for the ones that apply.
 3. **Read past the diff.** Follow changed values across boundaries: into the database, out to the API, through the UI. Most real bugs sit where the diff meets code it didn't touch.
 4. **Look where the damage is.** Check correctness (including accessibility), data, security, and failure behavior first, and style last. Don't discuss naming while a race condition sits three lines away.
-5. **Prove each finding.** Name the trigger (what input or situation), the consequence (what breaks, for whom), and the evidence (a failing test, a reproduction, or a clear path through the code). If it depends on an assumption you couldn't check, say so. Describe the mechanism, not a slogan: not "this violates separation of concerns" but "this controller now validates, saves, and calls the API, so changing one means retesting all three".
+5. **Prove each finding.** Name the trigger (what input or situation), the consequence (what breaks, for whom), and the evidence (a failing test, a reproduction, or a clear path through the code). If it depends on an assumption you couldn't check, say so. Describe the [mechanism](../../profile/writing.md#name-the-mechanism), not a slogan.
 6. **Check for too much, too.** Flag machinery the change doesn't need: an abstraction with one use, a dependency for ten lines of code, config for a value that never changes.
 7. **Look at it running when UI changed.** If you can't, say so in the report.
 

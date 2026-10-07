@@ -62,7 +62,7 @@ Do this on every read, update, and delete, including exports and file downloads.
 
 Server actions look like function calls. They're public endpoints. Next.js's data security guide says an exported action is reachable by a direct POST, and a page-level check doesn't extend to the actions defined on it.
 
-Agents love one check in `proxy.ts` (middleware before Next.js 16) that guards a list of routes. In March 2025, CVE-2025-29927 let anyone skip middleware entirely by sending one internal header, `x-middleware-subrequest`. It hit self-hosted apps (`next start` and standalone output) from 11.1.4 until the fixes in 12.3.5, 13.5.9, 14.2.25, and 15.2.3. Vercel-hosted apps were protected. Next.js's advice since: don't make middleware the only protection. Check auth in each action, or in a data access layer every action goes through.
+Agents love one check in `proxy.ts` (middleware before Next.js 16) that guards a list of routes. In March 2025, CVE-2025-29927 let anyone skip middleware entirely by sending one internal header, `x-middleware-subrequest`. It hit self-hosted apps (`next start` and standalone output) from 11.1.4 until the fixes in 12.3.5, 13.5.9, 14.2.25, and 15.2.3. Apps on Vercel and Netlify weren't affected. Next.js's advice since: don't make middleware the only protection. Check auth in each action, or in a data access layer every action goes through.
 
 ## Send the client only what it shows
 
@@ -85,11 +85,11 @@ Anyone can add `"role": "admin"` to the body, and the spread writes it. Name the
 
 Tiny apps get credential-stuffed too. From day one, limit login, signup, password reset, OTP and email sends, and every AI route. Limit by IP and by account, because a stuffing bot rotates IPs and an email bomber targets one inbox.
 
-Better Auth has a limiter, on by default in production, with tighter rules for sign-in. But it stores counts in memory, and its docs warn that this may not suit serverless: each function instance keeps its own count. Set `rateLimit.storage` to `"database"`. Your own routes, like email sends and AI calls, need your own counter, and a row in Postgres is enough. [AI features in production](ai-features-in-production.md) shows one.
+Better Auth has a limiter, on by default in production, with tighter rules for sign-in. But it keeps counts in memory by default, and its docs warn that this may not suit serverless: each function instance keeps its own count. Set `rateLimit.storage` to `"database"`. Your own routes, like email sends and AI calls, need your own counter, and a row in Postgres is enough. [AI features in production](ai-features-in-production.md) shows one.
 
 ## On Supabase, RLS is your authorization
 
-If the browser talks to Supabase directly, there's no server in between to check anything. Row-level security (RLS) is the check. A table in the exposed schema without RLS is readable and writable through the public key, and that key ships in your JavaScript.
+If the browser talks to Supabase directly, there's no server in between to check anything. Row-level security (RLS) is the check. On most projects, a table in an exposed schema without RLS is readable and writable through the publishable key, and that key ships in your JavaScript.
 
 That's CVE-2025-48757. A researcher scanned 1,645 apps built with Lovable and found 170 whose Supabase tables had missing or inadequate RLS, exposing emails, payment details, and API keys. Turn RLS on for every exposed table, write the policies, and test them as a second user. Which Supabase keys are safe to ship is in [secrets and agent safety](secrets-and-agent-safety.md).
 
@@ -99,7 +99,7 @@ That's CVE-2025-48757. A researcher scanned 1,645 apps built with Lovable and fo
 - **Auth only in `proxy.ts`.** One bypass, or one route the matcher forgot, and every action behind it is open.
 - **Whole rows passed to the client.** Every column of every user on the page ends up in the page source.
 - **No rate limit on password reset.** A bot sends 10,000 reset emails, and your email provider's quota and reputation go with them.
-- **Supabase tables without RLS.** Anyone with your public key, which is everyone, can read every row.
+- **Supabase tables without RLS.** Anyone with your publishable key, which is everyone, can read every row.
 - **Mass assignment.** A user promotes themselves to admin by adding one key to a request.
 
 ## What I'd do

@@ -1,6 +1,6 @@
 ---
 name: learn
-description: Help Tommy learn from what his agents built. Walk through a PR and check his understanding before merge, catch him up on recent agent work, or set up a piece for him to write himself. Use only when he asks to learn, review, quiz, or catch up. For explaining a new concept from scratch, use explain.
+description: Help Tommy learn from what his agents built. Walk through a PR and check his understanding before merge, catch him up on recent agent work, or set up a piece for him to write himself. Use only when he asks for one of these. Not for reviewing code for defects (use review-change) or explaining a new concept from scratch (use explain).
 metadata:
   title: Learn
   example: 'Walk me through this PR and quiz me before I merge.'
@@ -28,7 +28,7 @@ Keep it under ten minutes. If he skips the questions, name what he didn't check.
 
 ## Catch-up
 
-1. List the PRs merged since the last catch-up, with `gh pr list --state merged --search "merged:>=YYYY-MM-DD"` or `git log` on main.
+1. List the PRs merged since the last catch-up (the newest date in `LEARNING.md`), with `gh pr list --state merged --search "merged:>=YYYY-MM-DD"` or `git log` on main.
 2. Collect their "Worth learning" items and group them by concept.
 3. Teach the one or two that matter most: a concept that keeps coming up, one in a safety-floor area (auth, data, money, models that take actions), or one he got wrong before. Link a guide if one exists. Offer a walkthrough of any PR he's fuzzy on.
 4. End with one recall question from an older record in `LEARNING.md`. He answers before you show anything.

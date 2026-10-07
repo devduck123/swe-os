@@ -7,19 +7,19 @@ AI can write the code now. What it can't do for you is know what the happy path 
 
 Every stop ends with **What the vibe-coded version misses**, and every recommendation starts from the simplest thing that works.
 
-## The track
+## Follow the work from problem to production
 
-The track follows the lifecycle of real work, from understanding the problem to running the thing in production. Each stage is a few stops.
+The stops follow the lifecycle of real work. Each stage is a few stops.
 
 ### Understand
 
-1. [Vibe coder vs. engineer](vibe-coder-vs-engineer.md): what actually separates them, and why it isn't typing speed.
-2. [How a request travels through your app](how-a-request-travels.md): the one mental model everything else hangs on.
+1. [Vibe coder vs. engineer](vibe-coder-vs-engineer.md): the questions that separate them, now that AI writes the code for both.
+2. [How a request travels through your app](how-a-request-travels.md): one click traced from the browser to the database, so you know which hop broke.
 3. [Shape before you build](shape-before-you-build.md): a problem worth solving, a small first slice, and what "done" means.
 
 ### Design
 
-4. [Simple first](simple-first.md): when queues, caches, and services earn their place, and when they don't.
+4. [Simple first](simple-first.md): when a separate API, a cache, a queue, or another layer earns its place, and when it doesn't.
 5. [Data that stays correct](data-that-stays-correct.md): constraints, transactions, and indexes do the remembering for you.
 6. [Trust boundaries](trust-boundaries.md): validate what comes in, and make sure every user only touches what's theirs.
 7. [Timeouts, retries, and idempotency](timeouts-retries-idempotency.md): what happens when the network doesn't cooperate.
@@ -46,7 +46,7 @@ The track follows the lifecycle of real work, from understanding the problem to 
 ### Operate
 
 18. [Knowing it broke before your users do](knowing-it-broke.md): the smallest observability setup that actually helps.
-19. [When production breaks anyway](when-production-breaks.md): debugging live, staying calm, and restores you've tested.
+19. [When production breaks anyway](when-production-breaks.md): stop the damage, debug from evidence, and restore from backups you've tested.
 20. [Performance and cost](performance-and-cost.md): measure first, then fix the bottleneck you actually have.
 
 ### Improve
@@ -70,7 +70,7 @@ Planned guides, written as real projects need them. Fundamentals come before too
 
 ## How a guide is built
 
-Every guide is written as Tommy (see [Voice](../../profile/voice.md#know-which-voice-youre-in)) and follows [Learning](../../profile/learning.md#teach-the-shape-before-the-machinery): the simple model, why it exists, when you need it and when you don't, how it works, what goes wrong, what I'd do, and what changes at scale. Headings state the point, so skimming the headings alone teaches something.
+Every guide is written as Tommy (see [Voice](../../profile/voice.md#know-which-voice-youre-in)) and follows [Learning](../../profile/learning.md#teach-the-shape-before-the-machinery): a short model up top, a concrete example of the happy path going wrong, then why it works the way it does and when you need it. Headings state the point, so skimming the headings alone teaches something.
 
 Two sections are required in every guide:
 

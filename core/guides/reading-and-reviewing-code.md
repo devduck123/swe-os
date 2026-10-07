@@ -9,7 +9,7 @@ track: 15
 concerns: [testing, security]
 ---
 
-Reading code is how you find out what's actually true about a system, as opposed to what the README, the PR description, or the agent's summary says. Reviewing is deciding whether a change deserves to exist in that system. With agents, these two skills became most of the job. An agent can write a 600-line PR in four minutes. Whether it's good is still your call.
+Reading code is how you find out what's actually true about a system, as opposed to what the README, the PR description, or the agent's summary says. Reviewing is deciding whether a change deserves to exist in that system. With agents, these two skills are most of the job. An agent can write a 600-line PR in four minutes, and whether it's good is still your call.
 
 ## Green CI and a nice summary aren't a review
 
@@ -34,7 +34,7 @@ Nothing in the diff looks wrong. The bug is what's missing, and you only see it 
 
 ## Match the depth to the damage
 
-Read every line of anything that touches auth or permissions, money, data deletion, migrations, email or paid APIs, and anything hard to undo once deployed. Skim copy, styling, test-only changes, and throwaway prototypes. Check that they do what they say, then move on.
+Read every line of anything that touches auth or permissions, money, data deletion, migrations, email or paid APIs, and anything hard to undo once deployed. Skim copy, styling, test-only changes, and throwaway prototypes: check that they do what they say, then move on.
 
 When in doubt, ask: if this is wrong, who finds out, and how bad is it? [Shipping changes you can undo](shipping-changes-you-can-undo.md) lowers the cost of being wrong, but it doesn't help with leaked data or a broken migration.
 
@@ -55,13 +55,13 @@ git blame -w -C app/api/export/route.ts      # who last touched each line, follo
 git log -L :GET:app/api/export/route.ts      # the history of one function
 ```
 
-Agents are great at the first pass: "trace what happens when a user saves a profile, with file and line references." Then check two or three of its claims against the code. Agents summarize confidently, including when they're wrong.
+Agents are great at the first pass: "trace what happens when a user saves a profile, with file and line references." Then check two or three of its claims against the code, because agents sound just as sure when they're wrong.
 
 ## Spend attention where the damage is
 
 Review attention runs out, so spend it in order. First, **correctness**: does it do what it claims, edge cases included? Second, **data**: can it delete, overwrite, or quietly mangle anything? Third, **security**: who can call this, with what input, touching whose data? Style comes last.
 
-Ten comments about naming and zero about the missing ownership check is a review that made the merge riskier, because it gave the PR a stamp of approval.
+Ten comments about naming and zero about the missing ownership check is a review that made the merge riskier, because it stamped the PR approved.
 
 The [review-change skill](../../skills/review-change/SKILL.md) has the full checklist. Three habits from it matter most when you review by hand:
 
@@ -77,7 +77,7 @@ A quick self-check: without looking, how does this change handle a user who isn'
 
 ## Small PRs get real reviews
 
-Big PRs get skimmed. Google's engineering guidelines suggest around 100 lines is usually a reasonable change and 1,000 is usually too large, because small changes get reviewed more thoroughly, introduce fewer bugs, and are easier to roll back.
+Big PRs get skimmed. Google's code review guide calls 100 lines usually reasonable and 1,000 usually too large. Small changes get reviewed more thoroughly, introduce fewer bugs, and are simpler to roll back.
 
 Agents don't feel the cost of a big PR, so ask for small ones: the migration in one PR, the server logic in the next, the UI last. And ask for the description in the [build-feature report format](../../skills/build-feature/SKILL.md#report), which says how it was verified and what wasn't, so you know where to look.
 

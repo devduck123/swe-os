@@ -3,7 +3,7 @@ title: Cost
 description: What this will cost to run, where the pricing cliffs are, and what stops a surprise bill.
 ---
 
-**Triggered by:** usage-billed services, uploads, calls to paid APIs, background work, payments.
+**Triggered by:** usage-billed services, uploads, model calls, new dependencies, and calls to services you don't own.
 
 ## Minimum bar
 

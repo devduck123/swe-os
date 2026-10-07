@@ -37,7 +37,7 @@ Tag the environment too, so preview noise doesn't bury production issues.
 
 ## Logs you can search: structured, with an ID, without secrets
 
-`console.log(e)` gives you a line you can't find that doesn't say enough. Log JSON with a stable event name, the IDs involved, and a request ID:
+`console.log(e)` gives you a line you can't search for, and it doesn't say enough. Log JSON with a stable event name, the IDs involved, and a request ID:
 
 ```ts
 export function log(
@@ -62,7 +62,7 @@ The **request ID** connects a user's complaint to a log line. Make one per reque
 
 Log IDs, not contents. Request bodies and user objects hold passwords, tokens, and emails, and logs get copied to more places than your database. See [secrets and safety](secrets-and-agent-safety.md).
 
-Vercel keeps runtime logs for 1 hour on Hobby and 1 day on Pro, and log drains are Pro-only. Treat Vercel's logs as a live view. Anything you'll need next week belongs in Sentry or the database.
+Vercel keeps runtime logs for 1 hour on Hobby and 1 day on Pro, and log drains are Pro-only. Treat Vercel's logs as a live view. Anything you'll need next week belongs in Sentry, which keeps 30 days on the free plan, or in the database.
 
 ## Prove it's up, and that the important things still happen
 

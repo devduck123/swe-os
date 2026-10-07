@@ -10,19 +10,19 @@ reviewed: 2026-10-06
 concerns: [performance, cost]
 ---
 
-Performance work is finding the one slow thing and fixing that thing. Cost work is the same discipline applied to the bill. Both start with a number, not a hunch. Optimize the wrong thing and you add complexity to a page that's exactly as slow as before. Skip the cost math and you find out at the end of the month.
+Performance work is finding the one slow thing and fixing that thing. Cost work does the same for the bill. Both start with a number, not a hunch. Optimize the wrong thing and you add complexity to a page that's just as slow. Skip the cost math and you find out at the end of the month.
 
 ## The cache that would have hidden the bug
 
-Your SaaS dashboard takes four seconds to load. You ask an agent to fix it, and it suggests adding Redis. Sounds reasonable.
+Your SaaS dashboard takes four seconds to load. You ask an agent to fix it, and it suggests Redis. Sounds reasonable.
 
 Instead, you measure. The server timing shows 3.6 of those seconds in the database. The query log shows 51 queries for one page load: one to get the team's 50 projects, then one per project to fetch its owner. That's an N+1, and the ORM hid it inside a loop. One join turns 51 round trips into one, and the page loads in well under a second.
 
-Redis would have made the second visit fast and left the first one slow. It would also have added a new service to run and a new class of bug: owners who changed their name and still show the old one.
+Redis would have made the second visit fast and left the first one slow. It would also have added a service to run and a new bug: owners who renamed themselves still showing the old name.
 
 ## Slow is a number, not a feeling
 
-In the browser, Google's Core Web Vitals are the yardstick, judged at the 75th percentile of page loads: the main content shows within 2.5 seconds (LCP), every tap gets a response within 200 milliseconds (INP), and layout shift stays at 0.1 or less (CLS). Lighthouse is fine for before-and-after checks, but field data from real phones is what counts. Vercel Speed Insights shows it once you have traffic.
+In the browser, Google's Core Web Vitals are the yardstick, judged at the 75th percentile of page loads: the main content shows within 2.5 seconds (LCP), every tap gets a response within 200 milliseconds (INP), and layout shift stays at 0.1 or less (CLS). Lighthouse is fine for before-and-after checks, but field data from real phones is what counts, and Vercel Speed Insights shows it once you have traffic.
 
 On the server, measure each route at p95, not the average. An average of 200ms can hide one user in twenty waiting three seconds. To see where the time goes, add a `Server-Timing` header, which the browser's Network panel shows next to the request:
 
@@ -62,7 +62,7 @@ To find an N+1, log queries in development and count them per page. If the count
 
 A cache saves work by serving an old answer. Before adding one, answer two questions. How stale can this data be before someone gets hurt? What invalidates it? If you can't answer the second, you're shipping a stale-data bug on a timer.
 
-In Next.js 16, data isn't cached unless you opt in with Cache Components: set `cacheComponents: true` in `next.config.ts`, mark a function `'use cache'`, and give it a `cacheTag`. Then every write that changes the data has to invalidate that tag, with `updateTag` in a server action or `revalidateTag` in a route handler. Miss one write path and users see old data.
+In Next.js 16, data isn't cached unless you opt in with Cache Components: set `cacheComponents: true` in `next.config.ts`, mark a function `'use cache'`, and give it a `cacheTag`. Then every write to that data has to invalidate the tag, with `updateTag` in a server action or `revalidateTag` in a route handler. Miss one write path and users see old data. On Vercel, plain `'use cache'` mostly feeds the prerendered page, because request-time entries live in one instance's memory. A cache shared across requests needs `'use cache: remote'`, which adds a network hop and a bill.
 
 Never cache a personalized response somewhere it's shared, or one user's dashboard gets served to the next. Often the cheapest "cache" is an index, because it stays correct. [Simple first](simple-first.md) covers when Redis earns its place.
 
@@ -76,7 +76,7 @@ Never cache a personalized response somewhere it's shared, or one user's dashboa
 
 **List the billed resources** for each feature: function time, bandwidth, image optimizations, database compute and storage, file storage, emails, and AI tokens. The [cost concern](../concerns/cost.md) has the checklist. Free tiers end abruptly, and the [cliffs in my stack](../recipes/side-project-stack.md#what-it-costs) are in the recipe.
 
-**Set a cap that actually stops spending.** An alert email at 2 a.m. doesn't stop a runaway bill. Vercel's Spend Management on Pro can pause production when you hit a budget. It checks every few minutes, so set it below your real ceiling. Anthropic's Console lets you set a monthly spend limit, and requests fail once you reach it. Check whether each provider's limit is a hard stop or just an email.
+**Set a cap that actually stops spending.** An alert email at 2 a.m. doesn't stop a runaway bill. Vercel's Spend Management on Pro pauses production at a budget, but only with that action turned on. Otherwise it just notifies you. It checks every few minutes, so set it below your real ceiling. Anthropic's Console lets you set a monthly spend limit, and requests fail once you reach it. Check whether each provider's limit is a hard stop or just an email.
 
 **Assume someone will find your AI endpoint.** An open route that calls a model API lets strangers spend your money. Require a session, [rate-limit it](trust-boundaries.md), cap input size and `max_tokens`, and keep a provider spend limit as the backstop.
 
@@ -101,7 +101,7 @@ I'd add a cache when a measured hot path is still too slow after the query is fi
 - [web.dev: Web Vitals](https://web.dev/articles/vitals)
 - [MDN: Server-Timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Server-Timing)
 - [Drizzle: Relational queries](https://orm.drizzle.team/docs/rqb)
-- [Next.js: `use cache`](https://nextjs.org/docs/app/api-reference/directives/use-cache)
+- [Next.js: `use cache` (runtime caching on serverless)](https://nextjs.org/docs/app/api-reference/directives/use-cache)
 - [Next.js: `updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag)
 - [Next.js CLI: `next analyze`](https://nextjs.org/docs/app/api-reference/cli/next#next-analyze-options)
 - [Next.js: Edge runtime deprecated](https://nextjs.org/docs/messages/edge-runtime-deprecated)

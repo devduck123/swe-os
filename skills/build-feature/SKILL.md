@@ -25,7 +25,7 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 
 - Three failed attempts at the same problem: stop, write down what you learned, and ask.
 - The change needs something nobody agreed to, like a new service, a new dependency with running costs, or a schema change: stop and say so.
-- Anything in the stop-and-ask list in the [rules for every task](../README.md#rules-for-every-task).
+- Anything the [rules for every task](../README.md#rules-for-every-task) say to ask about first (rules 5 to 7).
 
 ## Report
 

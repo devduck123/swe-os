@@ -13,7 +13,7 @@ Build the simplest thing that fully solves today's problem. For most new web app
 
 ## The 50-user app an agent overbuilds
 
-You're building a booking app for a friend's yoga studio. About 50 regulars book classes, cancel, and get a confirmation email. You ask an agent to set it up properly. What comes back looks like a lot of tutorials. Go piece by piece and ask what each one solves for this app.
+You're building a booking app for a friend's yoga studio. About 50 regulars book classes, cancel, and get a confirmation email. You ask an agent to set it up properly, and what comes back looks like every tutorial at once. Go piece by piece and ask what each one solves for this app.
 
 - **A separate Express or tRPC API next to Next.js.** Next.js already runs server code. Server components read the database, and server actions handle writes. A second server means two deploys, CORS, and types that drift between them.
 - **A Zustand store that copies bookings from the API.** Bookings live in Postgres. A client copy is a second source of truth, and every mutation has to update both or someone sees a class that's already full.
