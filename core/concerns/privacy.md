@@ -4,7 +4,7 @@ description: What personal data you collect, where copies go, and whether you ca
 ---
 
 **Triggered by:** personal data, uploads, payments.
-**Floor:** personal data and payments always get "when stakes rise".
+**Floor:** sensitive personal data (health, financial, precise location, minors, government IDs), personal data shared with a third party, and payments always get "when stakes rise". Ordinary personal data, like an email for login, gets the minimum bar until the project is past prototype.
 
 ## Minimum bar
 
@@ -25,3 +25,7 @@ description: What personal data you collect, where copies go, and whether you ca
 - Email addresses in query strings, which end up in server logs and analytics.
 - "Delete account" that soft-deletes forever.
 - Sending full user records to an analytics or AI provider when an ID would do.
+
+## Learn more
+
+- [Trust boundaries: validation and authorization](../guides/trust-boundaries.md)

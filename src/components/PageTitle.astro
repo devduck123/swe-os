@@ -6,8 +6,9 @@ const data = entry.data as typeof entry.data & {
   domain?: string;
   stage?: string;
   freshness?: string;
-  status?: 'draft' | 'reviewed';
+  status?: 'outline' | 'draft' | 'reviewed';
   reviewed?: Date;
+  track?: number;
 };
 // Skill pages are built by StarlightPage, which reports a placeholder path under
 // src/content/docs/ (a Starlight internal). Those pages show their own raw link instead.
@@ -28,6 +29,11 @@ const reviewed = data.reviewed?.toISOString().slice(0, 10);
 <Default />
 {(chips.length > 0 || data.status || raw) && (
   <div class="page-meta not-content">
+    {data.track && (
+      <span class="chip chip--track">
+        <span class="sr-only">Learning </span>track {data.track}
+      </span>
+    )}
     {chips.map(([label, value]) => (
       <span class="chip">
         <span class="sr-only">{label}: </span>
@@ -41,6 +47,12 @@ const reviewed = data.reviewed?.toISOString().slice(0, 10);
       </a>
     )}
   </div>
+)}
+{data.status === 'outline' && (
+  <p class="draft-note not-content" role="note">
+    <strong>Outline.</strong> This page is being written. The headings and notes
+    show what it will cover.
+  </p>
 )}
 {data.status === 'draft' && (
   <p class="draft-note not-content" role="note">

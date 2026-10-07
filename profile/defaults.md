@@ -11,25 +11,29 @@ In an existing repo, its stack wins. In a work repo, the project's own rules and
 
 ## Stack
 
-| Layer                | I start with                                                                       | I change it when                                                          |
-| -------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Web app              | Next.js (App Router), React, TypeScript                                            | It's mostly client-side and URL-driven: TanStack Start once it's stable   |
-| Content site         | A static-first framework, like Astro for this site                                 | Pages need per-user or per-request data                                   |
-| UI                   | Tailwind and shadcn/ui (Base UI for new projects), Lucide icons                    | The project already has a design system                                   |
-| Forms and validation | react-hook-form and Zod                                                            | TanStack Form v2 lands and the project is on TanStack                     |
-| Server data          | Server actions or TanStack Query, whichever fits the screen                        | Pick per feature, not as a rule                                           |
-| Database             | Postgres: Neon for just the database, Supabase for its other services too, Drizzle | The data isn't relational (see below)                                     |
-| Auth                 | Better Auth when I want users in my own Postgres, Clerk for hosted UI fast         | Clerk's free tier lacks MFA and passkeys, so those push me to Better Auth |
-| Files                | Supabase Storage on Supabase, Vercel Blob on Vercel                                | Egress or limits matter: Cloudflare R2                                    |
-| Hosting              | Vercel                                                                             | The project makes money: Vercel Hobby is non-commercial only              |
-| Errors               | Sentry                                                                             | I also want product analytics: PostHog covers both                        |
-| Tests                | Vitest, plus Playwright for the flows that matter, once the codebase grows         | Never skipped for anything with my name on it that people use             |
-| App shape            | One Next.js app                                                                    | Multiple clients or truly separate services. Rare here.                   |
-| AI features          | A hosted model API behind my own server route                                      | Cost, latency, or privacy needs a different model or setup                |
+| Layer                | I start with                                                                                                           | I change it when                                                                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web app              | Next.js (App Router), React, TypeScript                                                                                | It's mostly client-side and URL-driven: TanStack Start once it's stable                                                                      |
+| Content site         | A static-first framework, like Astro for this site                                                                     | Pages need per-user or per-request data                                                                                                      |
+| UI                   | Tailwind, shadcn/ui, Lucide icons. New shadcn projects use Base UI by default, and I keep that                         | The project already has a design system                                                                                                      |
+| Forms and validation | react-hook-form and Zod                                                                                                | TanStack Form v2, now in alpha, goes stable and the project is on TanStack                                                                   |
+| Server data          | Server actions or TanStack Query, whichever fits the screen                                                            | Pick per feature, not as a rule                                                                                                              |
+| Database             | Postgres: Neon when I only need a database, Supabase when I want its auth, storage, and realtime too, Drizzle          | The data isn't relational (see below)                                                                                                        |
+| Auth                 | Better Auth when I want users in my own Postgres, Clerk for hosted UI fast                                             | Clerk's free tier lacks MFA and passkeys, so those push me to Better Auth                                                                    |
+| Rate limiting        | On auth and AI routes from day one, with counts stored in Postgres or Redis. In-memory limits don't hold on serverless | Postgres counters become measurable load: a managed Redis                                                                                    |
+| Payments             | Stripe Checkout, tested in a Stripe sandbox with test cards and the Stripe CLI forwarding webhooks                     | The hosted Checkout page can't do the flow: Stripe Elements                                                                                  |
+| Email                | A transactional email API, sending from my own verified domain. I haven't settled on a provider                        | Once one earns it, it goes here                                                                                                              |
+| Background work      | In the request, or in `after()` when the user shouldn't wait                                                           | It needs retries or outlasts the function: a hosted job service (Inngest, Trigger.dev, or Vercel Workflows). Hobby cron runs only once a day |
+| Files                | Supabase Storage on Supabase, Vercel Blob on Vercel                                                                    | Egress or limits matter: Cloudflare R2                                                                                                       |
+| Hosting              | Vercel                                                                                                                 | The project makes money: Vercel Hobby is non-commercial only                                                                                 |
+| Errors               | Sentry                                                                                                                 | I also want product analytics: PostHog covers both                                                                                           |
+| Tests                | Vitest for logic, plus Playwright for the flows that would hurt to break                                               | It's a throwaway spike nobody else uses: a manual check until someone does                                                                   |
+| App shape            | One Next.js app                                                                                                        | Multiple clients or truly separate services. Rare here.                                                                                      |
+| AI features          | A hosted model API behind my own server route                                                                          | Cost, latency, or privacy needs a different model or setup                                                                                   |
 
 **Honorable mention: Convex.** It has the best agent tooling of any backend I've looked at, with the whole backend in TypeScript and live queries built in. I'd try it on a realtime or collaborative app. It's a poor fit for relational or reporting-heavy data, since there's no SQL and there are per-query scan limits, and its paid plan is priced per developer.
 
-**Retired:** Auth.js now lives inside Better Auth and only gets security fixes, so I keep it only in apps that already use it. UploadThing has had almost no releases since 2025.
+**Retired:** Auth.js is now part of Better Auth and only gets security patches and urgent fixes, so I keep it only in apps that already use it. UploadThing hasn't shipped a release since 7.7.4 in August 2025.
 
 ## Data: Postgres unless the shape says otherwise
 
@@ -37,25 +41,18 @@ Postgres is the default for anything relational. I've used DynamoDB, Firestore, 
 
 - **Independent documents read by key:** the managed document or key-value store the platform makes easiest.
 - **A tiny tool for people who already live in a spreadsheet:** the spreadsheet can be the database. My backpack-comparison app started that way.
-- **Caching or rate limiting:** a managed Redis-style store, once something measured says you need it.
+- **Caching:** a managed Redis-style store, once something measured says you need it.
 
 ## Working with agents
 
 - **Who builds:** Claude Code and Codex, both for planning and building. Claude Code leads on UI and design work.
 - **Git:** light trunk-based development. A short-lived feature branch and a PR for everything, then merge to main. Vercel gives every PR a preview deploy.
 - **Pick agent-friendly tools.** When choosing between two tools, prefer the one an agent can drive: types end to end, schema and config in code, a CLI for everything, errors that say how to fix them, and docs an agent can load (llms.txt or an official MCP server).
-- **Connect the agent tooling per project.** Most of this stack ships MCP servers or agent skills: shadcn, Next.js devtools, Vercel, Playwright, Sentry, Supabase, Neon, and Convex. Point database tools at development data, or run them read-only against production.
+- **Connect the agent tooling per project.** Most of this stack ships an official MCP server: [shadcn](https://ui.shadcn.com/docs/mcp), [Next.js devtools](https://github.com/vercel/next-devtools-mcp), [Vercel](https://vercel.com/docs/agent-resources/vercel-mcp), [Playwright](https://github.com/microsoft/playwright-mcp), [Sentry](https://mcp.sentry.dev/), [Supabase](https://supabase.com/docs/guides/getting-started/mcp), [Neon](https://neon.com/docs/ai/neon-mcp-server), and [Convex](https://docs.convex.dev/ai/convex-mcp-server). Point database tools at development data, or run them read-only against production.
 
 ## Cliffs worth knowing
 
-Checked 2026-10-06. Recheck before relying on them.
-
-- **Vercel Hobby** is free for non-commercial use only. Go over a limit and that feature stops until the month resets, with no option to pay. Pro starts at $20 per seat per month.
-- **Supabase Free** pauses a project after a week without activity.
-- **Clerk Hobby** has no MFA or passkeys. Pro is $25 a month.
-- **Convex Pro** is $25 per developer per month once you outgrow the free tier.
-
-Free tiers are fine until they aren't. Before picking a service, find its pricing cliff: the usage level where the bill or the limits jump. I'd rather run cheap experiments on managed services than operate infrastructure for fun.
+Free tiers are fine until they aren't. Before picking a service, find its pricing cliff: the usage level where the bill or the limits jump. The current cliffs for this stack live in [the side-project stack](../core/recipes/side-project-stack.md#what-it-costs).
 
 ## UI taste
 
@@ -69,9 +66,13 @@ Default framework styling shipped as-is isn't a design. Neither is decoration th
 
 ## Sources
 
-- [Vercel Hobby plan](https://vercel.com/docs/plans/hobby)
-- [Supabase pricing](https://supabase.com/pricing)
-- [Clerk pricing](https://clerk.com/pricing)
+- [Vercel Hobby plan](https://vercel.com/docs/plans/hobby) and [cron job limits](https://vercel.com/docs/cron-jobs/usage-and-pricing)
+- [Next.js `after`](https://nextjs.org/docs/app/api-reference/functions/after) and [Vercel Workflows](https://vercel.com/docs/workflows)
+- [Clerk pricing](https://clerk.com/pricing), [Neon plans](https://neon.com/docs/introduction/plans), and [Supabase pricing](https://supabase.com/pricing)
+- [Better Auth rate limiting](https://www.better-auth.com/docs/concepts/rate-limit)
+- [Stripe sandboxes](https://docs.stripe.com/sandboxes) and [testing](https://docs.stripe.com/testing)
 - [Convex pricing](https://www.convex.dev/pricing) and [limits](https://docs.convex.dev/production/state/limits)
 - [Auth.js joins Better Auth](https://www.better-auth.com/blog/authjs-joins-better-auth)
-- [shadcn/ui changelog](https://ui.shadcn.com/docs/changelog)
+- [shadcn/ui: Base UI as the default](https://ui.shadcn.com/docs/changelog/2026-07-base-ui-default)
+- [Vercel Blob pricing](https://vercel.com/docs/vercel-blob/usage-and-pricing) and [R2 pricing](https://developers.cloudflare.com/r2/pricing/)
+- [UploadThing on npm](https://www.npmjs.com/package/uploadthing?activeTab=versions)

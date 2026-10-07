@@ -35,6 +35,7 @@ export const GET: APIRoute = async ({ site }) => {
     '',
     section('Concerns', 'core/concerns/'),
     section('Guides', 'core/guides/'),
+    section('Recipes', 'core/recipes/'),
     section('Principles', 'core/principles'),
     section('Profile', 'profile/'),
     '## Templates',

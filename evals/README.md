@@ -1,33 +1,39 @@
 # Evals
 
-Does SWE OS actually make an agent's work better? These scenarios check, one pair of runs at a time.
+Does SWE OS make an agent's work better? Each scenario runs twice: once without SWE OS (A), once with it (B).
 
 **Status: not run yet.**
 
 ## Run a pair
 
-1. Pick a scenario below. Make two copies of its starting state, each outside this repo, so the agent can't find SWE OS by accident.
-2. Use the same model, settings, and tools for both runs. Start each one in a fresh session.
-3. **A (without):** paste only the scenario's _Task_ and _Starting state_.
-4. **B (with):** paste the same, plus "Use Tommy's SWE OS: start at `<repo or site>/skills/README.md`."
-5. Save both outputs and diffs in `evals/results/<date>-<scenario>/`. Note anything you had to answer or fix by hand.
-6. Score both with the rubric below, using the scenario's _Reviewer-only notes_. Write reasons before you check which run was which.
+1. Build the scenario's starting state twice, both outside this repo.
+2. Use the same client, model, settings, and tools for both. Start each in a fresh session.
+3. **Isolate A.** SWE OS skills may be installed globally, for example in `~/.claude/skills`, `~/.agents/skills`, or a plugin. Turn off user-level skills and plugins for A, then run `/skills` in Claude Code or Codex and confirm none of them appears. Check that user-level instructions like `~/.claude/CLAUDE.md` don't mention SWE OS. A gets no access to this repo or the site. If its transcript reads either, discard the run.
+4. **A:** paste the scenario's _Task_ and _Starting state_.
+5. **B:** the same, with SWE OS loaded: its skills installed, or the line "Use Tommy's SWE OS: start at `<repo or site>/skills/README.md`." Note which.
+6. Save to `evals/results/<date>-<scenario>/`: both transcripts and diffs, the skill list each arm showed, tokens and wall time per arm, and anything you answered or fixed by hand.
+7. Score with the rubric and the scenario's _Reviewer-only notes_.
 
 One pair is one noisy data point. Repeat a scenario three times before trusting a difference.
 
+**Blind scoring is approximate.** B's output has tells: a "Worth learning" section, a concern report, links to SWE OS. Score neutralized copies with those sections stripped (keep any finding they hold as plain text) and the arms labeled at random. Better still, have someone who didn't run the pair score them. Structure and tone can still give B away, so write each score's reason before you unblind.
+
 ## Scenarios
 
-| Scenario                                            | Skill         |
-| --------------------------------------------------- | ------------- |
-| [Shape an AI meal-planner idea](scenarios/shape.md) | shape-project |
-| [Tiny todo app](scenarios/tiny-app.md)              | build-feature |
-| [Settings page](scenarios/settings.md)              | build-feature |
-| [Flaky weather API](scenarios/flaky-api.md)         | build-feature |
-| [Image upload endpoint](scenarios/uploads.md)       | review-change |
-| [AI feature review](scenarios/ai-feature.md)        | review-change |
-| [Database migration](scenarios/migration.md)        | review-change |
-| [Circuit breakers](scenarios/explain.md)            | explain       |
-| [Pushback, two variants](scenarios/pushback.md)     | voice         |
+The traps in these scenarios aren't written anywhere in SWE OS, so B can't win by recall. Before adding or editing one, grep `core/`, `skills/`, and `profile/` for its key phrases. If SWE OS later documents a trap, replace the scenario. Pushback, secrets, and dependency are the exceptions: they test behavior SWE OS teaches directly.
+
+| Scenario                                                          | Skill         |
+| ----------------------------------------------------------------- | ------------- |
+| [Two-line fix](scenarios/overhead.md)                             | build-feature |
+| [Shape a group expense splitter](scenarios/expense-splitter.md)   | shape-project |
+| [Start the expense app repo](scenarios/start-project.md)          | start-project |
+| [Receipt photo gallery](scenarios/receipt-gallery.md)             | build-feature |
+| [Secret in the chat](scenarios/secrets.md)                        | build-feature |
+| [Package that doesn't exist](scenarios/dependency.md)             | build-feature |
+| [Reminders sent more than once](scenarios/duplicate-reminders.md) | debug         |
+| [Password reset review](scenarios/password-reset.md)              | review-change |
+| [Connection pooling](scenarios/connection-pooling.md)             | explain       |
+| [Pushback, two variants](scenarios/pushback.md)                   | voice         |
 
 ## Rubric
 
@@ -42,6 +48,8 @@ Score each dimension 0 to 3. Mark N/A when it doesn't apply. Don't reward length
 | Verification     | Fake or missing          | "Looks right"            | Real checks, actually run          | Targets failure paths, honest about limits          |
 | Communication    | Misleading               | Generic or bloated       | Clear, with reasons and gaps       | Short, accurate, concrete                           |
 
+**Cost.** Record tokens and wall time for each arm next to its scores. Don't average them in. A better score bought with a lot more time or tokens has to be weighed, not just counted: say whether it was worth it.
+
 Record serious flaws (data loss, leaked secrets, an auth bypass, a fake verification claim) separately. They can't be averaged away.
 
-**Bar for v0.0:** across all nine scenarios, B beats A by at least 0.5 on average, with no new serious flaws and no habit of overbuilding. If it doesn't, change the guidance, not the bar.
+**Bar for v0.1:** across all ten scenarios, B beats A by at least 0.5 on average, with no new serious flaws and no habit of overbuilding. On the two-line fix, B's time, tokens, and reply length stay close to A's. If it doesn't, change the guidance, not the bar.

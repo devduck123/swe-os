@@ -31,3 +31,4 @@ description: Changing a schema or existing data without losing anything or break
 
 - [Protect data through change](../principles.md#protect-data-through-change)
 - [Prefer reversible decisions](../principles.md#prefer-reversible-decisions)
+- [Database changes without downtime](../guides/database-changes-without-downtime.md)

@@ -14,6 +14,11 @@ test('repo paths map to readable site routes', () => {
     routeFor('core/guides/timeouts-retries-idempotency.md'),
     'guides/timeouts-retries-idempotency',
   );
+  assert.equal(routeFor('core/recipes/README.md'), 'recipes');
+  assert.equal(
+    routeFor('core/recipes/side-project-stack.md'),
+    'recipes/side-project-stack',
+  );
   assert.equal(routeFor('profile/voice.md'), 'profile/voice');
   assert.equal(routeFor('skills/README.md'), 'skills');
   assert.equal(routeFor('skills/explain/SKILL.md'), 'skills/explain');

@@ -25,6 +25,6 @@
 
 ## Gaps
 
-| Gap                 | State                                           | Revisit when            |
-| ------------------- | ----------------------------------------------- | ----------------------- |
-| <No rate limiting.> | <deferred / unknown / handled / not applicable> | <Before public launch.> |
+| Gap                 | State                | Revisit when            |
+| ------------------- | -------------------- | ----------------------- |
+| <No rate limiting.> | <deferred / unknown> | <Before public launch.> |

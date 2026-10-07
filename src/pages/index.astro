@@ -12,7 +12,8 @@ const concerns = docs
   .filter((d) => d.id.startsWith('concerns/'))
   .map((d) => ({ id: d.id.replace('concerns/', ''), title: d.data.title }));
 const concernIds = new Set(concerns.map((c) => c.id));
-const guides = docs.filter((d) => d.id.startsWith('guides/'));
+// Stops on the learning track, guides and recipes alike.
+const trackStops = docs.filter((d) => d.data.track).length;
 const principles = (await getEntry('docs', 'principles'))!
   .body!.split('\n')
   .filter((line) => line.startsWith('## '))
@@ -21,14 +22,13 @@ const principles = (await getEntry('docs', 'principles'))!
 // The concern order follows the routing table, roughly from the user's view inward.
 const order = [
   'product-ux',
+  'ui-quality',
   'accessibility',
-  'responsive',
-  'visual-design',
-  'components',
   'api-contracts',
   'ai-features',
   'security',
   'privacy',
+  'dependencies',
   'data',
   'migrations',
   'concurrency',
@@ -53,14 +53,11 @@ const demos = [
     request: 'Add avatar uploads to user profiles.',
     skill: 'build-feature',
     concerns: [
-      'product-ux',
+      'ui-quality',
       'accessibility',
-      'responsive',
-      'visual-design',
       'security',
       'privacy',
       'data',
-      'performance',
       'testing',
       'cost',
     ],
@@ -194,9 +191,9 @@ const cards = [
   },
   {
     href: '/guides/',
-    title: 'Guides',
-    count: `${guides.length} written, more coming`,
-    body: "Concepts explained the way I'd want them explained to me.",
+    title: 'The track',
+    count: `${trackStops} stops`,
+    body: "From vibe coder to engineer, one stop at a time. Concepts explained the way I'd want them explained to me.",
     tone: 'mint',
     icon: 'book',
   },
@@ -204,7 +201,7 @@ const cards = [
     href: '/skills/',
     title: 'Skills',
     count: `${skills.length} workflows`,
-    body: 'Shape, build, debug, review, explain, learn. The playbooks your agent follows.',
+    body: 'Start, shape, build, debug, review, explain, learn. The playbooks your agent follows.',
     tone: 'sky',
     icon: 'spark',
   },
@@ -328,13 +325,13 @@ const cards = [
           </h1>
           <p class="hero__lede">
             SWE OS is how I build software, written once for two readers. You
-            read it to learn what separates a vibe-coder from a software
+            read it to learn what separates a vibe coder from a software
             engineer. Your coding agent reads the same pages and does better
             work.
           </p>
           <div class="hero__ctas">
             <a class="btn btn--primary" href="/guides/">
-              Start learning <span aria-hidden="true">→</span>
+              Start the track <span aria-hidden="true">→</span>
             </a>
             <a class="btn btn--ghost" href="#agent">
               Point your agent here
@@ -533,10 +530,11 @@ three things can happen...
 
       <section class="section inside" aria-labelledby="inside-title">
         <p class="eyebrow">What's inside</p>
-        <h2 id="inside-title">Small on purpose.</h2>
+        <h2 id="inside-title">Plenty here. Load only what you need.</h2>
         <p class="section__lede">
-          Good engineering isn't using every tool. It's knowing which ones the
-          problem deserves. Same goes for this site.
+          A {trackStops}-stop track, plus the principles, concerns, and skills
+          your agent works from. Nobody reads it all at once, your agent
+          included. Each task pulls in only the pages it needs.
         </p>
         <ul class="cards">
           {cards.map((card) => (
@@ -633,8 +631,8 @@ three things can happen...
     <footer class="footer">
       <Logo size={28} />
       <p>
-        Made by Tommy, with a lot of help from agents. Facts link to sources.
-        Opinions are labeled as mine.
+        Made by Tommy, with a lot of help from agents. Fast-moving facts are
+        dated and sourced. Opinions are labeled as mine.
       </p>
     </footer>
 

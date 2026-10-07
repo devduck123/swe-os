@@ -27,3 +27,8 @@ description: Getting a change from your machine to users, and back out again if 
 ## Learn more
 
 - [Prefer reversible decisions](../principles.md#prefer-reversible-decisions)
+- [Local first, then managed services](../guides/local-first-then-managed.md)
+- [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)
+- [Shipping changes you can undo](../guides/shipping-changes-you-can-undo.md)
+- [Database changes without downtime](../guides/database-changes-without-downtime.md)
+- [The side-project stack](../recipes/side-project-stack.md)

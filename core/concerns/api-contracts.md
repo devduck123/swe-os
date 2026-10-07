@@ -30,3 +30,4 @@ description: Is the interface other code depends on explicit, validated, and saf
 
 - [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
 - [Validate at the boundaries](../principles.md#validate-at-the-boundaries)
+- [Trust boundaries: validation and authorization](../guides/trust-boundaries.md)

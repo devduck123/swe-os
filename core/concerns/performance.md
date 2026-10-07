@@ -27,3 +27,8 @@ description: Is it fast enough for the people using it, with real data, and do y
 ## Learn more
 
 - [Scale from evidence](../principles.md#scale-from-evidence)
+- [How a request travels through your app](../guides/how-a-request-travels.md)
+- [Simple first: when complexity earns its place](../guides/simple-first.md)
+- [Data that stays correct](../guides/data-that-stays-correct.md)
+- [What a complete frontend feature includes](../guides/complete-frontend-features.md)
+- [Performance and cost: scale from evidence](../guides/performance-and-cost.md)
