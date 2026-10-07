@@ -83,7 +83,7 @@ for (const name of skills) {
   }
 }
 
-// 3. Every concern is reachable from the routing table, and guides only name real concerns.
+// 3. Every concern is reachable from the routing table.
 const concerns = readdirSync(join(root, 'core/concerns'))
   .filter((file) => file !== 'README.md')
   .map((file) => file.replace(/\.md$/, ''));
@@ -94,16 +94,35 @@ for (const id of concerns) {
     `core/concerns/${id}.md is not in the routing table`,
   );
 }
-for (const file of markdownIn('core/guides').filter(
-  (f) => !f.endsWith('README.md'),
-)) {
+// 4. Guides and recipes carry a status, and the track has one page per position, all linked
+//    from the track page.
+const trackPage = read('core/guides/README.md');
+const seenTrack = new Map();
+for (const file of [
+  ...markdownIn('core/guides'),
+  ...markdownIn('core/recipes'),
+].filter((f) => !f.endsWith('README.md'))) {
   const data = frontmatter(read(file));
   for (const id of data.concerns ?? []) {
     assert(concerns.includes(id), `${file} names unknown concern "${id}"`);
   }
-  assert(data.status, `${file} needs a status: draft or reviewed`);
+  assert(data.status, `${file} needs a status: outline, draft, or reviewed`);
   if (data.freshness === 'fast-moving')
     assert(data.reviewed, `${file} is fast-moving and needs a reviewed date`);
+  if (data.track) {
+    assert(
+      !seenTrack.has(data.track),
+      `${file} and ${seenTrack.get(data.track)} share track ${data.track}`,
+    );
+    seenTrack.set(data.track, file);
+    const href = file.startsWith('core/guides/')
+      ? file.split('/').at(-1)
+      : `../recipes/${file.split('/').at(-1)}`;
+    assert(
+      trackPage.includes(`](${href})`),
+      `${file} is on the track but not linked from core/guides/README.md`,
+    );
+  }
 }
 
 console.log(

@@ -30,3 +30,4 @@ description: Can people use it with a keyboard, a screen reader, zoom, or less-t
 ## Learn more
 
 - [Accessibility is correctness](../principles.md#accessibility-is-correctness)
+- [What a complete frontend feature includes](../guides/complete-frontend-features.md)

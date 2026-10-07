@@ -8,11 +8,21 @@ import { frontmatter, root } from './src/lib/routes.mjs';
 
 // Sidebar entries come from the files on disk, so a new guide or concern shows up by existing.
 // The config is read once, so restart `npm run dev` after adding a file to see it in the sidebar.
+// Pages with a `track` number come first, in track order, so Starlight's next and previous
+// links walk the learning track. Everything else follows alphabetically.
 const pages = (dir) =>
   readdirSync(join(root, dir))
     .filter((file) => file.endsWith('.md') && file !== 'README.md')
-    .map((file) => file.replace(/\.md$/, ''))
-    .sort();
+    .map((file) => ({
+      slug: file.replace(/\.md$/, ''),
+      track: frontmatter(readFileSync(join(root, dir, file), 'utf8')).track,
+    }))
+    .sort(
+      (a, b) =>
+        (a.track ?? Infinity) - (b.track ?? Infinity) ||
+        a.slug.localeCompare(b.slug),
+    )
+    .map((page) => page.slug);
 const skillItems = readdirSync(join(root, 'skills'), { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => {
@@ -101,8 +111,15 @@ export default defineConfig({
         {
           label: 'Learn',
           items: [
-            { label: 'All guides', slug: 'guides' },
+            { label: 'The track', slug: 'guides' },
             ...pages('core/guides').map((p) => ({ slug: `guides/${p}` })),
+          ],
+        },
+        {
+          label: 'Recipes',
+          items: [
+            { label: 'All recipes', slug: 'recipes' },
+            ...pages('core/recipes').map((p) => ({ slug: `recipes/${p}` })),
           ],
         },
         {

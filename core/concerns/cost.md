@@ -24,3 +24,7 @@ description: What this will cost to run, where the pricing cliffs are, and what 
 - Retry loops that multiply API spend during an outage.
 - Storing every upload forever because nobody set a retention rule.
 - Choosing a service for its free tier without checking the cliff.
+
+## Learn more
+
+- [Local first, then managed services](../guides/local-first-then-managed.md)

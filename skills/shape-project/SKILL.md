@@ -21,7 +21,7 @@ Turn an idea into a small, testable first version, and only then pick tools. Fol
 3. **Design the smallest valuable journey.** How the user arrives, the one core action, and how they know it worked. Include the empty state and the main error state. Assume a phone and a keyboard user. List the tempting extras you're leaving out.
 4. **Derive the requirements from that journey.** If the product leans on a model, read [AI features](../../core/concerns/ai-features.md) now: whether a model is even the right tool, how you'll judge output quality, and the cost per use all shape the first version. What data it stores, who it trusts, what it integrates with, its cost ceiling, and how much upkeep it can afford. Use the [concerns table](../../core/concerns/README.md#pick-the-concerns) to catch what's missing, like auth, personal data, or payments.
 5. **Now pick the stack.** Start from [Defaults](../../profile/defaults.md) and anything the user already has. For each component, say why it's there. Say what you left out and what would make you add it. Check current pricing and limits from primary sources. Never invent free-tier numbers.
-6. **Name the next step.** Usually it's the experiment from step 2 or the first build slice. If the user decides to build, create `AGENTS.md` and `PROJECT.md` from the [templates](../../templates/project/AGENTS.md) and record the decisions there.
+6. **Name the next step.** Usually it's the experiment from step 2 or the first build slice. If the user decides to build, set the repo up with [start-project](../start-project/SKILL.md) and record the decisions in its `PROJECT.md`.
 
 ## Stop rules
 

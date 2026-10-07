@@ -10,6 +10,7 @@ If you're an agent, start here. If you're a person, this is the page to point yo
 | The request sounds like...                                                     | Use                                     |
 | ------------------------------------------------------------------------------ | --------------------------------------- |
 | "I want to build X." A new app, product idea, or big change in direction.      | [shape-project](shape-project/SKILL.md) |
+| "Set up a new project", "start a repo". A new codebase, or one with no setup.  | [start-project](start-project/SKILL.md) |
 | "Build X", "add X", "change X". New or changed behavior.                       | [build-feature](build-feature/SKILL.md) |
 | "It's broken", "why is X doing Y", a crash, a failing test.                    | [debug](debug/SKILL.md)                 |
 | "Review this." A diff, a PR, or a plan.                                        | [review-change](review-change/SKILL.md) |

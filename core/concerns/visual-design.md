@@ -27,3 +27,7 @@ A feature isn't done because it resembles a screenshot. Visual design is how a u
 - Everything bold, so nothing stands out.
 - Default framework styling shipped as the design.
 - Dark mode with unreadable contrast because colors were hard-coded.
+
+## Learn more
+
+- [What a complete frontend feature includes](../guides/complete-frontend-features.md)

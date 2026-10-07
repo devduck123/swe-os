@@ -24,3 +24,7 @@ description: Does it hold up on a phone, a laptop, and everything between?
 - Hover-only interactions that don't exist on touch.
 - Fixed heights that cut off translated or user-generated text.
 - Testing only in the desktop browser the code was written in.
+
+## Learn more
+
+- [What a complete frontend feature includes](../guides/complete-frontend-features.md)

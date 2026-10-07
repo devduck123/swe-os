@@ -10,28 +10,29 @@ A concern is something a feature can get wrong that the happy path won't show yo
 
 Match what the feature actually does, after you've read the code it touches. One feature usually triggers several rows.
 
-| If the feature...                                   | Read these concerns                                                                                                                        |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| changes what a user sees or can do                  | [product and UX](product-ux.md)                                                                                                            |
-| has a UI                                            | [accessibility](accessibility.md), [responsive design](responsive.md), [visual design](visual-design.md)                                   |
-| adds UI pieces that appear in more than one place   | [components](components.md)                                                                                                                |
-| exposes an API, webhook, CLI, or file format        | [API contracts](api-contracts.md), [security](security.md)                                                                                 |
-| accepts input from outside your code                | [security](security.md)                                                                                                                    |
-| calls a language model, or acts on what one returns | [AI features](ai-features.md), [security](security.md), [cost](cost.md), [reliability](reliability.md)                                     |
-| accepts file uploads                                | [security](security.md), [data](data.md), [privacy](privacy.md), [performance](performance.md), [cost](cost.md)                            |
-| touches login, sessions, or permissions             | [security](security.md) (floor), [testing](testing.md)                                                                                     |
-| handles secrets or credentials                      | [security](security.md) (floor)                                                                                                            |
-| stores data that outlives a request                 | [data](data.md), [reliability](reliability.md)                                                                                             |
-| changes a schema or rewrites existing data          | [migrations](migrations.md), [data](data.md), [deployment](deployment.md)                                                                  |
-| lets more than one actor write the same thing       | [concurrency](concurrency.md)                                                                                                              |
-| runs background or scheduled work                   | [concurrency](concurrency.md), [reliability](reliability.md), [observability](observability.md)                                            |
-| calls a service you don't own                       | [reliability](reliability.md), [observability](observability.md), [security](security.md), [cost](cost.md)                                 |
-| processes personal data                             | [privacy](privacy.md) (floor)                                                                                                              |
-| moves money                                         | [security](security.md), [data](data.md), [concurrency](concurrency.md), [reliability](reliability.md), [privacy](privacy.md) (all floors) |
-| uses a usage-billed service                         | [cost](cost.md)                                                                                                                            |
-| has a latency, size, or throughput budget           | [performance](performance.md)                                                                                                              |
-| changes build, config, or release                   | [deployment](deployment.md)                                                                                                                |
-| changes any behavior                                | [testing](testing.md)                                                                                                                      |
+| If the feature...                                                  | Read these concerns                                                                                                                        |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| changes what a user sees or can do                                 | [product and UX](product-ux.md)                                                                                                            |
+| has a UI                                                           | [accessibility](accessibility.md), [responsive design](responsive.md), [visual design](visual-design.md)                                   |
+| adds UI pieces that appear in more than one place                  | [components](components.md)                                                                                                                |
+| exposes an API, webhook, CLI, or file format                       | [API contracts](api-contracts.md), [security](security.md)                                                                                 |
+| accepts input from outside your code                               | [security](security.md)                                                                                                                    |
+| calls a language model, or acts on what one returns                | [AI features](ai-features.md), [security](security.md), [cost](cost.md), [reliability](reliability.md)                                     |
+| accepts file uploads                                               | [security](security.md), [data](data.md), [privacy](privacy.md), [performance](performance.md), [cost](cost.md)                            |
+| touches login, sessions, or permissions                            | [security](security.md) (floor), [testing](testing.md)                                                                                     |
+| handles secrets or credentials                                     | [security](security.md) (floor)                                                                                                            |
+| stores data that outlives a request                                | [data](data.md), [reliability](reliability.md)                                                                                             |
+| changes a schema or rewrites existing data                         | [migrations](migrations.md), [data](data.md), [deployment](deployment.md)                                                                  |
+| lets more than one actor write the same thing                      | [concurrency](concurrency.md)                                                                                                              |
+| runs background or scheduled work                                  | [concurrency](concurrency.md), [reliability](reliability.md), [observability](observability.md)                                            |
+| adds a package, SDK, GitHub Action, MCP server, or outside service | [dependencies](dependencies.md), [security](security.md), [cost](cost.md)                                                                  |
+| calls a service you don't own                                      | [reliability](reliability.md), [observability](observability.md), [security](security.md), [cost](cost.md)                                 |
+| processes personal data                                            | [privacy](privacy.md) (floor)                                                                                                              |
+| moves money                                                        | [security](security.md), [data](data.md), [concurrency](concurrency.md), [reliability](reliability.md), [privacy](privacy.md) (all floors) |
+| uses a usage-billed service                                        | [cost](cost.md)                                                                                                                            |
+| has a latency, size, or throughput budget                          | [performance](performance.md)                                                                                                              |
+| changes build, config, or release                                  | [deployment](deployment.md)                                                                                                                |
+| changes any behavior                                               | [testing](testing.md)                                                                                                                      |
 
 If nothing matches an implementation task, look again. Pure explanations and copy edits can match nothing. Code changes rarely do.
 

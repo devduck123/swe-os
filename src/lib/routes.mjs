@@ -31,8 +31,8 @@ export const docPatterns = ['core/**/*.md', 'profile/*.md', 'skills/README.md'];
 
 const rules = [
   [/^core\/principles\.md$/, 'principles'],
-  [/^core\/(concerns|guides)\/README\.md$/, '$1'],
-  [/^core\/(concerns|guides)\/([a-z0-9-]+)\.md$/, '$1/$2'],
+  [/^core\/(concerns|guides|recipes)\/README\.md$/, '$1'],
+  [/^core\/(concerns|guides|recipes)\/([a-z0-9-]+)\.md$/, '$1/$2'],
   [/^profile\/([a-z0-9-]+)\.md$/, 'profile/$1'],
   [/^skills\/README\.md$/, 'skills'],
   [/^skills\/([a-z0-9-]+)\/SKILL\.md$/, 'skills/$1'],

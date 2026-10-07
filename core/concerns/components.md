@@ -23,3 +23,7 @@ description: Are UI pieces built once and reused, with clear props and state, in
 - The same button styled three different ways in three files.
 - A "generic" component built for one use that now needs a flag for every new caller.
 - Two pieces of state that must agree, kept in sync by hand.
+
+## Learn more
+
+- [What a complete frontend feature includes](../guides/complete-frontend-features.md)

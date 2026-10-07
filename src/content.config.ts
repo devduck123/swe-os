@@ -47,7 +47,10 @@ export const collections = {
           ])
           .optional(),
         freshness: z.enum(['durable', 'evolving', 'fast-moving']).optional(),
-        status: z.enum(['draft', 'reviewed']).optional(),
+        // outline: structure only, Tommy writes the prose. draft: written, not yet reviewed by Tommy.
+        status: z.enum(['outline', 'draft', 'reviewed']).optional(),
+        // Position in the learning track. Guides and recipes without one sit after the track.
+        track: z.number().int().positive().optional(),
         reviewed: z.coerce.date().optional(),
         concerns: z.array(z.string()).optional(),
       }),

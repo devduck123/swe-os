@@ -27,3 +27,4 @@ description: Getting a change from your machine to users, and back out again if 
 ## Learn more
 
 - [Prefer reversible decisions](../principles.md#prefer-reversible-decisions)
+- [Local first, then managed services](../guides/local-first-then-managed.md)

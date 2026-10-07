@@ -11,7 +11,8 @@ description: Who can do what, what input you trust, and where secrets live.
 - Name the trust boundaries: where does data come from someone you don't control?
 - Validate on the server. The UI is a convenience, not a control.
 - Check authorization on every protected action: is this user allowed to touch _this_ record?
-- Keep secrets out of client code, logs, error messages, and Git. Load them from the environment.
+- Keep secrets out of client code, logs, error messages, Git, and agent chats. Load them from the environment. Variables with a public prefix (`NEXT_PUBLIC_`, `VITE_`) ship to the browser.
+- Give agents and tools their own scoped, dev-only keys. Production keys live only in the hosting platform.
 - Use parameterized queries and the framework's escaping. Never build SQL or HTML by string concatenation.
 
 ## When stakes rise
@@ -29,7 +30,9 @@ description: Who can do what, what input you trust, and where secrets live.
 - Trusting a file's name or MIME type from the client.
 - Admin routes protected only by being hidden from the menu.
 - Detailed stack traces returned to users.
+- A production key pasted into an agent chat, or exposed through a public env prefix.
 
 ## Learn more
 
 - [Validate at the boundaries](../principles.md#validate-at-the-boundaries)
+- [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)
