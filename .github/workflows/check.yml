@@ -21,6 +21,10 @@ jobs:
       - run: npm run test:browser
   secrets:
     runs-on: ubuntu-latest
+    # The action lists a PR's commits to scan them, which needs read access to pull requests.
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v7
         with:
