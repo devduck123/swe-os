@@ -9,7 +9,7 @@ Done when:
 - A newcomer can land on the site and follow the track from "what's the difference?" to "here's the stack I'd ship, and why". Every stop on the track has been reviewed by Tommy, and cut where it didn't earn its place.
 - `start-project` sets up a real side project that passes its own checks, with secrets protected, on the first run.
 - The secrets and dependency evals show agents catching what the new guidance targets.
-- The site is live on a domain, under a license, with `.archive/` gone and no private details anywhere.
+- The site is live on a domain, under a license, with no private details anywhere.
 
 ## Next
 
@@ -17,7 +17,7 @@ Done when:
 2. Test `start-project` on one real side project, and fix what it gets wrong.
 3. Run the evals in `evals/`, starting with `overhead`, `secrets`, `dependency`, and `pushback`.
 4. Launch decisions: license, domain, hosting (Vercel per defaults), and the `site` URL for the sitemap and `llms.txt`.
-5. Before launch: delete `.archive/`, re-check every fast-moving claim, and do a final review of the public README and landing page.
+5. Before launch: re-check every fast-moving claim, and do a final review of the public README and landing page.
 6. After launch: the two-week `learn` trial, dogfooding `build-feature`, and guides picked by what `learn` keeps surfacing.
 
 ## Decisions
@@ -52,6 +52,5 @@ Done when:
 | No domain, hosting, or license chosen                                                     | Deferred | Before going public                                                                           |
 | Windows paths and line endings are handled in code but never run on Windows               | Unknown  | First Windows contributor or CI runner                                                        |
 | The 22-stop track is agent-drafted and unreviewed                                         | Deferred | v0.1 launch                                                                                   |
-| Codex's first version is in `.archive/codex-v0/`, untracked                               | Deferred | Tommy deletes it once he's compared                                                           |
 | Drizzle snippets target stable 0.45; 1.0 changes `casing` and relational `where`          | Deferred | Drizzle 1.0 ships stable                                                                      |
 | Local-first setup relies on a `pg_isready` healthcheck, but no compose template ships one | Deferred | First real run of `start-project`                                                             |

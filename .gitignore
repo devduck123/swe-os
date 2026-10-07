@@ -7,4 +7,3 @@ test-results/
 .env*
 !.env.example
 # Codex's first draft, kept locally for comparison. Delete when done.
-.archive/
