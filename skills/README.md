@@ -3,7 +3,7 @@ title: Using SWE OS with an agent
 description: The entry point for coding agents. Pick a skill, follow the shared rules, and load only what the task needs.
 ---
 
-If you're an agent, start here. Links are relative: resolve them against this file's path or URL, and read the raw Markdown.
+If you're an agent, start here. Links are relative: resolve them against this file's path or URL, and read the raw Markdown. Reading from a URL, print each file to the terminal with `curl`. There's nothing to save.
 
 If you're a person, this is the page to point your agent at. [Two ways to do it](https://github.com/devduck123/swe-os#use-it-with-an-agent). Not Tommy? Your own instructions and your project's `AGENTS.md` override everything here, and you can fork the repo and rewrite `profile/` to make it yours.
 
@@ -18,6 +18,8 @@ If you're a person, this is the page to point your agent at. [Two ways to do it]
 | "Review this." A diff, a PR, or a plan.                                        | [review-change](review-change/SKILL.md) |
 | "Explain X", "how does X work", "why would I use X".                           | [explain](explain/SKILL.md)             |
 | "Walk me through this PR", "catch me up", "quiz me". Learning from agent work. | [learn](learn/SKILL.md)                 |
+
+**Tiny changes skip the skills.** A typo, a copy edit, or a one-line fix that adds no behavior: make it, run the checks, and report in a sentence or two. No concern report, and no Worth learning unless something surprised you.
 
 If none fit, work normally and still follow the rules below. If a request spans two, finish the first before the second. Shape before you build.
 

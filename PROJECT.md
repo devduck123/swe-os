@@ -15,7 +15,7 @@ Done when:
 ## Next
 
 1. Tommy creates the Vercel project from the repo. The site goes live on its `vercel.app` domain.
-2. Test both agent paths with Claude Code and Codex from a fresh session in an unrelated folder, and fix what breaks.
+2. Done for Claude Code: both paths picked `build-feature` and followed it in a fresh project. Codex is still untested.
 3. Before the repo goes public: secret-scan every branch's history, grep for private names, and delete stale branches.
 4. Tommy makes the repo public.
 5. After launch:
@@ -55,7 +55,7 @@ Done when:
 | Gap                                                                                       | State    | Revisit when                                                                                  |
 | ----------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
 | Concern pages and skills are AI-drafted and only spot-reviewed by Tommy                   | Deferred | Evals or real use show agents missing what they should catch                                  |
-| The agent paths are untested from outside this repo                                       | Unknown  | Next step 2                                                                                   |
+| Codex is untested against SWE OS; Claude Code passed from the site and from a local copy  | Unknown  | Someone runs one task in Codex with each path                                                 |
 | No evidence yet that SWE OS improves agent results                                        | Unknown  | After the first eval runs                                                                     |
 | The learn loop is untested on Tommy                                                       | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
 | Windows paths and line endings are handled in code but never run on Windows               | Unknown  | First Windows contributor or CI runner                                                        |
