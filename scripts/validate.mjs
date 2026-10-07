@@ -1,8 +1,10 @@
 // Checks the source Markdown the way GitHub and agents will read it.
 // The site build separately validates frontmatter and rendered links.
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import {
   existsSync,
+  lstatSync,
   readFileSync,
   readdirSync,
   readlinkSync,
@@ -121,6 +123,34 @@ for (const file of [
     assert(
       trackPage.includes(`](${href})`),
       `${file} is on the track but not linked from core/guides/README.md`,
+    );
+  }
+}
+
+// 5. The repo is public, so no real email address belongs in a tracked file. Examples use
+//    reserved domains (RFC 2606), like billing@attacker.example.
+const exampleDomain =
+  /(^|\.)(example|test|invalid|localhost)$|^example\.(com|net|org)$/i;
+const tracked = execFileSync('git', ['ls-files', '-z'], {
+  cwd: root,
+  encoding: 'utf8',
+})
+  .split('\0')
+  .filter(
+    (file) =>
+      file &&
+      file !== 'package-lock.json' &&
+      existsSync(join(root, file)) &&
+      lstatSync(join(root, file)).isFile(),
+  )
+  .filter((file) => !/\.(png|jpe?g|gif|webp|ico|woff2?)$/i.test(file));
+for (const file of tracked) {
+  for (const [address, domain] of read(file).matchAll(
+    /[\w.%+-]+@([a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,})\b/gi,
+  )) {
+    assert(
+      exampleDomain.test(domain),
+      `${file} contains a real-looking email address (${address}). Use an example domain like name@example.com.`,
     );
   }
 }
