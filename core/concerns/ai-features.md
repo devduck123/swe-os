@@ -37,3 +37,5 @@ description: What goes wrong when a product calls a language model, and how to s
 
 - [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
 - [Security](security.md) and [cost](cost.md), which this concern always pulls in
+- [AI features in production](../guides/ai-features-in-production.md)
+- [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)

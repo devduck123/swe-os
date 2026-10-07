@@ -29,3 +29,6 @@ You don't need a monitoring platform for a side project. Structured logs and a h
 ## Learn more
 
 - [Make it operable](../principles.md#make-it-operable)
+- [Background jobs and webhooks](../guides/background-jobs-and-webhooks.md)
+- [Knowing it broke before your users do](../guides/knowing-it-broke.md)
+- [When production breaks anyway](../guides/when-production-breaks.md)

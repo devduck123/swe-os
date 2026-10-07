@@ -17,7 +17,7 @@ description: Can people use it with a keyboard, a screen reader, zoom, or less-t
 
 - Check contrast (4.5:1 for body text), 200% zoom, and reduced motion.
 - Make dynamic updates like "Saved" or new results announce themselves with a live region.
-- Run an automated checker (axe) and then do a manual keyboard pass. Automated tools catch roughly a third of issues.
+- Run an automated checker (axe), then do a manual keyboard pass. Tools find only part of the problems: in one GOV.UK test, the best single tool caught about 40% of known barriers.
 - Try the critical journey with a screen reader. Write down any barrier you can't fix yet.
 
 ## Common misses
@@ -31,3 +31,4 @@ description: Can people use it with a keyboard, a screen reader, zoom, or less-t
 
 - [Accessibility is correctness](../principles.md#accessibility-is-correctness)
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
+- [Accessibility in practice](../guides/accessibility-in-practice.md)

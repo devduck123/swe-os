@@ -28,3 +28,4 @@ description: Does it hold up on a phone, a laptop, and everything between?
 ## Learn more
 
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
+- [Accessibility in practice](../guides/accessibility-in-practice.md)

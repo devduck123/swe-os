@@ -28,3 +28,7 @@ description: What this will cost to run, where the pricing cliffs are, and what 
 ## Learn more
 
 - [Local first, then managed services](../guides/local-first-then-managed.md)
+- [Simple first: when complexity earns its place](../guides/simple-first.md)
+- [AI features in production](../guides/ai-features-in-production.md)
+- [Performance and cost: scale from evidence](../guides/performance-and-cost.md)
+- [The side-project stack](../recipes/side-project-stack.md)

@@ -5,12 +5,12 @@ domain: ai
 stage: improve
 freshness: evolving
 status: draft
-track: 7
+track: 21
 reviewed: 2026-10-06
 concerns: []
 next:
   link: /recipes/side-project-stack/
-  label: 'Track 8: The side-project stack'
+  label: 'Track 22: The side-project stack'
 ---
 
 Agents make you faster at shipping. They don't make you better at engineering unless you do something on purpose, and you won't notice the difference, because finishing work feels exactly like learning.

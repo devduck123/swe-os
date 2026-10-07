@@ -29,3 +29,4 @@ description: Does the feature actually solve the user's problem, from first clic
 
 - [Start with the user's problem](../principles.md#start-with-the-users-problem)
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
+- [Shape before you build](../guides/shape-before-you-build.md)

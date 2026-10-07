@@ -23,6 +23,19 @@ const pages = (dir) =>
         a.slug.localeCompare(b.slug),
     )
     .map((page) => page.slug);
+// The track follows the lifecycle, so the Learn sidebar groups guides by their `stage`.
+const stages = [
+  'understand',
+  'design',
+  'build',
+  'verify',
+  'ship',
+  'operate',
+  'improve',
+];
+const guideStage = (slug) =>
+  frontmatter(readFileSync(join(root, 'core/guides', `${slug}.md`), 'utf8'))
+    .stage;
 const skillItems = readdirSync(join(root, 'skills'), { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => {
@@ -112,7 +125,12 @@ export default defineConfig({
           label: 'Learn',
           items: [
             { label: 'The track', slug: 'guides' },
-            ...pages('core/guides').map((p) => ({ slug: `guides/${p}` })),
+            ...stages.map((stage) => ({
+              label: stage[0].toUpperCase() + stage.slice(1),
+              items: pages('core/guides')
+                .filter((p) => guideStage(p) === stage)
+                .map((p) => ({ slug: `guides/${p}` })),
+            })),
           ],
         },
         {

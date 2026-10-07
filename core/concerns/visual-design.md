@@ -31,3 +31,4 @@ A feature isn't done because it resembles a screenshot. Visual design is how a u
 ## Learn more
 
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
+- [Accessibility in practice](../guides/accessibility-in-practice.md)

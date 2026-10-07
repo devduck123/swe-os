@@ -30,3 +30,8 @@ description: Where data lives, who owns it, what keeps it valid, and how you get
 ## Learn more
 
 - [Protect data through change](../principles.md#protect-data-through-change)
+- [Data that stays correct](../guides/data-that-stays-correct.md)
+- [Local first, then managed services](../guides/local-first-then-managed.md)
+- [Database changes without downtime](../guides/database-changes-without-downtime.md)
+- [When production breaks anyway](../guides/when-production-breaks.md)
+- [The side-project stack](../recipes/side-project-stack.md)

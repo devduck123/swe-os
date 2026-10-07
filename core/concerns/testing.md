@@ -31,3 +31,6 @@ Aim for confidence, not a coverage number.
 ## Learn more
 
 - [Verify, don't assume](../principles.md#verify-dont-assume)
+- [How you know it works](../guides/how-you-know-it-works.md)
+- [Reading and reviewing code you didn't write](../guides/reading-and-reviewing-code.md)
+- [Shipping changes you can undo](../guides/shipping-changes-you-can-undo.md)

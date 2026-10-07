@@ -36,3 +36,9 @@ description: Who can do what, what input you trust, and where secrets live.
 
 - [Validate at the boundaries](../principles.md#validate-at-the-boundaries)
 - [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)
+- [How a request travels through your app](../guides/how-a-request-travels.md)
+- [Trust boundaries: validation and authorization](../guides/trust-boundaries.md)
+- [AI features in production](../guides/ai-features-in-production.md)
+- [Reading and reviewing code you didn't write](../guides/reading-and-reviewing-code.md)
+- [Local first, then managed services](../guides/local-first-then-managed.md)
+- [The side-project stack](../recipes/side-project-stack.md)

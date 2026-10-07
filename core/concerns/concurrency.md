@@ -29,3 +29,5 @@ description: What happens when two things touch the same data at the same time, 
 ## Learn more
 
 - [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
+- [Data that stays correct](../guides/data-that-stays-correct.md)
+- [Background jobs and webhooks](../guides/background-jobs-and-webhooks.md)
