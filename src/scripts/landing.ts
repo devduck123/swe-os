@@ -225,22 +225,28 @@ function setupDemo() {
 function setupCopy() {
   const origin = document.querySelector<HTMLElement>('[data-origin]');
   if (origin) origin.textContent = `${location.origin}/skills/README.md`;
-  const button = document.querySelector<HTMLButtonElement>('[data-copy]');
-  const prompt = document.querySelector<HTMLElement>('[data-prompt]');
   const status = document.querySelector<HTMLElement>('[data-copy-status]');
-  if (!button || !prompt || !status) return;
-  button.addEventListener('click', async () => {
-    const text = prompt.textContent!.replace(/\s+/g, ' ').trim();
-    try {
-      await navigator.clipboard.writeText(text);
-      button.textContent = 'Copied!';
-      status.textContent = 'Prompt copied to your clipboard.';
-    } catch {
-      status.textContent =
-        "Couldn't copy automatically. Select the text and copy it.";
-    }
-    window.setTimeout(() => (button.textContent = 'Copy'), 1800);
-  });
+  if (!status) return;
+  // Each copy button copies the prompt next to it.
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    '[data-copy]',
+  )) {
+    const prompt =
+      button.parentElement?.querySelector<HTMLElement>('[data-prompt]');
+    if (!prompt) continue;
+    button.addEventListener('click', async () => {
+      const text = prompt.textContent!.replace(/\s+/g, ' ').trim();
+      try {
+        await navigator.clipboard.writeText(text);
+        button.textContent = 'Copied!';
+        status.textContent = 'Copied to your clipboard.';
+      } catch {
+        status.textContent =
+          "Couldn't copy automatically. Select the text and copy it.";
+      }
+      window.setTimeout(() => (button.textContent = 'Copy'), 1800);
+    });
+  }
 }
 
 export function setupLanding() {

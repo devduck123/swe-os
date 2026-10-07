@@ -1255,3 +1255,29 @@ main {
     clip: rect(0, 0, 0, 0);
   }
 }
+
+.agent__way {
+  position: relative;
+  z-index: 1;
+  margin: 2rem 0 0;
+  font-family: var(--swe-font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--swe-on-pastel);
+}
+.agent__card .agent__hint {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.4rem;
+  font-size: 0.98rem;
+}
+.agent__hint code {
+  font-family: var(--swe-font-mono);
+  font-size: 0.9em;
+}
+.agent__way + .prompt {
+  margin-top: 0.75rem;
+}
+.prompt + .prompt {
+  margin-top: 0.6rem;
+}

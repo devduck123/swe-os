@@ -4,7 +4,7 @@ description: How to change a schema or rewrite data while the app keeps running,
 domain: data
 stage: ship
 freshness: durable
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 17
 concerns: [migrations, data, deployment]

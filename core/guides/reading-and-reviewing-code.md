@@ -4,7 +4,8 @@ description: How to understand an unfamiliar codebase or an agent's diff fast, w
 domain: foundations
 stage: verify
 freshness: durable
-status: draft
+status: reviewed
+reviewed: 2026-10-06
 track: 15
 concerns: [testing, security]
 ---

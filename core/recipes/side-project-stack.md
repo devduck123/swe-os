@@ -4,7 +4,7 @@ description: A full-stack web app on managed services that one person can ship t
 domain: architecture
 stage: design
 freshness: fast-moving
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 22
 concerns: [deployment, cost, security, data]

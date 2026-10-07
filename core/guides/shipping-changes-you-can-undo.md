@@ -4,7 +4,7 @@ description: 'CI, preview deploys, migrations, feature flags, and rollbacks: how
 domain: infrastructure
 stage: ship
 freshness: evolving
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 16
 concerns: [deployment, testing]

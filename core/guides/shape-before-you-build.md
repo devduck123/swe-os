@@ -4,7 +4,8 @@ description: Turn a vague idea into a person with a problem, a smallest useful s
 domain: foundations
 stage: understand
 freshness: durable
-status: draft
+status: reviewed
+reviewed: 2026-10-06
 track: 3
 concerns: [product-ux]
 ---

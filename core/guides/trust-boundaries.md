@@ -4,7 +4,7 @@ description: Where untrusted input enters your app, how to check its shape at th
 domain: security
 stage: design
 freshness: durable
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 6
 concerns: [security, api-contracts, privacy]

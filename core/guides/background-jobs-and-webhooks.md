@@ -4,7 +4,7 @@ description: 'Work that happens outside the request: deferred work, cron, hosted
 domain: backend
 stage: build
 freshness: durable
-status: draft
+status: reviewed
 reviewed: 2026-10-06
 track: 13
 concerns: [concurrency, reliability, observability]

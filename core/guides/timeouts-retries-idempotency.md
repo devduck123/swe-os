@@ -4,7 +4,7 @@ description: Why every network call needs a deadline, when to try again and when
 domain: reliability
 stage: design
 freshness: durable
-status: draft
+status: reviewed
 track: 7
 reviewed: 2026-10-06
 concerns: [reliability, concurrency, api-contracts]

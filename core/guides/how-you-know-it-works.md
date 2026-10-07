@@ -4,7 +4,7 @@ description: 'Testing for confidence instead of coverage: which tests pay for th
 domain: testing
 stage: verify
 freshness: durable
-status: draft
+status: reviewed
 track: 14
 reviewed: 2026-10-06
 concerns: [testing]

@@ -4,7 +4,7 @@ description: Building interfaces that work with a keyboard, a screen reader, zoo
 domain: frontend
 stage: build
 freshness: durable
-status: draft
+status: reviewed
 track: 10
 reviewed: 2026-10-06
 concerns: [accessibility, ui-quality]

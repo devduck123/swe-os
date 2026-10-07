@@ -4,7 +4,7 @@ description: The same feature built twice, once for the demo and once for real u
 domain: foundations
 stage: understand
 freshness: durable
-status: draft
+status: reviewed
 track: 1
 reviewed: 2026-10-06
 concerns: []

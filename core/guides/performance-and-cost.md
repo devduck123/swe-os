@@ -4,7 +4,7 @@ description: Measure before you optimize, fix the one bottleneck you actually ha
 domain: architecture
 stage: operate
 freshness: evolving
-status: draft
+status: reviewed
 track: 20
 reviewed: 2026-10-06
 concerns: [performance, cost]
