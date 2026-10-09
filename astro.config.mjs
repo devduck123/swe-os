@@ -93,13 +93,11 @@ const fonts = [
   google('Caveat', '--font-caveat', ['cursive'], { weights: ['700'] }),
 ];
 
-// The public URL, for the sitemap, absolute llms.txt links, and share cards. SITE_URL wins (set it
-// when a custom domain arrives); otherwise Vercel's production domain, which Vercel exposes at build time.
-const site =
-  process.env.SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL &&
-    `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`);
-const ogImage = site ? new URL('/og.png', site).href : '/og.png';
+// The public URL, for the sitemap, absolute llms.txt links, and share cards. It's written here
+// because Vercel's production-URL variable keeps reporting the project's first domain, not the alias.
+// When the domain changes, change it here, in the README, and in the repo's homepage.
+const site = process.env.SITE_URL ?? 'https://tommy-swe-os.vercel.app';
+const ogImage = new URL('/og.png', site).href;
 
 export default defineConfig({
   site,

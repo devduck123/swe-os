@@ -2,13 +2,13 @@
 
 AI made code cheap. Judgment is still the expensive part.
 
-**Read it at [swe-os-gules.vercel.app](https://swe-os-gules.vercel.app).**
+**Read it at [tommy-swe-os.vercel.app](https://tommy-swe-os.vercel.app).**
 
 SWE OS is how I build software, written once for two readers. People read it as a site to learn what separates a vibe coder from a software engineer. Coding agents read the same files as instructions, so they shape ideas before picking a stack, build complete features, and show evidence instead of confidence.
 
 ## Learn
 
-Start with [the track](https://swe-os-gules.vercel.app/guides/): 22 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Every stop ends with what the vibe-coded version misses.
+Start with [the track](https://tommy-swe-os.vercel.app/guides/): 22 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Every stop ends with what the vibe-coded version misses.
 
 ## Use it with an agent
 
@@ -16,7 +16,7 @@ There's nothing to install. Pick one:
 
 **Quick: read it from the site.** Paste this into Claude Code, Codex, Cursor, or whatever you use:
 
-> Use Tommy's SWE OS for this task. Download https://swe-os-gules.vercel.app/skills/README.md as raw text with curl, follow the skill that fits, and fetch each file it links the same way.
+> Use Tommy's SWE OS for this task. Download https://tommy-swe-os.vercel.app/skills/README.md as raw text with curl, follow the skill that fits, and fetch each file it links the same way.
 
 **Best: keep a copy on your machine.** You get the exact text, and it works offline and in sandboxes without network access, like Codex's default.
 
