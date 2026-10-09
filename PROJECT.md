@@ -19,7 +19,7 @@ Nothing claims agents do better with SWE OS until the evals run.
 3. Run `start-project` on a real side project, and fix what it gets wrong.
 4. Try one task in Codex with each path.
 5. The two-week `learn` trial.
-6. A custom domain, when wanted. Set `SITE_URL` in Vercel when it lands.
+6. A nicer URL or a custom domain, when wanted. Set `SITE_URL` in Vercel, and update the README links and the repo's homepage.
 
 ## Decisions
 
