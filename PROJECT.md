@@ -2,28 +2,24 @@
 
 ## Now
 
-**v0.1: public MVP.** SWE OS goes public as both a learning track and an agent toolkit, with the gap between vibe coding and engineering as the through-line. Maturity: prototype. Nothing is deployed yet.
+**v0.1 launched on 2026-10-08.** The site is live at https://swe-os-gules.vercel.app, and the repo is public under MIT (code and templates) and CC BY 4.0 (writing). Maturity: prototype.
 
-Done when:
+What shipped:
 
-- A newcomer can land on the site and follow the track from "what's the difference?" to "here's the stack I'd ship, and why". Every stop has been reviewed by Tommy. Done; tuning comes after launch.
-- Claude Code and Codex both pick and follow the right skill when pointed at SWE OS, from the site and from a local clone.
-- The site is live on Vercel, under a license, with no private details in the repo or its history.
+- The 22-stop track, reviewed by Tommy. Tuning comes in its own thread.
+- Seven skills and 17 concerns. Claude Code picked and followed `build-feature` in a fresh project, both from the site and from a local clone. Codex hasn't been tried.
+- Guards on the public repo: a gitleaks pre-commit hook and CI job, GitHub secret scanning with push protection, and a rule that `main` only changes through a squash-merged PR with `check` and `secrets` passing.
 
-`start-project` on a real project and the first eval runs moved to after launch. Until evals run, nothing claims agents do better with SWE OS.
+Nothing claims agents do better with SWE OS until the evals run.
 
 ## Next
 
-1. Tommy creates the Vercel project from the repo. The site goes live on its `vercel.app` domain.
-2. Done for Claude Code: both paths picked `build-feature` and followed it in a fresh project. Codex is still untested.
-3. Before the repo goes public: done. gitleaks found nothing in any branch's history, and stale branches are deleted. Tommy accepted that his email appears on older commits.
-4. Tommy makes the repo public.
-5. After launch:
-   - tune the track (its own thread)
-   - run the evals, starting with `overhead`, `secrets`, `dependency`, and `pushback`
-   - run `start-project` on a real side project
-   - the two-week `learn` trial
-   - a custom domain, when wanted
+1. Tune the track, in its own thread.
+2. Run the evals, starting with `overhead`, `secrets`, `dependency`, and `pushback`.
+3. Run `start-project` on a real side project, and fix what it gets wrong.
+4. Try one task in Codex with each path.
+5. The two-week `learn` trial.
+6. A custom domain, when wanted. Set `SITE_URL` in Vercel when it lands.
 
 ## Decisions
 
@@ -34,6 +30,7 @@ Done when:
 | Hosted on Vercel Hobby at the `vercel.app` domain                                                                                                                                         | Free, a preview per PR, and no domain needed to launch. The site URL comes from Vercel's production domain at build time; `SITE_URL` overrides it.                                                | A custom domain, or anything commercial (Hobby is non-commercial).               |
 | Writing under CC BY 4.0; code and templates under MIT                                                                                                                                     | CC licenses aren't meant for code. Templates get copied into projects, so they shouldn't need credit.                                                                                             | Never.                                                                           |
 | Guard the public repo with checks, not care: a gitleaks pre-commit hook, a gitleaks CI job, a private-terms list kept outside the repo, and a validator rule against real email addresses | Agents write most commits, and one pasted key or name is public forever. A check catches what memory misses.                                                                                      | A false positive blocks real work twice.                                         |
+| `main` changes only through a squash-merged PR with `check` and `secrets` passing; no approvals required, and no bypass                                                                   | Tommy's minimal CI/CD: every change gets the same checks, including his own. A solo maintainer can't approve his own PRs, so approvals would only block him.                                      | A second maintainer joins.                                                       |
 | One Markdown file per concern, instead of a JSON registry and script                                                                                                                      | Agents read Markdown directly, and people can learn from it. The script added ceremony, not judgment.                                                                                             | Agents keep misrouting concerns in evals.                                        |
 | The site renders the source files as they are, with no copy step                                                                                                                          | One source, no drift. Raw `.md` sits at the same path for agents.                                                                                                                                 | Never, ideally.                                                                  |
 | Astro and Starlight, with a custom landing page                                                                                                                                           | Static, fast, good search. Starlight handles docs pages; the landing page shows personality.                                                                                                      | Starlight blocks the design we want.                                             |
