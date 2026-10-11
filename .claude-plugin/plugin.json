@@ -1,0 +1,10 @@
+{
+  "name": "swe-os",
+  "version": "0.1.0",
+  "description": "Seven workflow skills: shape, start, build, debug, review, explain, and learn. They load SWE OS's concerns, guides, and profile as each task needs them.",
+  "author": { "name": "Tommy", "url": "https://github.com/devduck123" },
+  "homepage": "https://tommy-swe-os.vercel.app",
+  "repository": "https://github.com/devduck123/swe-os",
+  "license": "MIT AND CC-BY-4.0",
+  "keywords": ["skills", "engineering", "workflow", "learning"]
+}

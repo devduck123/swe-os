@@ -5,7 +5,7 @@ description: The entry point for coding agents. Pick a skill, follow the shared 
 
 If you're an agent, start here. Links are relative: resolve them against this file's path or URL, and read the raw Markdown. Reading from a URL, print each file to the terminal with `curl`. There's nothing to save.
 
-If you're a person, this is the page to point your agent at. [Two ways to do it](https://github.com/devduck123/swe-os#use-it-with-an-agent). Not Tommy? Your own instructions and your project's `AGENTS.md` override everything here. To use your own voice and default stack, point your project's `AGENTS.md` at your own profile files (see the [project template](../templates/project/AGENTS.md)).
+If you're a person, this is the page to point your agent at. [Three ways to do it](https://github.com/devduck123/swe-os#use-it-with-an-agent), including a Claude Code plugin. Not Tommy? Your own instructions and your project's `AGENTS.md` override everything here. To use your own voice and default stack, point your project's `AGENTS.md` at your own profile files (see the [project template](../templates/project/AGENTS.md)).
 
 ## Pick a skill
 

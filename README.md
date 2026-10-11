@@ -26,6 +26,8 @@ git clone https://github.com/devduck123/swe-os ~/swe-os
 
 > Use Tommy's SWE OS at ~/swe-os for this task. Start at skills/README.md and follow the skill that fits.
 
+**Claude Code: install the plugin.** The skills then trigger on their own, with no prompt to paste. In Claude Code, run `/plugin marketplace add devduck123/swe-os`, then `/plugin install swe-os@swe-os`. It updates when a new version is released.
+
 The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Your project's own `AGENTS.md` always wins. To use your own voice and default stack instead of mine, point it at your own profile files; the [project template](templates/project/AGENTS.md) shows how.
 
 ## What's inside

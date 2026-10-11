@@ -16,14 +16,8 @@ Nothing claims agents do better with SWE OS until the evals run.
 
 **v0.2: from MVP to product.** Primarily for Tommy, usable by anyone.
 
-1. Batch 1:
-   - Projects adopt SWE OS at a version, through the two tested paths.
-   - Tagged releases with a changelog.
-   - Other people can use their own profile without forking.
-   - Feedback channels: issue templates, edit links, SECURITY.md, CONTRIBUTING.md.
-   - A monthly freshness job.
-   - A Windows CI job.
-2. Batch 2: an optional Claude Code plugin, if the format stays simple.
+1. Batch 1: done in #11. Released `v0.1.0`.
+2. Batch 2: done. The Claude Code plugin installs with `/plugin marketplace add devduck123/swe-os`. Its version follows `package.json`, so installs update on releases, not on every commit.
 3. Batch 3: an eval harness, with a starting project per scenario, a headless runner for both arms, and a blinded grader. Then one round, capped at $50 API-equivalent on Tommy's Max plan.
 4. Run `start-project` on a real side project, and fix what it gets wrong. Needs Tommy's next project.
 5. Tune the track, in its own thread.

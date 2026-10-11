@@ -1,0 +1,12 @@
+{
+  "name": "swe-os",
+  "owner": { "name": "Tommy", "url": "https://github.com/devduck123" },
+  "description": "Tommy's SWE OS: engineering judgment for people and their coding agents.",
+  "plugins": [
+    {
+      "name": "swe-os",
+      "source": "./",
+      "description": "Seven workflow skills: shape, start, build, debug, review, explain, and learn. They load SWE OS's concerns, guides, and profile as each task needs them."
+    }
+  ]
+}
