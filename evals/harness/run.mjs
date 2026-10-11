@@ -6,7 +6,9 @@
 //   node evals/harness/run.mjs                      every scenario, 1 rep, $50 budget
 //   node evals/harness/run.mjs --only overhead,secrets --reps 3 --budget 20
 //   node evals/harness/run.mjs --dry-run            print what would run, spend nothing
-//   node evals/harness/run.mjs --grade <results dir> regrade and re-summarize a past round
+//   node evals/harness/run.mjs --grade <results dir> grade what's ungraded in a past round, re-summarize
+//   node evals/harness/run.mjs --round <results dir> --only receipt-gallery
+//                                                   rerun scenarios into a past round, at its SWE OS commit
 import { spawn, execFileSync } from 'node:child_process';
 import {
   cpSync,
@@ -24,6 +26,7 @@ import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { scenarios } from './scenarios.mjs';
 import { neutralize } from './neutralize.mjs';
+import { parseGrade } from './parse-grade.mjs';
 
 const repo = resolve(import.meta.dirname, '../..');
 const { values: opts } = parseArgs({
@@ -35,6 +38,7 @@ const { values: opts } = parseArgs({
     'per-run': { type: 'string', default: '5' },
     'dry-run': { type: 'boolean', default: false },
     grade: { type: 'string' },
+    round: { type: 'string' },
   },
 });
 const budget = Number(opts.budget);
@@ -136,13 +140,19 @@ function claude(args, cwd, transcript) {
 }
 
 // A copy of SWE OS at the current commit, so B reads exactly what's committed.
-function snapshotSweos(dir) {
+// Only the folders agents are meant to read. Never evals/: a B run once found its own
+// scenario's reviewer notes by searching the snapshot.
+const AGENT_FOLDERS = ['core', 'profile', 'skills', 'templates'];
+
+function snapshotSweos(dir, ref = 'HEAD') {
   mkdirSync(dir, { recursive: true });
   // Through a file, not a buffer: the archive is bigger than execFileSync's 1 MB default.
   const archive = join(dir, '..', 'swe-os.tar');
-  execFileSync('git', ['archive', '--output', archive, 'HEAD'], { cwd: repo });
+  execFileSync('git', ['archive', '--output', archive, ref, ...AGENT_FOLDERS], {
+    cwd: repo,
+  });
   execFileSync('tar', ['-xf', archive, '-C', dir]);
-  return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+  return execFileSync('git', ['rev-parse', '--short', ref], {
     cwd: repo,
     encoding: 'utf8',
   }).trim();
@@ -338,18 +348,32 @@ Reply with only this JSON:
     join(dir, 'grade-transcript.jsonl'),
   );
   spent += r.cost;
-  const json = r.reply.match(/\{[\s\S]*\}/)?.[0];
-  let grade;
-  try {
-    grade = JSON.parse(json);
-  } catch {
-    grade = { error: `unparseable grade: ${r.reply.slice(0, 300)}` };
-  }
+  const grade = parseGrade(r.reply);
   writeFileSync(
     join(dir, 'grade.json'),
     JSON.stringify({ ...grade, cost: r.cost }, null, 2),
   );
 }
+
+// True when a run still needs grading. A grade that failed to parse is re-read from the
+// saved grader transcript first, which costs nothing.
+const needsGrade = (dir) => {
+  if (!existsSync(join(dir, 'grade.json'))) return true;
+  const old = JSON.parse(readFileSync(join(dir, 'grade.json'), 'utf8'));
+  if (!old.error) return false;
+  const reply = readFileSync(join(dir, 'grade-transcript.jsonl'), 'utf8')
+    .split('\n')
+    .filter((line) => line.startsWith('{'))
+    .map((line) => JSON.parse(line))
+    .findLast((e) => e.type === 'result')?.result;
+  const grade = reply ? parseGrade(reply) : old;
+  if (grade.error) return true;
+  writeFileSync(
+    join(dir, 'grade.json'),
+    JSON.stringify({ ...grade, cost: old.cost }, null, 2),
+  );
+  return false;
+};
 
 function summarize(root) {
   const runs = readdirSync(join(root, 'runs')).map((name) => {
@@ -397,7 +421,7 @@ function summarize(root) {
   const lines = [
     `# Eval round ${info.started}`,
     '',
-    `SWE OS at \`${info.commit}\`, model \`${runs[0]?.model ?? 'unknown'}\`, ${info.reps} rep(s). Spent $${fmt(info.spent ?? spent)} API-equivalent (budget $${info.budget}).`,
+    `SWE OS at \`${info.commit}\`${info.reruns?.length ? ` (rerun: ${info.reruns.flatMap((r) => r.only).join(', ')})` : ''}, model \`${runs[0]?.model ?? 'unknown'}\`, ${info.reps} rep(s). Spent $${fmt(info.spent ?? spent)} API-equivalent (budget $${info.budget}).`,
     '',
     'Scores are the mean of the rubric dimensions that applied, 0 to 3, graded blind by Claude with SWE OS tells stripped. One rep per scenario is one noisy data point.',
     '',
@@ -424,25 +448,22 @@ const refuseNested = () => {
       'Run this from a normal terminal. Claude Code refuses to start inside another Claude Code session.',
     );
 };
+const loginHelp =
+  'Run `claude auth login`, then start again. Runs that already finished are kept.';
+
+// Regrade: grade every run in a past round that has no grade yet, or whose grade failed.
 if (opts.grade) {
   refuseNested();
-  const loggedIn = (() => {
-    try {
-      return JSON.parse(
-        execFileSync('claude', ['auth', 'status'], { encoding: 'utf8' }),
-      ).loggedIn;
-    } catch {
-      return false;
-    }
-  })();
-  if (!loggedIn)
-    throw new Error(
-      'The claude CLI is logged out. Run `claude auth login`, then start the round again.',
-    );
   const root = resolve(opts.grade);
   const info = JSON.parse(readFileSync(join(root, 'round.json'), 'utf8'));
-  for (const name of readdirSync(join(root, 'runs')))
-    await gradeOne(join(root, 'runs', name), info.sweos);
+  for (const name of readdirSync(join(root, 'runs'))) {
+    const dir = join(root, 'runs', name);
+    if (needsGrade(dir)) await gradeOne(dir, info.sweos);
+  }
+  writeFileSync(
+    join(root, 'round.json'),
+    JSON.stringify({ ...info, spent: (info.spent ?? 0) + spent }, null, 2),
+  );
   summarize(root);
   process.exit(0);
 }
@@ -450,8 +471,15 @@ if (opts.grade) {
 const picked = opts.only
   ? scenarios.filter((s) => opts.only.split(',').includes(s.id))
   : scenarios;
-const started = new Date().toISOString().slice(0, 19).replaceAll(':', '');
-const root = join(repo, 'evals/results', started);
+// --round adds or replaces runs in a past round, against that round's SWE OS commit.
+const past = opts.round ? resolve(opts.round) : null;
+const pastInfo = past
+  ? JSON.parse(readFileSync(join(past, 'round.json'), 'utf8'))
+  : null;
+const started =
+  pastInfo?.started ??
+  new Date().toISOString().slice(0, 19).replaceAll(':', '');
+const root = past ?? join(repo, 'evals/results', started);
 const jobs = picked.flatMap((s) =>
   Array.from({ length: reps }, (_, i) =>
     ['A', 'B'].map((arm) => [s, arm, i + 1]),
@@ -460,7 +488,7 @@ const jobs = picked.flatMap((s) =>
 
 if (opts['dry-run']) {
   console.log(
-    `${jobs.length} runs, then ${jobs.length} grades. Budget $${budget}. Results in ${root}.`,
+    `${jobs.length} runs, then ${jobs.length} grades. Budget $${budget}. Results in ${root}${past ? ` (SWE OS ${pastInfo.commit})` : ''}.`,
   );
   for (const [s, arm, rep] of jobs)
     console.log(
@@ -474,11 +502,20 @@ refuseNested();
 const scratch = mkdtempSync(join(tmpdir(), `swe-os-evals-${started}-`));
 mkdirSync(join(root, 'runs'), { recursive: true });
 const sweos = join(scratch, 'swe-os');
-const commit = snapshotSweos(sweos);
-const info = { started, commit, reps, budget, sweos };
+const commit = snapshotSweos(sweos, pastInfo?.commit ?? 'HEAD');
+const info = pastInfo
+  ? {
+      ...pastInfo,
+      sweos,
+      reruns: [
+        ...(pastInfo.reruns ?? []),
+        { at: new Date().toISOString(), only: picked.map((s) => s.id) },
+      ],
+    }
+  : { started, commit, reps, budget, sweos };
 writeFileSync(join(root, 'round.json'), JSON.stringify(info, null, 2));
 console.log(
-  `Eval round ${started}: ${jobs.length} runs on SWE OS ${commit}, budget $${budget}.`,
+  `${past ? 'Adding to round' : 'Eval round'} ${started}: ${jobs.length} runs on SWE OS ${commit}, budget $${budget}.`,
 );
 
 const queue = [...jobs];
@@ -495,33 +532,31 @@ await Promise.all(
       }
       if (authFailed) break;
       const [s, arm, rep] = queue.shift();
-      // Each job works in the scratch folder, and only meta and grades come back to the repo.
-      const jobRoot = scratch;
-      await runOne(s, arm, rep, jobRoot, sweos);
-      cpSync(
-        join(jobRoot, 'runs', `${s.id}-${arm}-${rep}`),
-        join(root, 'runs', `${s.id}-${arm}-${rep}`),
-        {
-          recursive: true,
-          filter: (src) =>
-            !/[\\/](node_modules|\.git|\.next)([\\/]|$)/.test(src),
-        },
-      );
+      const name = `${s.id}-${arm}-${rep}`;
+      await runOne(s, arm, rep, scratch, sweos);
+      // Only meta, replies, diffs, and grades come back to the repo, never installed packages.
+      rmSync(join(root, 'runs', name), { recursive: true, force: true });
+      cpSync(join(scratch, 'runs', name), join(root, 'runs', name), {
+        recursive: true,
+        filter: (src) => !/[\\/](node_modules|\.git|\.next)([\\/]|$)/.test(src),
+      });
     }
   }),
 );
 
 if (authFailed) {
-  rmSync(root, { recursive: true, force: true });
+  if (!past) rmSync(root, { recursive: true, force: true });
   throw new Error(
-    'A run failed to log in, so the round stopped before grading. Run `claude auth login` and start again.',
+    `A run failed to log in, so the round stopped before grading. ${loginHelp}`,
   );
 }
 console.log('\nGrading...');
-for (const name of readdirSync(join(root, 'runs')))
-  await gradeOne(join(root, 'runs', name), sweos);
+for (const name of readdirSync(join(root, 'runs'))) {
+  const dir = join(root, 'runs', name);
+  if (needsGrade(dir)) await gradeOne(dir, sweos);
+}
 writeFileSync(
   join(root, 'round.json'),
-  JSON.stringify({ ...info, spent }, null, 2),
+  JSON.stringify({ ...info, spent: (pastInfo?.spent ?? 0) + spent }, null, 2),
 );
 summarize(root);
