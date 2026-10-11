@@ -513,10 +513,10 @@ await Promise.all(
 
 if (authFailed) {
   rmSync(root, { recursive: true, force: true });
+  throw new Error(
+    'A run failed to log in, so the round stopped before grading. Run `claude auth login` and start again.',
+  );
 }
-throw new Error(
-  'A run failed to log in, so the round stopped before grading. Run `claude auth login` and start again.',
-);
 console.log('\nGrading...');
 for (const name of readdirSync(join(root, 'runs')))
   await gradeOne(join(root, 'runs', name), sweos);
