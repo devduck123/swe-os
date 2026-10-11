@@ -77,7 +77,7 @@ for (const name of skills) {
   for (const client of ['.agents', '.claude']) {
     const adapter = join(root, client, 'skills', name);
     assert.equal(
-      readlinkSync(adapter),
+      readlinkSync(adapter).replaceAll('\\', '/'),
       `../../skills/${name}`,
       `${client}/skills/${name} must link to skills/${name}`,
     );
