@@ -16,6 +16,7 @@ import {
   readFileSync,
   readdirSync,
   renameSync,
+  rmSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -39,6 +40,7 @@ const { values: opts } = parseArgs({
 const budget = Number(opts.budget);
 const reps = Number(opts.reps);
 let spent = 0;
+let authFailed = false;
 
 // Tools both arms get. Pushing, GitHub, deploys, and Docker are off so a run can't touch
 // anything outside its temp folder. Both arms lose them equally.
@@ -265,6 +267,8 @@ async function runOne(s, arm, rep, root, sweos) {
     })),
   };
   writeFileSync(join(dir, 'meta.json'), JSON.stringify(meta, null, 2));
+  if (/authenticat|OAuth|logged out|login/i.test(meta.error ?? ''))
+    authFailed = true;
   console.log(
     `${s.id} ${arm}${rep}: $${meta.cost.toFixed(2)}, ${meta.seconds}s${meta.error ? `, ERROR ${meta.error.slice(0, 120)}` : ''}  (spent $${spent.toFixed(2)})`,
   );
@@ -422,6 +426,19 @@ const refuseNested = () => {
 };
 if (opts.grade) {
   refuseNested();
+  const loggedIn = (() => {
+    try {
+      return JSON.parse(
+        execFileSync('claude', ['auth', 'status'], { encoding: 'utf8' }),
+      ).loggedIn;
+    } catch {
+      return false;
+    }
+  })();
+  if (!loggedIn)
+    throw new Error(
+      'The claude CLI is logged out. Run `claude auth login`, then start the round again.',
+    );
   const root = resolve(opts.grade);
   const info = JSON.parse(readFileSync(join(root, 'round.json'), 'utf8'));
   for (const name of readdirSync(join(root, 'runs')))
@@ -476,6 +493,7 @@ await Promise.all(
         queue.length = 0;
         break;
       }
+      if (authFailed) break;
       const [s, arm, rep] = queue.shift();
       // Each job works in the scratch folder, and only meta and grades come back to the repo.
       const jobRoot = scratch;
@@ -493,6 +511,12 @@ await Promise.all(
   }),
 );
 
+if (authFailed) {
+  rmSync(root, { recursive: true, force: true });
+}
+throw new Error(
+  'A run failed to log in, so the round stopped before grading. Run `claude auth login` and start again.',
+);
 console.log('\nGrading...');
 for (const name of readdirSync(join(root, 'runs')))
   await gradeOne(join(root, 'runs', name), sweos);
