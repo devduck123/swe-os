@@ -12,6 +12,7 @@ import {
   cpSync,
   existsSync,
   mkdirSync,
+  mkdtempSync,
   readFileSync,
   readdirSync,
   renameSync,
@@ -135,8 +136,10 @@ function claude(args, cwd, transcript) {
 // A copy of SWE OS at the current commit, so B reads exactly what's committed.
 function snapshotSweos(dir) {
   mkdirSync(dir, { recursive: true });
-  const tar = execFileSync('git', ['archive', 'HEAD'], { cwd: repo });
-  execFileSync('tar', ['-x', '-C', dir], { input: tar });
+  // Through a file, not a buffer: the archive is bigger than execFileSync's 1 MB default.
+  const archive = join(dir, '..', 'swe-os.tar');
+  execFileSync('git', ['archive', '--output', archive, 'HEAD'], { cwd: repo });
+  execFileSync('tar', ['-xf', archive, '-C', dir]);
   return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
     cwd: repo,
     encoding: 'utf8',
@@ -398,7 +401,7 @@ function summarize(root) {
     '| --- | --- | --- | --- | --- | --- | --- |',
     ...rows,
     '',
-    `**Average B − A:** ${fmt(mean(deltas))} across ${deltas.length} scenarios. The v0.1 bar is +0.5 with no new serious flaws, and the two-line fix staying close to A on time, cost, and length.`,
+    `**Average B − A:** ${fmt(mean(deltas))} across ${deltas.length} scenario${deltas.length === 1 ? '' : 's'}. The v0.1 bar is +0.5 with no new serious flaws, and the two-line fix staying close to A on time, cost, and length.`,
     '',
     '## Serious flaws',
     '',
@@ -430,9 +433,8 @@ if (opts.grade) {
 const picked = opts.only
   ? scenarios.filter((s) => opts.only.split(',').includes(s.id))
   : scenarios;
-const started = new Date().toISOString().slice(0, 16).replace(':', '');
+const started = new Date().toISOString().slice(0, 19).replaceAll(':', '');
 const root = join(repo, 'evals/results', started);
-const scratch = join(tmpdir(), `swe-os-evals-${started}`);
 const jobs = picked.flatMap((s) =>
   Array.from({ length: reps }, (_, i) =>
     ['A', 'B'].map((arm) => [s, arm, i + 1]),
@@ -451,6 +453,8 @@ if (opts['dry-run']) {
 }
 
 refuseNested();
+// A fresh temp folder per round, so a rerun never finds an earlier round's files.
+const scratch = mkdtempSync(join(tmpdir(), `swe-os-evals-${started}-`));
 mkdirSync(join(root, 'runs'), { recursive: true });
 const sweos = join(scratch, 'swe-os');
 const commit = snapshotSweos(sweos);
