@@ -613,11 +613,11 @@ three things can happen...
 
       <section class="section agent" id="agent" aria-labelledby="agent-title">
         <div class="agent__card reveal">
-          <p class="eyebrow">No install</p>
+          <p class="eyebrow">For your agent</p>
           <h2 id="agent-title">Point your agent here.</h2>
           <p>
-            No plugin, no package, no setup script. Paste a prompt into Claude
-            Code, Codex, Cursor, or whatever you use.
+            Nothing to install. Paste a prompt into Claude Code, Codex, Cursor,
+            or whatever you use.
           </p>
           <h3 class="agent__way">Quick: read it from this site</h3>
           <div class="prompt">
@@ -668,6 +668,11 @@ three things can happen...
             </button>
           </div>
           <p class="agent__status" role="status" data-copy-status></p>
+          <p class="agent__more">
+            Using Claude Code? Install the plugin and the skills trigger on
+            their own: <code>/plugin marketplace add devduck123/swe-os</code>,
+            then <code>/plugin install swe-os@swe-os</code>.
+          </p>
           <p class="agent__more">
             Agents can also read the whole index at{' '}
             <a href="/llms.txt">

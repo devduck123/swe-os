@@ -127,7 +127,16 @@ for (const file of [
   }
 }
 
-// 5. The repo is public, so no real email address belongs in a tracked file. Examples use
+// 5. The plugin's version is the release version. Installed plugins only update when it changes.
+const { version } = JSON.parse(read('package.json'));
+const plugin = JSON.parse(read('.claude-plugin/plugin.json'));
+assert.equal(
+  plugin.version,
+  version,
+  '.claude-plugin/plugin.json version must match package.json',
+);
+
+// 6. The repo is public, so no real email address belongs in a tracked file. Examples use
 //    reserved domains (RFC 2606), like billing@attacker.example.
 const exampleDomain =
   /(^|\.)(example|test|invalid|localhost)$|^example\.(com|net|org)$/i;

@@ -1281,3 +1281,8 @@ main {
 .prompt + .prompt {
   margin-top: 0.6rem;
 }
+.agent__more code {
+  font-family: var(--swe-font-mono);
+  font-size: 0.85em;
+  overflow-wrap: anywhere;
+}
