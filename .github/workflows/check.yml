@@ -19,6 +19,21 @@ jobs:
       - run: npm run check
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+  windows:
+    # Paths, line endings, and symlinks behave differently on Windows. No browser tests here.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run validate
+      - run: npm test
+      - run: npm run build
   secrets:
     runs-on: ubuntu-latest
     # The action lists a PR's commits to scan them, which needs read access to pull requests.

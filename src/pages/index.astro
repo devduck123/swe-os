@@ -1,5 +1,6 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
+import { version } from '../../package.json';
 import Logo from '../components/Logo.astro';
 import HeroArt from '../components/HeroArt.astro';
 import Fonts from '../components/Fonts.astro';
@@ -319,7 +320,7 @@ const cards = [
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__copy">
           <p class="eyebrow pill">
-            v0.1 · a work in progress, like all good software
+            v{version} · a work in progress, like all good software
           </p>
           <h1 id="hero-title">
             AI made code cheap.{' '}

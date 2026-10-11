@@ -1,0 +1,35 @@
+name: Freshness
+on:
+  schedule:
+    - cron: '0 16 1 * *' # The 1st of each month.
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Check fast-moving pages, outside links, and dependencies
+        run: |
+          node scripts/freshness.mjs > report.md
+          if ! npm audit --omit=dev --audit-level=high > audit.txt; then
+            [ -s report.md ] || echo "Checked pages and links: all fresh." > report.md
+            { echo; echo '## Dependencies with high-severity advisories'; echo; echo '```'; cat audit.txt; echo '```'; } >> report.md
+          fi
+      - name: Open an issue if anything needs attention
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s report.md ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --label freshness \
+              --title "Freshness check: $(date -u +%Y-%m)" --body-file report.md
+          fi

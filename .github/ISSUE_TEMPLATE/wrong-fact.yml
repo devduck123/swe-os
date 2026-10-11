@@ -1,0 +1,23 @@
+name: Wrong or outdated fact
+description: A price, limit, API, or claim that's wrong or no longer true.
+labels: [content]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The page URL or file path.
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What's wrong
+      description: Quote the claim, and say what's true now.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: A link to the docs, pricing page, or changelog that shows it.
