@@ -4,23 +4,34 @@ Does SWE OS make an agent's work better? Each scenario runs twice: once without 
 
 **Status: not run yet.**
 
-## Run a pair
+## Run a round
 
-1. Build the scenario's starting state twice, both outside this repo.
-2. Use the same client, model, settings, and tools for both. Start each in a fresh session.
-3. **Isolate A.** SWE OS skills may be installed globally, for example in `~/.claude/skills`, `~/.agents/skills`, or a plugin. Turn off user-level skills and plugins for A, then run `/skills` in Claude Code or Codex and confirm none of them appears. Check that user-level instructions like `~/.claude/CLAUDE.md` don't mention SWE OS. A gets no access to this repo or the site. If its transcript reads either, discard the run.
-4. **A:** paste the scenario's _Task_ and _Starting state_.
-5. **B:** the same, with SWE OS loaded: its skills installed, or the line "Use Tommy's SWE OS: start at `<repo or site>/skills/README.md`." Note which.
-6. Save to `evals/results/<date>-<scenario>/`: both transcripts and diffs, the skill list each arm showed, tokens and wall time per arm, and anything you answered or fixed by hand.
-7. Score with the rubric and the scenario's _Reviewer-only notes_.
+The harness runs every scenario headless with Claude Code, once without SWE OS (A) and once with it (B). Then it grades each run blind and writes `evals/results/<date>/summary.md`. It uses whatever account `claude` is logged into, and stops at the budget, measured in API-equivalent dollars.
 
-One pair is one noisy data point. Repeat a scenario three times before trusting a difference.
+```sh
+node evals/harness/run.mjs --dry-run                 # what would run, spends nothing
+node evals/harness/run.mjs                           # every scenario, 1 rep, $50 budget
+node evals/harness/run.mjs --only overhead,secrets --reps 3 --budget 20
+node evals/harness/run.mjs --grade evals/results/<date>   # regrade a past round
+```
 
-**Blind scoring is approximate.** B's output has tells: a "Worth learning" section, a concern report, links to SWE OS. Score neutralized copies with those sections stripped (keep any finding they hold as plain text) and the arms labeled at random. Better still, have someone who didn't run the pair score them. Structure and tone can still give B away, so write each score's reason before you unblind.
+Run it from a normal terminal: Claude Code won't start inside another Claude Code session.
+
+How it keeps the comparison fair:
+
+- **Same setup for both arms.** Each run starts in a fresh temp copy of its fixture from `evals/fixtures/`, with the same model, tools, and flags. User settings, skills, plugins, and MCP servers are off for both (`--setting-sources project,local --disable-slash-commands --strict-mcp-config`).
+- **One difference.** B's first message starts with "Use Tommy's SWE OS at <a snapshot of the current commit>…". A gets the task alone.
+- **Nothing escapes the temp folder.** Pushing, `gh`, deploys, Docker, and the Supabase and EAS CLIs are denied in both arms.
+- **The same answers for both.** When a scenario's starting state says "if asked", the harness answers once, the same way for both arms.
+- **Graded blind.** The grader sees the task, the reviewer-only notes, the rubric, the commands the agent ran, its replies with SWE OS tells stripped, and the diff. It never sees which arm it's grading.
+
+Raw transcripts and diffs stay in `runs/`, which Git ignores. Commit the round's `summary.md` and `round.json`.
+
+One rep is one noisy data point. Repeat a scenario three times before trusting a difference. To test another client, like Codex, run a pair by hand: same fixture, same task, with and without the SWE OS line, and score it with the rubric below.
 
 ## Scenarios
 
-The traps in these scenarios aren't written anywhere in SWE OS, so B can't win by recall. Before adding or editing one, grep `core/`, `skills/`, and `profile/` for its key phrases. If SWE OS later documents a trap, replace the scenario. Pushback, secrets, and dependency are the exceptions: they test behavior SWE OS teaches directly.
+The traps in these scenarios aren't written anywhere in SWE OS, so B can't win by recall. Each one has a harness entry in `evals/harness/scenarios.mjs` and, if it starts from code, a fixture in `evals/fixtures/`; `npm test` checks the prompts still match the scenario files. Before adding or editing one, grep `core/`, `skills/`, and `profile/` for its key phrases. If SWE OS later documents a trap, replace the scenario. Pushback, secrets, and dependency are the exceptions: they test behavior SWE OS teaches directly.
 
 | Scenario                                                          | Skill         |
 | ----------------------------------------------------------------- | ------------- |

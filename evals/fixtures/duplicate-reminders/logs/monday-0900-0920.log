@@ -1,0 +1,8 @@
+2026-10-05T09:00:00.112Z GET /api/cron/reminders  START
+2026-10-05T09:00:10.118Z GET /api/cron/reminders  Task timed out after 10 seconds
+2026-10-05T09:05:00.097Z GET /api/cron/reminders  START
+2026-10-05T09:05:10.103Z GET /api/cron/reminders  Task timed out after 10 seconds
+2026-10-05T09:10:00.121Z GET /api/cron/reminders  START
+2026-10-05T09:10:10.126Z GET /api/cron/reminders  Task timed out after 10 seconds
+2026-10-05T09:15:00.088Z GET /api/cron/reminders  START
+2026-10-05T09:15:10.094Z GET /api/cron/reminders  Task timed out after 10 seconds

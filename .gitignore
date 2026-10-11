@@ -6,3 +6,5 @@ test-results/
 .DS_Store
 .env*
 !.env.example
+# Eval transcripts and work folders stay local. Each round's summary.md is committed.
+evals/results/*/runs/
