@@ -19,7 +19,7 @@ const read = (path) => readFileSync(join(root, path), 'utf8');
 const markdownIn = (dir) =>
   readdirSync(join(root, dir), { recursive: true })
     .filter((file) => file.endsWith('.md'))
-    .map((file) => join(dir, file));
+    .map((file) => repoPath(join(root, dir, file)));
 
 const sources = [
   ...readdirSync(root).filter((file) => file.endsWith('.md')),
