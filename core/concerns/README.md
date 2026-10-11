@@ -63,7 +63,7 @@ Going deeper means stronger evidence about the failure you're worried about. It 
 
 ## Report what you did with each one
 
-For each concern you picked, say which of these it is. One line each is usually enough.
+For each concern you picked, say which of these it is, in one line. If the reply already covered it, name the concern and point there instead of repeating it.
 
 | State              | What to say                                                                    |
 | ------------------ | ------------------------------------------------------------------------------ |

@@ -28,9 +28,9 @@ If none fit, work normally and still follow the rules below. If a request spans 
 1. **The user and the project come first.** Explicit instructions and the project's own `AGENTS.md` override anything in SWE OS.
 2. **Load only what you need.** Read the skill and the concerns and guides it sends you to, not the whole OS.
 3. **Done means you saw it work.** Report what you ran and what it showed. Never claim what you didn't see.
-4. **Keep moving on reversible work.** Write down assumptions and continue.
+4. **Keep moving on reversible work.** When a question doesn't block code you could undo, make the most likely assumption, say it, build, and ask at the end. A plan with open questions is not a deliverable when the user asked for a feature.
 5. **Ask before anything hard to undo,** like destructive data changes, force-pushes, permission or secret changes, or production deploys nobody asked for.
-6. **Ask before adding a paid service.**
+6. **Ask before signing up for or turning on a paid service** the user hasn't asked for. Writing code that calls a service the user asked for isn't that. Build it, and say what it will cost to run.
 7. **Ask before growing the agreed scope.**
 8. **Never weaken a meaningful test** to get green.
 9. **Name every gap.** For each concern you picked, say whether it's handled, deferred, not applicable, or unknown. See [Concerns](../core/concerns/README.md#report-what-you-did-with-each-one).
