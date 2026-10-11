@@ -108,6 +108,9 @@ export default defineConfig({
     starlight({
       title: "Tommy's SWE OS",
       description: 'Engineering judgment for people and their coding agents.',
+      editLink: {
+        baseUrl: 'https://github.com/devduck123/swe-os/edit/main/',
+      },
       social: [
         {
           icon: 'github',

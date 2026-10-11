@@ -8,9 +8,14 @@ Read [PROJECT.md](PROJECT.md) for the current goal, decisions, and known gaps. I
 
 ## How we engineer
 
-This project uses Tommy's SWE OS, version <0.0.0>: <SWE OS URL>/skills/README.md
+This project uses Tommy's SWE OS <v0.0.0>. Read it from whichever source is available:
 
-Start there. Pick the matching skill and load only the concerns and guides the task needs. This file and PROJECT.md override SWE OS wherever they disagree.
+- A local copy at `~/swe-os`, checked out at that version: `git -C ~/swe-os checkout <v0.0.0>`.
+- Otherwise, print https://raw.githubusercontent.com/devduck123/swe-os/<v0.0.0>/skills/README.md with `curl`, and fetch the files it links the same way.
+
+Start at `skills/README.md`. Pick the matching skill and load only the concerns and guides the task needs. This file and PROJECT.md override SWE OS wherever they disagree.
+
+<Optional: "Use the profile in <path> instead of Tommy's." Point it at your own voice and default-stack files.>
 
 ## Commands
 

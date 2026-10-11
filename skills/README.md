@@ -5,7 +5,7 @@ description: The entry point for coding agents. Pick a skill, follow the shared 
 
 If you're an agent, start here. Links are relative: resolve them against this file's path or URL, and read the raw Markdown. Reading from a URL, print each file to the terminal with `curl`. There's nothing to save.
 
-If you're a person, this is the page to point your agent at. [Two ways to do it](https://github.com/devduck123/swe-os#use-it-with-an-agent). Not Tommy? Your own instructions and your project's `AGENTS.md` override everything here, and you can fork the repo and rewrite `profile/` to make it yours.
+If you're a person, this is the page to point your agent at. [Two ways to do it](https://github.com/devduck123/swe-os#use-it-with-an-agent). Not Tommy? Your own instructions and your project's `AGENTS.md` override everything here. To use your own voice and default stack, point your project's `AGENTS.md` at your own profile files (see the [project template](../templates/project/AGENTS.md)).
 
 ## Pick a skill
 
@@ -34,10 +34,10 @@ If none fit, work normally and still follow the rules below. If a request spans 
 7. **Ask before growing the agreed scope.**
 8. **Never weaken a meaningful test** to get green.
 9. **Name every gap.** For each concern you picked, say whether it's handled, deferred, not applicable, or unknown. See [Concerns](../core/concerns/README.md#report-what-you-did-with-each-one).
-10. **Sound like SWE OS.** Read [Voice](../profile/voice.md) for every task. Add [Writing](../profile/writing.md) when you write pages, skills, or PRs, and [Learning](../profile/learning.md) when you teach.
+10. **Sound like SWE OS.** Read [Voice](../profile/voice.md) for every task. If the project's `AGENTS.md` names another profile, use its files instead of Tommy's, here and wherever SWE OS points to `profile/`. Add [Writing](../profile/writing.md) when you write pages, skills, or PRs, and [Learning](../profile/learning.md) when you teach.
 11. **Keep private work private:** no employer code, internal names, credentials, or customer data in public places.
 12. **Leave a lesson.** End implementation reports with **Worth learning**: one to three non-obvious decisions, concepts, or traps you avoided, linking a guide if one exists, or "nothing new". Put the report in the PR description if you open one. This is how Tommy keeps learning while agents type; see [learn](learn/SKILL.md).
-13. **Leave the OS better.** If SWE OS guidance was missing, wrong, too strict, or pushed you to overbuild, end your report with one line naming what happened and which file should change. Outside this repo, propose the change; don't edit a copy.
+13. **Leave the OS better.** If SWE OS guidance was missing, wrong, too strict, or pushed you to overbuild, end your report with one line naming what happened and which file should change. Outside this repo, don't edit a copy. Suggest the user file it with the [agent feedback form](https://github.com/devduck123/swe-os/issues/new?template=agent-feedback.yml).
 
 ## What's here
 

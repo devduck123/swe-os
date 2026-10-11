@@ -26,7 +26,7 @@ git clone https://github.com/devduck123/swe-os ~/swe-os
 
 > Use Tommy's SWE OS at ~/swe-os for this task. Start at skills/README.md and follow the skill that fits.
 
-The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Your project's own `AGENTS.md` always wins. To make it yours, fork the repo and rewrite `profile/`.
+The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Your project's own `AGENTS.md` always wins. To use your own voice and default stack instead of mine, point it at your own profile files; the [project template](templates/project/AGENTS.md) shows how.
 
 ## What's inside
 

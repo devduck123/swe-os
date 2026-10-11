@@ -1,0 +1,30 @@
+name: Agent feedback
+description: An agent using SWE OS did something wrong, overbuilt, or hit friction. Agents suggest this under rule 13.
+labels: [agent-feedback]
+body:
+  - type: input
+    id: setup
+    attributes:
+      label: Agent and setup
+      description: For example "Claude Code, Opus 5.5, local clone at v0.1.0" or "Codex, site URL".
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: The task
+      description: What you asked for, in a sentence or two.
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What the agent did, and what it should have done instead.
+    validations:
+      required: true
+  - type: input
+    id: file
+    attributes:
+      label: Which SWE OS file caused it
+      description: Your best guess, like skills/build-feature/SKILL.md.
