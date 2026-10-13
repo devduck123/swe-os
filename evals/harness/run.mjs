@@ -44,7 +44,8 @@ const { values: opts } = parseArgs({
 const budget = Number(opts.budget);
 const reps = Number(opts.reps);
 let spent = 0;
-let authFailed = false;
+// Set when a run fails in a way every later run would too, so the round stops early.
+let stopReason = null;
 
 // Tools both arms get. Pushing, GitHub, deploys, and Docker are off so a run can't touch
 // anything outside its temp folder. Both arms lose them equally.
@@ -233,10 +234,7 @@ async function runOne(s, arm, rep, root, sweos) {
     if (r.error) break;
     // Answer a clarifying question once, with the scenario's facts, the same way for both arms.
     if (i === 0 && s.ifAsked && /\?\s*$/m.test(r.reply.slice(-800)))
-      await send(
-        `Answers to your questions: ${s.ifAsked}\n\nGo ahead.`,
-        turns.length,
-      );
+      await send(`Answers to your questions: ${s.ifAsked}`, turns.length);
   }
   let diff = '';
   try {
@@ -278,7 +276,9 @@ async function runOne(s, arm, rep, root, sweos) {
   };
   writeFileSync(join(dir, 'meta.json'), JSON.stringify(meta, null, 2));
   if (/authenticat|OAuth|logged out|login/i.test(meta.error ?? ''))
-    authFailed = true;
+    stopReason = 'A run failed to log in. Run `claude auth login`';
+  else if (/rate.?limit|usage limit|429|overloaded/i.test(meta.error ?? ''))
+    stopReason = 'A run hit a usage or rate limit. Wait for it to reset';
   console.log(
     `${s.id} ${arm}${rep}: $${meta.cost.toFixed(2)}, ${meta.seconds}s${meta.error ? `, ERROR ${meta.error.slice(0, 120)}` : ''}  (spent $${spent.toFixed(2)})`,
   );
@@ -448,8 +448,6 @@ const refuseNested = () => {
       'Run this from a normal terminal. Claude Code refuses to start inside another Claude Code session.',
     );
 };
-const loginHelp =
-  'Run `claude auth login`, then start again. Runs that already finished are kept.';
 
 // Regrade: grade every run in a past round that has no grade yet, or whose grade failed.
 if (opts.grade) {
@@ -479,7 +477,12 @@ const pastInfo = past
 const started =
   pastInfo?.started ??
   new Date().toISOString().slice(0, 19).replaceAll(':', '');
-const root = past ?? join(repo, 'evals/results', started);
+// Two rounds started in the same second get separate folders.
+const newRoot = (name, n = 1) => {
+  const dir = join(repo, 'evals/results', n === 1 ? name : `${name}-${n}`);
+  return existsSync(dir) ? newRoot(name, n + 1) : dir;
+};
+const root = past ?? newRoot(started);
 const jobs = picked.flatMap((s) =>
   Array.from({ length: reps }, (_, i) =>
     ['A', 'B'].map((arm) => [s, arm, i + 1]),
@@ -530,7 +533,7 @@ await Promise.all(
         queue.length = 0;
         break;
       }
-      if (authFailed) break;
+      if (stopReason) break;
       const [s, arm, rep] = queue.shift();
       const name = `${s.id}-${arm}-${rep}`;
       await runOne(s, arm, rep, scratch, sweos);
@@ -544,10 +547,23 @@ await Promise.all(
   }),
 );
 
-if (authFailed) {
-  if (!past) rmSync(root, { recursive: true, force: true });
+if (stopReason) {
+  // Keep the runs that finished. Drop the ones that failed, so a later --round redoes them.
+  for (const name of readdirSync(join(root, 'runs'))) {
+    const meta = JSON.parse(
+      readFileSync(join(root, 'runs', name, 'meta.json'), 'utf8'),
+    );
+    if (meta.error)
+      rmSync(join(root, 'runs', name), { recursive: true, force: true });
+  }
+  writeFileSync(
+    join(root, 'round.json'),
+    JSON.stringify({ ...info, spent: (pastInfo?.spent ?? 0) + spent }, null, 2),
+  );
+  if (!past && readdirSync(join(root, 'runs')).length === 0)
+    rmSync(root, { recursive: true, force: true });
   throw new Error(
-    `A run failed to log in, so the round stopped before grading. ${loginHelp}`,
+    `${stopReason}, then finish the round: --round ${root} --only <the scenarios that didn't run>, or --grade ${root} to grade what finished.`,
   );
 }
 console.log('\nGrading...');
