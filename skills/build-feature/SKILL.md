@@ -24,7 +24,7 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 ## Stop rules
 
 - Three failed attempts at the same problem: stop, write down what you learned, and ask.
-- The change needs something nobody agreed to, like a new service, a new dependency with running costs, or a schema change: stop and say so.
+- The change needs something the request doesn't already imply, like a paid service, a running cost, or a schema change to existing data: build everything that doesn't depend on it, state your assumption, and ask at the end. A server route for a feature the user asked for, or a well-known substitute for a package that doesn't exist, is implied.
 - Anything the [rules for every task](../README.md#rules-for-every-task) say to ask about first (rules 5 to 7).
 
 ## Report
