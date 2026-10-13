@@ -67,3 +67,17 @@ test('grades parse from fenced or chatty replies', async () => {
   );
   assert.ok(parseGrade('no json here').error);
 });
+
+test('grading hides SWE OS reads but keeps the rest of a chained command', async () => {
+  const { hideSweos } = await import('../evals/harness/neutralize.mjs');
+  const sweos = '/tmp/x/swe-os';
+  assert.equal(
+    hideSweos(
+      `Bash cd ${sweos} && ls core/concerns; grep -n depend core/concerns/README.md; npm view left-pad name`,
+      sweos,
+    ),
+    'Bash npm view left-pad name',
+  );
+  assert.equal(hideSweos(`Read ${sweos}/skills/README.md`, sweos), null);
+  assert.equal(hideSweos('Bash npm test', sweos), 'Bash npm test');
+});

@@ -42,3 +42,19 @@ export function neutralize(text, sweosPath = '') {
     .trim();
   return out;
 }
+
+// Commands that read SWE OS give the arm away, so the grader doesn't see them. A chained
+// command keeps its other parts: in round 3, hiding all of "cd <swe-os> && ... && npm view x"
+// hid the npm check too, and the grader called the agent's true report of it fake.
+// Entries look like "Bash <command>" or "Read <path>".
+export function hideSweos(entry, sweosPath) {
+  if (!entry.includes(sweosPath)) return entry;
+  const [tool, ...rest] = entry.split(' ');
+  if (tool !== 'Bash') return null;
+  const kept = rest
+    .join(' ')
+    .split(/\s*(?:&&|\|\||;)\s*/)
+    .filter((part) => part && !part.includes(sweosPath))
+    .filter((part) => !/\b(core|skills|profile|templates)\//.test(part));
+  return kept.length ? `Bash ${kept.join(' && ')}` : null;
+}

@@ -25,7 +25,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { scenarios } from './scenarios.mjs';
-import { neutralize } from './neutralize.mjs';
+import { hideSweos, neutralize } from './neutralize.mjs';
 import { parseGrade } from './parse-grade.mjs';
 
 const repo = resolve(import.meta.dirname, '../..');
@@ -294,7 +294,8 @@ async function gradeOne(dir, sweos) {
       (t, i) =>
         `### Turn ${i + 1}\n\nUser: ${t.sent}\n\nCommands and files the agent touched:\n${
           t.commands
-            .filter((c) => !c.includes(sweos))
+            .map((c) => hideSweos(c, sweos))
+            .filter(Boolean)
             .map((c) => `- ${c}`)
             .join('\n') || '- none'
         }\n\nAgent's final reply:\n\n${neutralize(t.reply, sweos)}`,
