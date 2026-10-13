@@ -525,8 +525,8 @@ const queue = [...jobs];
 await Promise.all(
   Array.from({ length: Number(opts.parallel) }, async () => {
     while (queue.length) {
-      // Leave room for grading, about $0.30 a run.
-      if (spent + jobs.length * 0.3 >= budget) {
+      // Leave room for grading, about $0.05 a run, with margin.
+      if (spent + jobs.length * 0.1 >= budget) {
         console.log(
           `Stopping: $${spent.toFixed(2)} spent, budget $${budget}. ${queue.length} runs skipped.`,
         );
