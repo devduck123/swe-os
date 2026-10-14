@@ -43,6 +43,8 @@ Use different keys for development, preview, and production. On Vercel, store cr
 
 In Next.js, any variable starting with `NEXT_PUBLIC_` gets inlined into the JavaScript bundle at build time. Anyone can read it in devtools. `VITE_` works the same way.
 
+Mobile apps are no safer. In Expo, `EXPO_PUBLIC_` variables are inlined into the app's JavaScript, and so is anything else the app can read at runtime, like `extra` in `app.config.ts` or a constant in the code. Anyone can unzip the app and read them. A key for a paid API needs a server between it and the phone, like an Expo Router API route.
+
 This is where agents bite. A client component calls the model API, `process.env.OPENAI_API_KEY` comes back `undefined` in the browser, and the quickest fix is renaming it `NEXT_PUBLIC_OPENAI_API_KEY`. The error is gone, and the key is published.
 
 The real fix is moving the call to a server route. Put `import 'server-only'` at the top of any module that touches a secret, so importing it from client code fails the build.
@@ -124,7 +126,7 @@ I'd add a secret manager once several people or services share credentials, or r
 ## Sources
 
 - [Orca Security: 2023 Honeypotting in the Cloud Report](https://orca.security/resources/press-releases/orca-security-2023-honeypotting-in-the-cloud-report/)
-- [Next.js: Environment variables](https://nextjs.org/docs/app/guides/environment-variables)
+- [Next.js: Environment variables](https://nextjs.org/docs/app/guides/environment-variables) and [Expo: Environment variables](https://docs.expo.dev/guides/environment-variables/)
 - [Vercel: Config and Secret environment variables](https://vercel.com/docs/environment-variables/sensitive-environment-variables) and [rotating secrets](https://vercel.com/docs/environment-variables/rotating-secrets)
 - [Supabase: API keys](https://supabase.com/docs/guides/getting-started/api-keys)
 - [Stripe: API keys](https://docs.stripe.com/keys)

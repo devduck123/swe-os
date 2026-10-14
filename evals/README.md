@@ -2,7 +2,18 @@
 
 Does SWE OS make an agent's work better? Each scenario runs twice: once without SWE OS (A), once with it (B).
 
-**Status: not run yet.**
+## Results so far
+
+Three rounds in October 2026, on Claude Code with Opus 5.5, about $45 API-equivalent on a Max plan. One or two reps per scenario, so each number is noisy. Summaries: [round 1](results/2026-10-11T233550/summary.md), [round 2](results/2026-10-13T071137/summary.md), [round 3](results/2026-10-13T081543/summary.md).
+
+- **SWE OS helps with shaping, setup, and debugging.** Start-project was +0.83 and +0.75, duplicate reminders +0.17 and +0.83, and the expense splitter +0.67 and +0.33.
+- **It adds no ceremony to a tiny fix.** The two-line fix tied on score, time, and length once the small-change rule was in.
+- **It stopped to ask instead of building,** until round 3. Rule 6 and build-feature's stop rule both fired on things the request already implied. Fixed in round 3: B now builds the secrets and dependency features.
+- **Its reports ran long.** A line per concern, even handled ones, made replies up to 77% longer. They're now one line for everything handled.
+- **It costs about twice as much** in tokens and time.
+- **The bar isn't met yet.** Round 1 averaged +0.03, round 2 +0.25. The fixes from rounds 2 and 3 haven't had a full round.
+
+The rounds also found four harness bugs, now fixed: B could read the reviewer notes, an answer turn said "Go ahead" and turned a shaping task into a build, grades failed to parse, and grading hid real checks chained after a SWE OS read.
 
 ## Run a round
 
@@ -11,7 +22,7 @@ The harness runs every scenario headless with Claude Code, once without SWE OS (
 ```sh
 node evals/harness/run.mjs --dry-run                 # what would run, spends nothing
 node evals/harness/run.mjs                           # every scenario, 1 rep, $50 budget
-node evals/harness/run.mjs --only overhead,secrets --reps 3 --budget 20
+node evals/harness/run.mjs --only overhead,extension-key --reps 3 --budget 20
 node evals/harness/run.mjs --grade evals/results/<date>   # regrade a past round
 ```
 
@@ -31,7 +42,7 @@ One rep is one noisy data point. Repeat a scenario three times before trusting a
 
 ## Scenarios
 
-The traps in these scenarios aren't written anywhere in SWE OS, so B can't win by recall. Each one has a harness entry in `evals/harness/scenarios.mjs` and, if it starts from code, a fixture in `evals/fixtures/`; `npm test` checks the prompts still match the scenario files. Before adding or editing one, grep `core/`, `skills/`, and `profile/` for its key phrases. If SWE OS later documents a trap, replace the scenario. Pushback, secrets, and dependency are the exceptions: they test behavior SWE OS teaches directly.
+The traps in these scenarios aren't written anywhere in SWE OS, so B can't win by recall. Each one has a harness entry in `evals/harness/scenarios.mjs` and, if it starts from code, a fixture in `evals/fixtures/`; `npm test` checks the prompts still match the scenario files. Before adding or editing one, grep `core/`, `skills/`, and `profile/` for its key phrases. If SWE OS later documents a trap, replace the scenario. Pushback and dependency are the exceptions: they test behavior SWE OS teaches directly. The extension key scenario tests a taught rule (anything shipped to the client is public) somewhere SWE OS never mentions: a Chrome extension. It replaced an Expo scenario once SWE OS documented `EXPO_PUBLIC_`.
 
 | Scenario                                                          | Skill         |
 | ----------------------------------------------------------------- | ------------- |
@@ -39,7 +50,7 @@ The traps in these scenarios aren't written anywhere in SWE OS, so B can't win b
 | [Shape a group expense splitter](scenarios/expense-splitter.md)   | shape-project |
 | [Start the expense app repo](scenarios/start-project.md)          | start-project |
 | [Receipt photo gallery](scenarios/receipt-gallery.md)             | build-feature |
-| [Secret in the chat](scenarios/secrets.md)                        | build-feature |
+| [Key in the extension](scenarios/extension-key.md)                | build-feature |
 | [Package that doesn't exist](scenarios/dependency.md)             | build-feature |
 | [Reminders sent more than once](scenarios/duplicate-reminders.md) | debug         |
 | [Password reset review](scenarios/password-reset.md)              | review-change |

@@ -1,0 +1,23 @@
+{
+  "started": "2026-10-13T071137",
+  "commit": "b386529",
+  "reps": 2,
+  "budget": 35,
+  "sweos": "/var/folders/vb/_1kzd2gx3zq_07z5nswm4qfw0000gn/T/swe-os-evals-2026-10-13T071137-oD0qwK/swe-os",
+  "spent": 32.144662600000004,
+  "reruns": [
+    {
+      "at": "2026-10-13T08:01:04.430Z",
+      "only": [
+        "expense-splitter",
+        "secrets",
+        "dependency",
+        "duplicate-reminders",
+        "password-reset",
+        "connection-pooling",
+        "pushback-a",
+        "pushback-b"
+      ]
+    }
+  ]
+}
