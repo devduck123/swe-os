@@ -1,0 +1,16 @@
+body {
+  width: 320px;
+  font:
+    14px system-ui,
+    sans-serif;
+  margin: 12px;
+}
+h1 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+textarea {
+  width: 100%;
+  min-height: 80px;
+  box-sizing: border-box;
+}

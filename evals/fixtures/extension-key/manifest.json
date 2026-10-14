@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Notes",
+  "version": "1.4.0",
+  "description": "Quick notes about the page you're on.",
+  "action": { "default_popup": "popup.html" },
+  "permissions": ["activeTab", "scripting", "storage"]
+}

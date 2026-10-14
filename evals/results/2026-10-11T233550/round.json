@@ -1,0 +1,14 @@
+{
+  "started": "2026-10-11T233550",
+  "commit": "36ef116",
+  "reps": 1,
+  "budget": 50,
+  "sweos": "/var/folders/vb/_1kzd2gx3zq_07z5nswm4qfw0000gn/T/swe-os-evals-2026-10-11T233550-8pVrvu/swe-os",
+  "spent": 10.873909,
+  "reruns": [
+    {
+      "at": "2026-10-13T07:02:26.307Z",
+      "only": ["receipt-gallery"]
+    }
+  ]
+}

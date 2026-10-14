@@ -54,3 +54,30 @@ test('grading strips SWE OS tells but keeps what they say', () => {
   assert.match(out, /The limit is 5,000 characters/);
   assert.doesNotMatch(out, /Worth learning|SWE OS|SKILL\.md/);
 });
+
+test('grades parse from fenced or chatty replies', async () => {
+  const { parseGrade } = await import('../evals/harness/parse-grade.mjs');
+  const json =
+    '{"scores":{"risk":3},"serious_flaws":[],"reasons":{"risk":"Uses {braces} fine."}}';
+  assert.equal(parseGrade('```json\n' + json + '\n```').scores.risk, 3);
+  assert.equal(
+    parseGrade('Here you go:\n' + json + '\nHope that helps {really}.').scores
+      .risk,
+    3,
+  );
+  assert.ok(parseGrade('no json here').error);
+});
+
+test('grading hides SWE OS reads but keeps the rest of a chained command', async () => {
+  const { hideSweos } = await import('../evals/harness/neutralize.mjs');
+  const sweos = '/tmp/x/swe-os';
+  assert.equal(
+    hideSweos(
+      `Bash cd ${sweos} && ls core/concerns; grep -n depend core/concerns/README.md; npm view left-pad name`,
+      sweos,
+    ),
+    'Bash npm view left-pad name',
+  );
+  assert.equal(hideSweos(`Read ${sweos}/skills/README.md`, sweos), null);
+  assert.equal(hideSweos('Bash npm test', sweos), 'Bash npm test');
+});

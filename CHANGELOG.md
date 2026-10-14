@@ -4,6 +4,14 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+## v0.2.0 (2026-10-13)
+
+From MVP to product. Projects that pin v0.1.0 should read the guidance changes below before moving.
+
+- **Agents build first, then ask.** Rule 4 and build-feature's stop rule: when a question doesn't block code you could undo, make the likely assumption, say it, build, and ask at the end. A server route for a requested feature, or a substitute for a package that doesn't exist, counts as implied. Rule 6 asks only before signing up for or turning on a paid service the user hasn't asked for.
+- **Shorter reports.** One line names the handled concerns; only open ones get their own line. Answers to questions skip the concern report (rule 9).
+- **Expo.** The secrets guide and security concern cover `EXPO_PUBLIC_` and other values shipped inside a mobile app.
+- **Evals you can run.** `node evals/harness/run.mjs` runs every scenario with and without SWE OS through Claude Code, grades blind, and writes a summary. Results from the first three rounds are in `evals/README.md`.
 - **Claude Code plugin.** `/plugin marketplace add devduck123/swe-os`, then `/plugin install swe-os@swe-os`. The seven skills trigger on their own, and the plugin updates when a new version is released.
 - **Pin a version.** The project template reads SWE OS at a tag, from a local copy or from the raw files on GitHub, and `start-project` fills in the latest tag.
 - **Use your own profile.** A project's `AGENTS.md` can point at your own voice and default-stack files instead of Tommy's.

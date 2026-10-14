@@ -1,6 +1,6 @@
 {
   "name": "swe-os",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Seven workflow skills: shape, start, build, debug, review, explain, and learn. They load SWE OS's concerns, guides, and profile as each task needs them.",
   "author": { "name": "Tommy", "url": "https://github.com/devduck123" },
   "homepage": "https://tommy-swe-os.vercel.app",
