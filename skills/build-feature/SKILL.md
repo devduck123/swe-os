@@ -32,16 +32,13 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 ```
 **What changed.** One short paragraph, in user terms first.
 
-**Evidence.** Each command or check you ran, and what it showed.
+**Evidence.** The commands or checks you ran, and what they showed.
 
-**Concerns.** One line each:
-- Security: handled. Server checks ownership; test `rejects other user's avatar` passes.
-- Cost: deferred. No upload rate limit yet. Revisit before public launch. Added to PROJECT.md.
-- Migrations: not applicable. No schema change.
+**Open.** One line naming the handled concerns ("Handled: security, testing."), then one line for each thing that's deferred, unknown, or not verified, with what would close it. "Cost: deferred. No upload rate limit yet; add one before launch."
 
-**Not verified.** Anything you couldn't check, and why.
-
-**Worth learning.** One to three non-obvious decisions or concepts, or "nothing new".
+**Worth learning.** One non-obvious point the reply hasn't already made, or "nothing new".
 ```
+
+Most reports fit in 150 to 250 words. Leave out a section that would be empty, and don't repeat a point in a later section.
 
 If you open a PR, use this report as its description.

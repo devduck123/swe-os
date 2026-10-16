@@ -43,5 +43,5 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 
 **Deferred.** What was left out on purpose, and the trigger to add it. Also written in PROJECT.md.
 
-**Worth learning.** One to three things about this setup worth understanding, or "nothing new".
+**Worth learning.** One or two things about this setup worth understanding, or "nothing new".
 ```
