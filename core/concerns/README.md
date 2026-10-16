@@ -37,7 +37,7 @@ Match what the feature actually does, after you've read the code it touches. One
 
 If nothing matches an implementation task, look again. Pure explanations and copy edits can match nothing. Code changes rarely do.
 
-**Small changes.** If a change is under about 20 lines and matches no row except "changes any behavior", report only security and testing, in one line each. A copy or typo fix that changes no logic needs no concern report at all.
+**Small changes.** If a change is under about 20 lines and matches no row except "changes any behavior", check only security and testing, and mention one only if it's open. A copy or typo fix that changes no logic needs no concern report at all.
 
 ## Decide how deep to go
 
@@ -63,11 +63,11 @@ Going deeper means stronger evidence about the failure you're worried about. It 
 
 ## Report what you did with each one
 
-Name the handled concerns together in one line. Give each concern that's deferred, not applicable for a non-obvious reason, or unknown its own line. Don't repeat what the reply already said.
+Report only what isn't done: each concern that's deferred, unknown, or not applicable for a reason that isn't obvious gets its own line. Handled concerns show in your evidence, so don't list them again. If nothing is open, say nothing about concerns.
 
 | State              | What to say                                                                    |
 | ------------------ | ------------------------------------------------------------------------------ |
-| **Handled**        | What you changed or checked, and what proves it.                               |
+| **Handled**        | Nothing here. Your evidence shows what you changed or checked.                 |
 | **Deferred**       | The remaining risk and what would make you revisit it. Write it in PROJECT.md. |
 | **Not applicable** | Why the trigger doesn't hold here.                                             |
 | **Unknown**        | The missing fact, why it matters, and how to find out.                         |

@@ -34,7 +34,7 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 
 **Evidence.** The commands or checks you ran, and what they showed.
 
-**Open.** One line naming the handled concerns ("Handled: security, testing."), then one line for each thing that's deferred, unknown, or not verified, with what would close it. "Cost: deferred. No upload rate limit yet; add one before launch."
+**Open.** One line for each thing that's deferred, unknown, or not verified, with what would close it. Leave out what's handled; the evidence shows it. "Cost: deferred. No upload rate limit yet; add one before launch."
 
 **Worth learning.** One non-obvious point the reply hasn't already made, or "nothing new".
 ```
