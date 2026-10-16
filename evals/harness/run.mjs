@@ -26,7 +26,7 @@ import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { scenarios } from './scenarios.mjs';
 import { hideSweos, neutralize } from './neutralize.mjs';
-import { parseGrade } from './parse-grade.mjs';
+import { combineGrades, parseGrade } from './parse-grade.mjs';
 
 const repo = resolve(import.meta.dirname, '../..');
 const { values: opts } = parseArgs({
@@ -36,6 +36,7 @@ const { values: opts } = parseArgs({
     budget: { type: 'string', default: '50' },
     parallel: { type: 'string', default: '2' },
     'per-run': { type: 'string', default: '5' },
+    graders: { type: 'string', default: '2' },
     'dry-run': { type: 'boolean', default: false },
     grade: { type: 'string' },
     round: { type: 'string' },
@@ -330,29 +331,34 @@ Score each rubric dimension 0 to 3, or null if it doesn't apply. Don't reward le
 Reply with only this JSON:
 {"scores":{"product_judgment":n,"completeness":n,"simplicity":n,"risk":n,"verification":n,"communication":n},"serious_flaws":["..."],"reasons":{"product_judgment":"one sentence","completeness":"...","simplicity":"...","risk":"...","verification":"...","communication":"..."}}`;
   writeFileSync(join(dir, 'grade-prompt.md'), prompt);
-  const r = await claude(
-    [
-      '-p',
-      '--output-format',
-      'stream-json',
-      '--verbose',
-      '--tools',
-      '',
-      '--setting-sources',
-      'project,local',
-      '--disable-slash-commands',
-      '--strict-mcp-config',
-      '--',
-      prompt,
-    ],
-    dir,
-    join(dir, 'grade-transcript.jsonl'),
+  const grade1 = (i) =>
+    claude(
+      [
+        '-p',
+        '--output-format',
+        'stream-json',
+        '--verbose',
+        '--tools',
+        '',
+        '--setting-sources',
+        'project,local',
+        '--disable-slash-commands',
+        '--strict-mcp-config',
+        '--',
+        prompt,
+      ],
+      dir,
+      join(dir, `grade-transcript-${i + 1}.jsonl`),
+    );
+  const results = await Promise.all(
+    Array.from({ length: Number(opts.graders) }, (_, i) => grade1(i)),
   );
-  spent += r.cost;
-  const grade = parseGrade(r.reply);
+  const cost = results.reduce((n, r) => n + r.cost, 0);
+  spent += cost;
+  const grade = combineGrades(results.map((r) => parseGrade(r.reply)));
   writeFileSync(
     join(dir, 'grade.json'),
-    JSON.stringify({ ...grade, cost: r.cost }, null, 2),
+    JSON.stringify({ ...grade, cost }, null, 2),
   );
 }
 
@@ -362,6 +368,8 @@ const needsGrade = (dir) => {
   if (!existsSync(join(dir, 'grade.json'))) return true;
   const old = JSON.parse(readFileSync(join(dir, 'grade.json'), 'utf8'));
   if (!old.error) return false;
+  // Rounds before double grading saved one transcript under this name.
+  if (!existsSync(join(dir, 'grade-transcript.jsonl'))) return true;
   const reply = readFileSync(join(dir, 'grade-transcript.jsonl'), 'utf8')
     .split('\n')
     .filter((line) => line.startsWith('{'))
@@ -419,12 +427,17 @@ function summarize(root) {
       (f) => `- ${r.scenario} ${r.arm}${r.rep}: ${f}`,
     ),
   );
+  const disputed = runs.flatMap((r) =>
+    (r.grade.disputedFlaws ?? []).map(
+      (f) => `- ${r.scenario} ${r.arm}${r.rep}: ${f}`,
+    ),
+  );
   const lines = [
     `# Eval round ${info.started}`,
     '',
     `SWE OS at \`${info.commit}\`${info.reruns?.length ? ` (rerun: ${info.reruns.flatMap((r) => r.only).join(', ')})` : ''}, model \`${runs[0]?.model ?? 'unknown'}\`, ${info.reps} rep(s). Spent $${fmt(info.spent ?? spent)} API-equivalent (budget $${info.budget}).`,
     '',
-    'Scores are the mean of the rubric dimensions that applied, 0 to 3, graded blind by Claude with SWE OS tells stripped. One rep per scenario is one noisy data point.',
+    'Scores are the mean of the rubric dimensions that applied, 0 to 3, graded blind by Claude (two graders per run, averaged) with SWE OS tells stripped. One rep per scenario is one noisy data point.',
     '',
     '| Scenario | A | B | B − A | Serious flaws A / B | Cost A / B | Time A / B |',
     '| --- | --- | --- | --- | --- | --- | --- |',
@@ -436,6 +449,9 @@ function summarize(root) {
     '',
     ...(flawLines.length ? flawLines : ['None.']),
     '',
+    ...(disputed.length
+      ? ['Flagged by only one grader, so not counted:', '', ...disputed, '']
+      : []),
     'Raw transcripts, diffs, and per-dimension reasons are in `runs/` next to this file, which Git ignores.',
   ];
   writeFileSync(join(root, 'summary.md'), lines.join('\n') + '\n');

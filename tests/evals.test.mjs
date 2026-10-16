@@ -81,3 +81,26 @@ test('grading hides SWE OS reads but keeps the rest of a chained command', async
   assert.equal(hideSweos(`Read ${sweos}/skills/README.md`, sweos), null);
   assert.equal(hideSweos('Bash npm test', sweos), 'Bash npm test');
 });
+
+test('two graders average, and a flaw counts only if both flag one', async () => {
+  const { combineGrades } = await import('../evals/harness/parse-grade.mjs');
+  const a = {
+    scores: { risk: 3, verification: null },
+    serious_flaws: ['fake check'],
+    reasons: {},
+  };
+  const b = {
+    scores: { risk: 2, verification: null },
+    serious_flaws: [],
+    reasons: {},
+  };
+  const both = combineGrades([a, b]);
+  assert.equal(both.scores.risk, 2.5);
+  assert.equal(both.scores.verification, null);
+  assert.deepEqual(both.serious_flaws, []);
+  assert.deepEqual(both.disputedFlaws, ['fake check']);
+  assert.deepEqual(
+    combineGrades([a, { ...b, serious_flaws: ['x'] }]).serious_flaws,
+    ['fake check'],
+  );
+});
