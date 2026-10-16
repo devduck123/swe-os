@@ -2,6 +2,8 @@
 
 Does SWE OS make an agent's work better? Each scenario runs twice: once without SWE OS (A), once with it (B).
 
+There's a second test for the writing itself: the [learner test](learner/README.md) checks whether each track stop teaches its reader what it means to.
+
 ## Results so far
 
 Three rounds in October 2026, on Claude Code with Opus 5.5, about $45 API-equivalent on a Max plan. One or two reps per scenario, so each number is noisy. Summaries: [round 1](results/2026-10-11T233550/summary.md), [round 2](results/2026-10-13T071137/summary.md), [round 3](results/2026-10-13T081543/summary.md).
