@@ -1,0 +1,77 @@
+[
+  {
+    "takeaway": "Never paste a key into the agent chat or rename it to NEXT_PUBLIC_ to make an error go away, and if a key does leak, make a new one and kill the old one before doing anything else, because deleting the commit doesn't help.",
+    "intended": "Where secrets should live (.env locally, platform settings when deployed), and the new ways agents can leak them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "gitleaks in CI scans every PR",
+        "why": "CI is never explained. I deploy with Vercel and have never set up CI, so I don't know what it is, where it runs, or how I'd add gitleaks to it without the start-project skill."
+      },
+      {
+        "quote": "strip the rest in Sentry's `beforeSend` hook",
+        "why": "Too dense. I've never used Sentry, and 'strip the rest' with no example code means I couldn't do this. I'd just skip it."
+      },
+      {
+        "quote": "a connection string for a read-only role",
+        "why": "'Role' is never explained, and I don't know how to make one. On Supabase the URL is copy-paste, but this Neon/Postgres line assumes I can create database users."
+      }
+    ],
+    "skimmed": [
+      "The Expo paragraph about `extra` in app.config.ts. I don't build mobile apps, so I stopped at 'mobile apps are no safer'.",
+      "'A local hook is optional'. It says it's optional and explains why it isn't enough, so I skipped it.",
+      "The second half of 'Logs and error reports leak too' (Sentry). I'd keep 'don't console.log(process.env)' and skim the rest.",
+      "The Neon / plain Postgres line under least privilege, since I'm on Supabase."
+    ],
+    "jargon": [
+      "CI",
+      "role (database role)",
+      "beforeSend hook",
+      "revoke (mostly clear from context, but never defined next to 'rotate')",
+      "MCP (the stop says 'these plugins give an agent tools', but never what MCP stands for or where I'd find these servers in my setup)",
+      "deny rule (where do I write `Read(./.env)`?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What I'd do assumes a new repo. I already have repos, and some may already have a key in history. I need a step like 'on an existing repo, run `gitleaks git` once and rotate anything it finds'. That command is buried in the leak section. Also, 'with a spend cap set in each provider's dashboard' sends me to another page to learn which caps actually stop spending. One sentence here would do. And if I don't use start-project, I have no idea how to add gitleaks to CI myself.",
+    "cut": "The 'A local hook is optional' bullet. It introduces pre-commit hooks, git flags, and --no-verify, then tells me not to rely on it. It's the densest bit, and I lose nothing by deleting it.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Never paste a real key into the agent chat or rename it to NEXT_PUBLIC_ to make an error go away; keep it in .env or Vercel, and if one leaks, make a new key and kill the old one before doing anything else.",
+    "intended": "A secret acts as you, so it's compromised the moment it leaves .env or the platform's settings, and agents create new ways for it to leave: your files, your shell, and their transcripts.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a connection string for a read-only role",
+        "why": "Unexplained term. I don't know what a database 'role' is or how to make one. Supabase gives me one connection string and I've never made another. The Supabase URL above it I could copy; this line I couldn't act on."
+      },
+      {
+        "quote": "strip the rest in Sentry's `beforeSend` hook",
+        "why": "Too dense, and a leap. I don't use Sentry yet, and 'strip the rest' doesn't say what to strip or show any code. I'd just skip it."
+      },
+      {
+        "quote": "Agents invent package names, and attackers register them",
+        "why": "A leap. Does the agent make up a fake package and then an attacker creates one with that name? Two short clauses for a scary idea. One sentence of example would land it."
+      }
+    ],
+    "skimmed": [
+      "The Expo sentences in 'Anything with a public prefix is public' (extra, app.config.ts, unzipping the app): I don't build mobile apps, so I skipped past to the NEXT_PUBLIC_ story.",
+      "'Logs and error reports leak too' after the first sentence: the console.log(process.env) warning stuck, but the Sentry part felt like it was for someone who already has Sentry.",
+      "The 'A local hook is optional' bullet: the gitleaks command with four flags looked like something to copy, not read, and the section says CI matters more anyway."
+    ],
+    "jargon": [
+      "CI (used five times, never glossed; I sort of know it's GitHub Actions stuff, but not well)",
+      "role (database role)",
+      "restricted keys (rk_…)",
+      "legacy anon / service_role (I've seen anon in Supabase but don't know what 'legacy' means for me)",
+      "redeploy vs. deploy (minor, I mostly got it)",
+      "scrubs"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What if my repo already exists and isn't new? 'Day one' assumes a fresh project. I'd want 'run gitleaks git on your existing repo now to see if you already leaked something.' It's buried in the rotation steps. Also, if prod keys never live on my laptop, how do I run something against prod when I need to? One line on that would stop me from quietly breaking the rule.",
+    "cut": "The Expo sentences in the public-prefix section. The one line 'VITE_ and EXPO_PUBLIC_ work the same way' is enough. The extra/app.config.ts/unzip detail is for mobile devs, and it sits right before the best part of the stop, the NEXT_PUBLIC_ rename story.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

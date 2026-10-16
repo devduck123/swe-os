@@ -1,0 +1,80 @@
+[
+  {
+    "takeaway": "Before adding caching or Redis, time the slow page first: the problem is usually one bad database query, like the 51-queries-in-a-loop thing, and a join or an index fixes it.",
+    "intended": "Find the one slow thing with a real number before optimizing, and do the same for your bill before it runs away.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AND (created_at, id) < ($1, $2)",
+        "why": "Cursor pagination lost me. I don't get why comparing two columns at once works, and I don't know what '$1, $2' are or where they come from in my app code. The comment helps a little, but I couldn't hand this to an agent with confidence."
+      },
+      {
+        "quote": "every write to that data has to clear the cached copy",
+        "why": "A leap. How do I clear it? Is there a function? 'Opt in' to what, exactly? I know caching is risky now but have no idea what the Next.js 16 mechanism looks like."
+      },
+      {
+        "quote": "in the pooler host under Connect",
+        "why": "I don't know what a pooler is. I'd find the Connect button, but I'd be guessing which string is the 'pooler host'."
+      }
+    ],
+    "skimmed": [
+      "Slow is a number, not a feeling: the Core Web Vitals numbers went by fast and I wouldn't remember 2.5s vs 200ms. I'd skip to 'just install Speed Insights'.",
+      "The Server-Timing code block: I can read it, but I wouldn't know I need it until something is slow. I'd come back.",
+      "Watch the bundle: 'next analyze' and 'Server Components' felt like a separate topic, so I'd skim it."
+    ],
+    "jargon": [
+      "Redis (glossed only as 'in-memory cache server', and I still don't know what in-memory means for me)",
+      "p95 (explained, but I'd forget it)",
+      "Seq Scan / Index Scan (I get the gist from the comments but not what to look for in the output)",
+      "cursor (pagination)",
+      "pooler",
+      "Server Components (assumed knowledge)",
+      "invalidate / invalidates",
+      "usage-billed",
+      "relational queries (Drizzle)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The Speed Insights, region, and spend-limit steps are concrete, so I'd do those. 'Log queries in development' is fine for Drizzle, but for supabase-js there's no logging step, just 'look for a .map()'. I also can't run EXPLAIN ANALYZE and know what to do next beyond 'add an index'. It doesn't tell me which columns to index or how to ask my agent to pick them. A prompt like 'Run EXPLAIN ANALYZE on this route's queries and propose an index' would help.",
+    "cut": "The cursor pagination SQL block. I'm told OFFSET is fine to start, and I won't have deep paging for a long time. It's the densest part and the one I understood least. A one-line 'switch to cursor pagination when people page deep; ask your agent' would do.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before letting an agent add Redis or any cache, time the slow page, count its queries, and fix the one slow query (usually a missing index or a query-per-row loop) first.",
+    "intended": "Performance and cost work both start from a measured number: find the one slow or expensive thing and fix that, rather than guessing.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AND (created_at, id) < ($1, $2)",
+        "why": "Code I couldn't follow. I've never seen two columns compared to two values at once, and I don't know where $1 and $2 come from in my app or how the next page gets them. 'Cursor' is never explained beyond 'switch to a cursor'."
+      },
+      {
+        "quote": "the region is in the pooler host",
+        "why": "Unexplained term. I don't know what a pooler is or which string on the Connect screen is the 'host'. I'd have to screenshot it and ask my agent."
+      },
+      {
+        "quote": "What invalidates it?",
+        "why": "Unexplained term, and it's the question I'm supposed to answer. Then 'every write to that data has to clear the cached copy' tells me it matters but not how to do that in Next.js. I wouldn't know what to tell my agent."
+      }
+    ],
+    "skimmed": [
+      "The Core Web Vitals paragraph. It's three numbers and three tool names in a row, and nothing tells me what to do when one is bad.",
+      "The cursor pagination code block. LIMIT/OFFSET made sense and I don't have users paging deep, so I'd skip it.",
+      "'Watch the bundle.' I don't know what to look for in `next analyze` output, so I'd skim past it."
+    ],
+    "jargon": [
+      "invalidates / invalidation",
+      "cursor (pagination)",
+      "pooler host",
+      "Seq Scan / Index Scan (half explained by the comments)",
+      "Server-Timing header (I can copy the code, but I don't know where in the Network panel to look)",
+      "staleness window",
+      "Server Components (I've heard it, but not why it keeps a library out of the browser)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "'Log queries in development' only gives me Drizzle's `{ logger: true }`. I use supabase-js, and the stop just says to look for a loop, so I have no way to actually count queries. I also don't know where Server-Timing shows up in DevTools (which tab? which request?). And if I do add a cache, nothing tells me what to ask the agent so that writes clear it.",
+    "cut": "The cursor pagination block under 'Bound the work'. It's the densest code on the page, it solves a problem I don't have yet, and 'LIMIT 50 OFFSET 100 is fine to start' already gave me what I need today.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

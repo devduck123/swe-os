@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "If a request might run twice, like a double-clicked Buy button or a retry after a timeout, give it the same key every time (like `checkout-${order.id}`) so Stripe treats it as one thing, and don't auto-retry while the user is staring at a spinner.",
+    "intended": "Timeouts handle calls that never answer, retries handle failures that might pass, and idempotency makes repeats safe, and they only work together.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Both clicks have to land on the same order",
+        "why": "This is the part I actually need, and it's a leap. If my button creates the order and then the checkout, two clicks make two orders with two IDs, and the key doesn't help. A unique constraint on which column? It sends me to another page right when I'm trying to fix my Buy button."
+      },
+      {
+        "quote": "Leave the migration role alone",
+        "why": "I didn't know my database had more than one 'role' or user. I've never written a migration by hand, so I don't know which role runs them or whether I even have a separate one. Same with `NOTIFY pgrst, 'reload config'`: what's pgrst, and which 'API' am I reloading?"
+      },
+      {
+        "quote": "for (let attempt = 1; ; attempt++)",
+        "why": "The empty middle of the for loop threw me. I had to stare at it to realize it loops forever until a `return` or `throw`. `200 * 2 ** attempt` was also a lot. The comment saying 400ms then 800ms saved me."
+      }
+    ],
+    "skimmed": [
+      "The non-Supabase `ALTER ROLE app_user` part. I'm on Supabase, and the stop says it's already set there, so I jumped ahead.",
+      "The Supabase role timeouts paragraph (anon 3s, authenticated 8s, postgres 2 minutes). I read the numbers, didn't know whether to change anything, and moved on.",
+      "'Incoming webhooks are the same problem from the other side.' It's a link out, so I skipped it."
+    ],
+    "jargon": [
+      "role / app's role / migration role (database sense)",
+      "pgrst / NOTIFY",
+      "cron jobs and queued work (I sort of know cron, not 'queued work')",
+      "server-to-server syncs",
+      "4xx (as a group)",
+      "upstream",
+      "$1 in the SQL (placeholder, not explained)",
+      "webhooks (I've heard of them, not sure I'd handle one right)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to make sure both clicks reuse the same order: create the order once (or look up the pending one) before making the checkout, and what the unique constraint goes on. Also how to set a timeout on SDK calls. The checklist says 'every fetch and SDK call has a timeout' but only shows `fetch`. What's the option for Stripe, supabase-js, and the AI SDK? And an example of 'an error that says what to do'.",
+    "cut": "The Supabase role timeout paragraph ('supabase-js calls run as the anon role… Code using the connection string runs as postgres…'). It's three numbers and a command with no clear reason to change anything. 'Supabase already has sane defaults' would be enough for me.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "If a request times out you can't tell whether it actually happened, so anything that writes, like creating a Stripe checkout, should send a key built from my order ID so a second click or a retry gets the same result instead of a second charge.",
+    "intended": "Timeouts, retries, and idempotency only work together: timeouts stop endless waits, retries cover temporary failures, and idempotency makes repeats safe so a retried write can't double-charge.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Both clicks have to land on the same order",
+        "why": "A leap. My Buy button probably creates the order and the session in one go, so two clicks means two orders with two different IDs, and then `checkout-${order.id}` is two different keys. The stop says a unique constraint fixes this, but a unique constraint on what column? I don't know what makes two clicks 'the same order', and the link to another page is where the answer lives, not here."
+      },
+      {
+        "quote": "on your app's role: the database user",
+        "why": "I've never thought of my database as having 'roles' or multiple users. 'Leave the migration role alone' lost me more: I don't have a migration role that I know of, and I've never written a migration by hand. I couldn't tell whether this was for me."
+      },
+      {
+        "quote": "NOTIFY pgrst, 'reload config';",
+        "why": "No idea what pgrst is. 'Reload the API' is given as the reason, but I'd be pasting a magic line without knowing what it touches."
+      }
+    ],
+    "skimmed": [
+      "The `ALTER ROLE app_user` part. I'm on Supabase and the next paragraph says it's already set, so I'd skip straight there. The order is backwards for me.",
+      "The retry helper code. `for (let attempt = 1; ; attempt++)` with an empty middle and `200 * 2 ** attempt` is dense on a phone. I read the comment 'up to 400ms, then up to 800ms' and trusted it.",
+      "The 'Retry in the background' section in general. I don't have cron jobs or queues yet, so it felt like it was for later."
+    ],
+    "jargon": [
+      "role / app's role / migration role",
+      "pgrst",
+      "queued work",
+      "server-to-server syncs",
+      "upstream",
+      "4xx (I know 404, but not 4xx as a group)",
+      "AbortSignal (the line works but 'signal' is never explained)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "An agent prompt for the double-click fix that covers creating the order: something like 'Make the Buy flow reuse the user's existing pending order instead of creating a new one per click, then pass checkout-${order.id} as the Stripe idempotency key.' Without that, the key alone doesn't help me. Also, 'Run the ALTER ROLE line ... (not needed on Supabase)' contradicts the section, which shows a Supabase ALTER ROLE for changing the limit. Say plainly 'On Supabase, skip this unless you want to change the defaults.' The 'Make writes safe to repeat' section has no matching line in What I'd do, only in the checklist.",
+    "cut": "The 'Set it once, in your database's SQL editor, on your app's role…' paragraph plus 'Leave the migration role alone.' Most readers like me are on Supabase, where it's already set, and this paragraph adds role and migration ideas I can't place. Put the Supabase paragraph first and make the plain-Postgres line one short aside.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

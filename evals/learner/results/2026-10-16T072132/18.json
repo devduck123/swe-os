@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Set up Sentry with a request ID on every error so I find out from an alert, not from an angry customer three days later.",
+    "intended": "How to know your app is broken, for whom, and why, using error tracking, structured logs, a health check, outcome counts, and alerts you actually act on.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "On Neon, a health check that queries",
+        "why": "I use Supabase and don't know what Neon is. I also didn't follow the logic: keeping the database awake uses up free hours? That's a leap, and the paragraph reads like it's for someone else's stack."
+      },
+      {
+        "quote": "Wrap <my most important job> in",
+        "why": "I don't know if I have 'jobs'. Is a webhook a job? Is a Supabase function one? I don't know what Sentry.withMonitor does to my code, so I can't pick what to fill in."
+      },
+      {
+        "quote": "Stripe then retries, and Sentry records it",
+        "why": "I got the gist, but the 'answer with an error, not ok' part went by fast in a code comment. If it's important enough for the checklist, it should get a sentence in the text."
+      }
+    ],
+    "skimmed": [
+      "The Neon paragraph, because it isn't my database and I couldn't tell if it applied to me.",
+      "The last paragraph of What I'd do (log drain, tracing), because it's about later, not now.",
+      "The Sentry cron monitor paragraph, half-skimmed because I'm not sure I have a background job."
+    ],
+    "jargon": [
+      "Neon",
+      "stack trace (I roughly know it, but it's never glossed)",
+      "cron monitor / Sentry.withMonitor",
+      "issue (as a Sentry term vs. a GitHub issue)",
+      "VERCEL_ENV / environment (preview vs. production isn't spelled out)",
+      "server action vs. route handler (I mostly know, but it matters for where the request ID goes)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Nothing in What I'd do sets up the alerts themselves. The page says 'alert when a new issue appears in payments or auth' and 'break each alerted thing on purpose', but there's no step for creating those Sentry alert rules or testing them. The daily email step also assumes I know which email provider and how to send from a cron route. And there's no guidance on how to pick 'my most important job'.",
+    "cut": "The Neon paragraph in 'Prove it's up'. It's about a database I don't use, the reasoning is backwards-feeling, and the one useful line ('A broken database shows up in Sentry anyway') could just follow 'Notice that it never touches the database'.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Set up Sentry with source maps and the commit tagged before real people use my app, so a broken Stripe webhook pings me in a minute instead of a customer emailing me three days later.",
+    "intended": "Observability means you can tell from data you already collected whether the app is broken, for whom, and why, and for a solo dev that's a small setup: error tracking, structured logs, a health check, a few outcome counts, and alerts you have to act on.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "On Neon, a health check that queries",
+        "why": "I use Supabase, not Neon. 'Keeps it from sleeping' and 'free compute hours' aren't explained, so I couldn't tell if this applies to me or why I should care."
+      },
+      {
+        "quote": "payments received vs. marked paid",
+        "why": "Marked paid is in my database, but where does 'received' come from? Stripe's dashboard? Its API? I don't have a table for that, so 'count them with SQL over tables you already have' doesn't work for this one."
+      },
+      {
+        "quote": "Wrap <my most important job> in",
+        "why": "I don't know what counts as a 'job' in my app. I don't think I have any cron jobs. Is a webhook a job? The background jobs link might say, but here I just stalled."
+      }
+    ],
+    "skimmed": [
+      "The Neon paragraph, because I'm on Supabase and it read like it was for someone else.",
+      "The Vercel retention line ('1 hour on Hobby, 1 day on Pro'). I got the point from the story already.",
+      "The last paragraph about log drains and tracing. It says not to do them yet, so I skipped ahead."
+    ],
+    "jargon": [
+      "release (it's explained under Releases, but the story uses it earlier without a gloss)",
+      "stack trace",
+      "issue (as a Sentry term)",
+      "environment / VERCEL_ENV (I sort of know preview vs production, but not as a 'tag')",
+      "Hobby / Pro (I know Hobby is free, but not that the plans have names that matter here)",
+      "compute hours / sleeping database",
+      "Sentry.withMonitor",
+      "SENTRY_AUTH_TOKEN (where do I get it?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to get SENTRY_AUTH_TOKEN. How to tell which of my things is a 'job' if I have no cron jobs yet, and what to do if I have none. How to count 'payments received' when only the Stripe side knows about them. Which email provider to use, or a pointer to it, for the daily summary.",
+    "cut": "The Neon paragraph ('On Neon, a health check that queries the database…'). It's for a different database than mine, uses terms I don't know, and the useful part (don't hit the DB in the health check) is already in the code comment and the checklist.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

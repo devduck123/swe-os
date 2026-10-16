@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "When stuff breaks, first stop whatever is still writing (roll back, pause cron jobs), and a backup only counts if I've actually restored it once, ideally into a copy next to production, not over it.",
+    "intended": "The order for handling a production incident (stop the bleeding, understand, fix, prevent) plus making sure backups exist, cover the right moment, and can be restored.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the Session pooler string from Connect",
+        "why": "No idea what a pooler is or why it has to be the Session one. I'd just copy whatever string Supabase shows me and hope."
+      },
+      {
+        "quote": "SET session_replication_role = replica",
+        "why": "The comment says it skips triggers, but I don't know what a trigger is or why skipping them is safe. And 'one transaction' is used like I know what that means. I only got it from the comment about nothing being half-loaded."
+      },
+      {
+        "quote": "the diff between the last good release",
+        "why": "The whole debug section is one dense paragraph. 'Request ID' and 'reproduce before you fix' are a leap for me. Where do I find a request ID? Sentry issue assumes I've set up Sentry."
+      }
+    ],
+    "skimmed": [
+      "The Supabase Free psql code block: it's for someone comfortable on the command line, and I'd hand it to my agent anyway",
+      "The postmortem template: I'd skim it now and only come back after something actually broke",
+      "Debug from evidence: too short to teach me anything, it just points elsewhere"
+    ],
+    "jargon": [
+      "transaction",
+      "Session pooler",
+      "triggers / session_replication_role",
+      "request ID",
+      "hard-delete (only explained indirectly by soft-delete later)",
+      "postmortem (never defined, I'm guessing 'write-up after')",
+      "database branch (it says what it isn't, not what it is)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually do the restore drill on my plan: step 1 says 'restore a copy' but the commands are buried in the previous section split by provider. Also no link or exact name for Supabase's nightly db dump GitHub Actions workflow, so I'd have to go hunting. And what 'check row counts' looks like. A one-line SQL or an agent prompt would help.",
+    "cut": "The psql block for Supabase Free. It's the densest part of the page, most readers would paste it to an agent anyway, and an agent prompt like 'load my db dump into a new Supabase project in one transaction' would teach the same thing in one line.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "When stuff breaks, first stop whatever is still doing damage (roll back AND pause jobs), and my Supabase Free app has no backups at all unless I set up the db dump thing myself.",
+    "intended": "When production breaks, stop the bleeding, understand, fix, then prevent recurrence, and backups only save you if they exist, cover the right moment, and you've practiced restoring.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "--command 'SET session_replication_role = replica'",
+        "why": "Code I couldn't follow. I don't know what roles.sql is, what a replication role is, or why skipping triggers matters. The comment says what it does, not why I'd want it. I'd just paste this and pray."
+      },
+      {
+        "quote": "the Session pooler string from Connect",
+        "why": "Unexplained term. I don't know what a pooler is or why I'd pick Session over the other options on that screen."
+      },
+      {
+        "quote": "Notice it's one transaction",
+        "why": "Unexplained term. The comment helps a bit ('a failure leaves nothing half-loaded'), but 'transaction' is used before that gloss, so I stalled on it first."
+      }
+    ],
+    "skimmed": [
+      "Restore next to production: the psql block. It's for someone at a laptop mid-incident, not me on my phone. I'd come back to it only if it happened.",
+      "Debug from evidence: one dense paragraph of 'Sentry issue, request ID, diff', and it just points to another skill, so I'd skip it.",
+      "The postmortem template. I got the point from the paragraph above it."
+    ],
+    "jargon": [
+      "transaction",
+      "Session pooler",
+      "session_replication_role / triggers",
+      "postmortem (never defined in one plain line; 'blameless postmortem' assumes I know the base word)",
+      "request ID",
+      "hard-delete (contrasted with soft-delete later, but used first)",
+      "PROJECT_REF / POOLER_HOST placeholders (where do I find these?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The single most important action for me (set up the nightly db dump on Supabase Free) has no link and no paste-ready agent prompt, unlike the other bullets. 'Copy Supabase's nightly db dump workflow' assumes I can find it. Give me the link or a prompt like the others. Also, 'Do one restore drill' has no prompt to hand my agent, so I'd put it off.",
+    "cut": "The Supabase Free psql block. It's the densest thing on the page, I can't run it from my phone, and in a real incident I'd ask my agent anyway. A one-line 'ask your agent to load your latest dump into a new project, in one transaction' would teach me the same thing.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

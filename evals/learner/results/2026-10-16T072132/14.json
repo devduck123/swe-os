@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Write tests for who-can-touch-what and money stuff against a real database, make the agent show a failing test before it fixes a bug, and watch for it quietly changing expected values to get green.",
+    "intended": "A test is a re-checkable claim about your app's behavior that gives you confidence the things people depend on still work after the next change, and coverage doesn't tell you that.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Vitest's `fileParallelism: false`",
+        "why": "I get 'run files one at a time' but 'Empty the tables before each test' — how? Is that a helper I write, a Supabase command, a Vitest setting? I'd have to ask the agent, which is fine, but it's stated like I'd know."
+      },
+      {
+        "quote": "fails if the button loses its accessible name",
+        "why": "The Playwright example is clear, but 'role' is never explained. What's getByRole('status')? I'd guess it's some HTML attribute but I've never set a role on anything."
+      },
+      {
+        "quote": "add the `supabase/setup-cli` action",
+        "why": "I've never written a GitHub Actions file. 'A ready-made step' helps a bit, but I don't know where it goes. Also the Neon branch line lost me: why would I need that if I'm on Supabase?"
+      }
+    ],
+    "skimmed": [
+      "'Each kind of test buys a different kind of confidence' bullet list: skimmed the unit and E2E lines, only the integration paragraph after it stuck.",
+      "'Otherwise, use the Docker setup... and a Neon branch per CI run': not my stack, skipped."
+    ],
+    "jargon": [
+      "role (as in getByRole)",
+      "assertion / loosened assertions",
+      "Postgres (I know Supabase uses it, but the stop assumes I know Supabase *is* Postgres)",
+      "smoke test",
+      "happy path",
+      "refactors"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How tables get emptied before each test: one line saying 'ask your agent for a beforeEach that truncates the tables' would do it. And for CI, say the agent can write the GitHub Actions file; otherwise that bullet feels like homework I can't do.",
+    "cut": "The Neon branch half of the first What I'd do bullet. I'm on Supabase, the stop already told me what to do, and the 'Otherwise' branch makes me wonder if I picked wrong.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Test the stuff that would hurt if it broke (money, who can see what) against a real database, check that the test can actually fail by breaking the code, and watch for agents changing expected numbers to get green.",
+    "intended": "Tests give you confidence that what people depend on still works after the next change, and coverage percentages don't tell you that.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Vitest's `fileParallelism: false`",
+        "why": "I get 'run files one at a time' from the sentence, but I don't know where this setting goes or what file it lives in. The line before says 'Empty the tables before each test' and never shows how. Is that a SQL command? A Vitest hook? I'd have to ask the agent."
+      },
+      {
+        "quote": "markPaid({ invoiceId: invoice.id, actorId: bob.id })",
+        "why": "You explained createUser and createInvoice, but markPaid and getInvoice just appear. Are they my app's real server functions or more helpers I write? It matters, because if markPaid is a helper then the test isn't testing my app. I also had to guess what `.rejects.toThrow` means."
+      },
+      {
+        "quote": "a [Neon branch] per CI run",
+        "why": "This is the 'Otherwise' path for people not on Supabase, so I skimmed it. But 'Neon branch' and 'the Docker setup' are dropped in with no explanation, so that whole sentence was noise to me."
+      }
+    ],
+    "skimmed": [
+      "'Test the page people actually see': the stop says to add Playwright later, so I'd skip the Playwright code now. `getByRole('status')` also meant nothing to me.",
+      "The snapshot bullet in 'Some tests pass no matter what': I don't write snapshot tests, so I'd skip it even though it's explained."
+    ],
+    "jargon": [
+      "happy path",
+      "assertions (as in 'loosened assertions')",
+      "refactors",
+      "authorization check",
+      "smoke test",
+      "role (in getByRole)",
+      "Neon branch",
+      "rejects.toThrow"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How my tests connect to the local Supabase database: is it an env var, and which URL from the `supabase start` output? How to actually empty the tables, even one line or a prompt I can paste to my agent. How to make a failing check block merging on GitHub: 'required to merge' is a repo setting nobody told me about, and I'd assume CI failing blocks it automatically. Also, the agent prompt only covers invoices. I'd like a generic version for 'my main rule'.",
+    "cut": "The whole 'Test the page people actually see' section. 'What I'd do' says to wait on Playwright until I have a flow worth protecting, so this section teaches something I'm told not to do yet, right in the middle of the stuff I need now.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

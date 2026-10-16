@@ -48,9 +48,9 @@ Two arrows need a closer look:
 
 **Postgres on Neon, through Drizzle.** Postgres's constraints (rules like "email is unique") and transactions (writes that all happen or none do) do the remembering your code forgets ([data that stays correct](../guides/data-that-stays-correct.md)). Neon sleeps when idle and gives each preview its own copy of the database. Drizzle keeps the schema in TypeScript and generates migrations, the SQL files that change your tables.
 
-**Better Auth or Clerk.** Never hand-roll auth. Better Auth is a free library that keeps users in your own Postgres. Clerk is hosted, with ready-made sign-in UI, and is faster to start, but its free plan has no MFA or passkeys. Either way, every query still checks that the user owns the row ([trust boundaries](../guides/trust-boundaries.md)).
+**Better Auth or Clerk.** Never hand-roll auth. Better Auth is a free library that keeps users in your own Postgres. Clerk is hosted, with ready-made sign-in UI, and is faster to start, but its free plan has no MFA or passkeys. Better Auth's two-factor and passkey plugins add both for free. Either way, every query still checks that the user owns the row ([trust boundaries](../guides/trust-boundaries.md)).
 
-**Vercel Blob.** Files don't belong in the database. Blob stores them, serves them from servers near your users, and lets the browser upload directly. Postgres keeps only each file's URL and owner.
+**Vercel Blob.** Files don't belong in the database. Blob stores them, serves them from servers near your users, and lets the browser upload directly. Postgres keeps each file's URL and owner, and pages read the URLs from there. Blob's free plan allows 2,000 "advanced operations" a month, Vercel's name for uploads, copies, and `list()` calls. Each `list()` call is one, so a page that calls it on every view burns through them.
 
 **A transactional email provider,** such as Resend or Postmark. Auth needs it from the first sign-up, for verification and password resets. Locally, log the email to the console.
 
@@ -62,7 +62,7 @@ Two arrows need a closer look:
 
 ## Connect to the database once
 
-Create the database client once, in `lib/db.ts`, and import it everywhere. Each client holds open connections, and Postgres allows only so many, so a client per request runs out under load. With supabase-js, queries go over HTTP, so there's nothing to set up.
+Create the database client once, in `lib/db.ts`, and import it everywhere. Each client holds open connections, and Postgres allows only so many, so a client per request runs out under load. With supabase-js, skip this: it talks to Supabase's API, which manages the database connections for you.
 
 <details>
 <summary>Going deeper: the pool setup on Vercel and Neon</summary>
@@ -90,7 +90,7 @@ Migrations are the exception. They run over the direct URL, from the Vercel buil
 
 ## Rate-limit auth in the database
 
-Login, sign-up, and password reset need rate limits from day one ([trust boundaries](../guides/trust-boundaries.md)). Better Auth's limiter counts in memory by default, and on Vercel each running copy of your function keeps its own count. Store the counts in Postgres with one setting, then run Better Auth's migration to create the table:
+Login, sign-up, and password reset need rate limits from day one ([trust boundaries](../guides/trust-boundaries.md)). Better Auth's limiter counts in memory by default. Under load, Vercel runs several copies of your function at once, and each copy keeps its own count, so the real limit is several times what you set. Store the counts in Postgres with one setting, then run Better Auth's migration to create the table:
 
 ```ts
 export const auth = betterAuth({
@@ -102,6 +102,24 @@ export const auth = betterAuth({
 On Supabase Auth, rate limits are built in. Adjust them under **Authentication > Rate Limits**.
 
 ## What it costs
+
+At 0 users, the stack is $0. Around 1,000 monthly users, it's $0 to about $40 a month (about $45 with Supabase Pro), depending on Vercel's terms and how long the database stays awake. Around 10,000, expect $20 a month plus database usage, plus any email, Clerk, or Sentry upgrades. Trust your own dashboards over these guesses.
+
+The cliffs, in the order I'd expect to hit them:
+
+- **Neon Free's compute runs out if the database never sleeps.** Neon suspends it after 5 idle minutes, which keeps a quiet app well inside the free hours. If something queries it every few minutes (a health check, a polling cron, an open dashboard), the smallest database never sleeps, and the free hours last about 17 days a month. Then every query fails until next month. To see how close you are, open your project in the Neon Console: the Usage panel on its Overview page shows compute used.
+- **Supabase Free pauses a project after a week of inactivity.** A quiet app can be down when someone finally visits. Upgrade to Pro before real users depend on it, since paid projects never pause.
+- **Supabase Auth's built-in email only reaches your own team.** Until you set up custom SMTP, it refuses to send to anyone outside your project's team, and it's capped at a few emails an hour. Before the first real user, sign up for an email provider like Resend, then paste its SMTP settings under **Authentication > Email > SMTP Settings** in the Supabase dashboard.
+- **Vercel Hobby is non-commercial only.** Taking payments, showing ads, or getting paid to build the site all count as commercial. Hobby also can't pay for overages: go over a limit and that feature stops until 30 days have passed.
+- **Vercel Hobby cron runs once a day,** anywhere within the hour you set. A more frequent schedule fails the deploy.
+- **Vercel Blob Hobby allows 2,000 advanced operations a month.** Browsing the store in the dashboard counts too. That's about 66 uploads a day. Go over and Blob is unavailable until 30 days have passed.
+- **Resend Free sends 100 emails a day.** A good launch day uses that up, and verification emails fail until it resets.
+- **Supabase Free goes read-only at 500 MB.** Every write fails until you upgrade or delete data.
+- **Free backups are thin.** Neon Free keeps 6 hours of history, and Supabase Free has none. Once it's real users' data, that's the first upgrade I'd make ([when production breaks](../guides/when-production-breaks.md)).
+- **Spend caps differ.** Vercel Pro only alerts on spend unless you set an action ([performance and cost](../guides/performance-and-cost.md)). Supabase Pro's spend cap is on by default, so going over a quota stops that usage until the next billing cycle.
+
+<details>
+<summary>Going deeper: plan prices</summary>
 
 Checked 2026-10-06, Supabase on 2026-10-15. Each line is the free tier, then the first paid step.
 
@@ -115,20 +133,7 @@ Checked 2026-10-06, Supabase on 2026-10-15. Each line is the free tier, then the
 - **Stripe:** $0 in test mode. Live, 2.9% + 30¢ per US card charge, no monthly fee.
 - **Sentry:** Developer is $0 for 1 user and 5,000 errors. Team starts at $26/mo, billed yearly.
 
-At 0 users, the stack is $0. Around 1,000 monthly users, it's $0 to about $40 a month (about $45 with Supabase Pro), depending on Vercel's terms and how long the database stays awake. Around 10,000, expect $20 a month plus database usage, plus any email, Clerk, or Sentry upgrades. Trust your own dashboards over these guesses.
-
-The cliffs, in the order I'd expect to hit them:
-
-- **Neon Free's compute runs out if the database never sleeps.** Neon suspends it after 5 idle minutes, which keeps a quiet app well inside. Something that queries every few minutes (a database health check, a polling cron, an open dashboard) keeps it awake, and the smallest database runs out around day 17. Then every query fails until next month.
-- **Supabase Free pauses a project after a week of inactivity.** A quiet app can be down when someone finally visits.
-- **Supabase Auth's built-in email sends 2 emails an hour.** Set up custom SMTP (your email provider's sending server) under Authentication in the Supabase dashboard before launch, or sign-up emails stop.
-- **Vercel Hobby is non-commercial only.** Taking payments, showing ads, or getting paid to build the site all count as commercial. Hobby also can't pay for overages: go over a limit and that feature stops until 30 days have passed.
-- **Vercel Hobby cron runs once a day,** anywhere within the hour you set. A more frequent schedule fails the deploy.
-- **Vercel Blob Hobby allows 2,000 advanced operations a month.** Every `put()`, `copy()`, and `list()` counts, and so does browsing the store in the dashboard. That's about 66 uploads a day. Go over and Blob is unavailable until 30 days have passed.
-- **Resend Free sends 100 emails a day.** A good launch day uses that up, and verification emails fail until it resets.
-- **Supabase Free goes read-only at 500 MB.** Every write fails until you upgrade or delete data.
-- **Free backups are thin.** Neon Free keeps 6 hours of history, and Supabase Free has none. Once it's real users' data, that's the first upgrade I'd make ([when production breaks](../guides/when-production-breaks.md)).
-- **Spend caps differ.** Vercel Pro only alerts on spend unless you set an action ([performance and cost](../guides/performance-and-cost.md)). Supabase Pro's spend cap is on by default, so going over a quota stops that usage until the next billing cycle.
+</details>
 
 <details>
 <summary>Going deeper: Neon compute math and Blob transfer on Pro</summary>
@@ -181,13 +186,15 @@ Checked 2026-10-06, Supabase on 2026-10-15.
 - [Vercel fair use guidelines (commercial usage)](https://vercel.com/docs/limits/fair-use-guidelines)
 - [Vercel Cron Jobs usage and pricing (Hobby: once a day)](https://vercel.com/docs/cron-jobs/usage-and-pricing)
 - [Vercel Blob pricing (advanced operations, Hobby limits)](https://vercel.com/docs/vercel-blob/usage-and-pricing) and [Flat Rate CDN](https://vercel.com/docs/pricing/flat-rate-cdn)
+- [Vercel: Fluid compute (scaling and concurrency)](https://vercel.com/docs/fluid-compute)
 - [Vercel: `attachDatabasePool`](https://vercel.com/docs/functions/functions-api-reference/vercel-functions-package) and [connection pooling with functions](https://vercel.com/kb/guide/connection-pooling-with-functions)
 - [Drizzle: Get started with PostgreSQL (node-postgres)](https://orm.drizzle.team/docs/get-started-postgresql)
-- [Neon pricing](https://neon.com/pricing), [plans (CU-hours, suspension, branches)](https://neon.com/docs/introduction/plans), and [connection pooling](https://neon.com/docs/connect/connection-pooling)
+- [Neon pricing](https://neon.com/pricing), [plans (CU-hours, suspension, branches)](https://neon.com/docs/introduction/plans), [connection pooling](https://neon.com/docs/connect/connection-pooling), and [monitoring usage](https://neon.com/docs/introduction/monitor-usage)
 - [Clerk: How Clerk works (session tokens)](https://clerk.com/docs/guides/how-clerk-works/overview) and [pricing](https://clerk.com/pricing)
-- [Better Auth: Rate limit](https://www.better-auth.com/docs/concepts/rate-limit)
+- [Better Auth: Rate limit](https://www.better-auth.com/docs/concepts/rate-limit), [two-factor plugin](https://www.better-auth.com/docs/plugins/2fa), and [passkey plugin](https://www.better-auth.com/docs/plugins/passkey)
 - [Supabase pricing (free tier, Pro, project pausing)](https://supabase.com/pricing), [database size (read-only mode)](https://supabase.com/docs/guides/platform/database-size), and [cost control (spend cap)](https://supabase.com/docs/guides/platform/cost-control)
 - [Supabase: Auth rate limits (built-in email limit)](https://supabase.com/docs/guides/auth/rate-limits) and [connecting to Postgres (Data API)](https://supabase.com/docs/guides/database/connecting-to-postgres)
+- [Supabase: Custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp) and [Resend: Send with Supabase SMTP](https://resend.com/docs/send-with-supabase-smtp)
 - [Supabase: Database backups](https://supabase.com/docs/guides/platform/backups)
 - [Resend pricing](https://resend.com/pricing)
 - [Stripe pricing](https://stripe.com/pricing) and [Stripe CLI](https://docs.stripe.com/stripe-cli/use-cli)

@@ -1,0 +1,74 @@
+[
+  {
+    "takeaway": "Before I merge something an agent wrote, I have it quiz me on the change and I answer from memory, because finishing work feels like learning even when I'm not learning.",
+    "intended": "Agents make you faster but not better unless you deliberately add a step where you check you understand what they wrote.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the core as one `TODO(human)`, with a failing test",
+        "why": "I don't write tests, so I don't know what a failing test is for or what I'm supposed to do with it. I also don't know what counts as 'the core' of a feature. Step 4 is the only one I couldn't start today."
+      },
+      {
+        "quote": "Paste this to your agent before you merge",
+        "why": "The checklist includes 'I answered them from memory first.' How would my agent check that? It reads like a checklist for me, but it tells me to paste it to the agent. I got confused about who's checking what."
+      },
+      {
+        "quote": "Group the week's \"Worth learning\" notes",
+        "why": "Where do these notes live? They're scattered across PR descriptions and commit messages. I don't know how I'd gather them, or whether the learn skill does it. Also 'learn the one or two that matter most' doesn't say how. Reread them? Ask the agent?"
+      }
+    ],
+    "skimmed": [
+      "The three learning-science bullets. I got the idea from the headings ('retrieval beats rereading'), and the 61% vs 40% study felt like one stat too many after the two AI studies.",
+      "The learn skill paragraph. 'A saved workflow you ask your agent for' doesn't tell me how to get it or install it, and the link is a file path, so I moved on."
+    ],
+    "jargon": [
+      "async library (I know async/await, but not what 'learning an async library' involved in the study)",
+      "failing test",
+      "TODO(human)",
+      "collapsed <details> block (I can guess, and the agent handles it, so this was minor)",
+      "skill (in the 'learn skill' sense)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Steps 1 and 2 I'd do tonight: paste the prompt, answer the quiz. Step 3 needs a concrete how: where the notes collect and what 'learn' means in practice (for example, ask the agent to turn them into recall questions). Step 4 needs a sentence on what a failing test is and what I do once I've written the code. 'Non-trivial' in step 2 needs a rule of thumb, or I'll call everything trivial when I'm tired.",
+    "cut": "The 'Before you ship, check' section. It repeats steps 1 and 2, and telling me to paste a self-check to my agent confused me. If it stays, it should say it's a checklist for me.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I merge an agent's PR, I have it write me a short quiz about the change and answer it from memory, because just shipping with AI feels like learning but isn't.",
+    "intended": "Agents make you ship faster but won't make you a better engineer unless you deliberately add a step to understand what they wrote.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Leave me the core as one `TODO(human)`, with a failing test",
+        "why": "I don't know what 'the core' of a feature is, and I've never written or run a test. 'Failing test' is a leap. Does the test fail until I write the code? How do I run it? Step 4 is the one I'd actually skip because I can't picture doing it."
+      },
+      {
+        "quote": "Paste this to your agent before you merge",
+        "why": "The checklist says 'I answered them from memory first.' How would my agent know that? Some of these I check and some the agent checks, and it doesn't say which. I'd paste it and not know what I'm supposed to get back."
+      },
+      {
+        "quote": "Once a week, catch up. Group the",
+        "why": "Where do these notes live after the PR merges? Do I scroll back through old PRs? 'Group' them how? It sounds like work with no tool attached, unless the learn skill does it. The skill gets mentioned once and I don't know how to install or call it."
+      }
+    ],
+    "skimmed": [
+      "The 'What actually builds understanding' section. The bold lines are enough, and the 61% vs 40% study felt like it was for someone checking the argument, not someone doing it.",
+      "The METR paragraph. I got 'your gut lies to you' from the first sentence, so the percentages slid past me."
+    ],
+    "jargon": [
+      "async library",
+      "non-trivial",
+      "TODO(human)",
+      "failing test",
+      "<details> block",
+      "compounds",
+      "skill (glossed as 'saved workflow' but not how to get or use it)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Steps 1 and 2 are clear: I'd paste the prompt into CLAUDE.md today. Step 3 needs to say where the notes end up and what tool or prompt does the weekly grouping. Step 4 needs one concrete example of what 'the core' looks like in a Next.js/Supabase feature and how to run the failing test. The skill needs one line on how to install it and the exact words to ask for it.",
+    "cut": "The 'What actually builds understanding' section. The steps already apply it (quiz = retrieval, write the core = generating, weekly = spacing). One sentence saying that would do the job, and the study numbers and the 'it's a bet' caveat are where my phone attention ran out.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Start with one Next.js app and one database, and don't let the agent add Redis, a separate API, a store, or layers unless I can name today's problem and show a number proving it.",
+    "intended": "Build the simplest thing that solves today's problem, and make every added piece name a real problem and the evidence for it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every mutation has to update both",
+        "why": "'Mutation' isn't explained. I think it means any change to a booking, but I had to guess, and this is the sentence that explains why the store is bad."
+      },
+      {
+        "quote": "once route handlers in the same app no longer fit",
+        "why": "I've seen route handlers, but I can't tell when they 'no longer fit.' Is it too many? Too slow? A mobile app can't call them? This trigger is the vaguest one on the list."
+      },
+      {
+        "quote": "Next.js caching first, Redis after",
+        "why": "Which Next.js caching? There are several kinds and they keep changing. I wouldn't know what to tell the agent here, and I wouldn't know when 'after' starts."
+      }
+    ],
+    "skimmed": [
+      "The Dan McKinley and Martin Fowler references. Names of people I don't know, and the point was already made.",
+      "Most of 'Every piece adds a way to fail.' The first paragraph landed, but 'timeouts, retries, and a plan for when one is down' and 'work can run twice' sound scary without telling me what to do about it. I'd skip it on my phone."
+    ],
+    "jargon": [
+      "mutation",
+      "network hop",
+      "route handlers",
+      "runtime (in 'a different runtime')",
+      "Drizzle",
+      "managed auth",
+      "Neon (named as production with no gloss, and I use Supabase)",
+      "monolith is glossed, but 'boundaries' in 'the right boundaries' isn't"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I don't have a PROJECT.md. Is it a file I create, and what goes in it besides this? The page also doesn't say what to do if the agent already overbuilt my app. Do I rip out the Express API now, or leave it? That's my real situation more often than starting fresh. The 'ask it what problem this solves' prompt is great, and I'd use it today.",
+    "cut": "The 'Choose Boring Technology' and 'MonolithFirst' sentences. They're appeals to authority for a reader who doesn't know the authors, and the yoga-app example already convinced me.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Start with one Next.js app and one database, and before I let an agent add Redis, a separate API, a store, or extra layers, make it tell me what problem that solves today and show me a number that proves it.",
+    "intended": "Build the simplest thing that fully solves today's problem, and only add a service, layer, store, or package when you can name the real problem and the evidence for it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "each holding one file of queries that checks who's asking",
+        "why": "A leap. I get 'one file of queries', but 'checks who's asking' sounds like auth inside the query file. Does that mean checking the user ID in every function? With Supabase I thought RLS did that. I couldn't picture the file."
+      },
+      {
+        "quote": "every mutation has to update both",
+        "why": "Unexplained term. I guessed it means any change like booking or cancelling, but I wasn't sure. 'Every change' would have been clearer."
+      },
+      {
+        "quote": "once route handlers in the same app no longer fit",
+        "why": "Too vague. I don't know what 'no longer fit' looks like, so I couldn't tell if I'd hit it. Same with 'a different runtime' later on."
+      }
+    ],
+    "skimmed": [
+      "The Dan McKinley and Martin Fowler references. Names I don't know, and the sentence around each already made the point.",
+      "The second paragraph of 'Every piece adds a way to fail' (layers and packages). The yoga app list already said this, so it felt repeated.",
+      "Part of the BookingRepository/Service/Controller bullet. I've never used that pattern, so I skimmed to 'every change touches four files', which landed."
+    ],
+    "jargon": [
+      "mutation",
+      "network hop",
+      "Drizzle (named in What I'd do with no gloss)",
+      "Neon (I guessed it's hosted Postgres from context)",
+      "runtime",
+      "Next.js caching (which kind? I know there's more than one and it confuses me)",
+      "retries and timeouts as things I'd have to 'plan' for"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "1) The agent already built the overbuilt version. What do I tell it to rip out first, and how do I keep it from breaking things? 2) For Supabase, what does 'one file of queries per feature' look like? Is it the supabase-js client in bookings/queries.ts, and how does that fit with RLS? 3) 'Next.js caching first' needs one concrete pointer or a prompt to give the agent, since I wouldn't know which caching API to use.",
+    "cut": "The 'Layers and packages cost less each but add up' paragraph. The yoga app bullets already covered the four-files problem and the packages problem more concretely, and this paragraph is where I started skimming.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
