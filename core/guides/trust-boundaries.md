@@ -22,7 +22,7 @@ The browser is the one people forget. You wrote the frontend, so it feels like y
 
 Say you built a small invoicing app. Invoices live at `/invoices/8f3a…`. The page loads the invoice by ID and checks that someone is logged in. A user pastes in an ID from an email a client forwarded, and now they're reading another company's invoice.
 
-That's **broken object level authorization**, also called IDOR. OWASP's API Security Top 10, the standard list of API risks, ranks it first. The app checked "is anyone logged in?" when it needed "does this invoice belong to this person?"
+That's **broken object level authorization**, also called IDOR (insecure direct object reference: the ID in the URL is the only thing standing guard). OWASP's API Security Top 10, the standard list of API risks, ranks it first. The app checked "is anyone logged in?" when it needed "does this invoice belong to this person?"
 
 ## Validate at the edge, with one schema
 

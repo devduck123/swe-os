@@ -26,7 +26,7 @@ This applies once the app holds other people's data or money. For a toy with no 
 
 Your first job isn't to understand the bug. It's to stop new damage with the fastest move available, even a blunt one:
 
-1. **Roll back** to the last good deploy. On Vercel that's Instant Rollback, and it takes effect immediately. Hobby can only go back one deploy, so roll back before you push a fix attempt. See [shipping changes you can undo](shipping-changes-you-can-undo.md).
+1. **Roll back** to the last good deploy. On Vercel that's Instant Rollback, and it takes effect immediately. Hobby can only go back one deploy: if your fix attempt is broken too, you can't roll back past it. So roll back first, then push the fix. See [shipping changes you can undo](shipping-changes-you-can-undo.md).
 2. **Turn the feature off** with its flag, if it has one: a setting your code checks before running it, flipped without a deploy.
 3. **Disable it by hand**: hide the button, return `503` from the route, or press **Disable Cron Jobs** in Vercel's project settings.
 4. **Put the app in maintenance mode** if you can't tell what's safe.

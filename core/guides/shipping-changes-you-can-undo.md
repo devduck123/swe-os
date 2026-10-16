@@ -76,7 +76,7 @@ A migration is a SQL file that changes your database's shape, and something has 
 { "buildCommand": "npm run db:migrate && npm run build" }
 ```
 
-Only Vercel reads this, so local builds and CI never touch a database. In production, the migration runs before the new deployment takes traffic, and if it fails, nothing ships. Each preview build migrates its own branch, a free rehearsal. Use your database's direct connection string for this, not the pooled one; Neon and Supabase both say so. On Supabase, Vercel can't reach the IPv6-only direct connection, so use the session pooler, or let Supabase's GitHub integration run `supabase/migrations` on merge.
+Only Vercel reads this, so local builds and CI never touch a database. In production, the migration runs before the new deployment takes traffic, and if it fails, nothing ships. Each preview build migrates its own branch, a free rehearsal. Migrations need the direct connection string, not the pooled one. On Supabase, use the session pooler string instead (Vercel can't reach the direct one), or let Supabase's GitHub integration run `supabase/migrations` on merge.
 
 Two rules make this safe. First, the old deployment keeps serving while the build runs, so every migration must work with the old code too. That's [expand and contract](database-changes-without-downtime.md): add the new column first, in its own PR, and remove the old one later. Second, the Preview `DATABASE_URL` must never be production, or every PR migrates prod.
 

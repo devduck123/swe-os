@@ -63,7 +63,7 @@ The public ones work because something else does the guarding. Supabase's publis
 
 ## Agents change who can see your secrets
 
-- **A pasted key is a leaked key.** It lives in a transcript you don't control, so rotate it. Tell the agent the variable's name, never its value.
+- **A pasted key is a leaked key.** It lives in a transcript you don't control, so rotate it: make a new key and turn off the old one. Tell the agent the variable's name, never its value.
 - **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` doesn't stop a script the agent runs from opening the file. The dependable fix is what's in the file: dev keys with low limits, and production keys never on your laptop.
 - **MCP servers hold tokens too.** These plugins give an agent tools, like querying your database. Give each the narrowest access: a dev database, read-only, one repo.
 - **Decide what never gets auto-approved:** destructive commands (`rm -rf`, `DROP TABLE`, `git push --force`), pushes to main, deploys, new packages, and anything with production credentials.

@@ -47,7 +47,7 @@ If it times out, retry later. A failed migration is better than a frozen app. He
 
 - **Adding a column** that's nullable, or has a fixed default, is instant.
 - **Changing a column's type** usually rewrites the whole table while holding the lock. Use add, copy, switch, drop.
-- **Adding `NOT NULL` to an existing column** scans the whole table while holding the lock. On a big table, use the safer version below.
+- **Adding `NOT NULL` to an existing column** scans the whole table while holding the lock. On a big table, use the safer version in "Going deeper" below.
 - **Adding an index** (a lookup structure that makes queries on a column fast) normally blocks writes until it's built. `CREATE INDEX CONCURRENTLY` doesn't, but it can't run inside a transaction (a group of statements that all apply or none do), and Drizzle's migrator wraps your migrations in one. So run it on its own with `psql`, over your database's direct (unpooled) connection string:
 
 ```sh

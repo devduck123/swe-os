@@ -36,7 +36,7 @@ You pick a photo, it shows up, the demo works. Ship it.
 Now read it like an engineer. Every line trusts the request.
 
 - **Who can upload?** `userId` comes from the form, so anyone can change anyone's photo. There's no session check at all.
-- **How big?** Vercel Functions reject request bodies over 4.5 MB with a `413`, so a photo straight off a phone fails with an error your UI never handles.
+- **How big?** Vercel Functions reject request bodies over 4.5 MB with a `413` ("too large") error, so a photo straight off a phone fails with an error your UI never handles.
 - **What type?** Nothing checks it, so your storage becomes free hosting for anything, on your bill.
 - **What path?** The user's filename. `put` throws when the path already exists, so the second user to upload `photo.jpg` gets a 500.
 - **What happens on failure?** If the upload works and the database update fails, the file sits in storage with nothing pointing to it. A double-click uploads twice, and old avatars are never deleted.

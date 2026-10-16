@@ -16,7 +16,7 @@ Performance work is finding the one slow thing and fixing that thing. Cost work 
 
 Your SaaS dashboard takes four seconds to load. You ask an agent to fix it, and it suggests Redis. Sounds reasonable.
 
-Instead, you measure. The server timing shows 3.6 of those seconds in the database. The query log shows 51 queries for one page load: one to get the team's 50 projects, then one per project to fetch its owner. That's an N+1, and the ORM (the library that writes your SQL) hid it inside a loop. One join turns 51 trips to the database into one, and the page loads in well under a second.
+Instead, you measure. The server timing shows 3.6 of those seconds in the database. The query log shows 51 queries for one page load: one to get the team's 50 projects, then one per project to fetch its owner. That's an N+1, and the ORM (the library that writes your SQL) hid it inside a loop. One join (a single query that fetches the projects and their owners together) turns 51 trips to the database into one, and the page loads in well under a second.
 
 Redis would have made the second visit fast and left the first one slow. It would also have added a service to run and a new bug: owners who renamed themselves still showing the old name.
 

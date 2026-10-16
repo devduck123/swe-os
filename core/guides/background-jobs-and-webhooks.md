@@ -156,7 +156,7 @@ Postgres session advisory locks are the textbook tool here, but they don't survi
 For a Next.js app on Vercel with Neon or Supabase:
 
 - For slow work, ask your agent: "Move the slow part of this route into a `jobs` table with status, attempts, and last_error. Insert the row in the request and process it in `after()`."
-- Ask your agent: "Add a daily Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap."
+- Ask your agent: "Add a Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap." On Hobby it runs once a day, so a stuck job can wait a day and five attempts take five days. If that's too slow, sweep every few minutes with Vercel Pro or Supabase Cron.
 
 I'd move to a hosted job service once I need retries with backoff, steps that wait on each other, or runs longer than a function's time limit. Past that, I'd be rebuilding one badly in a table.
 

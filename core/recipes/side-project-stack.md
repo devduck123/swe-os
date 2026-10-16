@@ -30,7 +30,7 @@ Notice that every arrow starts or ends at the one app:
    |  Zod at every boundary                          |
    +----+---------+---------+---------+---------+----+
         |         |         |         |         ^
-        | SQL     | session | uploads | send    | checkout out,
+        | SQL     | session | uploads | send    | checkouts out,
         |         |         |         |         | webhooks in
         v         v         v         v         v
       Neon      Better    Vercel    Email     Stripe
@@ -124,7 +124,7 @@ The cliffs, in the order I'd expect to hit them:
 
 - **Neon Free's compute runs out if the database never sleeps.** Neon suspends it after 5 idle minutes, which keeps a quiet app well inside. Something that queries every few minutes (a database health check, a polling cron, an open dashboard) keeps it awake, and the smallest database runs out around day 17. Then every query fails until next month.
 - **Supabase Free pauses a project after a week of inactivity.** A quiet app can be down when someone finally visits.
-- **Supabase Auth's built-in email sends 2 emails an hour.** Set up custom SMTP with your email provider before launch, or sign-up emails stop.
+- **Supabase Auth's built-in email sends 2 emails an hour.** Set up custom SMTP (your email provider's sending server) under Authentication in the Supabase dashboard before launch, or sign-up emails stop.
 - **Vercel Hobby is non-commercial only.** Taking payments, showing ads, or getting paid to build the site all count as commercial. Hobby also can't pay for overages: go over a limit and that feature stops until 30 days have passed.
 - **Vercel Hobby cron runs once a day,** anywhere within the hour you set. A more frequent schedule fails the deploy.
 - **Vercel Blob Hobby allows 2,000 advanced operations a month.** Every `put()`, `copy()`, and `list()` counts, and so does browsing the store in the dashboard. That's about 66 uploads a day. Go over and Blob is unavailable until 30 days have passed.
