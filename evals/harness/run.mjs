@@ -47,6 +47,13 @@ const reps = Number(opts.reps);
 let spent = 0;
 // Set when a run fails in a way every later run would too, so the round stops early.
 let stopReason = null;
+// Errors every later call would hit too, so there's no point continuing.
+const fatalReason = (error) =>
+  /authenticat|OAuth|logged out|login/i.test(error ?? '')
+    ? 'A run failed to log in. Run `claude setup-token` (or `claude auth login`)'
+    : /rate.?limit|usage limit|429|overloaded/i.test(error ?? '')
+      ? 'A run hit a usage or rate limit. Wait for it to reset'
+      : null;
 
 // Tools both arms get. Pushing, GitHub, deploys, and Docker are off so a run can't touch
 // anything outside its temp folder. Both arms lose them equally.
@@ -276,10 +283,7 @@ async function runOne(s, arm, rep, root, sweos) {
     })),
   };
   writeFileSync(join(dir, 'meta.json'), JSON.stringify(meta, null, 2));
-  if (/authenticat|OAuth|logged out|login/i.test(meta.error ?? ''))
-    stopReason = 'A run failed to log in. Run `claude auth login`';
-  else if (/rate.?limit|usage limit|429|overloaded/i.test(meta.error ?? ''))
-    stopReason = 'A run hit a usage or rate limit. Wait for it to reset';
+  stopReason ??= fatalReason(meta.error);
   console.log(
     `${s.id} ${arm}${rep}: $${meta.cost.toFixed(2)}, ${meta.seconds}s${meta.error ? `, ERROR ${meta.error.slice(0, 120)}` : ''}  (spent $${spent.toFixed(2)})`,
   );
@@ -353,6 +357,11 @@ Reply with only this JSON:
   const results = await Promise.all(
     Array.from({ length: Number(opts.graders) }, (_, i) => grade1(i)),
   );
+  const fatal = results.map((r) => fatalReason(r.error)).find(Boolean);
+  if (fatal) {
+    stopReason = fatal;
+    return;
+  }
   const cost = results.reduce((n, r) => n + r.cost, 0);
   spent += cost;
   const grade = combineGrades(results.map((r) => parseGrade(r.reply)));
@@ -408,7 +417,12 @@ function summarize(root) {
   const info = JSON.parse(readFileSync(join(root, 'round.json'), 'utf8'));
   const rows = [];
   const deltas = [];
-  for (const s of scenarios) {
+  // Scenarios in harness order, then any a past round ran that have since been retired.
+  const ids = [
+    ...new Set([...scenarios.map((s) => s.id), ...runs.map((r) => r.scenario)]),
+  ];
+  for (const id of ids) {
+    const s = { id };
     const arm = (a) => runs.filter((r) => r.scenario === s.id && r.arm === a);
     const [A, B] = [arm('A'), arm('B')];
     if (!A.length && !B.length) continue;
@@ -474,6 +488,8 @@ if (opts.grade) {
   for (const name of readdirSync(join(root, 'runs'))) {
     const dir = join(root, 'runs', name);
     if (needsGrade(dir)) await gradeOne(dir, info.sweos);
+    if (stopReason)
+      throw new Error(`${stopReason}, then run --grade ${root} again.`);
   }
   writeFileSync(
     join(root, 'round.json'),
@@ -587,6 +603,10 @@ console.log('\nGrading...');
 for (const name of readdirSync(join(root, 'runs'))) {
   const dir = join(root, 'runs', name);
   if (needsGrade(dir)) await gradeOne(dir, sweos);
+  if (stopReason)
+    throw new Error(
+      `${stopReason}, then run --grade ${root} to finish grading.`,
+    );
 }
 writeFileSync(
   join(root, 'round.json'),
