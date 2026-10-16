@@ -4,6 +4,9 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Shorter reports.** build-feature and debug reports have fewer sections (What changed, Evidence, Open, Worth learning) and aim for 150–250 words. Only open concerns are listed; the evidence shows what's handled. Worth learning is one point, never repeating the reply. Rule 13's feedback line appears only when guidance actually caused a problem, written for the user. Eval round 6: communication went from −0.15 to +0.07 against no SWE OS, and median reply length dropped from 3,593 to 2,847 characters.
+- **The learner test.** `node evals/learner/run.mjs` checks whether each track stop teaches its reader.
+
 ## v0.2.0 (2026-10-13)
 
 From MVP to product. Projects that pin v0.1.0 should read the guidance changes below before moving.

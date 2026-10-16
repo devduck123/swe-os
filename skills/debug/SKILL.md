@@ -32,13 +32,13 @@ Find the mechanism, prove it, then fix it. Follow the [rules for every task](../
 ```
 **Cause.** The mechanism in one or two sentences.
 
-**Evidence.** The reproduction before and after: the command and what it showed.
-
 **Fix.** What changed, and why it fixes the cause, not just the symptom.
 
-**Regression test.** Its name, and proof that it failed before the fix. Or "not testable, because…" for a config or infrastructure bug.
+**Evidence.** The reproduction before and after, and the regression test's name with proof it failed before the fix (or "not testable, because…").
 
-**Not verified.** Environments or cases you couldn't check.
+**Open.** Environments or cases you couldn't check.
 
-**Worth learning.** The mechanism in one line, as something worth remembering, or "nothing new".
+**Worth learning.** One line, only if the mechanism is worth remembering and the reply hasn't already said it. Otherwise "nothing new".
 ```
+
+Most reports fit in 150 to 250 words. Leave out a section that would be empty.

@@ -6,16 +6,23 @@ There's a second test for the writing itself: the [learner test](learner/README.
 
 ## Results so far
 
-Three rounds in October 2026, on Claude Code with Opus 5.5, about $45 API-equivalent on a Max plan. One or two reps per scenario, so each number is noisy. Summaries: [round 1](results/2026-10-11T233550/summary.md), [round 2](results/2026-10-13T071137/summary.md), [round 3](results/2026-10-13T081543/summary.md).
+Six rounds in October 2026, on Claude Code with Opus 5.5, under a Max plan. Each summary is in [results/](results/). Rounds 4 and 6 are the full ones to compare:
 
-- **SWE OS helps with shaping, setup, and debugging.** Start-project was +0.83 and +0.75, duplicate reminders +0.17 and +0.83, and the expense splitter +0.67 and +0.33.
-- **It adds no ceremony to a tiny fix.** The two-line fix tied on score, time, and length once the small-change rule was in.
-- **It stopped to ask instead of building,** until round 3. Rule 6 and build-feature's stop rule both fired on things the request already implied. Fixed in round 3: B now builds the secrets and dependency features.
-- **Its reports ran long.** A line per concern, even handled ones, made replies up to 77% longer. They're now one line for everything handled.
-- **It costs about twice as much** in tokens and time.
-- **The bar isn't met yet.** Round 1 averaged +0.03, round 2 +0.25. The fixes from rounds 2 and 3 haven't had a full round.
+|                                      | Round 4 (v0.2.0, 3 reps) | Round 6 (shorter reports, 2 reps) |
+| ------------------------------------ | ------------------------ | --------------------------------- |
+| Average B − A                        | +0.29                    | +0.30                             |
+| Scenarios B wins / ties within noise | 10 / 1                   | 9 / 2                             |
+| Serious flaws, B                     | 0                        | 0                                 |
+| Verification B − A                   | +1.00                    | +1.07                             |
+| Communication B − A                  | −0.15                    | +0.07                             |
+| Median reply length, B               | 3,593 chars              | 2,847 chars                       |
 
-The rounds also found four harness bugs, now fixed: B could read the reviewer notes, an answer turn said "Go ahead" and turned a shaping task into a build, grades failed to parse, and grading hid real checks chained after a SWE OS read.
+- **Where SWE OS helps most:** verification, setup (start-project +0.83), debugging (+0.58), and keeping keys out of shipped code (extension-key +0.50).
+- **Where it ties:** tasks Opus already does well alone, like the password reset review and pushback. A scores 2.3–2.7 there, so there's little room.
+- **It costs about 2x** tokens and time.
+- **The +0.5 average bar isn't met,** and may be the wrong bar: see [PROJECT.md](../PROJECT.md).
+
+Rounds 1–3 found and fixed four harness bugs (B could read reviewer notes, a leading "Go ahead", unparseable grades, hidden checks). Rounds 2–5 drove the guidance changes in CHANGELOG: build first and ask at the end, shorter reports, and only open concerns.
 
 ## Run a round
 
