@@ -16,19 +16,19 @@ The other half is backups. A broken deploy rolls back in a minute. Lost data com
 
 ## A bad afternoon
 
-You run a project-management app with a few hundred users. You ship "archive selected projects". The query builder drops the `WHERE id IN (...)` when the selection is empty, so one user clicking Archive with nothing selected archives every project in their workspace. Then a cleanup job hard-deletes archived projects older than a day, and a bug in your date math makes that "all archived projects".
+You run a project-management app with a few hundred users. You ship "archive selected projects". When nothing is selected, a bug drops the query's filter, so one user clicking Archive with nothing selected archives every project in their workspace. Then a cleanup job that permanently deletes archived projects older than a day has a date-math bug, and deletes all of them.
 
 At 15:10 the first email arrives: "All my projects are gone." The next ten minutes decide whether this is a bad afternoon or the end of the project.
 
-This applies once the app holds other people's data or money. For a toy with no users, fix forward, but still practice one restore.
+This applies once the app holds other people's data or money. For a toy with no users, just ship the fix, but still practice one restore.
 
 ## Stop the bleeding first
 
-Your first job isn't to understand the bug. It's to stop new damage, with the fastest move available, even a blunt one:
+Your first job isn't to understand the bug. It's to stop new damage with the fastest move available, even a blunt one:
 
 1. **Roll back** to the last good deploy. On Vercel that's Instant Rollback, and it takes effect immediately. Hobby can only go back one deploy, so roll back before you push a fix attempt. See [shipping changes you can undo](shipping-changes-you-can-undo.md).
-2. **Flip the flag off**, if the feature is behind one.
-3. **Disable the feature**: hide the button, return `503` from the route, pause the cron job.
+2. **Turn the feature off** with its flag, if it has one: a setting your code checks before running it, flipped without a deploy.
+3. **Disable it by hand**: hide the button, return `503` from the route, or press **Disable Cron Jobs** in Vercel's project settings.
 4. **Put the app in maintenance mode** if you can't tell what's safe.
 
 In the example, rolling back stops new archive clicks, but the cleanup job is the thing destroying data. Pause it too. Ask "what is still writing right now?" and stop all of it.
@@ -37,11 +37,11 @@ Write down the time of each action as you go. You'll need it for the restore and
 
 ## Debug from evidence, not redeploys
 
-Start from the Sentry issue, the request ID, and the diff between the last good release and the bad one, then reproduce before you fix. Redeploying guesses is a production change made under stress. The [debug skill](../../skills/debug/SKILL.md) is this loop written down.
+Start from the Sentry issue, the request ID, and the diff between the last good release and the bad one, then reproduce before you fix. Redeploying guesses is a production change made under stress. The [debug skill](../../skills/debug/SKILL.md) is this loop.
 
 ## Tell people, even in one sentence
 
-Users can handle "something's broken and I'm on it". Silence is what they can't handle. Post a banner in the app, or email the people affected.
+Users can handle "something's broken and I'm on it". Silence they can't. Post a banner in the app, or email the people affected.
 
 > Archiving deleted more projects than it should have, starting around 14:50. I've turned it off and I'm restoring the data now. Next update by 17:00.
 
@@ -49,38 +49,49 @@ Say what's affected, what you've done, and when you'll update. Then update on ti
 
 ## A backup you haven't restored is a hope
 
-- **Point-in-time recovery (PITR)** lets you restore to any moment within a window, like 14:49, one minute before the damage. It replays the database's write-ahead log, the record of every change, on top of a snapshot.
-- **Daily backups** only restore to when the snapshot was taken. Anything written since is gone.
+- **Point-in-time recovery (PITR)** lets you restore to any moment within a window, like 14:49, one minute before the damage.
+- **Daily backups** only restore to when the backup was taken. Anything written since is gone.
 
-The window is the part people skip. As of this writing, Neon's free plan keeps 6 hours of restore history, its Launch plan up to 7 days, and its Scale plan up to 30 days. Supabase's free plan has no automatic backups, and its docs tell free users to export with `supabase db dump` themselves. Supabase Pro keeps 7 days of daily backups, and PITR is a paid add-on.
+The window is the part people skip. As of this writing:
 
-Run the example on Neon's free plan. If you notice the deletion within 6 hours, you can get the data back. If a user notices on Monday, it's gone.
+- **Neon** keeps 6 hours of history on Free, up to 7 days on Launch, and up to 30 days on Scale.
+- **Supabase Free** has no automatic backups. Its docs tell you to export your own with `supabase db dump`.
+- **Supabase Pro** keeps 7 days of daily backups. PITR is an add-on, about $100 a month for 7 days, and needs a Small compute add-on or bigger.
 
-Restoring a Neon root branch in place overwrites it. Neon keeps the pre-restore state as a backup branch, but every good write since 14:49 is no longer in the live database. Usually the better move is to restore _next to_ production and copy back only what was lost:
+In the example, a deletion you catch within 6 hours comes back on Neon Free. Reported on Monday, it's gone on either free plan. Supabase Pro gets you last night's backup, minus today.
+
+## Restore next to production, not over it
+
+Restoring production in place brings back the deleted rows and throws away every good write since. Supabase also takes the project offline while it restores. Instead, restore a copy _next to_ production and move back only what was lost.
+
+On Neon, the copy is a branch. Notice `--parent`: the minute before the damage.
 
 ```sh
-# A branch of production as it was one minute before the damage.
 neon branches create --name before-archive-bug --parent 2026-10-06T14:49:00Z
 ```
 
-Then copy the deleted projects from that branch back into production. Everyone else's work from the last hour stays.
+On Supabase Pro, open **Database > Backups**, choose **Restore to a New Project**, and pick last night's backup, or a time if you have PITR. It's billed like any project, so delete it after.
 
-A restore brings back rows, not sent emails or charges. [Shipping changes you can undo](shipping-changes-you-can-undo.md) covers what no rollback or restore can reach, and how to design around it.
+Then ask your agent: "Write a script that copies the projects with these IDs from the restored copy into production, skipping any that already exist. Show me row counts before running it." Everyone else's work from today stays.
 
-## Practice the restore on a branch
+A restore brings back rows, not sent emails or charges. [Shipping changes you can undo](shipping-changes-you-can-undo.md) covers what nothing can undo.
+
+## Practice the restore on a copy
 
 Do a restore drill before you need one. It takes twenty minutes:
 
-1. Pick a time an hour ago and create a branch from it.
+1. Restore a copy from an hour ago, or from last night on Supabase Pro.
 2. Connect and run a sanity query: row counts on your main tables, the newest `created_at`.
-3. Write down the exact commands and how long it took, in your project's runbook or PROJECT.md.
-4. Delete the branch.
+3. Write down the exact steps and how long they took in PROJECT.md.
+4. Delete the copy.
 
-Now you know the backups exist, cover the window you think, and restore without a docs search mid-incident. Repeat it when you change plans.
+Now you know the backups exist and cover the window you think. Repeat it when you change plans.
 
 ## Write a blameless postmortem
 
-Once it's over, write it down. Blameless doesn't mean nobody made a mistake. It means asking why the system made the mistake easy, because "be more careful" changes nothing. "The cleanup job can't hard-delete more than 100 rows without a manual flag" does.
+Once it's over, write it down. Blameless doesn't mean nobody made a mistake. It means asking why the system made it easy, because "be more careful" changes nothing. "The cleanup job can't hard-delete more than 100 rows without a manual flag" does.
+
+Notice that the last two sections carry the fix:
 
 ```md
 ## Summary
@@ -106,30 +117,32 @@ Each change with a link to its PR or issue.
 
 ## What the vibe-coded version misses
 
-- **Hotfixing in prod by hand.** Editing rows in the database console mid-incident leaves no record of what changed, so the restore becomes guesswork.
-- **Debugging before stopping the damage.** An hour of investigation while the cleanup job keeps deleting, and every minute is more to restore.
-- **Assuming backups exist.** The free plan has 6 hours of history, or no automatic backups at all. A Monday bug report on a Friday deletion means the data is gone.
-- **Never restoring one.** The first restore happens mid-incident, from docs you're reading for the first time.
-- **Restoring over production.** An in-place restore brings back the deleted rows and throws away every good write since, so you've caused a second data loss fixing the first.
-- **Fixing the symptom and moving on.** The rows come back, the root cause stays, and without a postmortem it happens again in a month.
+- **Debugging while the damage continues.** Every minute of investigation is more data to restore.
+- **Assuming backups exist.** A Friday deletion reported on Monday is gone on Neon Free and Supabase Free.
+- **Restoring over production.** The deleted rows come back, and every good write since is lost.
+- **Skipping the postmortem.** The cause stays, and it happens again next month.
 
 ## What I'd do
 
-For a side project on Neon and Vercel:
+Before launch:
 
-- Know my three stop buttons before launch: Vercel Instant Rollback, env-var flags on risky features, and a way to pause each cron job.
-- Move to a paid Neon plan with a multi-day restore window as soon as real users' data is in the database. Six hours isn't enough to notice most problems.
-- Do one restore drill to a branch at launch and write the steps in the runbook.
-- Soft-delete anything users create, and cap bulk deletes.
-- Write a postmortem for anything that affected users, and ship at least one of its changes.
+- Know my three stop buttons: Instant Rollback, a flag on each risky feature, and **Disable Cron Jobs**. Ask your agent: "Put bulk archive and delete behind a flag in a settings table, so I can turn them off without a deploy."
+- Soft-delete what users create: mark it deleted instead of removing the row. Ask your agent: "Add a `deleted_at` column to projects, hide deleted rows everywhere, and refuse any delete or archive over 100 rows."
+- Do one restore drill.
 
-I'd add a separate logical backup, like a nightly `pg_dump` to storage outside the provider, once losing the database would end the business or the provider itself is the risk.
+Once real users' data is in the database, I'd move to Neon Launch or Supabase Pro for a multi-day window. Until then on Supabase Free, I'd copy Supabase's nightly `supabase db dump` GitHub Actions workflow into a private repo, since it's the only backup there is.
+
+After anything that hits users, I'd write the postmortem and ship at least one of its changes.
 
 ## Sources
 
 - [Neon pricing (restore windows)](https://neon.com/pricing)
+- [Neon: Plans (history window)](https://neon.com/docs/introduction/plans)
 - [Neon: Instant restore](https://neon.com/docs/introduction/branch-restore)
 - [Neon CLI: branches](https://neon.com/docs/cli/branches)
-- [Supabase: Database backups](https://supabase.com/docs/guides/platform/backups)
+- [Supabase: Database backups (plans, PITR, restore downtime)](https://supabase.com/docs/guides/platform/backups)
+- [Supabase: Restore to a new project](https://supabase.com/docs/guides/platform/clone-project)
+- [Supabase: Automated backups with GitHub Actions](https://supabase.com/docs/guides/deployment/ci/backups)
 - [Supabase pricing](https://supabase.com/pricing)
 - [Vercel: Instant Rollback](https://vercel.com/docs/instant-rollback)
+- [Vercel: Managing cron jobs (disabling)](https://vercel.com/docs/cron-jobs/manage-cron-jobs)

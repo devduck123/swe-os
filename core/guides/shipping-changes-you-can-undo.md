@@ -26,7 +26,7 @@ You need all this once someone else depends on the app. Even on a throwaway prot
 
 ## CI keeps main deployable
 
-On Vercel, every merge to main _is_ a deploy, so main must always be safe to ship. CI enforces it: on every PR, a fresh machine installs exactly what the lockfile says and runs your one `check` script.
+On Vercel, every merge to main _is_ a deploy, so main must always be safe to ship. CI enforces it. Notice the last two lines: on every PR, a fresh machine installs the exact versions in your lockfile (`package-lock.json`), then runs your one `check` script.
 
 ```yaml
 # .github/workflows/check.yml
@@ -48,49 +48,53 @@ jobs:
       - run: npm run check
 ```
 
-I accept version tags for GitHub's own `actions/*`, but I pin third-party actions to a full commit SHA. Whoever controls a repo can move its tag to different code. They can't move a SHA.
-
-CI on its own only reports. **Branch protection** makes it binding: require a PR to merge into main, and require `check` to pass first. The solo-dev trap: by default these rules don't apply to repository admins, and on your own repo you're the admin. Turn on the option that includes admins, or you'll skip the rules the first time you're in a hurry.
+CI on its own only reports. **Branch protection** makes it binding: main only accepts PRs that pass `check`. The solo-dev trap: by default these rules skip repository admins, and on your own repo that's you. Turn on the option that includes admins, or you'll skip the rules the first time you're in a hurry.
 
 ## Previews let you see it before users do
 
-Connect the repo to Vercel and every PR gets its own deployment at its own URL. Click through it on your phone. That catches bugs that only show up in a real build, like a missing env var.
+Connect the repo to Vercel and every PR gets its own preview deployment at its own URL. Click through it on your phone. That catches bugs that only show up in a real build, like a missing env var.
 
 The trap is what the preview talks to. If the Preview environment holds your production `DATABASE_URL` and live Stripe keys, clicking "delete account" on a half-finished branch deletes a real account. Give previews their own world:
 
-- **Database:** a separate branch per preview. Neon's Vercel integration creates one and injects its connection string into that deployment only.
-- **Keys:** test-mode Stripe keys and a sandbox email sender, scoped to Preview, never "all environments".
-- **Access:** keep previews behind Vercel's deployment protection, and give CI tests its automation bypass header (`x-vercel-protection-bypass`).
+- **Database:** a separate database branch (a copy just for this PR) per preview. Neon's Vercel integration creates one and gives only that deployment its connection string. On Supabase, Branching does this on paid plans. On the free plan, point Preview at a second project.
+- **Keys:** test-mode Stripe keys and a sandbox email sender, scoped to Preview in Vercel, never "all environments".
+- **Access:** keep previews behind Vercel's deployment protection, so only your team can open them.
+
+<details>
+<summary>Going deeper: locking down CI and previews</summary>
+
+- For CI tests that need to reach a protected preview, Vercel's Protection Bypass for Automation gives you a secret to send in the `x-vercel-protection-bypass` header.
+- I accept version tags for GitHub's own `actions/*`, but I pin third-party actions to a full commit SHA. Whoever controls a repo can move its tag to different code. They can't move a SHA.
+
+</details>
 
 ## Run migrations in the Vercel build
 
-Something has to run `drizzle-kit migrate`. My default is the Vercel build, right before `next build`. In `vercel.json`:
+A migration is a SQL file that changes your database's shape, and something has to run it. My default is the Vercel build. In this `vercel.json`, notice the migration runs before `next build`:
 
 ```json
 { "buildCommand": "npm run db:migrate && npm run build" }
 ```
 
-Only Vercel reads this, so local builds and CI never touch a database. In production, the migration runs before the new deployment takes traffic. If it fails, the build fails and nothing ships. With Neon's integration, each preview build migrates its own branch, which rehearses the migration for free. Point `drizzle.config.ts` at `DATABASE_URL_UNPOOLED`, because Neon says to run migrations over a direct connection, not the pooler.
+Only Vercel reads this, so local builds and CI never touch a database. In production, the migration runs before the new deployment takes traffic, and if it fails, nothing ships. Each preview build migrates its own branch, a free rehearsal. Use your database's direct connection string for this, not the pooled one; Neon and Supabase both say so. On Supabase, Vercel can't reach the IPv6-only direct connection, so use the session pooler, or let Supabase's GitHub integration run `supabase/migrations` on merge.
 
-Two rules make this safe. First, the old deployment keeps serving while the build runs, so every migration must work with the old code too. That's [expand and contract](database-changes-without-downtime.md): schema changes go in their own PR, before the code that needs them. Second, the Preview `DATABASE_URL` must never be production, or every PR migrates prod.
-
-I'd move migrations into their own CI job once I want a human to approve them, or they get slow enough to stall builds.
+Two rules make this safe. First, the old deployment keeps serving while the build runs, so every migration must work with the old code too. That's [expand and contract](database-changes-without-downtime.md): add the new column first, in its own PR, and remove the old one later. Second, the Preview `DATABASE_URL` must never be production, or every PR migrates prod.
 
 ## Flags separate shipping code from turning it on
 
-A feature flag lets you deploy code that stays switched off, so turning the feature on becomes its own reversible step. Start with the simplest flag that works:
+A feature flag lets you deploy code that stays switched off, so turning it on becomes its own reversible step. Start with the simplest flag that works:
 
 - **An env var.** `process.env.FLAG_NEW_CHECKOUT === "true"`. Free, but on Vercel an env var change only applies to new deployments, so flipping it means a redeploy.
 - **A database row.** A `feature_flags` table with a name and an `enabled` boolean. Flipping it is one `UPDATE`, live in seconds.
 - **A managed flag service** like PostHog or Vercel's Flags SDK, for percentage rollouts and targeting.
 
-Every flag is a branch in your code, and both sides have to work. Delete each one once the feature is fully on.
+Every flag is an `if` in your code, and both sides have to work. Delete each one once the feature is fully on.
 
 ## A rollback undoes code, not consequences
 
 Vercel's **Instant Rollback** points your domain back at an earlier production deployment, with no rebuild. Hobby can go back one deployment. Pro can pick any earlier one.
 
-After a rollback, Vercel stops auto-assigning production, so your next merge to main won't go live until you undo the rollback or promote a deployment.
+After a rollback, merges to main stop going live until you undo the rollback in the Vercel dashboard.
 
 What a rollback can't touch:
 
@@ -104,18 +108,21 @@ After each production deploy, load the real URL, run one critical flow, and watc
 
 ## What the vibe-coded version misses
 
-- **Deploying from a laptop.** `vercel --prod` from a dirty working tree ships code no commit matches. When it breaks, you can't see what shipped.
-- **Branch protection that admins skip.** You're the admin, so it never stops you, and an agent's red PR lands on main.
-- **Giant releases.** When two weeks of changes break, you're bisecting in production.
-- **Previews wired to the production database.** A test click edits real customer data, or a preview build runs a migration against prod.
-- **No rollback plan.** Nobody knows the rollback button won't undo the backfill the release just ran.
-- **A migration that only the new code understands.** The old deployment is still serving when it lands, and every request it handles fails.
+- **Branch protection that admins skip.** You're the admin, so an agent's failing PR lands on main anyway.
+- **Giant releases.** Two weeks of changes break, and you guess which of 40 files did it, one deploy at a time.
+- **Previews wired to the production database.** A test click deletes a real account, or a preview build migrates prod.
+- **No rollback plan.** Nobody knows the rollback button won't undo the rows the release just rewrote.
+- **A migration only the new code understands.** Every request the old deployment still serves fails.
 
 ## What I'd do
 
-Light trunk-based development, meaning everyone works off main in short-lived branches. Every change gets a branch, ideally under a day old, and a PR. CI runs `check`, Vercel builds and migrates a preview, and I click through it. I squash-merge, hit the production URL, and watch Sentry for a few minutes.
+Every change gets a branch, ideally under a day old, and a PR. CI runs `check`, Vercel builds and migrates a preview, and I click through it before merging. The setup is small:
 
-The setup is small: branch protection that includes admins, previews on their own Neon branch with test keys, migrations in the Vercel build, env-var flags, and Dependabot on the lockfile and the actions.
+- **CI.** Add the `check.yml` above.
+- **Branch protection.** In the repo's GitHub settings, add a rule for main: require a PR, require `check` to pass, and include administrators.
+- **Previews.** Install Neon's Vercel integration (or Supabase's, with Branching), and add test Stripe keys scoped to Preview.
+- **Migrations.** Set the `buildCommand` above.
+- **Dependency updates.** Ask your agent: "Add a Dependabot config for npm and GitHub Actions." It's GitHub's bot that opens update PRs.
 
 I'd add a database-row flag once I want to try a feature on just my account in production, and a managed flag service once I need percentage rollouts.
 
@@ -126,5 +133,6 @@ I'd add a database-row flag once I want to try a feature on just my account in p
 - [Vercel: Project configuration (`buildCommand`)](https://vercel.com/docs/project-configuration/vercel-json)
 - [Vercel: Protection Bypass for Automation](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation)
 - [Neon: Neon-managed Vercel integration](https://neon.com/docs/guides/neon-managed-vercel-integration) and [connection pooling (direct connections for migrations)](https://neon.com/docs/connect/connection-pooling)
+- [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching), [Vercel integration](https://supabase.com/docs/guides/deployment/branching/integrations), [pricing (branching on paid plans, 2 free projects)](https://supabase.com/pricing), [connecting to Postgres (direct connections for migrations)](https://supabase.com/docs/guides/database/connecting-to-postgres), and [IPv4 and IPv6 compatibility (Vercel is IPv4-only)](https://supabase.com/docs/guides/troubleshooting/supabase--your-network-ipv4-and-ipv6-compatibility-cHe3BP)
 - [GitHub: Secure use of Actions (pinning to a commit SHA)](https://docs.github.com/en/actions/reference/security/secure-use), and the [checkout](https://github.com/actions/checkout/releases) and [setup-node](https://github.com/actions/setup-node/releases) releases
 - [GitHub: About protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)

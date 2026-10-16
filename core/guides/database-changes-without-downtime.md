@@ -10,7 +10,7 @@ track: 17
 concerns: [migrations, data, deployment]
 ---
 
-Code is easy to undo: redeploy the old version and it's back in seconds. Data isn't. A migration changes the one thing every version of your app shares, and there's no redeploy button for a dropped column.
+Code is easy to undo: redeploy the old version and it's back in seconds. Data isn't. A migration (a script that changes your database's structure) changes the one thing every version of your app shares, and there's no redeploy button for a dropped column.
 
 The mental model: during every deploy, old code and new code run against the same database at the same time, so every schema change has to work for both. Big changes get split into small ones across several releases, each safe on its own.
 
@@ -20,7 +20,7 @@ Say you want to rename `users.name` to `users.display_name`. The agent writes on
 
 The migration runs, and for the next minute the old deployment is still serving traffic. Every request it handles asks for `name`, which no longer exists, so they all fail. So does a cron job that started before the deploy. Then you hit rollback. The old code comes back, still asking for `name`, and now _everything_ fails. The rollback that saves you on a normal deploy made this one worse.
 
-You need the slow way once real users are on the app, for anything that renames, drops, or changes the type of a column, and for any table big enough that a lock is noticeable. Purely additive changes, like a new nullable column or a new table, are already safe for both versions. Just run them.
+You need the slow way once real users are on the app, for anything that renames, drops, or changes the type of a column. Purely additive changes, like a new nullable column (one that can be empty) or a new table, are already safe for both versions. Just run them.
 
 ## Expand, migrate, switch, contract
 
@@ -35,16 +35,29 @@ That's four deploys instead of one. Every step but the last is reversible, and b
 
 ## Know what lock you're taking
 
-Most `ALTER TABLE` forms take an `ACCESS EXCLUSIVE` lock, which blocks every read and write on the table. For a metadata-only change that's milliseconds. The trap is the queue. If a slow query is already running, your `ALTER` waits for it, and every query that arrives after your `ALTER` waits behind it. A one-millisecond change can freeze the table for as long as that slow query runs. Set a lock timeout so the migration fails fast instead:
+A lock is how Postgres keeps changes from colliding: while one statement holds a table's lock, others that need it wait. Most `ALTER TABLE` statements take the strongest lock, which blocks every read and write. For a quick change, that's milliseconds. The trap is the line. If a slow query is already running, your `ALTER` waits for it, and every query after waits behind your `ALTER`. A one-millisecond change can freeze the table for as long as that slow query runs.
+
+So start risky migrations with a lock timeout, which makes them give up after 5 seconds instead of waiting:
 
 ```sql
 SET lock_timeout = '5s';
 ```
 
-If it times out, retry later. A failed migration is better than a frozen app.
+If it times out, retry later. A failed migration is better than a frozen app. Here's what common changes cost:
 
-- **Adding a column** that's nullable, or that has a constant default, only updates metadata. No table rewrite.
-- **Adding `NOT NULL` to an existing column** normally scans the whole table under that lock. The safe version proves it with a `CHECK` first:
+- **Adding a column** that's nullable, or has a fixed default, is instant.
+- **Changing a column's type** usually rewrites the whole table while holding the lock. Use add, copy, switch, drop.
+- **Adding `NOT NULL` to an existing column** scans the whole table while holding the lock. On a big table, use the safer version below.
+- **Adding an index** (a lookup structure that makes queries on a column fast) normally blocks writes until it's built. `CREATE INDEX CONCURRENTLY` doesn't, but it can't run inside a transaction (a group of statements that all apply or none do), and Drizzle's migrator wraps your migrations in one. So run it on its own with `psql`, over your database's direct (unpooled) connection string:
+
+```sh
+psql "$DIRECT_DATABASE_URL" -c "CREATE INDEX CONCURRENTLY invoices_team_id_idx ON invoices (team_id);"
+```
+
+<details>
+<summary>Going deeper: NOT NULL on a big table, and failed index builds</summary>
+
+Prove the rule with a `CHECK` constraint first, then let `SET NOT NULL` skip its scan:
 
 ```sql
 ALTER TABLE users ADD CONSTRAINT display_name_not_null
@@ -54,14 +67,15 @@ ALTER TABLE users ALTER COLUMN display_name SET NOT NULL;    -- skips the scan: 
 ALTER TABLE users DROP CONSTRAINT display_name_not_null;
 ```
 
-Foreign keys can use the same `NOT VALID` then `VALIDATE` trick.
+Foreign keys can use the same `NOT VALID` then `VALIDATE` trick. Adding a `NOT NULL` column with no default to a table that has rows fails outright, which an empty dev database never shows you.
 
-- **Creating an index** normally blocks writes for the whole build. `CREATE INDEX CONCURRENTLY` doesn't, but it **can't run inside a transaction block**, and Drizzle's migrator runs every pending migration inside one transaction. Put a concurrent index in a Drizzle migration and it fails. Run it as its own one-off script over the direct connection instead. If a concurrent build fails, it leaves an `INVALID` index behind. Drop it and try again.
-- **Changing a column's type** usually rewrites the whole table under the lock. Use add, copy, switch, drop.
+If a concurrent index build fails, it leaves an `INVALID` index behind. Drop it and try again.
+
+</details>
 
 ## Backfill in small batches you can stop
 
-One `UPDATE users SET display_name = name` on a big table is one giant transaction. It locks every row it touches until it commits, leaves a dead copy of every row behind (bloat), and can't be paused halfway. Do it in batches:
+One `UPDATE users SET display_name = name` on a big table is one giant transaction. It locks every row it touches until it finishes, leaves a dead copy of every row for Postgres to clean up, and can't be paused halfway. Do it in batches. Notice the inner query picks only rows that still need copying:
 
 ```sql
 UPDATE users SET display_name = name
@@ -73,41 +87,40 @@ WHERE id IN (
 -- Repeat until it updates 0 rows. Pause briefly between batches.
 ```
 
-Each batch commits on its own, so locks are short and you can stop any time. The `IS NULL` filter makes it idempotent: rerun it after a crash and it picks up where it left off. The `name IS NOT NULL` part matters too. Without it, rows with no name stay null after every batch, the loop never hits zero, and your backfill runs forever. I run backfills as a script, separate from schema migrations, so I can watch them.
+Each batch saves on its own, so locks are short and you can stop any time. The `IS NULL` filter makes it safe to rerun: after a crash, it picks up where it left off. The `name IS NOT NULL` part matters too. Without it, rows with no name stay null after every batch, the loop never hits zero, and your backfill runs forever.
 
 ## Drizzle: generate and review, don't push to production
 
-Drizzle Kit gives you two workflows. `drizzle-kit push` compares your TypeScript schema to the database and applies the difference directly. `drizzle-kit generate` writes a SQL migration file that you commit, and `drizzle-kit migrate` applies pending files.
+`drizzle-kit push` applies your TypeScript schema straight to the database. `drizzle-kit generate` writes a SQL migration file you commit, and `drizzle-kit migrate` applies it ([where that runs](shipping-changes-you-can-undo.md#run-migrations-in-the-vercel-build)).
 
-Drizzle's docs mention teams using `push` in production. I wouldn't, once real data is involved: there's no file to review, so nobody sees the `DROP COLUMN` until it has run. With `generate`, the SQL shows up in the PR diff. That's where you catch a column being dropped and re-added when you meant to rename it, or a plain `CREATE INDEX` on a big table. Edit the generated SQL when it needs it. It's your migration, not the tool's.
+Drizzle's docs mention teams using `push` in production. I'd use it only locally while I iterate. With `push` there's no file to review, so nobody sees the `DROP COLUMN` until it has run. With `generate`, the SQL shows up in the PR diff, where you catch a column dropped and re-added when you meant to rename it. Edit that SQL when it needs it. It's your migration, not the tool's.
 
-So: `push` against your local or branch database while you iterate, then `generate` once the schema settles. [Shipping changes you can undo](shipping-changes-you-can-undo.md#run-migrations-in-the-vercel-build) covers where `migrate` runs.
+On Supabase without Drizzle, `supabase db diff -f <name>` writes a migration file and `supabase db push` applies committed ones, so you're already on the reviewable path. Despite the name, it's not Drizzle's `push`.
 
 ## Rehearse on a branch first
 
-A database branch is a copy you can wreck. Neon branches include the parent's data by default, so you can run and time a migration and backfill against production-shaped data. Supabase branches start empty by default, so seed them if you want to rehearse against something real.
+A database branch is a copy you can wreck. Neon branches include the parent's data by default, so you can run and time a migration and backfill against production-shaped data. Supabase branches start empty and need a paid plan. On the free plan, rehearse locally: `supabase db reset` rebuilds your local database from your migrations and `supabase/seed.sql`.
 
 Before any destructive step, [restore a backup into a branch and check it](when-production-breaks.md).
 
 ## What the vibe-coded version misses
 
-- **Add, backfill, and drop in a single deploy.** The old code still running during the rollout breaks, and no version you can roll back to works.
+- **Add, backfill, and drop in a single deploy.** The old code still running breaks, and no version you can roll back to works.
 - **`drizzle-kit push` against production.** A destructive statement runs before anyone has read it.
-- **"Rollback plan: redeploy the old app," after dropping a column.** The old app needs the column. Rolling back breaks every request instead of some of them.
-- **A backfill that locks the table.** One huge `UPDATE` holds row locks for minutes, and every user's save waits behind it.
-- **Adding a `NOT NULL` column with no default to a table that has rows.** It worked on your empty dev database and fails in production, mid-deploy.
-- **A plain `CREATE INDEX` on a busy table.** Writes block for the whole build, which on a big table means checkout stops working.
+- **"Rollback plan: redeploy the old app," after dropping a column.** The old app needs the column, so rolling back breaks every request.
+- **One huge backfill `UPDATE`.** It holds row locks for minutes, and every user's save waits behind it.
+- **A plain `CREATE INDEX` on a busy table.** Writes block until it's built, so checkout stops working.
 
 ## What I'd do
 
 For a Next.js app on Neon or Supabase with Drizzle:
 
-- `push` locally while I'm shaping the schema. `generate` plus a reviewed SQL file for anything that reaches production.
-- Additive changes go out in one step. Renames, type changes, and drops go through expand, migrate, switch, contract, as separate PRs.
-- `SET lock_timeout` at the top of any migration that touches a big table. Concurrent indexes as a separate script.
-- Backfills as batched, idempotent scripts, rehearsed on a Neon branch first.
+- **Review the SQL.** `push` locally, then `generate`, and read the SQL file in the PR.
+- **Split risky changes.** Additive changes go out in one step. For a rename, type change, or drop, ask your agent: "Plan this as expand, migrate, switch, contract, one PR per step."
+- **Guard big tables.** `SET lock_timeout = '5s';` first in any migration that touches one, and indexes through `psql` with `CONCURRENTLY`.
+- **Script backfills.** Ask your agent: "Write a script that runs this batched `UPDATE` until it updates 0 rows, pausing between batches and logging progress." Rehearse it first.
 
-I'd add a migration linter that flags locking operations once more than one person writes migrations, or a table gets too big to eyeball the risk.
+Once more than one person writes migrations, I'd add a migration linter, a tool that flags locking statements in the PR.
 
 ## Sources
 
@@ -117,5 +130,6 @@ I'd add a migration linter that flags locking operations once more than one pers
 - [Drizzle: Migrations](https://orm.drizzle.team/docs/migrations)
 - [Drizzle source: the Postgres migrator wraps all pending migrations in one transaction](https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/pg-core/dialect.ts)
 - [Neon: Branching](https://neon.com/docs/introduction/branching)
-- [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching)
+- [PostgreSQL: psql (`-c` runs a single command)](https://www.postgresql.org/docs/current/app-psql.html)
+- [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching), [pricing (branching on paid plans)](https://supabase.com/pricing), and [database migrations (`db diff`, `db push`, `db reset`, `seed.sql`)](https://supabase.com/docs/guides/deployment/database-migrations)
 - [Vercel: Managing cron jobs (running jobs during deploys)](https://vercel.com/docs/cron-jobs/manage-cron-jobs)

@@ -39,26 +39,37 @@ Three findings from learning science hold up across decades of studies:
 - **Generating beats reading.** Things you produce yourself, like a prediction, an answer, or a piece of code, stick better than things you only read.
 - **Spacing beats cramming.** Coming back to something a few times, with gaps in between, beats one long session.
 
-Most of this research comes from classrooms and labs, not agent workflows, so applying it here is an informed bet. It's the best bet available, and it's cheap to try.
+This research comes from classrooms and labs, not agent workflows, so applying it here is a bet. It's a cheap one.
 
 ## What the vibe-coded version misses
 
-- **Reading the walkthrough and calling it learned.** A great explanation you skim feels like understanding and isn't. The first time you debug that code alone, you start from zero. Answering a question about it is the evidence; reading it isn't.
-- **Mistaking agent memory for your own.** CLAUDE.md notes, learnings files, and retros make the agent smarter. They teach you nothing, so when the agent is confidently wrong about your auth, you can't tell.
-- **Quizzes in the middle of work.** They're annoying, so you turn them off, and you lose the only check you had. Checks belong at a natural pause, like before a merge.
-- **Merging code you can't explain.** It works until the incident, and then you're debugging a system you've never understood, under pressure.
-- **Trusting your sense of progress.** You feel faster and sharper while the skills that review and debug agent code quietly erode. You find out when something breaks.
+- **Reading the agent's explanation and calling it learned.** The first time you debug that code alone, you start from zero.
+- **Merging code you can't explain.** The first incident has you debugging a system you never understood.
+- **Trusting your sense of progress.** You feel faster while your debugging skills erode, and find out when something breaks.
 
 ## What I'd do
 
 With several agents running, your attention lands on the PR anyway, so that's where learning goes.
 
-1. **Every agent leaves a "Worth learning" note** in its PR: one to three non-obvious decisions or concepts, or "nothing new". It costs nothing.
-2. **Before merging anything non-trivial, take the walkthrough.** Read the change in the order of its decisions, then answer three to five questions from memory. It takes five to ten minutes. Geoffrey Litt's rule is that he won't [send code to others until he can pass the quiz](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html). Simon Willison's version: don't commit code you couldn't explain to someone else.
+1. **Every agent leaves a "Worth learning" note and a short quiz** in its PR. The agent writes both; you answer.
+2. **Before merging anything non-trivial, answer the quiz from memory,** then check the answers. It takes five to ten minutes. Geoffrey Litt's rule is that he won't [send code to others until he can pass the quiz](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html). Simon Willison's version: don't commit code you couldn't explain to someone else.
 3. **Once a week, catch up.** Group the week's "Worth learning" notes, learn the one or two that matter most, and finish with one recall question from an older lesson. That's the spacing, without a review schedule to maintain.
 4. **Once per feature, in an area you want to own, write the core yourself.** The agent does the routine parts and leaves you the decision that matters.
 
-The [learn skill](../../skills/learn/SKILL.md) runs the walkthrough, the catch-up, and own-a-piece. It only writes a lesson down after you've shown you understand it.
+For step 1, paste this into your `AGENTS.md` or `CLAUDE.md` so every agent sees it. Notice that the answers stay hidden until you've tried:
+
+```text
+When you open a PR, add a "Worth learning" section to its description:
+one to three decisions or concepts in this change I probably don't know
+yet, two sentences each, or "Nothing new" if there aren't any.
+
+Then add 3–5 questions that check I understand this change. Ask me to
+predict what the code does in a specific case, explain why you chose one
+approach over another, or say what breaks if a given line is removed.
+Put the answers in a collapsed <details> block below the questions.
+```
+
+The [learn skill](../../skills/learn/SKILL.md) runs the PR quiz, the weekly catch-up, and writing the core yourself. It only writes a lesson down after you've shown you understand it.
 
 ## Sources
 
