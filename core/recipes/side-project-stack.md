@@ -15,27 +15,26 @@ prev:
 
 This is the stack I'd use to build a real web app alone: one Next.js app on Vercel, Postgres on Neon through Drizzle, auth, file storage, email, payments, and error tracking. Every piece is managed, starts free, and grows a long way before you'd want to replace it. You'll see why each one is here and exactly where its free tier ends, because those limits are abrupt.
 
+**Already on Supabase?** Stay. It's the same Postgres, with auth and storage from one vendor: Supabase Auth replaces Better Auth, and Supabase Storage replaces Blob. The rest still applies, and its cliffs are below.
+
 ## The whole thing on one page
 
 Notice that every arrow starts or ends at the one app:
 
 ```text
-                            Browser
-                               |
-                               | HTTPS
-                               v
-   +-------------------- Vercel ---------------------+
-   |  One Next.js app (TypeScript)                   |
-   |  pages, server actions, route handlers          | --- errors ---> Sentry
-   |  Zod at every boundary                          |
-   +----+---------+---------+---------+---------+----+
-        |         |         |         |         ^
-        | SQL     | session | uploads | send    | checkouts out,
-        |         |         |         |         | webhooks in
-        v         v         v         v         v
-      Neon      Better    Vercel    Email     Stripe
-    Postgres   Auth or     Blob    provider
-                Clerk
+Browser
+  |
+  | HTTPS
+  v
+One Next.js app on Vercel
+  |
+  |-- SQL --------> Neon Postgres
+  |-- session ----> Better Auth or Clerk
+  |-- uploads ----> Vercel Blob
+  |-- send -------> Email provider
+  |-- errors -----> Sentry
+  |-- checkout ---> Stripe
+  |<-- webhook ---- Stripe
 ```
 
 Two arrows need a closer look:
@@ -59,9 +58,7 @@ Two arrows need a closer look:
 
 **Sentry.** It tells you something broke before a user does ([knowing it broke](../guides/knowing-it-broke.md)).
 
-**Zod.** Everything crossing a boundary gets parsed: form input, route params, webhook bodies, env vars, and AI output.
-
-**Already on Supabase?** Stay. It's the same Postgres, with auth and storage from one vendor: Supabase Auth replaces Better Auth, and Supabase Storage replaces Blob. The rest still applies, and its cliffs are below.
+**Zod,** a library that checks data has the shape you expect. Everything that arrives from outside your code gets parsed: form input, route params, webhook bodies, env vars, and AI output.
 
 ## Connect to the database once
 
@@ -109,7 +106,7 @@ On Supabase Auth, rate limits are built in. Adjust them under **Authentication >
 Checked 2026-10-06, Supabase on 2026-10-15. Each line is the free tier, then the first paid step.
 
 - **Vercel:** Hobby is $0, non-commercial only. Pro is $20/mo, which includes $20 of usage credit.
-- **Neon:** Free gives 1 GB storage and 100 CU-hours of compute a month per project. A CU (compute unit) is about 4 GB of RAM plus CPU, and the smallest database is a quarter CU. Launch bills $0.106 per CU-hour plus $0.35 per GB-month, no minimum.
+- **Neon:** Free gives 1 GB storage and 100 CU-hours of compute a month per project, enough for the smallest database to stay awake about 17 days. Launch bills by usage, with no minimum.
 - **Supabase:** Free gives a 500 MB database, 1 GB of file storage, 5 GB of egress (data sent out), and 2 active projects. Pro is $25/mo for an 8 GB database and 7 days of backups, with $10 of compute credit included.
 - **Better Auth:** $0.
 - **Clerk:** Free up to 50,000 monthly retained users per app. Pro is $25/mo ($20/mo billed yearly) for MFA and passkeys.
@@ -136,7 +133,7 @@ The cliffs, in the order I'd expect to hit them:
 <details>
 <summary>Going deeper: Neon compute math and Blob transfer on Pro</summary>
 
-Every Neon branch's compute counts toward the 100 CU-hours. The smallest compute (0.25 CU) awake all month uses about 182 CU-hours, which is why it runs out around day 17. Then Neon suspends compute until the next billing period. On Launch, that always-awake compute comes to about $19 a month by my math (182.5 × $0.106), plus storage.
+A CU (compute unit) is about 4 GB of RAM plus CPU, and the smallest database is a quarter CU. Every Neon branch's compute counts toward the 100 CU-hours. The smallest compute (0.25 CU) awake all month uses about 182 CU-hours, which is why it runs out around day 17. Then Neon suspends compute until the next billing period. Launch bills $0.106 per CU-hour plus $0.35 per GB-month, so that always-awake compute comes to about $19 a month by my math (182.5 × $0.106), plus storage.
 
 Blob transfer on Pro falls under Pro's flat-rate CDN. Once you turn it on in billing, it covers 1 TB of transfer a month, including Blob downloads. Apps where media or file downloads are most of the bandwidth don't qualify.
 
@@ -153,14 +150,6 @@ No separate API, queue, Redis, microservices, Kubernetes, or staging environment
 3. [Shipping changes you can undo](../guides/shipping-changes-you-can-undo.md) for CI, previews, migrations, and rollback.
 4. [Knowing it broke](../guides/knowing-it-broke.md) for Sentry, a health check, and uptime.
 
-## What the vibe-coded version misses
-
-- **A new database client per request.** Under load, Postgres runs out of connections.
-- **No idea where the free tier ends.** The database goes dark on day 17 or read-only at 500 MB, and you hear it from users.
-- **Calling `list()` to render a gallery.** Every page view spends one of 2,000 monthly Blob operations.
-- **An in-memory rate limiter on serverless.** Each copy counts alone, so password guessing stays under the limit.
-- **Supabase's built-in auth email in production.** At 2 an hour, sign-ups stall on launch day.
-
 ## What I'd do
 
 This stack, with nothing added until something real asks for it. Upgrades come one at a time, each for a reason I can name:
@@ -172,6 +161,17 @@ This stack, with nothing added until something real asks for it. Upgrades come o
 - On Supabase, custom SMTP before the first real user.
 
 Before each upgrade, I'd know how I'd leave: `pg_dump` exports Postgres, Blob files are plain objects, and Drizzle doesn't care who hosts the database.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- The database client is created once, in `lib/db.ts`, not per request.
+- Auth rate limits are counted in the database, not in memory.
+- Pages read file URLs from Postgres, never from Blob's `list()`.
+- Nothing queries a Neon Free database every few minutes.
+- On Supabase, custom SMTP is set up.
+- Form input, params, webhooks, env vars, and AI output are parsed with Zod.
 
 ## Sources
 

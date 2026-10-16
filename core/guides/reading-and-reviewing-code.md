@@ -14,17 +14,14 @@ Reading code is how you find out what's actually true about a system, not what t
 
 ## Green CI and a nice summary aren't a review
 
-An agent opens "Add CSV export for invoices." The description is clear, the tests pass, the code is tidy. You skim the diff and merge.
+An agent opens "Add CSV export for invoices." The description is clear, CI (the checks GitHub runs on every PR) is green, the code is tidy. You skim the diff and merge.
 
 Inside the new route, look at where `teamId` comes from:
 
 ```ts
 export async function GET(req: Request) {
   const teamId = new URL(req.url).searchParams.get('teamId');
-  const rows = await db
-    .select()
-    .from(invoices)
-    .where(eq(invoices.teamId, teamId));
+  const rows = await sql`SELECT * FROM invoices WHERE team_id = ${teamId}`;
   return csvResponse(rows);
 }
 ```
@@ -32,12 +29,6 @@ export async function GET(req: Request) {
 It never checks that the logged-in user belongs to `teamId`. Anyone with an account can export any team's invoices by changing a number in the URL. The tests pass because they use a team the test user owns. CI checks what the tests check, and nobody wrote the test that mattered.
 
 Nothing in the diff looks wrong. The bug is what's missing, and you only see it if you know what this kind of route must always do: check who's signed in, check they're allowed to see _this_ team's data, and reject bad input. That's the skill.
-
-## Match the depth to the damage
-
-Read every line of anything that touches auth or permissions, money, deleting data, database changes, email or paid APIs, and anything hard to undo. Skim copy, styling, test-only changes, and throwaway prototypes: check they do what they say, then move on.
-
-When in doubt, ask: if this is wrong, who finds out, and how bad is it? [Shipping changes you can undo](shipping-changes-you-can-undo.md) lowers the cost of being wrong, but it doesn't help with leaked data or a broken migration.
 
 ## Read an unfamiliar codebase from the outside in
 
@@ -59,13 +50,13 @@ git log -L :GET:app/api/export/route.ts      # the history of one function
 
 </details>
 
-## Spend attention where the damage is
+## Match the depth to the damage
 
-Attention runs out, so spend it in order. First, **correctness**: does it do what it claims, edge cases included? Second, **data**: can it delete, overwrite, or quietly mangle anything? Third, **security**: who can call this, with what input, touching whose data? Style comes last.
+Spend attention where a mistake costs the most. Read every line of anything that touches auth or permissions, money, deleting data, database changes, email or paid APIs, and anything hard to undo. Skim copy, styling, test-only changes, and throwaway prototypes: check they do what they say, then move on. When in doubt, ask: if this is wrong, who finds out, and how bad is it?
 
-Ten comments about naming and zero about the missing ownership check is a review that made the merge riskier, because it stamped the PR approved.
+Within a change, check **correctness** first: does it do what it claims, edge cases included? Then **data**: can it delete, overwrite, or quietly mangle anything? Then **security**: who can call this, with what input, touching whose data? Style comes last. Ten comments about naming and zero about the missing ownership check is a review that made the merge riskier, because it stamped the PR approved.
 
-Three habits from the [review-change skill](../../skills/review-change/SKILL.md) matter most when you review by hand:
+Three habits from the [review-change skill](../../skills/review-change/SKILL.md) matter most:
 
 - **Review past the diff.** Most real bugs sit where changed code meets code it didn't touch. If the PR changes what a function returns, open its callers (the code that uses it).
 - **Prove each finding.** "Request `/export?teamId=7` as a user on team 3. You get team 7's invoices." A finding with a reproduction gets fixed. "This feels risky" gets argued about.
@@ -83,20 +74,23 @@ Big PRs get skimmed. Google's code review guide calls 100 lines usually reasonab
 
 Agents don't feel the cost of a big PR, so ask: "Split this into small PRs: the database change, then the server logic, then the UI." And ask for the description in the [build-feature report format](../../skills/build-feature/SKILL.md#report), which says how it was verified and what wasn't, so you know where to look.
 
-## What the vibe-coded version misses
-
-- **Approving because CI is green.** The missing ownership check ships, and every team's invoices are one URL edit away.
-- **Reviewing only the changed lines.** The caller three files away now gets `null` and crashes in production.
-- **2,000-line agent PRs merged unread.** Nobody understands that code, so its first bug takes days to fix.
-- **Trusting the agent's summary over the code.** The description says "validates input". The code validates one of three fields.
-
 ## What I'd do
 
-- **Every change goes through a small PR**, even when I'm the only reviewer.
+- **Every change goes through a small PR**, even when I'm the only reviewer. Ask your agent to open one instead of pushing to main.
 - **Read auth, data, and money line by line.** Skim the rest.
 - **Get a second opinion.** Ask your agent: "Review this PR with the review-change skill." Then answer the self-check questions yourself.
 
 Once other people commit, I'd turn on required approvals in GitHub's branch protection and add a `CODEOWNERS` file (it names who must review which folders) for auth and migrations.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Every route that touches data checks who's signed in and that they may access that record.
+- Every change touching auth, money, deletes, or the database is listed for me to read line by line.
+- Every caller of a changed function still works with what it now returns.
+- Each claim in the PR description is true of the code.
+- The PR is small and does one thing.
 
 ## Sources
 

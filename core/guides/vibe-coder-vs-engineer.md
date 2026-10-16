@@ -18,15 +18,14 @@ You have a small SaaS on Next.js and Vercel. You tell your agent: "Let users upl
 
 ```ts
 // app/api/avatar/route.ts: the vibe-coded version
+import { put } from '@vercel/blob';
+
 export async function POST(req: Request) {
   const form = await req.formData();
   const file = form.get('file') as File;
   const userId = form.get('userId') as string;
   const blob = await put(file.name, file, { access: 'public' });
-  await db
-    .update(users)
-    .set({ avatarUrl: blob.url })
-    .where(eq(users.id, userId));
+  await sql`update users set avatar_url = ${blob.url} where id = ${userId}`;
   return Response.json({ url: blob.url });
 }
 ```
@@ -41,7 +40,9 @@ Now read it like an engineer. Every line trusts the request.
 - **What path?** The user's filename. `put` throws when the path already exists, so the second user to upload `photo.jpg` gets a 500.
 - **What happens on failure?** If the upload works and the database update fails, the file sits in storage with nothing pointing to it. A double-click uploads twice, and old avatars are never deleted.
 
-The engineered version isn't much longer. With Vercel Blob's client uploads, the browser sends the file straight to storage. Your server only decides whether to hand out an upload token (a one-time pass for one file), and Blob calls you back when the upload finishes. Notice that the user ID now comes from the session, not the form:
+(`sql` stands for your database client.)
+
+The engineered version isn't much longer. With Vercel Blob's client uploads, the browser sends the file straight to storage, and your route runs twice. First, `onBeforeGenerateToken` decides whether to hand out an upload token (a one-time pass for one file) and with what limits. `tokenPayload` carries the user ID along. After the upload, Blob calls `onUploadCompleted` with that payload, and you save the URL. Notice that the user ID now comes from the session, not the form:
 
 ```ts
 // app/api/avatar/upload/route.ts: the engineered version
@@ -64,17 +65,21 @@ export async function POST(request: Request) {
     },
     onUploadCompleted: async ({ blob, tokenPayload }) => {
       const { userId } = JSON.parse(tokenPayload!);
-      await db
-        .update(users)
-        .set({ avatarUrl: blob.url })
-        .where(eq(users.id, userId));
+      await sql`update users set avatar_url = ${blob.url} where id = ${userId}`;
     },
   });
   return Response.json(result);
 }
 ```
 
-Size and type limits are baked into the token, and the random suffix means paths never clash. One catch: `onUploadCompleted` is Vercel's servers calling yours, so it can't reach `localhost` on your laptop. In development, run ngrok (it gives your laptop a public URL), or your database never hears about the upload. For anything more personal than an avatar, like ID scans, use a private Blob store and serve files through a route that checks who's asking.
+Size and type limits are baked into the token, and the random suffix means paths never clash.
+
+<details>
+<summary>Going deeper: testing on localhost, and private files</summary>
+
+`onUploadCompleted` is Vercel's servers calling yours, so it can't reach `localhost` on your laptop. In development, run ngrok (it gives your laptop a public URL), or your database never hears about the upload. For anything more personal than an avatar, like ID scans, use a private Blob store and serve files through a route that checks who's asking.
+
+</details>
 
 Add a loading state, a useful error, and cleanup for the old photo. Same agent, same afternoon. Someone just asked the questions.
 
@@ -108,13 +113,6 @@ Some things never get a pass, even in a prototype. I call these the floors:
 
 You can't take any of these back. A leaked key is leaked the moment it's pushed. A double charge has already hit someone's card. A dropped column doesn't come back with a redeploy.
 
-## What the vibe-coded version misses
-
-- **Trusting the request:** a stranger's face shows up on someone's profile. See [trust boundaries](trust-boundaries.md).
-- **A secret shipped to the browser:** you're replacing a leaked key at midnight. See [secrets and agent safety](secrets-and-agent-safety.md).
-- **Code that runs twice:** a retried charge, and you're refunding a customer. See [timeouts, retries, and idempotency](timeouts-retries-idempotency.md).
-- **Code nobody can explain:** the first bug in it costs a day of reverse-engineering. See [reading and reviewing code](reading-and-reviewing-code.md).
-
 ## What I'd do
 
 - Vibe code a prototype whenever Willison's harm test says nobody gets hurt. It's the cheapest experiment there is.
@@ -123,6 +121,16 @@ You can't take any of these back. A leaked key is leaked the moment it's pushed.
 - Don't merge code I couldn't explain to someone else. If I can't, I ask the agent to walk me through it, or run the [learn](../../skills/learn/SKILL.md) skill.
 
 Once real users or real money show up, everything gets the engineered treatment, not just the floors. Keep the rest [simple](simple-first.md).
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- The server checks who's signed in, and takes their ID from the session, never from the request.
+- Every upload has a size limit and a list of allowed file types.
+- If this fails halfway or runs twice, nothing is left half-done or doubled.
+- Anything touching a floor (secrets, auth, money, personal data, deletes) got the engineered version.
+- You've listed every decision you made that I didn't specify, and I've read it.
 
 ## Sources
 

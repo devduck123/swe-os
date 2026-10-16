@@ -5,7 +5,7 @@ description: A path from "it works on my machine" to software you'd put your nam
 
 AI can write the code now. What it can't do for you is know what the happy path is hiding. This track is the difference between a vibe coder and an engineer, one stop at a time. Read it in order, or jump to what you need. Agents load the same pages when a concern points to them, so a lesson only has to be written once.
 
-Every stop ends with **What the vibe-coded version misses**, and every recommendation starts from the simplest thing that works.
+Every stop ends with **Before you ship, check**: what the vibe-coded version misses, as a list you can hand your agent. Every recommendation starts from the simplest thing that works.
 
 ## Follow the work from problem to production
 
@@ -72,10 +72,12 @@ Planned guides, written as real projects need them. Fundamentals come before too
 
 Every guide is written as Tommy (see [Voice](../../profile/voice.md#know-which-voice-youre-in)) and follows [Learning](../../profile/learning.md#teach-the-shape-before-the-machinery): a short model up top, a concrete example of the happy path going wrong, then why it works the way it does and when you need it. Headings state the point, so skimming the headings alone teaches something.
 
-Two sections are required in every guide:
+Code is plain SQL first wherever the lesson is about the database. It runs anywhere: Supabase's SQL editor, a Drizzle or Prisma migration, or `psql`. App code stays short and light on framework. Where a step differs by vendor, a short "On Neon" or "On Supabase" line covers it.
 
-- **What the vibe-coded version misses.** The specific things an AI-built happy path leaves out, and what each one costs when it bites.
-- **What I'd do.** Starting from the simplest option that works, then what would make me add more.
+Two sections are required in every guide, in this order, at the end:
+
+- **What I'd do.** Starting from the simplest option that works, then what would make me add more. Every item says how: a command, a file, or a prompt to give the agent.
+- **Before you ship, check.** What an AI-built happy path leaves out, as 3 to 6 checks the reader can paste to their agent before merging. Each check is something the stop taught, phrased so you can answer yes or no.
 
 Each guide's frontmatter records:
 

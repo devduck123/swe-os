@@ -46,37 +46,23 @@ days for three weeks.
 isn't tracking.
 ```
 
-That fits in a prompt, and in your `PROJECT.md`.
+That fits in a prompt, and in your `PROJECT.md` (the file in your repo that tracks the goal and decisions, which your agent reads every session).
+
+Notice what an agent wouldn't add on its own. The Done-when list names an edge case (the double tap) and an empty state, because those are what an agent skips when nobody names them. Each line becomes a test: "tapping twice records one check-in" taps twice and counts the rows ([how you know it works](how-you-know-it-works.md)). The "Today" line names your real competition, the current workaround: if you can't say what's painful about it, there's no product yet. And the stop signal is decided before any code, while you're still honest. After a month of work, every result starts to look like a reason to continue.
 
 ## A vague request gets the average app
 
 When a request is vague, an agent fills the gaps with the most common pattern it has seen. For "habit tracker", that's the average habit tracker: every feature every other one has. It won't ask who it's for, because you didn't give it a way to.
 
-Shaping fixes both problems. The slice and the non-goals keep the agent from building what you didn't ask for. The acceptance criteria (the "Done when" list) give it a way to check its own work, and give you a way to tell "done" from "the agent says it's done."
+Shaping fixes both problems. The slice is one complete journey, thin, from the screen to the database, deployed where someone can open it. "Design the schema first" isn't a slice, because nobody can use a schema. The slice and the non-goals keep the agent from building what you didn't ask for, and keep you honest when "it'd only take ten minutes to add reminders" comes up. The acceptance criteria (the "Done when" list) give it a way to check its own work, and give you a way to tell "done" from "the agent says it's done."
 
 ## Shape when the stakes justify it
 
 Shape anything new that someone besides you will use, anything that would take an agent more than a session, and anything that touches a floor: auth, money, personal data, or deleting things.
 
-The depth scales with the stakes. A new feature in an existing app takes five minutes: one sentence for the outcome, three to five acceptance criteria, and a line of non-goals. A new product deserves an hour, mostly spent on the first two questions.
+The depth scales with the stakes. A new feature in an existing app takes five minutes: one sentence for the outcome, three to five acceptance criteria, and a line of non-goals. A new product deserves an hour, mostly spent on who has the problem and what they do today.
 
 Skip it for a bug with a clear reproduction, a copy change, or an experiment where building is the shaping, like learning a tool.
-
-## Six questions, in order
-
-Each answer narrows the next one, so the order matters.
-
-**1. Who has the problem?** A specific person, not "users." "Me and two friends trying to stretch every morning" tells you the scale, the device, and who you can ask.
-
-**2. What do they do today?** Their current workaround is your real competition. If you can't name what's painful about it, there's no product yet.
-
-**3. What's the smallest slice that helps?** One complete journey, thin, from the screen to the database, deployed where someone can open it. "Design the schema first" isn't a slice, because nobody can use a schema.
-
-**4. How will you check it's done?** Behavior someone can observe, including at least one edge case and one error case, because those are what an agent skips when nobody names them. Each line becomes a test: "tapping twice records one check-in" is a test that taps twice and counts the rows. See [how you know it works](how-you-know-it-works.md).
-
-**5. What are you not building?** Write the non-goals down. They're what you tell the agent to leave out, and what you tell yourself when "it'd only take ten minutes to add reminders" comes up.
-
-**6. What tells you to keep going, and what tells you to stop?** Decide this before you build, while you're still honest. After a month of work, every result starts to look like a reason to continue.
 
 ## The AI part is rarely the product
 
@@ -84,19 +70,21 @@ Each answer narrows the next one, so the order matters.
 
 Before building it, try a manual version: write the coaching messages yourself and text them to your two friends for a week. If they ignore them, you've saved yourself a model integration, a prompt, and a per-use bill. If they love them, you now know what good output looks like, which is the hardest part of [AI features in production](ai-features-in-production.md) anyway.
 
-## What the vibe-coded version misses
-
-- **The stack before the problem:** you build for someone who doesn't exist.
-- **No definition of done:** bugs turn into arguments about what was intended.
-- **Ten features in v1:** ten times the review, for one feature people use.
-- **Only the happy path:** the first real user finds the double tap, the time zone, and the empty state in a day.
-- **No kill signal:** the project never fails, it just fades, and you keep paying for its database.
-
 ## What I'd do
 
-- Run the [shape-project](../../skills/shape-project/SKILL.md) skill on any new idea before I let an agent pick a stack. It asks the same questions and pushes back on the weakest assumption.
+- Run the [shape-project](../../skills/shape-project/SKILL.md) skill (a saved workflow your agent follows) on any new idea before I let an agent pick a stack. It asks the same questions and pushes back on the weakest assumption.
 - Write the shaped slice into `PROJECT.md` when I set up the repo with [start-project](../../skills/start-project/SKILL.md), so every later session starts from it.
 - Paste the acceptance criteria and non-goals into the prompt for the first build. Then ask the agent: "Write one test for each Done-when line, and show me each one passing." The same list is my review checklist.
 - Ship the slice to a real URL, use it for a week, and only then shape the next slice.
 
 If someone hands me a real spec, at work or from a client, I don't redo it. I add whatever acceptance criteria and non-goals are missing, because those are what an agent needs most.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- The shaped slice (who, today, slice, done when, not building, keep going or stop) is in `PROJECT.md`.
+- The Done-when list has at least one edge case and one error or empty case.
+- Every Done-when line has a test, and you've shown me each one passing.
+- Nothing on the Not-building list made it into the code.
+- The slice is deployed where someone besides me can open it.

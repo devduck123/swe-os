@@ -16,7 +16,7 @@ A network call can answer, fail, or never answer. **Timeouts** handle "never ans
 
 Your **Buy** button calls a server action that creates a Stripe Checkout Session. The network is slow, nothing seems to happen, and the user clicks again. Now there are two sessions for one order, and if they finish both, two charges.
 
-stripe-node already covers part of this. It retries a failed request once by default and adds an idempotency key so the retry can't create a duplicate. But that covers one call, and it can't know two clicks are one purchase. You do, so tell Stripe:
+stripe-node already retries a failed request once, with its own idempotency key so the retry can't create a duplicate. But it can't know two clicks are one purchase. You do, so tell Stripe:
 
 ```ts
 const session = await stripe.checkout.sessions.create(
@@ -52,17 +52,20 @@ The database needs a deadline too. Postgres's `statement_timeout` (the longest o
 ALTER ROLE app_user SET statement_timeout = '5s';
 ```
 
-Leave the role that runs migrations alone. Migrations are allowed to be slow.
+Leave the migration role alone. Migrations may be slow.
 
-On Supabase, `supabase-js` calls already stop after 3 seconds signed out and 8 signed in, and a direct connection as `postgres` stops at 2 minutes.
+On Supabase, it's already set. `supabase-js` calls run as the `anon` role when signed out (3 seconds) and `authenticated` when signed in (8 seconds). Code using the connection string runs as `postgres` and stops at 2 minutes. To change one, run the line on that role and reload the API:
+
+```sql
+ALTER ROLE authenticated SET statement_timeout = '5s';
+NOTIFY pgrst, 'reload config';
+```
 
 ## Don't retry when a person is waiting
 
 If a user is watching a spinner, your retry just makes them wait longer for the error. They can click again, and with idempotency, that's safe. So my default is one attempt, a tight timeout, and an error that says what to do.
 
-Know the retries your SDKs already do, so you don't stack yours on top. The AI SDK retries twice by default, so a failing model call can cost three attempts' worth of waiting. For chat, lower `maxRetries`; [AI features in production](ai-features-in-production.md) covers the rest.
-
-Retry at one layer only. If the browser, your route, and your client library each make 3 attempts, one click becomes 27 calls during an outage.
+Retry at one layer only, and know the retries your SDKs already do. The AI SDK retries twice by default, so one failing model call means three waits. For chat, lower `maxRetries`; [AI features in production](ai-features-in-production.md) covers the rest. If the browser, your route, and your client library each make 3 attempts, one click becomes 27 calls during an outage.
 
 ## Retry in the background, and only what's temporary
 
@@ -73,7 +76,7 @@ This helper stops after 3 attempts and waits a random, growing time between them
 ```ts
 const RETRYABLE = new Set([429, 502, 503, 504]);
 
-// For reads and keyed writes only.
+// For reads, and for writes that send an idempotency key.
 export async function fetchWithRetry(url: string, init: RequestInit = {}) {
   for (let attempt = 1; ; attempt++) {
     try {
@@ -97,27 +100,38 @@ export async function fetchWithRetry(url: string, init: RequestInit = {}) {
 
 - **An idempotency key,** made once per operation and sent with every attempt, like the Stripe call above.
 - **A unique constraint,** when the data already has an identity, like one reaction per user per post. The second insert fails harmlessly.
-- **An update that checks first.** `UPDATE orders SET status = 'paid' WHERE id = $1 AND status = 'pending'` only works once. The second attempt updates zero rows.
+- **An update that checks first.** It only works once. The second attempt updates zero rows.
 
-Incoming webhooks are the same problem from the other side: senders may deliver the same event twice, so you skip any event ID you've already handled. [Background jobs and webhooks](background-jobs-and-webhooks.md) has the table and the order of operations.
+```sql
+-- One reaction per user per post.
+ALTER TABLE reactions ADD CONSTRAINT reactions_one_per_user UNIQUE (user_id, post_id);
 
-## What the vibe-coded version misses
+-- Marks the order paid once. A repeat finds no pending row.
+UPDATE orders SET status = 'paid' WHERE id = $1 AND status = 'pending';
+```
 
-- **No deadline on `fetch`.** One hung API makes your page look down for minutes.
-- **A new idempotency key per attempt.** The double click still charges twice, and you find out from a refund request.
-- **Retries where a user is waiting.** A 2-second error becomes a 20-second spinner, and they click again anyway.
-- **Retries stacked on SDK retries.** One click becomes dozens of calls during an outage.
-- **No `statement_timeout`.** One runaway query ties up the database while every request behind it times out.
+Incoming webhooks are the same problem from the other side. [Background jobs and webhooks](background-jobs-and-webhooks.md) shows how to skip an event you've already handled.
 
 ## What I'd do
 
 - Ask your agent: "Add `AbortSignal.timeout` to every `fetch` in this repo, sized from how long the user waits."
-- No retries of my own in requests a user waits on, and `maxRetries: 1` on AI chat calls.
-- An `idempotencyKey` built from my own record's ID, like `checkout-${order.id}`, on every Stripe create call.
-- The `ALTER ROLE` line above, once, for the app's database user.
-- The retry helper only in cron jobs, queued work, and server-to-server calls.
+- Ask your agent: "Remove any retries in code a user waits on, and set `maxRetries: 1` on AI chat calls."
+- Pass an `idempotencyKey` built from my own record's ID, like `checkout-${order.id}`, on every Stripe create call.
+- Run the `ALTER ROLE` line above once in the SQL editor, for the app's database user (not needed on Supabase).
+- Copy the retry helper into `lib/`, and call it only from cron jobs, queued work, and server-to-server calls.
 
 I'd add a retry library only when I can point at a failure it would have prevented.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Every `fetch` and SDK call has a timeout.
+- Code a user waits on doesn't retry, and no call retries at more than one layer.
+- Every Stripe create call sends an idempotency key built from our record's ID.
+- Background retries cover only network errors, timeouts, `429`, and `502`–`504`.
+- The app's database role has a `statement_timeout`.
+- Every write that might run twice has a key, a unique constraint, or a check in its `WHERE`.
 
 ## Sources
 

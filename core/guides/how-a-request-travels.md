@@ -20,12 +20,19 @@ You have a habit tracker on Next.js, deployed to Vercel, with Postgres on Neon. 
 browser ──▶ CDN (near the user) ──▶ function (one region) ──▶ Postgres
    ▲         static files and           server components,
    │         cached pages stop here     route handlers, auth
-   └──────────── HTML + RSC payload, streamed back ◀────────┘
+   └──────────── the rendered page, sent back ◀────────────┘
 ```
 
-1. **Getting there.** DNS turns your domain into an IP address, and TLS (the padlock) proves the server is really yours.
-2. **CDN.** Vercel's servers near the user hand back static files and cached pages without running your code.
-3. **Function and database.** Anything dynamic runs in a function in one region. It queries Postgres and streams back HTML plus the RSC payload, React's compact description of the rendered components.
+1. **CDN.** Vercel's servers near the user hand back static files and cached pages without running your code.
+2. **Function and database.** Anything dynamic runs in a function in one region. It queries Postgres and sends back the rendered page.
+
+## Debug by asking which hop broke
+
+- **Slow only after a quiet period:** on this stack, probably Neon. It suspends after 5 minutes idle and takes a few hundred milliseconds to wake.
+- **`504` (gateway timeout) or a function timeout:** the function was waiting on the database or an outside API.
+- **CORS error:** the browser blocked your page from reading another site's response. The server usually answered fine.
+- **Works locally, broken when deployed:** a missing environment variable, or a region far from the database.
+- **Stale data:** a cache you forgot ([below](#caching-happens-at-every-hop)).
 
 ## Put the function next to the database
 
@@ -47,40 +54,25 @@ Put `import 'server-only'` at the top of any module that touches the database or
 
 "Where is this value stored?" answers most questions about stale, lost, and leaked data.
 
-| Where          | Survives refresh, deploy? | Who can read or change it               |
-| -------------- | ------------------------- | --------------------------------------- |
-| The URL        | Yes, yes                  | The user, and anyone they share it with |
-| React state    | No, no                    | The user                                |
-| Cookies        | Yes, yes                  | The user; signing them catches edits    |
-| `localStorage` | Yes, yes                  | Any script running on your page         |
-| Server memory  | Sometimes, no             | Every request on that instance          |
-| The database   | Yes, yes                  | Only your server code                   |
+- **The URL** survives refresh and deploys. Anyone it's shared with can read it.
+- **React state** is gone on refresh. Only that tab has it.
+- **Cookies** survive both. The user can edit them, so auth libraries sign theirs to spot edits.
+- **`localStorage`** survives both. Any script running on your page can read it.
+- **Server memory** sometimes survives a refresh, never a deploy. Every request on that instance shares it.
+- **The database** survives everything. Only your server code reaches it.
 
-Server memory is the tricky row. An instance is one running copy of your function, and Vercel starts and stops them as traffic changes, so an in-memory counter quietly resets. One instance also handles several requests at once. So a variable at module scope (declared at the top of a file, outside any function), like `let currentUser`, is shared by every user who lands on that instance.
+Server memory is the tricky one. An instance is one running copy of your function, and Vercel starts and stops them as traffic changes, so an in-memory counter quietly resets. One instance also handles several requests at once. So a variable at module scope (declared at the top of a file, outside any function), like `let currentUser`, is shared by every user who lands on that instance.
 
 Module scope is only for things that are the same for everyone, like the database client. It holds a pool of open connections that requests reuse, instead of opening a new one each time. Per-request data stays inside the request, and anything you'd miss goes in the database.
 
 ## Caching happens at every hop
 
-- **The browser** keeps a response for as long as its `Cache-Control: max-age` says.
-- **The CDN** keeps a response, and hands it to everyone, when `Cache-Control` sets `s-maxage` (the lifetime for shared caches). The user's session cookie on the request doesn't stop that.
+`Cache-Control` is a response header (a note sent with the response) that says who may keep a copy, and for how long:
 
-Stale data is almost always a cache you forgot. In the browser's Network tab, click the request and check the `x-vercel-cache` response header: `HIT` means the CDN answered and your code never ran. Then work inward.
+- **The browser** keeps a response for `max-age` seconds.
+- **The CDN** keeps a response for `s-maxage` seconds, and hands it to everyone. The user's session cookie on the request doesn't stop that. Next.js adds `s-maxage` to pages it caches, like ones with `export const revalidate`, and agents add it by hand to route handlers.
 
-## Debug by asking which hop broke
-
-- **Name not resolved or certificate warning:** DNS or TLS.
-- **Slow only after a quiet period:** on this stack, probably Neon. It suspends after 5 minutes idle and takes a few hundred milliseconds to wake.
-- **`504` or a function timeout:** the function was waiting on the database or an outside API.
-- **CORS error:** the browser blocked your page from reading the response. The server usually answered fine.
-- **Works locally, broken when deployed:** a missing environment variable, or a region far from the database.
-
-## What the vibe-coded version misses
-
-- **A personal page cached with `s-maxage`:** strangers see the first user's dashboard for a minute.
-- **Per-user data in module scope:** it leaks between users under load, and passes every test you run alone.
-- **The function and database in different regions:** you burn a weekend tuning queries that were never the problem.
-- **A new database connection per request:** under load Postgres runs out of connections and requests fail.
+In the browser's Network tab, click the request and check its `x-vercel-cache` header: `HIT` means the CDN answered and your code never ran. Then work inward.
 
 ## What I'd do
 
@@ -89,13 +81,24 @@ Stale data is almost always a cache you forgot. In the browser's Network tab, cl
 - Put `import 'server-only'` at the top of every module that touches the database or a secret.
 - Create the database client once at module scope, copied from the [recipe](../recipes/side-project-stack.md). Nothing per-user goes there.
 - Ask your agent: "Find every response that sets `s-maxage` or `public`, and tell me whether any of them depends on who's signed in."
-- When something breaks, open the browser's Network tab, click the failing request, and read its status code, its timing, and its `x-vercel-cache` header before guessing.
+- When something breaks, open the browser's Network tab, click the failing request, and read its status, timing, and `x-vercel-cache` header before guessing.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Nothing that depends on who's signed in is cached with `s-maxage` or `public`.
+- No per-user data lives in a variable at module scope.
+- The function region matches the database's.
+- The database client is created once at module scope, not per request.
+- Every module that touches the database or a secret starts with `import 'server-only'`.
 
 ## Sources
 
 - [Next.js: Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
 - [Vercel: Configuring regions for functions](https://vercel.com/docs/functions/configuring-functions/region)
-- [Vercel: CDN cache](https://vercel.com/docs/caching/cdn-cache), for the cacheable response criteria
+- [Vercel: CDN cache](https://vercel.com/docs/caching/cdn-cache), for the cacheable response criteria and `s-maxage`
+- [Next.js: Incremental Static Regeneration](https://nextjs.org/docs/app/guides/incremental-static-regeneration), for `revalidate` adding `Cache-Control` headers
 - [Vercel: Fluid compute](https://vercel.com/docs/fluid-compute), for several requests sharing one instance
 - [Neon: Scale to zero](https://neon.com/docs/introduction/scale-to-zero)
 - [Supabase: Regions](https://supabase.com/docs/guides/platform/regions)

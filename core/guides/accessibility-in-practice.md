@@ -62,13 +62,17 @@ A red border says nothing to a screen reader or to someone who can't see red. A 
 </>
 ```
 
-shadcn's `FieldError` doesn't link itself to the input, so give it an `id` the same way. Then three form habits:
+shadcn's field error component, `FieldError`, doesn't link itself to the input, so give it an `id` the same way. Then two form habits:
 
-- **On a failed submit, move focus to the first invalid field.** react-hook-form's `shouldFocusError` does this by default, as long as the input gets the field's `ref`. Don't turn it off. Without it, a screen reader user hears nothing after pressing Submit.
-- **Don't disable Submit until the form is valid.** A disabled button drops out of the tab order, so keyboard users can't even find it.
+- **On a failed submit, move focus to the first invalid field.** react-hook-form's `shouldFocusError` does this by default if it can reach the input. Spread `{...register('email')}` onto the input, or with a `Controller`, pass `field.ref` to it. Otherwise a screen reader user hears nothing after pressing Submit.
 - **Add `autocomplete`** to fields about the user (`email`, `name`, `tel`, `new-password`). WCAG, the W3C's accessibility standard, expects it, and it saves everyone who types slowly from typing at all.
 
-For updates without a page change, like "Saved" or "3 results", use a live region: an element whose new text the screen reader reads aloud. `role="status"` waits until it finishes speaking. `role="alert"` interrupts, so save it for errors. Render the empty element on page load and change only its text. One that appears along with its message often isn't announced.
+For updates without a page change, like "Saved" or "3 results", use a live region: an element whose new text the screen reader reads aloud. `role="status"` waits until it finishes speaking. `role="alert"` interrupts, so save it for errors. An element that appears along with its message often isn't announced, so keep it on the page from the start:
+
+```tsx
+// Always rendered. Only the text changes.
+<p role="status">{saved ? 'Saved' : ''}</p>
+```
 
 ## Contrast, zoom, motion, and color
 
@@ -89,7 +93,7 @@ Don't use color as the only signal: pair the red border with an icon and text. A
 
 ## What shadcn/ui handles, and what it doesn't
 
-shadcn/ui is built on Radix or Base UI, unstyled component libraries that do the hard behavioral parts: focus in dialogs, arrow keys in menus and tabs, and the right roles. That's the main reason I use shadcn. It can't fix your labels, alt text, heading order, colors, or a `div` you styled yourself. And keep the `DialogTitle`, since the dialog's accessible name comes from it. Hide it visually instead of deleting it.
+shadcn/ui is built on Radix or Base UI, unstyled component libraries that do the hard behavioral parts: focus in dialogs, arrow keys in menus and tabs, and the right roles. That's the main reason I use shadcn. It can't fix your labels, alt text, heading order, colors, or your own styled `div`. And keep the `DialogTitle`, since the dialog's accessible name comes from it. Hide it visually instead of deleting it.
 
 ## The five-minute check
 
@@ -100,21 +104,24 @@ shadcn/ui is built on Radix or Base UI, unstyled component libraries that do the
 
 Automated tools are step 3 of 4 for a reason. In 2017, the UK's Government Digital Service ran ten checkers on a page seeded with 143 known barriers. The best one found about 40%. A tool can tell that an image has alt text. It can't tell whether the alt text is right.
 
-## What the vibe-coded version misses
-
-- **Icon buttons with no name.** "Button, button, button", and guessing near Delete loses data.
-- **`outline: none` for looks.** Keyboard users navigate blind and quietly leave.
-- **Submit disabled until valid.** Keyboard users can't reach it, so signups drop.
-- **Focus left on the button after a failed submit.** A screen reader user hears nothing and walks away from an unsaved form.
-- **Motion with no reduced-motion fallback.** Some people get physically ill and never come back.
-
 ## What I'd do
 
-- shadcn/ui for anything interactive, native elements for everything else, and a label on every input.
+- shadcn/ui for anything interactive (`npx shadcn@latest add dialog`), native elements for everything else, and a `<label>` on every input.
 - The five-minute check before merging any UI change.
 - Ask your agent: "Add `@axe-core/playwright` to the Playwright tests for signup and checkout, so accessibility violations fail CI."
 
 For anything people pay for, I'd add a pass with NVDA, a Windows screen reader, and keep a list of known barriers. If I'm selling to schools, governments, or enterprises, I'd pay for a proper audit.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Actions are `<button>`s, links are `<a href>`, and every input has a `<label>`.
+- Every icon-only button has an `aria-label`.
+- Each field error is visible text, linked with `aria-describedby`, with `aria-invalid` on the input.
+- A failed submit moves focus to the first invalid field.
+- Messages like "Saved" go in a `role="status"` element rendered from page load.
+- The flow works by keyboard alone, with visible focus, and at 200% zoom.
 
 ## Sources
 

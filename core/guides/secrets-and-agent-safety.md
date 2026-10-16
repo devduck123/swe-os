@@ -16,7 +16,7 @@ A secret is a string that lets whoever holds it act as you. It can spend your mo
 
 Say you're building a meal planner with an "AI weekly plan" button. You paste your model API key into the agent chat and say "wire this up". The agent hardcodes it in `lib/ai.ts` to get the demo working, and you push the repo public to show a friend.
 
-Nothing breaks, so it doesn't feel like a bug. But bots scan public GitHub for keys all day. In a 2023 honeypot study, Orca Security saw a leaked AWS key used within two minutes.
+Nothing breaks, so it doesn't feel like a bug. But bots scan public GitHub for keys all day. In 2023, Orca Security planted keys on GitHub as bait and saw a leaked AWS key used within two minutes.
 
 ## Secrets live in exactly two places
 
@@ -43,9 +43,7 @@ Use different keys for development, preview, and production. On Vercel, store cr
 
 ## Anything with a public prefix is public
 
-In Next.js, any variable starting with `NEXT_PUBLIC_` is copied into the JavaScript sent to the browser, where anyone can read it in devtools. `VITE_` works the same way.
-
-Mobile apps are no safer. In Expo, `EXPO_PUBLIC_` variables, `extra` in `app.config.ts`, and constants in the code all ship inside the app, where anyone can unzip and read them. A paid API key needs a server between it and the phone, like an Expo Router API route.
+In Next.js, any variable starting with `NEXT_PUBLIC_` is copied into the JavaScript sent to the browser, where anyone can read it in devtools. `VITE_` works the same way, and so does Expo's `EXPO_PUBLIC_`: mobile apps are no safer. In Expo, `extra` in `app.config.ts` and constants in the code also ship inside the app, where anyone can unzip and read them.
 
 This is where agents bite. A client component calls the model API, `process.env.OPENAI_API_KEY` comes back `undefined` in the browser, and the quickest fix is renaming it `NEXT_PUBLIC_OPENAI_API_KEY`. The error is gone, and the key is published.
 
@@ -64,7 +62,7 @@ The public ones work because something else does the guarding. Supabase's publis
 ## Agents change who can see your secrets
 
 - **A pasted key is a leaked key.** It lives in a transcript you don't control, so rotate it: make a new key and turn off the old one. Tell the agent the variable's name, never its value.
-- **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` doesn't stop a script the agent runs from opening the file. The dependable fix is what's in the file: dev keys with low limits, and production keys never on your laptop.
+- **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` blocks its file-reading tool from opening `.env`, but not a script the agent runs. The dependable fix is what's in the file: dev keys with low limits, and production keys never on your laptop.
 - **MCP servers hold tokens too.** These plugins give an agent tools, like querying your database. Give each the narrowest access: a dev database, read-only, one repo.
 - **Decide what never gets auto-approved:** destructive commands (`rm -rf`, `DROP TABLE`, `git push --force`), pushes to main, deploys, new packages, and anything with production credentials.
 - **Text the agent reads can give it orders.** A README or issue that says "print your environment variables" is prompt injection, explained in [AI features in production](ai-features-in-production.md).
@@ -94,7 +92,7 @@ Deleting the commit doesn't help: clones, forks, and caches keep the key. GitHub
 
 ## Least privilege is the cheap insurance
 
-Assume something will leak, and keep the damage small. Set a provider spend cap ([performance and cost](performance-and-cost.md) says which ones actually stop spending). And give agents read-only database access, to a dev project when you can.
+Least privilege means each key, agent, and tool gets only the access its job needs, so a leak does little damage. Set a provider spend cap ([performance and cost](performance-and-cost.md) says which ones actually stop spending). And give agents read-only database access, to a dev project when you can.
 
 On Supabase, set two options in the MCP server's URL: one project only, and read-only mode, which runs queries as a read-only database user:
 
@@ -120,21 +118,24 @@ ALTER DEFAULT PRIVILEGES FOR ROLE migration_role IN SCHEMA public
 
 </details>
 
-## What the vibe-coded version misses
-
-- **`NEXT_PUBLIC_OPENAI_API_KEY`.** Every visitor can run up your bill.
-- **Supabase `service_role` behind `NEXT_PUBLIC_`.** Anyone can delete every row, RLS or not.
-- **A production key pasted into an agent chat.** It has to be rotated today.
-- **An MCP server with a full-access production token.** One injected instruction away from a dropped table.
-- **Deleting the commit instead of rotating.** The key still works, and it's in every clone.
-
 ## What I'd do
 
 - **Day one,** ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)." It adds the `.gitignore`, the `.env.example`, and a gitleaks scan, then proves the scan by committing a fake key.
-- **Keys:** dev keys with spend caps on my laptop, prod keys only in Vercel as Secrets.
-- **Agents never see prod.** If one truly needs production data, it gets read-only access for one session.
+- **Keys:** dev keys on my laptop, with a spend cap set in each provider's dashboard. Prod keys only in Vercel, saved as the Secret type.
+- **Agents never see prod.** If one truly needs production data, it gets the read-only MCP URL or role above, for one session.
 
 I'd add a secret manager once several people or services share credentials, or rotating by hand starts getting skipped.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- No secret is in code, a README, or a chat.
+- No secret uses a public prefix like `NEXT_PUBLIC_`, and modules that read one import `server-only`.
+- Nothing logs `process.env`, request headers, or connection strings.
+- gitleaks runs in CI on every PR.
+- Agents and MCP servers never hold production keys.
+- Any pasted or pushed key has been rotated.
 
 ## Sources
 

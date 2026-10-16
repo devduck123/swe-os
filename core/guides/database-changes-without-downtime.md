@@ -35,7 +35,7 @@ That's four deploys instead of one. Every step but the last is reversible, and b
 
 ## Know what lock you're taking
 
-A lock is how Postgres keeps changes from colliding: while one statement holds a table's lock, others that need it wait. Most `ALTER TABLE` statements take the strongest lock, which blocks every read and write. For a quick change, that's milliseconds. The trap is the line. If a slow query is already running, your `ALTER` waits for it, and every query after waits behind your `ALTER`. A one-millisecond change can freeze the table for as long as that slow query runs.
+A lock is how Postgres keeps changes from colliding: while one statement holds a table's lock, others that need it wait. Most `ALTER TABLE` statements take the strongest lock, which blocks every read and write. For a quick change, that's milliseconds. The trap is the queue. If a slow query is already running, your `ALTER` waits for it, and every query after waits behind your `ALTER`. A one-millisecond change can freeze the table for as long as that slow query runs.
 
 So start risky migrations with a lock timeout, which makes them give up after 5 seconds instead of waiting:
 
@@ -48,14 +48,10 @@ If it times out, retry later. A failed migration is better than a frozen app. He
 - **Adding a column** that's nullable, or has a fixed default, is instant.
 - **Changing a column's type** usually rewrites the whole table while holding the lock. Use add, copy, switch, drop.
 - **Adding `NOT NULL` to an existing column** scans the whole table while holding the lock. On a big table, use the safer version in "Going deeper" below.
-- **Adding an index** (a lookup structure that makes queries on a column fast) normally blocks writes until it's built. `CREATE INDEX CONCURRENTLY` doesn't, but it can't run inside a transaction (a group of statements that all apply or none do), and Drizzle's migrator wraps your migrations in one. So run it on its own with `psql`, over your database's direct (unpooled) connection string:
-
-```sh
-psql "$DIRECT_DATABASE_URL" -c "CREATE INDEX CONCURRENTLY invoices_team_id_idx ON invoices (team_id);"
-```
+- **Adding an index** (a lookup structure that makes queries on a column fast) normally blocks writes until it's built. On a busy table, use `CREATE INDEX CONCURRENTLY`, which doesn't. It needs to run on its own (see "Going deeper").
 
 <details>
-<summary>Going deeper: NOT NULL on a big table, and failed index builds</summary>
+<summary>Going deeper: NOT NULL on a big table, and index builds that don't block</summary>
 
 Prove the rule with a `CHECK` constraint first, then let `SET NOT NULL` skip its scan:
 
@@ -69,13 +65,19 @@ ALTER TABLE users DROP CONSTRAINT display_name_not_null;
 
 Foreign keys can use the same `NOT VALID` then `VALIDATE` trick. Adding a `NOT NULL` column with no default to a table that has rows fails outright, which an empty dev database never shows you.
 
+`CREATE INDEX CONCURRENTLY` can't run inside a transaction (a group of statements that all apply or none do), and Drizzle's migrator wraps your migrations in one. So run it on its own with `psql`, Postgres's command-line client, over your database's direct (unpooled) connection string:
+
+```sh
+psql "$DIRECT_DATABASE_URL" -c "CREATE INDEX CONCURRENTLY invoices_team_id_idx ON invoices (team_id);"
+```
+
 If a concurrent index build fails, it leaves an `INVALID` index behind. Drop it and try again.
 
 </details>
 
 ## Backfill in small batches you can stop
 
-One `UPDATE users SET display_name = name` on a big table is one giant transaction. It locks every row it touches until it finishes, leaves a dead copy of every row for Postgres to clean up, and can't be paused halfway. Do it in batches. Notice the inner query picks only rows that still need copying:
+One `UPDATE users SET display_name = name` on a big table is one giant transaction. It locks every row it touches until it finishes, and it can't be paused halfway. Do it in batches. Notice the inner query picks only rows that still need copying:
 
 ```sql
 UPDATE users SET display_name = name
@@ -89,13 +91,13 @@ WHERE id IN (
 
 Each batch saves on its own, so locks are short and you can stop any time. The `IS NULL` filter makes it safe to rerun: after a crash, it picks up where it left off. The `name IS NOT NULL` part matters too. Without it, rows with no name stay null after every batch, the loop never hits zero, and your backfill runs forever.
 
-## Drizzle: generate and review, don't push to production
+## Review the SQL migration file before it runs
 
-`drizzle-kit push` applies your TypeScript schema straight to the database. `drizzle-kit generate` writes a SQL migration file you commit, and `drizzle-kit migrate` applies it ([where that runs](shipping-changes-you-can-undo.md#run-migrations-in-the-vercel-build)).
+Most tools have a shortcut that skips the file. That's fine locally while you iterate. For production, you want a SQL file in the PR, because that's where you catch the `DROP COLUMN` before it runs, or a column dropped and re-added when you meant to rename it. Edit that SQL when it needs it. It's your migration, not the tool's. ([Where it runs](shipping-changes-you-can-undo.md#run-migrations-in-the-vercel-build).)
 
-Drizzle's docs mention teams using `push` in production. I'd use it only locally while I iterate. With `push` there's no file to review, so nobody sees the `DROP COLUMN` until it has run. With `generate`, the SQL shows up in the PR diff, where you catch a column dropped and re-added when you meant to rename it. Edit that SQL when it needs it. It's your migration, not the tool's.
+**On Drizzle:** the shortcut is `drizzle-kit push`. Use `drizzle-kit generate` to write the file, and `drizzle-kit migrate` to apply it.
 
-On Supabase without Drizzle, `supabase db diff -f <name>` writes a migration file and `supabase db push` applies committed ones, so you're already on the reviewable path. Despite the name, it's not Drizzle's `push`.
+**On Supabase:** the shortcut is editing tables in the dashboard, and nobody can review or repeat those edits. Make them on your local stack, then `supabase db diff -f <name>` writes them to a migration file. `supabase db push` applies committed files, so despite the name, it's the reviewable path.
 
 ## Rehearse on a branch first
 
@@ -103,24 +105,27 @@ A database branch is a copy you can wreck. Neon branches include the parent's da
 
 Before any destructive step, [restore a backup into a branch and check it](when-production-breaks.md).
 
-## What the vibe-coded version misses
-
-- **Add, backfill, and drop in a single deploy.** The old code still running breaks, and no version you can roll back to works.
-- **`drizzle-kit push` against production.** A destructive statement runs before anyone has read it.
-- **"Rollback plan: redeploy the old app," after dropping a column.** The old app needs the column, so rolling back breaks every request.
-- **One huge backfill `UPDATE`.** It holds row locks for minutes, and every user's save waits behind it.
-- **A plain `CREATE INDEX` on a busy table.** Writes block until it's built, so checkout stops working.
-
 ## What I'd do
 
-For a Next.js app on Neon or Supabase with Drizzle:
+For a Next.js app on Neon or Supabase:
 
-- **Review the SQL.** `push` locally, then `generate`, and read the SQL file in the PR.
+- **Review the SQL.** On Drizzle, `push` locally, then `generate`, and read the SQL file in the PR. On Supabase, edit tables only locally, run `supabase db diff -f <name>`, and read that file.
 - **Split risky changes.** Additive changes go out in one step. For a rename, type change, or drop, ask your agent: "Plan this as expand, migrate, switch, contract, one PR per step."
-- **Guard big tables.** `SET lock_timeout = '5s';` first in any migration that touches one, and indexes through `psql` with `CONCURRENTLY`.
+- **Guard big tables.** `SET lock_timeout = '5s';` first in any migration that touches one, and build indexes `CONCURRENTLY` with the `psql` command in "Going deeper".
 - **Script backfills.** Ask your agent: "Write a script that runs this batched `UPDATE` until it updates 0 rows, pausing between batches and logging progress." Rehearse it first.
 
 Once more than one person writes migrations, I'd add a migration linter, a tool that flags locking statements in the PR.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- No migration renames, drops, or retypes a column the running code still uses.
+- Every schema change is a SQL migration file in this PR.
+- Migrations that touch a big table start with `SET lock_timeout`.
+- New indexes on busy tables use `CREATE INDEX CONCURRENTLY`.
+- Backfills run in small batches that are safe to rerun.
+- The migration and backfill ran on a branch or local copy first.
 
 ## Sources
 
@@ -131,5 +136,5 @@ Once more than one person writes migrations, I'd add a migration linter, a tool 
 - [Drizzle source: the Postgres migrator wraps all pending migrations in one transaction](https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/pg-core/dialect.ts)
 - [Neon: Branching](https://neon.com/docs/introduction/branching)
 - [PostgreSQL: psql (`-c` runs a single command)](https://www.postgresql.org/docs/current/app-psql.html)
-- [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching), [pricing (branching on paid plans)](https://supabase.com/pricing), and [database migrations (`db diff`, `db push`, `db reset`, `seed.sql`)](https://supabase.com/docs/guides/deployment/database-migrations)
+- [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching), [pricing (branching on paid plans)](https://supabase.com/pricing), [database migrations (dashboard edits, `db diff`, `db push`, `db reset`, `seed.sql`)](https://supabase.com/docs/guides/deployment/database-migrations), and [CLI: `supabase db diff`](https://supabase.com/docs/reference/cli/supabase-db-diff)
 - [Vercel: Managing cron jobs (running jobs during deploys)](https://vercel.com/docs/cron-jobs/manage-cron-jobs)

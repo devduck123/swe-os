@@ -22,7 +22,13 @@ Work leaves the request when it's **slow** like this, needs **retries** (the enr
 
 **`after()` in Next.js** runs a callback once the response is sent. Use it for analytics, logging, and best-effort cleanup. If the callback throws or hits the time limit, the work is gone, with no record and no retry.
 
-**Vercel Cron** calls one of your routes on a schedule. It suits a sweep (a scheduled run that picks up work still pending), but it's weaker than it looks. On Hobby it runs **at most once a day**, anywhere within the hour you picked. Vercel also says a failed run isn't retried, a run can be delivered twice, and a slow run can overlap the next. Protect the route with `CRON_SECRET`, since it's a public URL. On Supabase, Supabase Cron can call the same route more often, from inside your database.
+**Vercel Cron** calls one of your routes on a schedule. It suits a sweep (a scheduled run that picks up pending work), but it's weaker than it looks:
+
+- On Hobby it runs **at most once a day**, anywhere within the hour you picked.
+- A failed run isn't retried.
+- A run can arrive twice, and a slow run can overlap the next.
+
+Protect the route with `CRON_SECRET`, since it's a public URL. On Supabase, Supabase Cron can call the same route more often, from inside your database.
 
 **A hosted job service** like Inngest, Trigger.dev, or Vercel Workflows stores the job, retries it with backoff (a longer wait before each try), runs steps that outlast one function, and shows you what failed. Use it for imports, emails, and multi-step work.
 
@@ -45,7 +51,7 @@ WHERE id = $1 AND status = 'pending';
 -- 0 rows updated means a previous run already handled it.
 ```
 
-Keep jobs small, too. With one job per 100 rows, a killed function loses one batch, not progress you can't locate.
+Keep jobs small. With one job per 100 rows, a killed function loses one batch, not progress you can't locate.
 
 ## Webhooks: verify, record, acknowledge, then work
 
@@ -65,15 +71,12 @@ export async function POST(req: Request) {
     return new Response('Invalid signature', { status: 400 });
   }
 
-  await db
-    .insert(webhookEvents)
-    .values({
-      id: event.id,
-      type: event.type,
-      payload: event,
-      status: 'pending',
-    })
-    .onConflictDoNothing(); // a retried delivery hits the primary key and does nothing
+  // `sql` is your Postgres client's query tag.
+  // A retried delivery hits the primary key and does nothing.
+  await sql`
+    INSERT INTO webhook_events (id, type, payload, status)
+    VALUES (${event.id}, ${event.type}, ${JSON.stringify(event)}, 'pending')
+    ON CONFLICT (id) DO NOTHING`;
 
   return new Response(null, { status: 200 });
 }
@@ -85,13 +88,11 @@ export async function POST(req: Request) {
 
 **Store before you acknowledge.** If you return `200`, then process in `after()` and crash, the sender never retries and the event is lost. Writing the row first makes your `200` a promise you can keep. If processing is a couple of quick writes, doing it inline before the `200` is fine too.
 
-**Don't trust the order.** `invoice.paid` can land before `invoice.created`. Treat the event as a signal: fetch the current object from Stripe and set your state from that.
-
-To test locally, run `stripe listen --forward-to localhost:3000/api/webhooks/stripe`. It forwards test events to your machine and prints the signing secret.
+**Don't trust the order.** `invoice.paid` can land before `invoice.created`. So use the event only to learn which object changed. Fetch its current state, like `stripe.invoices.retrieve(id)`, and save that.
 
 ## Keep every job in a table you can query
 
-Your own jobs need a record too. In this minimal `jobs` table, each column answers a question you'll ask when something breaks:
+Your own jobs need a record too. In this `jobs` table, each column answers a question you'll ask when something breaks:
 
 ```sql
 CREATE TABLE jobs (
@@ -143,22 +144,26 @@ Postgres session advisory locks are the textbook tool here, but they don't survi
 
 </details>
 
-## What the vibe-coded version misses
-
-- **Slow work inside the request.** The import dies at the time limit, and the retry pays to enrich 3,100 contacts twice.
-- **Unsigned webhook endpoints.** Anyone can post a fake `checkout.session.completed` and get the paid plan free.
-- **No dedupe on event ID.** A retried delivery sends two welcome emails and grants credits twice.
-- **Acknowledging before storing.** The handler returns `200`, crashes, and the event is gone for good.
-- **Events applied in arrival order.** A late update overwrites a newer cancellation, and you keep serving someone who stopped paying.
-
 ## What I'd do
 
 For a Next.js app on Vercel with Neon or Supabase:
 
 - For slow work, ask your agent: "Move the slow part of this route into a `jobs` table with status, attempts, and last_error. Insert the row in the request and process it in `after()`."
+- For webhooks, copy the handler above. `stripe listen --forward-to localhost:3000/api/webhooks/stripe` sends test events to your machine.
 - Ask your agent: "Add a Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap." On Hobby it runs once a day, so a stuck job can wait a day and five attempts take five days. If that's too slow, sweep every few minutes with Vercel Pro or Supabase Cron.
 
 I'd move to a hosted job service once I need retries with backoff, steps that wait on each other, or runs longer than a function's time limit. Past that, I'd be rebuilding one badly in a table.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Slow or flaky work runs outside the request, as a row in a `jobs` table.
+- Every job leaves the same result if it runs twice.
+- The webhook route verifies the signature on the raw body first.
+- Each webhook event is saved by event ID before the route returns `200`.
+- Handlers fetch the object's current state instead of trusting event order.
+- The cron route checks `CRON_SECRET`, and a lease row stops sweeps from overlapping.
 
 ## Sources
 
@@ -167,4 +172,4 @@ I'd move to a hosted job service once I need retries with backoff, steps that wa
 - [Vercel Functions limits (max duration)](https://vercel.com/docs/functions/limitations) and [Vercel Workflows](https://vercel.com/docs/workflows)
 - [Neon: Scale to zero](https://neon.com/docs/introduction/scale-to-zero) and [Connection pooling (unsupported session features)](https://neon.com/docs/connect/connection-pooling)
 - [Supabase: Cron](https://supabase.com/docs/guides/cron) and [Connecting to Postgres (transaction mode limits)](https://supabase.com/docs/guides/database/connecting-to-postgres)
-- [Stripe: Receive events in your webhook endpoint (duplicates, ordering, `stripe listen`)](https://docs.stripe.com/webhooks)
+- [Stripe: Receive events in your webhook endpoint (duplicates, ordering, `stripe listen`)](https://docs.stripe.com/webhooks) and [Retrieve an invoice](https://docs.stripe.com/api/invoices/retrieve)

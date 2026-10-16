@@ -10,7 +10,7 @@ track: 5
 concerns: [data, concurrency, performance]
 ---
 
-Your database is the one part of your app that remembers. Code gets rewritten every week, often by an agent that never saw last month's version. The rows stay. So write what must be true about your data into the schema as constraints: rules the database checks on every write, from every code path, forever. Your code forgets. Constraints don't.
+Your database is the one part of your app that remembers. Code gets rewritten every week, often by an agent that never saw last month's version. The rows stay. So write what must be true about your data into the schema (your table definitions) as constraints: rules the database checks on every write, from every code path, forever. Your code forgets. Constraints don't.
 
 ## Happy-path code lets bad data in quietly
 
@@ -24,100 +24,122 @@ The first one is a race condition: two requests run at the same moment, and both
 
 Start from what's true in the domain, not from the screen you're building. An order belongs to one user. Stock is never negative. A user books a given class once. Each sentence maps to a constraint:
 
-- **`NOT NULL`:** the column always has a value.
-- **`UNIQUE`:** no two rows share this value.
-- **Foreign key:** the column must point at a row that exists in another table.
-- **`CHECK`:** any rule about one row, like `stock >= 0`.
+- **`not null`:** the column always has a value.
+- **`unique`:** no two rows share this value.
+- **Foreign key (`references`):** the column must point at a row that exists in another table.
+- **`check`:** any rule about one row, like `stock >= 0`.
 
-Here they are in Drizzle. Look for `notNull()`, `references()` (a foreign key), and `check`:
+Here they are in SQL. Look for `not null`, `references`, and `check`:
 
-```ts
-export const products = pgTable(
-  'products',
-  {
-    id: uuid().defaultRandom().primaryKey(),
-    priceCents: integer().notNull(),
-    stock: integer().notNull(),
-  },
-  (t) => [check('stock_not_negative', sql`${t.stock} >= 0`)],
+```sql
+create table products (
+  id uuid primary key default gen_random_uuid(),
+  price_cents integer not null,
+  stock integer not null check (stock >= 0)
 );
 
-export const orders = pgTable(
-  'orders',
-  {
-    id: uuid().defaultRandom().primaryKey(),
-    userId: uuid()
-      .notNull()
-      .references(() => users.id),
-    productId: uuid()
-      .notNull()
-      .references(() => products.id),
-    totalCents: integer().notNull(),
-    createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [index('orders_user_created_idx').on(t.userId, t.createdAt)],
+create table orders (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users (id),
+  product_id uuid not null references products (id),
+  total_cents integer not null,
+  created_at timestamptz not null default now()
 );
+
+create index orders_user_created_idx on orders (user_id, created_at);
 ```
 
-Now the 51st hoodie fails: the `CHECK` rejects stock going to `-1`. The foreign key refuses to delete a product that orders still point at. You can tell a foreign key to cascade instead (delete the orders too), as the habit tracker below does.
+Now the 51st hoodie fails: the `check` rejects stock going to `-1`. The foreign key refuses to delete a product that orders still point at. You can make a foreign key cascade instead (delete the orders too), like the habit tracker below.
 
-On Supabase without Drizzle, the same rules are plain SQL (`not null`, `unique`, `references`, `check`) in a migration file (a file of schema changes, applied in order).
-
-<details>
-<summary>Going deeper: snake_case column names in Drizzle</summary>
-
-This schema leaves column names out, so `userId` becomes a column literally named `"userId"`. To get `user_id`, pass `casing: 'snake_case'` to both `drizzle()` and `drizzle.config.ts`.
-
-</details>
+This goes in a migration file (schema changes, applied in order). On Supabase, `supabase migration new` creates one. In Drizzle, the same rules are `notNull()`, `references()`, and `check()`.
 
 ## Uniqueness is a constraint, not a check
 
-"Has this user booked this class? No? Insert." is the same race. A double-tap sends two requests, both pass the check, and one person holds two of the ten spots. A unique index on `(user_id, class_id)` (a lookup the database keeps that also refuses duplicates) makes the second insert fail, however close together they arrive. Catch that error and show "you're already booked."
+"Has this user booked this class? No? Insert." is the same race. A double-tap sends two requests, both pass the check, and one person holds two of the ten spots. A `unique` constraint on `(user_id, class_id)` makes the second insert fail, however close together they arrive. Catch that error and show "you're already booked."
 
-Stop 3's [habit tracker](shape-before-you-build.md) needs it too. Notice `onConflictDoNothing()`: the second tap becomes a no-op instead of an error.
+Stop 3's [habit tracker](shape-before-you-build.md) needs it too. Notice `on conflict … do nothing`: the second tap becomes a no-op instead of an error. `$1` and `$2` are values your app fills in.
 
-```ts
-export const checkIns = pgTable(
-  'check_ins',
-  {
-    habitId: uuid()
-      .notNull()
-      .references(() => habits.id, { onDelete: 'cascade' }),
-    day: date().notNull(), // the user's local date
-  },
-  (t) => [uniqueIndex('check_ins_habit_day').on(t.habitId, t.day)],
+```sql
+create table check_ins (
+  habit_id uuid not null references habits (id) on delete cascade,
+  day date not null, -- the user's local date
+  unique (habit_id, day)
 );
 
-await db.insert(checkIns).values({ habitId, day }).onConflictDoNothing();
+insert into check_ins (habit_id, day)
+values ($1, $2)
+on conflict (habit_id, day) do nothing;
 ```
+
+In app code: Drizzle's `.onConflictDoNothing()`, or supabase-js's `.upsert(row, { onConflict: 'habit_id,day', ignoreDuplicates: true })`.
 
 A calendar day is a `date`, not an instant: store `2026-10-06`, computed from the user's time zone, and the 11:50 p.m. check-in in California stays on the right day. Use `timestamptz` (a timestamp with time zone) for instants, like when an order was placed.
 
 ## Writes that belong together go in one transaction
 
-A transaction is a group of writes that all happen, or none do. Put the stock check inside the write, not in a separate read. Notice that `gt(products.stock, 0)` sits in the `UPDATE`'s `where`, so checking and decrementing are one step:
+A transaction is a group of writes that all happen, or none do. Put the stock check inside the write, not in a separate read. Notice `stock > 0` in the `update`'s `where`:
 
-```ts
-await db.transaction(async (tx) => {
-  const [reserved] = await tx
-    .update(products)
-    .set({ stock: sql`${products.stock} - 1` })
-    .where(and(eq(products.id, productId), gt(products.stock, 0)))
-    .returning({ priceCents: products.priceCents });
+```sql
+begin;
 
-  if (!reserved) throw new SoldOutError(); // 0 rows: someone got the last one
+update products
+set stock = stock - 1
+where id = $1 and stock > 0
+returning price_cents;
 
-  await tx
-    .insert(orders)
-    .values({ userId, productId, totalCents: reserved.priceCents });
-});
+insert into orders (user_id, product_id, total_cents)
+values ($2, $1, $3);
+
+commit;
 ```
 
-The `UPDATE` locks the product row: any other write to that row waits until this transaction commits (finishes and saves). Two buyers racing for the last hoodie go one after the other. The second waits, rechecks `stock > 0`, and updates zero rows. If the order insert fails or the function dies, the stock change rolls back (gets undone) too.
+- **`begin`** starts the transaction. Nothing after it is saved until `commit`.
+- **`update … where id = $1 and stock > 0`** checks and takes one hoodie in a single step. It also locks the row, so a second buyer's `update` waits, rechecks `stock > 0`, and changes nothing.
+- **`returning price_cents`** sends back the changed row. No row means sold out, so your app runs `rollback` (undo everything since `begin`).
+- **`insert`** records the order, at the price the update returned (`$3`).
+- **`commit`** saves both writes at once. If the insert fails or the function dies first, the stock change is undone too.
 
-Because other writes wait, keep transactions short. Don't call Stripe or send email inside one: everyone else waits on your network call, and an email can't be undone ([what to do instead](timeouts-retries-idempotency.md)).
+In app code: Drizzle's `db.transaction(...)`, or a Postgres function you call with `supabase.rpc()`, which runs as one transaction.
 
-On Supabase with `supabase-js`, there's no `db.transaction`. Put the writes in a Postgres function and call it with `supabase.rpc()`: each API call runs as one transaction.
+Other writes wait, so keep transactions short. Don't call Stripe or send email inside one: everyone waits on your network call, and an email can't be undone ([what to do instead](timeouts-retries-idempotency.md)).
+
+<details>
+<summary>Going deeper: the same checkout as a Supabase function</summary>
+
+`if not found` is true when the `update` changed no rows. `raise exception` stops the function, and because the whole call is one transaction, the stock change is undone with it.
+
+```sql
+create function public.buy(p_product_id uuid)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_price integer;
+  v_order_id uuid;
+begin
+  update public.products
+  set stock = stock - 1
+  where id = p_product_id and stock > 0
+  returning price_cents into v_price;
+
+  if not found then
+    raise exception 'sold out';
+  end if;
+
+  insert into public.orders (user_id, product_id, total_cents)
+  values (auth.uid(), p_product_id, v_price)
+  returning id into v_order_id;
+
+  return v_order_id;
+end;
+$$;
+```
+
+Call it with `supabase.rpc('buy', { p_product_id: productId })`. `security definer` runs it with the owner's rights, so buyers don't need permission to edit products. That's also why it takes the user from `auth.uid()`, Supabase's signed-in user, and never from an argument. Signed out, `auth.uid()` is null, and the `not null` on `user_id` rejects the order.
+
+</details>
 
 <details>
 <summary>Going deeper: Neon's HTTP driver, rules that span rows, and Stripe Checkout</summary>
@@ -132,48 +154,60 @@ With Stripe Checkout, if you decrement only when `checkout.session.completed` ar
 
 ## Index the queries you actually run
 
-An index is a sorted lookup the database keeps for a column, so it can jump to matching rows instead of reading the whole table. Without one, "this user's last 20 orders" scans every order ever placed. At 500,000 rows, that's your slowest page. Index your `WHERE`, `JOIN`, and `ORDER BY` columns. Postgres doesn't index foreign keys for you.
+An index is a sorted lookup the database keeps for a column, so it can jump to matching rows instead of reading the whole table. Without one, "this user's last 20 orders" scans every order ever placed. At 500,000 rows, that's your slowest page. The `create index` above fixes it. Index your `where`, `join`, and `order by` columns. Postgres doesn't index foreign keys for you.
 
-To check, put `EXPLAIN ANALYZE` in front of the query and run it in a SQL client, like Supabase's SQL Editor. `Seq Scan` on a big table means Postgres read every row: that's the problem. With 20 rows in dev, Postgres reads every row anyway, so seed a few thousand before you trust the result.
+To check, put `explain analyze` in front of the query and run it in a SQL client, like Supabase's SQL Editor:
 
-The other classic is **N+1**: load 50 orders, then fetch each order's product in a loop. That's 51 round trips to a hosted database. Use a join, `inArray`, or Drizzle's relational `with`. On Supabase, `.select('*, products(*)')` gets both in one request.
+```sql
+explain analyze
+select * from orders
+where user_id = '…'
+order by created_at desc
+limit 20;
+```
 
-## Small choices that are expensive to change later
+`Seq Scan` on a big table means Postgres read every row: that's the problem. With 20 rows in dev, Postgres reads every row anyway, so seed a few thousand first. Using supabase-js? Ask your agent for each call's SQL.
 
-**Money is integer cents.** In JavaScript, `0.1 + 0.2` is `0.30000000000000004`. Store `1999` with a `currency` column, the way Stripe takes amounts.
+## Store money as integer cents
 
-**Hard delete by default.** Soft delete, a `deleted_at` column instead of removing the row, means every query must filter it, and "delete my account" never deletes ([privacy](../concerns/privacy.md)). Use it only where undo or an audit trail is a real need.
-
-## What the vibe-coded version misses
-
-- **Uniqueness checked in code:** one person holds two spots, and someone else gets turned away.
-- **No foreign keys:** orders point at a deleted product, and pages crash on the missing row.
-- **Related writes without a transaction:** inventory is wrong, with no error anywhere.
-- **A timestamp for a calendar day:** an evening check-in lands on tomorrow, and streaks break.
+In JavaScript, `0.1 + 0.2` is `0.30000000000000004`. Store `1999` with a `currency` column, the way Stripe takes amounts.
 
 ## What I'd do
 
-With Next.js, Postgres, and Drizzle:
-
 - Ask your agent: "List the rules this data must always follow, and enforce each one as a constraint."
-- Integer cents, `timestamptz` for instants, `date` for calendar days.
-- `db.transaction` (on Supabase, a Postgres function called with `rpc()`) for any action that writes related rows.
-- To add a rule to an existing table, edit the schema and run `npx drizzle-kit generate`, then `npx drizzle-kit migrate`. On Supabase, `supabase migration new`, then `supabase db push`. If existing rows break the rule, the migration fails, so fix them first. Big tables take [extra steps](database-changes-without-downtime.md).
-- Seed a few thousand rows. Ask your agent for a seed script, or on Supabase, write `supabase/seed.sql`, which runs on `supabase db reset`. Then `EXPLAIN ANALYZE` each main page's query.
+- In every `create table`: integer cents for money, `timestamptz` for instants, `date` for calendar days.
+- Run any action that writes related rows in a transaction: Drizzle's `db.transaction`, or on Supabase, a Postgres function called with `rpc()`.
+- To add a rule to an existing table, write a migration. On Supabase, `supabase migration new`, then `supabase db push`. With Drizzle, edit the schema, then `npx drizzle-kit generate` and `npx drizzle-kit migrate`. If existing rows break the rule, the migration fails, so fix them first. Big tables take [extra steps](database-changes-without-downtime.md).
+- Seed a few thousand rows (on Supabase, in `supabase/seed.sql`, which runs on `supabase db reset`), then `explain analyze` each main page's query.
 
-I'd add caching only when `EXPLAIN` says a query is as good as it gets and it's still too slow. Constraints are cheapest on day one.
+I'd add caching only when `explain` says a query is as good as it gets and it's still too slow. Constraints are cheapest on day one.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Every rule the data must follow is a constraint in the schema, not only a check in code.
+- Anything a double-tap could create twice has a `unique` constraint, and the app handles the conflict.
+- Writes that belong together run in one transaction, with the stock check in the `update`'s `where`.
+- No transaction waits on Stripe, email, or any other network call.
+- Money is integer cents, instants are `timestamptz`, and calendar days are `date`.
+- Each main page's query shows no `Seq Scan` in `explain analyze` on a few thousand seeded rows.
 
 ## Sources
 
 - [PostgreSQL: Constraints, including foreign key indexing](https://www.postgresql.org/docs/current/ddl-constraints.html)
+- [PostgreSQL: Transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html), for `begin`, `commit`, and `rollback`
 - [PostgreSQL: Explicit locking (row locks are held until the transaction ends)](https://www.postgresql.org/docs/current/explicit-locking.html)
+- [PostgreSQL: Transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html), for how a waiting `update` rechecks its `where` under Read Committed
+- [PostgreSQL: `INSERT`](https://www.postgresql.org/docs/current/sql-insert.html), for `on conflict do nothing` and `returning`
+- [PostgreSQL: Using `EXPLAIN`](https://www.postgresql.org/docs/current/using-explain.html)
+- [PostgreSQL: PL/pgSQL basic statements](https://www.postgresql.org/docs/current/plpgsql-statements.html), for `returning … into` and `found`
 - [PostgreSQL: `ALTER TABLE`](https://www.postgresql.org/docs/current/sql-altertable.html), for new constraints checking existing rows
 - [Drizzle: Indexes and constraints](https://orm.drizzle.team/docs/indexes-constraints)
-- [Drizzle: v0 to v1 changes (`casing`)](https://orm.drizzle.team/docs/v0-v1-changes)
 - [Drizzle: Connect to Neon (HTTP vs. WebSocket drivers)](https://orm.drizzle.team/docs/connect-neon)
 - [Drizzle: Migrations (`drizzle-kit generate` and `migrate`)](https://orm.drizzle.team/docs/migrations)
 - [PostgREST: Transactions](https://docs.postgrest.org/en/stable/references/transactions.html), the layer under Supabase's API, for one transaction per call; [Supabase: Database functions](https://supabase.com/docs/guides/database/functions) for `rpc()`
-- [Supabase: Querying joins and nested tables](https://supabase.com/docs/guides/database/joins-and-nesting)
+- [Supabase JS: `upsert` with `ignoreDuplicates`](https://supabase.com/docs/reference/javascript/upsert)
 - [Supabase: Database migrations](https://supabase.com/docs/guides/deployment/database-migrations) and [seeding](https://supabase.com/docs/guides/local-development/seeding-your-database)
 - [Stripe: Manage limited inventory with Checkout](https://docs.stripe.com/payments/checkout/managing-limited-inventory)
 - [Stripe: Amounts in the currency's minor unit](https://docs.stripe.com/currencies)

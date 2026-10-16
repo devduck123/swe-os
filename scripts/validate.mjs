@@ -112,6 +112,25 @@ for (const file of [
   if (data.freshness === 'fast-moving')
     assert(data.reviewed, `${file} is fast-moving and needs a reviewed date`);
   if (data.track) {
+    // Every stop ends the same way: what to do, then checks to paste to the agent, then sources.
+    const text = read(file).replace(/^```[^\n]*\n[\s\S]*?^```/gm, '');
+    const heads = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
+    const end = heads.filter((h) => h !== 'Sources').slice(-2);
+    assert.deepEqual(
+      end,
+      ["What I'd do", 'Before you ship, check'],
+      `${file} must end with "## What I'd do", then "## Before you ship, check", then Sources`,
+    );
+    // Plain bullets, not "- [ ]": a task-list checkbox renders as an unlabeled form input.
+    const checks =
+      text
+        .split('## Before you ship, check')[1]
+        .split('## Sources')[0]
+        .match(/^- /gm) ?? [];
+    assert(
+      checks.length >= 3 && checks.length <= 6,
+      `${file}: "Before you ship, check" needs 3 to 6 checks as bullets, has ${checks.length}`,
+    );
     assert(
       !seenTrack.has(data.track),
       `${file} and ${seenTrack.get(data.track)} share track ${data.track}`,

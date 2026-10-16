@@ -22,7 +22,7 @@ So day one is Next.js and Postgres on your machine, plus a seed script that fill
 
 ## A fresh clone should run without calling you
 
-A good setup lets a fresh clone run on another machine, or in an agent's sandbox, from the README alone. Five things make that true:
+A good setup lets a fresh clone run anywhere, including an agent's sandbox, from the README alone. Five things make that true:
 
 - **A pinned runtime.** `.nvmrc` says which Node to use.
 - **A committed lockfile.** `package-lock.json` records the exact version of every package, and `npm ci` installs exactly those.
@@ -30,15 +30,29 @@ A good setup lets a fresh clone run on another machine, or in an agent's sandbox
 - **Seed data,** fake records a script loads, so a new database isn't an empty, broken-looking app.
 - **One `check` script** that runs format, lint, types, and tests, the same one CI (the checks that run on every push) runs.
 
-Postgres itself takes one line. Install Docker Desktop (or OrbStack on a Mac), then run:
+Postgres itself takes one line. Install Docker Desktop (or OrbStack on a Mac), which runs packaged apps called containers. Then run:
 
 ```bash
+# -e sets the password, -p opens port 5432 on your laptop,
+# -d runs it in the background, postgres:18 is the image to run.
 docker run --name db -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:18
 ```
 
 Your `DATABASE_URL` is then `postgresql://postgres:postgres@localhost:5432/postgres`. On Supabase, run `npx supabase init` once, then `npx supabase start`, which runs the database, auth, and storage locally and prints the URL and keys.
 
-Then `package.json` does the rest. Notice `setup`: one command takes a fresh clone to a running app with data. `db:migrate` applies your migrations, the files that create and change your tables.
+Your tables come from migrations: SQL files applied in order, each recorded so it runs once:
+
+```sql
+-- migrations/0001_create_habits.sql
+CREATE TABLE habits (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id uuid NOT NULL,
+  name text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+```
+
+Then `package.json` does the rest. Notice `setup`: one command takes a fresh clone to a running app with data.
 
 ```json
 {
@@ -52,9 +66,9 @@ Then `package.json` does the rest. Notice `setup`: one command takes a fresh clo
 }
 ```
 
-On Supabase, `npx supabase db reset` rebuilds the local database from `supabase/migrations` and `supabase/seed.sql`.
+`db:migrate` runs your migration tool, like `drizzle-kit migrate` or `prisma migrate deploy`. On Supabase, migrations live in `supabase/migrations`, and `npx supabase db reset` rebuilds the local database from them and `supabase/seed.sql`.
 
-Agents benefit from this setup more than people do. An agent that can run `npm run setup` and `npm run check` can verify its own work. An agent that has to ask you for a database URL can't.
+Agents gain the most from this. One that can run `npm run setup` and `npm run check` can verify its own work. One that has to ask you for a database URL can't.
 
 <details>
 <summary>Going deeper: starting the database from the setup script</summary>
@@ -86,42 +100,54 @@ Each service leans on the ones before it:
 5. **Error tracking.** Matters once someone other than you is using it.
 6. **Payments.** Last, because money brings webhooks, refunds, taxes, and the most ways to be wrong.
 
-Each one has a local stand-in and a managed free tier:
+Each has a local stand-in and a free tier:
 
-| Service  | Local stand-in                                | Managed free tier               |
-| -------- | --------------------------------------------- | ------------------------------- |
-| Database | Postgres in Docker, or `supabase start`       | Neon or Supabase                |
-| Auth     | Better Auth on your local Postgres            | Better Auth on Neon, or Clerk   |
-| Files    | A local folder, or Supabase Storage locally   | Vercel Blob or Supabase Storage |
-| Email    | Mailpit (a fake inbox), or the console        | A transactional email provider  |
-| Errors   | Off locally, since the console is right there | Sentry                          |
-| Payments | Stripe test mode with the Stripe CLI          | Stripe test mode, then live     |
+| Service  | Local stand-in                              | Managed free tier               |
+| -------- | ------------------------------------------- | ------------------------------- |
+| Database | Postgres in Docker, or `supabase start`     | Neon or Supabase                |
+| Auth     | Better Auth on your local Postgres          | Better Auth on Neon, or Clerk   |
+| Files    | A local folder, or Supabase Storage locally | Vercel Blob or Supabase Storage |
+| Email    | Mailpit (a fake inbox), or the console      | A transactional email provider  |
+| Errors   | Off, since the console is right there       | Sentry                          |
+| Payments | Stripe test mode with the Stripe CLI        | Stripe test mode, then live     |
 
 Stripe webhooks reach your laptop through `stripe listen --forward-to localhost:3000/api/webhooks/stripe`, which prints the signing secret to put in `.env`.
 
 ## Dev, preview, and prod get separate data and separate keys
 
-On Vercel, every environment variable is scoped to Development, Preview, or Production, so each gets its own keys. Every PR gets a preview deploy, its own URL running that PR's code, and previews need a database. Neon's Vercel integration creates a branch, a throwaway copy of your database, for each preview. Turn on its cleanup of old branches, or you'll hit the Free plan's branch limit.
+On Vercel, every environment variable is scoped to Development, Preview, or Production, so each gets its own keys. Every PR gets a preview deploy, its own URL running that PR's code, which needs a database. Neon's Vercel integration creates a branch, a throwaway copy of your database, for each preview. Turn on its cleanup of old branches, or you'll hit the Free plan's branch limit.
 
-Never point a preview at production data. Preview code hasn't been reviewed, preview URLs get shared, and a build that runs migrations runs them against whatever database it's given. The quieter version: a Neon branch copies its parent's data, and the integration branches from your default branch, usually production. Once you have real users, previews hold their personal data, so branch from a seeded dev branch instead, in CI with Neon's GitHub Action (`parent_branch`). Supabase preview branches start empty, so this one is Neon's.
+Never point a preview at production data. Preview code hasn't been reviewed, preview URLs get shared, and a build that runs migrations runs them against whatever database it's given.
+
+Neon has a quieter version: a branch copies its parent's data, and the integration branches from production. Once you have users, every preview holds their personal data. Supabase preview branches start empty, and a seed file fills them.
+
+<details>
+<summary>Going deeper: branching Neon previews from seed data</summary>
+
+Keep a Neon branch called `dev` that holds only seed data. Then create preview branches in CI (the checks GitHub runs on every push) with Neon's create-branch GitHub Action, setting `parent_branch: dev`, instead of through the Vercel integration.
+
+</details>
 
 Free tiers have cliffs, and the one that hurts is rarely the obvious limit. Read [the side-project stack's cliffs](../recipes/side-project-stack.md#what-it-costs) before you sign up, and upgrade when it lists a reason you can name.
-
-## What the vibe-coded version misses
-
-- **It only runs on the author's laptop.** Nobody else can run it, including your next agent.
-- **Developing against the production database.** One bad migration and real users lose data.
-- **No seed data.** Every new clone and environment starts empty, so bugs that need real-looking data ship.
-- **Eight services on day one.** Eight dashboards, key sets, and pricing cliffs for an app with no users.
-- **A preview pointed at prod.** Unreviewed code with write access to real data, behind a shareable URL.
 
 ## What I'd do
 
 - **Laptop first.** Postgres in Docker, then ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)." It adds the pinned runtime, `.env.example`, seed data, and `check` script.
-- **Then previews.** Connect the repo to Vercel and add Neon's Vercel integration. Move preview branching to CI once real users arrive.
+- **Then previews.** Connect the repo to Vercel and add Neon's Vercel integration. Once real users arrive, move preview branching to CI, as the details above show.
 - **Then one service per feature,** in the order above. [The side-project stack](../recipes/side-project-stack.md) puts the whole thing together.
 
 I'd pick Supabase instead of Neon when I want its auth and storage too, and I'd run `npx supabase start` locally to match.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- A fresh clone runs from the README and `npm run setup` alone.
+- `.nvmrc`, the lockfile, `.env.example`, and seed data are committed.
+- CI runs the same `check` script as my laptop.
+- Nothing local or in previews connects to the production database.
+- Development, Preview, and Production each have their own keys.
+- Every hosted service is one a shipped feature needs.
 
 ## Sources
 

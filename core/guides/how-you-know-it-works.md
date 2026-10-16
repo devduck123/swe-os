@@ -10,7 +10,7 @@ reviewed: 2026-10-06
 concerns: [testing]
 ---
 
-A test is a claim about your app's behavior that you can check again for free, forever. "A user can't mark someone else's invoice paid" is a claim. A test turns it into something a machine re-proves on every change. What you want is confidence that the things people depend on still work after the next change. Coverage tells you which lines ran, not whether anything checked what they did.
+A test is a claim about your app's behavior that you can check again for free, forever. "A user can't mark someone else's invoice paid" is a claim. A test turns it into something a machine re-proves on every change. What you want is confidence that the things people depend on still work after the next change. Coverage, the share of your code that tests run, tells you which lines ran, not whether anything checked what they did.
 
 ## "It worked when I clicked it" expires with the next change
 
@@ -68,10 +68,10 @@ await expect(page.getByRole('status')).toHaveText('Invoice marked paid');
 
 That survives a redesign, and it fails if the button loses its accessible name (the label a screen reader announces), which is a real bug.
 
-**Don't log in through the form in every test.** It's slow, and bot protection may block it. Log in once in a setup step, save the signed-in state with Playwright's `storageState`, and start every test from it. On Supabase, create that test user in setup with `supabase.auth.admin.createUser()` against your local stack.
-
 <details>
-<summary>Going deeper: test sign-in with Clerk or Better Auth</summary>
+<summary>Going deeper: signing in once for every test</summary>
+
+Don't log in through the form in every test. It's slow, and bot protection may block it. Log in once in a setup step, save the signed-in state with Playwright's `storageState`, and start every test from it. On Supabase, create that test user in setup with `supabase.auth.admin.createUser()` against your local stack.
 
 With Clerk, `@clerk/testing` gets a Testing Token in global setup (`clerkSetup()`) so bot detection lets your tests through. Then `clerk.signIn({ page, emailAddress })` signs a test user in through Clerk's Backend API. With Better Auth, the `testUtils` plugin creates a user, and its `getCookies()` returns session cookies you pass to `context.addCookies()`. Keep that plugin out of your production config.
 
@@ -95,24 +95,27 @@ The quick check: break the line the test is supposed to protect, and run it. If 
 
 ## CI runs the same check every time, and flaky tests poison it
 
-Put formatting, lint (a scan for suspicious code), type checks, and tests behind one `check` script. CI runs it on every PR, and a failing PR can't merge. Then "it passes" means the same thing for you, every agent, and every machine.
+Put formatting, lint (a scan for suspicious code), type checks, and tests behind one `check` script. CI (a service like GitHub Actions that runs your checks on a fresh machine) runs it on every PR, and a failing PR can't merge. Then "it passes" means the same thing for you, every agent, and every machine.
 
 A flaky test (one that fails at random) does more damage than its own failure. People learn to hit re-run, then to ignore red, and then a real failure ships looking like every other flake. Fix it, or skip it on purpose with an owner and a date.
 
-## What the vibe-coded version misses
-
-- **Tests that share rows with no cleanup.** The suite fails at random in CI, and everyone learns to re-run it.
-- **An agent quietly updating the expected value.** The test now asserts the bug, and the diff looked like a routine fix.
-- **Only happy-path tests.** Nobody checked the wrong user, so a user finds it.
-- **Every E2E test logging in through the UI.** The suite gets slow enough that people stop running it.
-
 ## What I'd do
 
-- **A real Postgres for tests.** On Supabase, `supabase start` runs one locally in Docker, and `supabase db start` does it in CI after the `supabase/setup-cli` action. Otherwise, use the Docker setup from [local first, then managed](local-first-then-managed.md), and a [Neon branch](https://neon.com/docs/introduction/branching) per CI run.
+- **A real Postgres for tests.** On Supabase, `supabase start` runs one locally. Install Docker Desktop first, which runs the database in a container (an isolated box on your machine). In CI, add the `supabase/setup-cli` action (a ready-made step) and run `supabase db start`. Otherwise, use the Docker setup from [local first, then managed](local-first-then-managed.md), and a [Neon branch](https://neon.com/docs/introduction/branching) per CI run.
 - **Tests for the rules.** Ask your agent: "Add Vitest integration tests against the local database proving a user can't read or change another user's invoices. Empty the tables before each test."
 - **One `check` script, required to merge.** [start-project](../../skills/start-project/SKILL.md) sets it up with one real smoke test.
 
 I'd add Playwright once the app has a flow I'd be embarrassed to see broken, usually sign-up and the core action. I'd ignore coverage percentages.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Every rule about who can see or change what has an integration test against a real Postgres.
+- Tests cover the failure paths: the wrong user, invalid input, an expired session.
+- Every bug fix comes with a test that failed before the fix.
+- No test was deleted, skipped, or given a new expected value to get green.
+- Tests empty their tables first, so they pass alone and together.
 
 ## Sources
 

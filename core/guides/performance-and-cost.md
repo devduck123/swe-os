@@ -14,9 +14,9 @@ Performance work is finding the one slow thing and fixing that thing. Cost work 
 
 ## The cache that would have hidden the bug
 
-Your SaaS dashboard takes four seconds to load. You ask an agent to fix it, and it suggests Redis. Sounds reasonable.
+Your SaaS dashboard takes four seconds to load. You ask an agent to fix it, and it suggests Redis, an in-memory cache server. Sounds reasonable.
 
-Instead, you measure. The server timing shows 3.6 of those seconds in the database. The query log shows 51 queries for one page load: one to get the team's 50 projects, then one per project to fetch its owner. That's an N+1, and the ORM (the library that writes your SQL) hid it inside a loop. One join (a single query that fetches the projects and their owners together) turns 51 trips to the database into one, and the page loads in well under a second.
+Instead, you time each step: 3.6 of those seconds are in the database. The query log shows 51 queries for one page load: one to get the team's 50 projects, then one per project to fetch its owner. That's an N+1, and the ORM (the library that writes your SQL) hid it inside a loop. One join (one query that fetches the projects with their owners) turns 51 trips to the database into one, and the page loads in well under a second.
 
 Redis would have made the second visit fast and left the first one slow. It would also have added a service to run and a new bug: owners who renamed themselves still showing the old name.
 
@@ -24,7 +24,7 @@ Redis would have made the second visit fast and left the first one slow. It woul
 
 In the browser, Google's Core Web Vitals are the yardstick: the main content shows within 2.5 seconds, every tap responds within 200 milliseconds, and the layout doesn't jump as it loads. Lighthouse in Chrome DevTools is fine for before-and-after checks, but real phones are what count, and Vercel Speed Insights shows them once you have traffic.
 
-On the server, measure each route's p95, the time 95 out of 100 requests beat, not the average. An average of 200ms can hide one user in twenty waiting three seconds. To see where the time goes, add a `Server-Timing` header. Notice it times only the database call. The browser's Network panel shows the result:
+On the server, measure each route's p95, the time 95 out of 100 requests beat, not the average. An average of 200ms can hide one user in twenty waiting three seconds. To see where the time goes, add a `Server-Timing` header. Notice it times only the database call. The browser's Network panel shows it:
 
 ```ts
 const start = performance.now();
@@ -56,11 +56,24 @@ CREATE INDEX invoices_team_created_idx ON invoices (team_id, created_at DESC);
 -- Run EXPLAIN ANALYZE again. You want an Index Scan that touches about 50 rows.
 ```
 
-To find an N+1, log queries in development and count them per page. In Drizzle, pass `{ logger: true }` to `drizzle()`. With supabase-js, look for a query inside a loop or a `.map()`. If the count grows with the rows on screen, that's it. Fix it with a join, or with Drizzle's relational queries, which compile to one SQL statement.
+To find an N+1, count queries per page in development. In Drizzle, pass `{ logger: true }` to `drizzle()`. With supabase-js, look for a query inside a loop or a `.map()`. If the count grows with the rows on screen, that's it. Notice the fix is one query:
+
+```sql
+-- N+1: one query for the projects, then this once per project
+SELECT id, name FROM users WHERE id = 7;
+
+-- The fix: a join, so one query for the whole page
+SELECT p.id, p.name, u.name AS owner_name
+FROM projects p
+JOIN users u ON u.id = p.owner_id
+WHERE p.team_id = 42;
+```
+
+In app code: Drizzle's relational queries (`with: { owner: true }`), or supabase-js's `.select('id, name, owner:users(name)')`.
 
 ## Every cache is a bet on staleness
 
-A cache saves work by serving an old answer. Before adding one, answer two questions. How stale can this data be before someone gets hurt? What invalidates it? If you can't answer the second, you're shipping a stale-data bug on a timer.
+A cache saves work by serving an old answer. First answer two questions. How stale can this data be before someone gets hurt? What invalidates it? If you can't answer the second, you're shipping a stale-data bug on a timer.
 
 In Next.js 16, data isn't cached unless you opt in, and then every write to that data has to clear the cached copy. Miss one write path and users see old data.
 
@@ -75,43 +88,59 @@ Opt in with Cache Components: set `cacheComponents: true` in `next.config.ts`, m
 
 ## Bound the work
 
-- **Paginate every list.** `LIMIT 50 OFFSET 100` (skip 100, take 50) is fine to start. When people page deep, switch to a cursor (`WHERE created_at < $last_seen ORDER BY created_at DESC LIMIT 50`), because `OFFSET` still reads every skipped row.
+- **Paginate every list.** `LIMIT 50 OFFSET 100` (skip 100, take 50) is fine to start. When people page deep, switch to a cursor, because `OFFSET` still reads every skipped row:
+
+  ```sql
+  -- $1, $2: created_at and id of the last row shown
+  SELECT id, number, total FROM invoices
+  WHERE team_id = 42
+    AND (created_at, id) < ($1, $2)
+  ORDER BY created_at DESC, id DESC
+  LIMIT 50;
+  ```
+
 - **Watch the bundle,** the JavaScript each page sends to the browser. Run `next analyze` to see it per route. Render heavy things like Markdown or syntax highlighting in Server Components, so the library never reaches the browser.
-- **Put compute next to your data.** A function talking to a database on another continent pays that distance on every query. Vercel runs functions in Washington, D.C. (`iad1`) by default. Set **Settings > Functions > Function Regions** to your database's region.
+- **Put compute next to your data.** A function talking to a database on another continent pays that distance on every query. Vercel runs functions in Washington, D.C. (`iad1`) by default. Set **Settings > Functions > Function Regions** to your database's region. On Supabase, the region is in the pooler host under **Connect** (`us-east-1` matches `iad1`).
 
 ## Know what you're billed for
 
-**List the billed resources** for each feature: function time, bandwidth, image optimizations, database compute and storage, file storage, emails, and AI tokens. The [cost concern](../concerns/cost.md) has the checklist. Free tiers end abruptly, and the [cliffs in my stack](../recipes/side-project-stack.md#what-it-costs) are in the recipe.
+**List the billed resources** for each feature: function time, bandwidth, image optimizations, database compute and storage, file storage, emails, and AI tokens. The [cost concern](../concerns/cost.md) has the checklist. The [cliffs in my stack](../recipes/side-project-stack.md#what-it-costs) are in the recipe.
 
-**Set a cap that actually stops spending.** An alert email at 2 a.m. doesn't stop a runaway bill. Vercel's Spend Management on Pro pauses production at a budget, but only with that action turned on. Otherwise it just emails you. It checks every few minutes, so set it below your real ceiling. Anthropic's Console has a monthly spend limit, and requests fail once you reach it.
+**Set a cap that actually stops spending.** An alert email at 2 a.m. doesn't stop a runaway bill. Vercel's Spend Management on Pro pauses production at a budget, but only with that action turned on. It checks every few minutes, so set it below your real ceiling. Anthropic's Console has a monthly spend limit, and requests fail once you reach it.
 
 **Assume someone will find your AI endpoint.** An open route that calls a model API lets strangers spend your money. Require a session, [rate-limit it](trust-boundaries.md), cap the input size and the reply length (`max_tokens`), and keep a provider spend limit as the backstop.
 
 **Estimate at 10x before you need to.** Users, times actions per user per day, times 30, times the cost per action. Say 200 users each run 5 AI summaries a day. That's 30,000 calls a month. Now do 2,000 users. Then do the bad month: one bot sending 10 requests a second for a day is 864,000 calls. If either number scares you, add the limit now.
 
-## What the vibe-coded version misses
-
-- **A cache before a measurement.** The real bottleneck stays, plus stale data.
-- **An N+1 hidden by the ORM.** Fast with 5 rows in dev, 500 queries per page in production.
-- **No pagination.** It times out for your biggest customer alone.
-- **No spend cap on a model API.** One scraper burns a month's budget overnight.
-- **No cost estimate.** You find out from the bill, and can't tell which feature spent it.
-
 ## What I'd do
 
 - Ask your agent: "Install `@vercel/speed-insights` and add `<SpeedInsights />` to the root layout."
-- Match the Vercel function region to the database.
+- Match the Vercel function region to the database's, in **Settings > Functions**.
 - Log queries in development, and add `Server-Timing` to any route that feels slow.
 - When something's slow, run `EXPLAIN ANALYZE` and fix the query before touching caching.
 - Before shipping anything usage-billed, put the 10x estimate in the PR and set the provider's spend limit. On Vercel Pro, turn on Spend Management with the pause action.
 
-I'd add a cache when a measured slow path is still too slow after the query is fixed, and the data can be stale for a known window.
+I'd add a cache when a measured path is still too slow after fixing the query, and the data can be stale for a known window.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- No query runs inside a loop over rows.
+- Every list is paginated.
+- Each cache has a known staleness window and is cleared on every write.
+- The function region matches the database's.
+- Every AI route requires a session, a rate limit, and `max_tokens`.
+- Anything usage-billed has a 10x estimate and a spend limit.
 
 ## Sources
 
 - [web.dev: Web Vitals](https://web.dev/articles/vitals)
 - [MDN: Server-Timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Server-Timing)
 - [Drizzle: Relational queries](https://orm.drizzle.team/docs/rqb)
+- [Supabase: Joins and nested tables](https://supabase.com/docs/guides/database/joins-and-nesting)
+- [PostgreSQL: Row-wise comparison](https://www.postgresql.org/docs/current/functions-comparisons.html#ROW-WISE-COMPARISON)
+- [Supabase: Connecting to Postgres (pooler host and region)](https://supabase.com/docs/guides/database/connecting-to-postgres)
 - [Next.js: `use cache` (runtime caching on serverless)](https://nextjs.org/docs/app/api-reference/directives/use-cache)
 - [Next.js: `updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag)
 - [Next.js CLI: `next analyze`](https://nextjs.org/docs/app/api-reference/cli/next#next-analyze-options)

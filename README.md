@@ -8,7 +8,7 @@ SWE OS is how I build software, written once for two readers. People read it as 
 
 ## Learn
 
-Start with [the track](https://tommy-swe-os.vercel.app/guides/): 22 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Every stop ends with what the vibe-coded version misses.
+Start with [the track](https://tommy-swe-os.vercel.app/guides/): 22 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Every stop ends with a checklist of what the vibe-coded version misses.
 
 ## Use it with an agent
 

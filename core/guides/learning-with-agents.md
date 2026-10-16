@@ -19,11 +19,11 @@ Agents make you faster at shipping. They don't make you better at engineering un
 
 In a randomized study from Anthropic, developers learning a new async library either coded by hand or with an AI assistant. On the quiz afterward, the AI group scored 50% and the hand-coding group 67%. The biggest gap was debugging. The AI group wasn't even meaningfully faster.
 
-The interesting part is how people used the AI. The ones who scored under 40% delegated: they asked for code, leaned on it more over time, and debugged by asking the AI again. The ones who scored 65% or higher generated code and then made sure they understood it, asked for code with explanations, or used the AI only for conceptual questions.
+The ones who scored under 40% delegated: they asked for code, leaned on it more over time, and debugged by asking the AI again. The ones who scored 65% or higher generated code and then made sure they understood it, asked for code with explanations, or used the AI only for conceptual questions.
 
 So the fix isn't using less AI. It's adding a comprehension step after the AI does the work.
 
-There's a second problem: you can't feel it. In METR's study, experienced developers took 19% longer with AI on their own repos, yet afterward believed AI had made them about 20% faster. Your gut won't tell you you're falling behind, so the check has to come from outside your own judgment.
+There's a second problem: you can't feel it. In a study by METR (a nonprofit that tests AI models), experienced developers took 19% longer with AI on their own repos, yet afterward believed AI had made them about 20% faster. Your gut won't tell you, so the check has to come from outside it.
 
 ## Spend learning time where it compounds
 
@@ -36,30 +36,25 @@ It doesn't matter for throwaway prototypes, boilerplate, or tools you'll never t
 Three findings from learning science hold up across decades of studies:
 
 - **Retrieval beats rereading.** Pulling an answer from memory, even when you get it wrong and then see the right one, sticks far better than reading the explanation again. In one classic study, students who practiced recall remembered 61% a week later, against 40% for those who reread.
-- **Generating beats reading.** Things you produce yourself, like a prediction, an answer, or a piece of code, stick better than things you only read.
+- **Generating beats reading.** Things you produce yourself, like a prediction or a piece of code, stick better than things you only read.
 - **Spacing beats cramming.** Coming back to something a few times, with gaps in between, beats one long session.
 
 This research comes from classrooms and labs, not agent workflows, so applying it here is a bet. It's a cheap one.
 
-## What the vibe-coded version misses
-
-- **Reading the agent's explanation and calling it learned.** The first time you debug that code alone, you start from zero.
-- **Merging code you can't explain.** The first incident has you debugging a system you never understood.
-- **Trusting your sense of progress.** You feel faster while your debugging skills erode, and find out when something breaks.
-
 ## What I'd do
 
-With several agents running, your attention lands on the PR anyway, so that's where learning goes.
+Your attention lands on the PR anyway, so that's where learning goes.
 
 1. **Every agent leaves a "Worth learning" note and a short quiz** in its PR. The agent writes both; you answer.
 2. **Before merging anything non-trivial, answer the quiz from memory,** then check the answers. It takes five to ten minutes. Geoffrey Litt's rule is that he won't [send code to others until he can pass the quiz](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html). Simon Willison's version: don't commit code you couldn't explain to someone else.
-3. **Once a week, catch up.** Group the week's "Worth learning" notes, learn the one or two that matter most, and finish with one recall question from an older lesson. That's the spacing, without a review schedule to maintain.
-4. **Once per feature, in an area you want to own, write the core yourself.** The agent does the routine parts and leaves you the decision that matters.
+3. **Once a week, catch up.** Group the week's "Worth learning" notes, learn the one or two that matter most, and finish with one recall question from an older lesson. That's the spacing.
+4. **Once per feature, in an area you want to own, write the core yourself.** Ask your agent: "Leave me the core as one `TODO(human)`, with a failing test."
 
-For step 1, paste this into your `AGENTS.md` or `CLAUDE.md` so every agent sees it. Notice that the answers stay hidden until you've tried:
+For step 1, paste this into `AGENTS.md` or `CLAUDE.md`, the file your agent reads first. Pushing straight to main, without PRs? The note goes in the commit message, the quiz in the agent's reply. Answer before you push. Notice that the answers stay hidden until you've tried:
 
 ```text
-When you open a PR, add a "Worth learning" section to its description:
+When you open a PR, add a "Worth learning" section to its description
+(with no PR, put it in the commit message and the questions in your reply):
 one to three decisions or concepts in this change I probably don't know
 yet, two sentences each, or "Nothing new" if there aren't any.
 
@@ -69,7 +64,16 @@ approach over another, or say what breaks if a given line is removed.
 Put the answers in a collapsed <details> block below the questions.
 ```
 
-The [learn skill](../../skills/learn/SKILL.md) runs the PR quiz, the weekly catch-up, and writing the core yourself. It only writes a lesson down after you've shown you understand it.
+The [learn skill](../../skills/learn/SKILL.md) (a saved workflow you ask your agent for) runs the PR quiz, the weekly catch-up, and writing the core yourself.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- There's a "Worth learning" note, or "Nothing new".
+- There are 3 to 5 questions, with the answers hidden.
+- I answered them from memory first.
+- I can explain any auth, data, or money change without the code.
 
 ## Sources
 
