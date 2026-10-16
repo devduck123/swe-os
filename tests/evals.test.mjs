@@ -104,3 +104,12 @@ test('two graders average, and a flaw counts only if both flag one', async () =>
     ['fake check'],
   );
 });
+
+test('the learner reads the main path only', async () => {
+  const { mainPath } = await import('../evals/learner/main-path.mjs');
+  const page =
+    "---\ntitle: X\n---\n\nIntro.\n\n<details>\n<summary>Going deeper</summary>\n\nLock levels.\n\n</details>\n\n## What I'd do\n\nShip it.\n\n## Sources\n\n- a link\n";
+  const out = mainPath(page);
+  assert.match(out, /Intro\.[\s\S]*Ship it\./);
+  assert.doesNotMatch(out, /title: X|Lock levels|a link/);
+});
