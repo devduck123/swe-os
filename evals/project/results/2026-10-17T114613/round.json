@@ -1,0 +1,12 @@
+{
+  "project": "book-club",
+  "started": "2026-10-17T114613",
+  "commit": "c316a2f",
+  "budget": 100,
+  "perTurn": 12,
+  "answers": "simulated",
+  "sessions": "fresh",
+  "turns": 7,
+  "sweos": "/private/var/folders/vb/_1kzd2gx3zq_07z5nswm4qfw0000gn/T/swe-os-YDNcTf/swe-os",
+  "spent": 22.9640377
+}
