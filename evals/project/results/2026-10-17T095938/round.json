@@ -1,0 +1,12 @@
+{
+  "project": "book-club",
+  "started": "2026-10-17T095938",
+  "commit": "f1d1eb9",
+  "budget": 120,
+  "perTurn": 12,
+  "answers": "simulated",
+  "turns": 7,
+  "sweos": "/private/var/folders/vb/_1kzd2gx3zq_07z5nswm4qfw0000gn/T/swe-os-u2piRo/swe-os",
+  "stopped": "Stopped before turn 6 of 7: $124.68 spent, and the last turn cost $58.21 for both arms.",
+  "spent": 125.36565710000009
+}

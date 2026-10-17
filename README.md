@@ -28,7 +28,7 @@ git clone https://github.com/devduck123/swe-os ~/swe-os
 
 **Claude Code: install the plugin.** The skills then trigger on their own, with no prompt to paste. In Claude Code, run `/plugin marketplace add devduck123/swe-os`, then `/plugin install swe-os@swe-os`. It updates when a new version is released.
 
-The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Your project's own `AGENTS.md` always wins. To use your own voice and default stack instead of mine, point it at your own profile files; the [project template](templates/project/AGENTS.md) shows how.
+The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Start a fresh agent session for each feature: `PROJECT.md` carries the plan between sessions, and a long session re-reads everything it has done on every message. In one test build, that made the later messages cost 5–10× the early ones. Your project's own `AGENTS.md` always wins. To use your own voice and default stack instead of mine, point it at your own profile files; the [project template](templates/project/AGENTS.md) shows how.
 
 ## What's inside
 
