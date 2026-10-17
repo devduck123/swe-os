@@ -4,6 +4,8 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **The project eval.** `node evals/project/run.mjs` builds a book club app over one seven-turn session, with and without SWE OS, then runs `npm install`, `npm test`, and `npm run build` on each final repo and reviews both blind. It's tested end to end with a stand-in `claude`; nobody has run it with Claude yet. The scenario harness now shares its Claude helpers through `evals/harness/common.mjs`.
+
 ## v0.3.0 (2026-10-17)
 
 - **The track, tuned with a learner test.** Agents read every stop as the target reader. 91% now take away the intended lesson (from 68%), and clarity is 3.9/5 (from 3.7).

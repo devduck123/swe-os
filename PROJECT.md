@@ -14,10 +14,11 @@ What's in it:
 ## Next
 
 1. **A real-use baseline.** Build one real side project with SWE OS end to end: `shape-project`, `start-project`, `build-feature`, and shipping, with the `learn` skill on. Record what helped, what got in the way, and what Tommy learned. The evals are synthetic; this is the first real signal.
-2. **The track's level.** After the baseline, decide what a solo builder needs first and what's professional depth. Likely a short core path, with the rest marked as going further.
-3. **Real readers.** Share the site with a few people who build with AI, and turn on Vercel Web Analytics, so the learner test isn't the only reader signal.
-4. Try one task in Codex with each path.
-5. A custom domain, when wanted. Change the URL in `astro.config.mjs`, the README, and the repo's homepage.
+2. **Run the [project eval](evals/project/README.md) once.** It builds a whole app over one session, with and without SWE OS, on a $40 budget. It's synthetic, so it adds to the baseline above instead of replacing it.
+3. **The track's level.** After the baseline, decide what a solo builder needs first and what's professional depth. Likely a short core path, with the rest marked as going further.
+4. **Real readers.** Share the site with a few people who build with AI, and turn on Vercel Web Analytics, so the learner test isn't the only reader signal.
+5. Try one task in Codex with each path.
+6. A custom domain, when wanted. Change the URL in `astro.config.mjs`, the README, and the repo's homepage.
 
 ## Decisions
 
