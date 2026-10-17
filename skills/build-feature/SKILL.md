@@ -23,6 +23,8 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 
 ## Stop rules
 
+- If you'd design it differently from what the user asked, say so in one line and build what they asked. Don't stop to re-ask a question they've already answered. If an answer doesn't settle it, go with the option you recommended and say so.
+
 - Three failed attempts at the same problem: stop, write down what you learned, and ask.
 - The change needs something the request doesn't already imply, like a paid service, a running cost, or a schema change to existing data: build everything that doesn't depend on it, state your assumption, and ask at the end. A server route for a feature the user asked for, or a well-known substitute for a package that doesn't exist, is implied.
 - Anything the [rules for every task](../README.md#rules-for-every-task) say to ask about first (rules 5 to 7).
