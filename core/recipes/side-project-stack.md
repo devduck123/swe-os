@@ -50,7 +50,7 @@ Two arrows need a closer look:
 
 **Better Auth or Clerk.** Never hand-roll auth. Better Auth is a free library that keeps users in your own Postgres. Clerk is hosted, with ready-made sign-in UI, and is faster to start, but its free plan has no MFA or passkeys. Better Auth's two-factor and passkey plugins add both for free. Either way, every query still checks that the user owns the row ([trust boundaries](../guides/trust-boundaries.md)).
 
-**Vercel Blob.** Files don't belong in the database. Blob stores them, serves them from servers near your users, and lets the browser upload directly. Postgres keeps each file's URL and owner, and pages read the URLs from there. Blob's free plan allows 2,000 "advanced operations" a month, Vercel's name for uploads, copies, and `list()` calls. Each `list()` call is one, so a page that calls it on every view burns through them.
+**Vercel Blob.** Files don't belong in the database. Blob stores them, serves them from servers near your users, and lets the browser upload directly. Postgres keeps each file's URL and owner, and pages read the URLs from there. Calling `list()` on every page view burns through Blob's free operations ([cliffs below](#what-it-costs)).
 
 **A transactional email provider,** such as Resend or Postmark. Auth needs it from the first sign-up, for verification and password resets. Locally, log the email to the console.
 
@@ -112,7 +112,7 @@ The cliffs, in the order I'd expect to hit them:
 - **Supabase Auth's built-in email only reaches your own team.** Until you set up custom SMTP, it refuses to send to anyone outside your project's team, and it's capped at a few emails an hour. Before the first real user, sign up for an email provider like Resend, then paste its SMTP settings under **Authentication > Email > SMTP Settings** in the Supabase dashboard.
 - **Vercel Hobby is non-commercial only.** Taking payments, showing ads, or getting paid to build the site all count as commercial. Hobby also can't pay for overages: go over a limit and that feature stops until 30 days have passed.
 - **Vercel Hobby cron runs once a day,** anywhere within the hour you set. A more frequent schedule fails the deploy.
-- **Vercel Blob Hobby allows 2,000 advanced operations a month.** Browsing the store in the dashboard counts too. That's about 66 uploads a day. Go over and Blob is unavailable until 30 days have passed.
+- **Vercel Blob Hobby allows 2,000 "advanced operations" a month:** uploads, copies, and `list()` calls. Browsing the store in the dashboard counts too. That's about 66 uploads a day. Go over and Blob is unavailable until 30 days have passed.
 - **Resend Free sends 100 emails a day.** A good launch day uses that up, and verification emails fail until it resets.
 - **Supabase Free goes read-only at 500 MB.** Every write fails until you upgrade or delete data.
 - **Free backups are thin.** Neon Free keeps 6 hours of history, and Supabase Free has none. Once it's real users' data, that's the first upgrade I'd make ([when production breaks](../guides/when-production-breaks.md)).
@@ -155,9 +155,9 @@ No separate API, queue, Redis, microservices, Kubernetes, or staging environment
 3. [Shipping changes you can undo](../guides/shipping-changes-you-can-undo.md) for CI, previews, migrations, and rollback.
 4. [Knowing it broke](../guides/knowing-it-broke.md) for Sentry, a health check, and uptime.
 
-## What I'd do
+## How I do it
 
-This stack, with nothing added until something real asks for it. Upgrades come one at a time, each for a reason I can name:
+On my own side projects: this stack, with nothing added until something real asks for it. Upgrades come one at a time, each for a reason I can name:
 
 - Vercel Pro the day it makes money, needs cron more than once a day, or gets anywhere near 2,000 uploads a month.
 - Neon Launch or Supabase Pro the day real users' data matters, or the database has to stay awake.
@@ -165,7 +165,16 @@ This stack, with nothing added until something real asks for it. Upgrades come o
 - Better Auth over Clerk Pro if I need MFA or passkeys.
 - On Supabase, custom SMTP before the first real user.
 
-Before each upgrade, I'd know how I'd leave: `pg_dump` exports Postgres, Blob files are plain objects, and Drizzle doesn't care who hosts the database.
+Before each upgrade, I know how I'd leave: `pg_dump` exports Postgres, Blob files are plain objects, and Drizzle doesn't care who hosts the database.
+
+## The standard
+
+- **Paid plans everywhere, with a seat per engineer.** Once it makes money or there's a second engineer.
+- **Point-in-time recovery and restore drills** ([data concern](../concerns/data.md)). Once losing today's writes would cost you customers.
+- **Personal logins with only the access each person needs, and MFA on every vendor account** ([security concern](../concerns/security.md)). Once a second person needs access.
+- **A record of what user data you hold, where it lives, and which vendors process it.** Once a customer's security review asks, or you hold health or financial data.
+- **An on-call rotation.** Once customers pay for uptime.
+- **A second region, or a tested failover plan.** Once an hour of one region being down costs more than running two.
 
 ## Before you ship, check
 

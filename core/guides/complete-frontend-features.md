@@ -112,13 +112,20 @@ Use a skeleton that holds the shape of what's loading. A full-page spinner hides
 - **A 404 and an error page.** `not-found.tsx` and `error.tsx`, so a bad URL shows a way back instead of a framework default.
 - **Theme colors, not fixed ones.** `text-foreground` flips with dark mode. `text-gray-900` stays dark on a dark background.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - **The stack:** shadcn/ui on Tailwind, react-hook-form plus Zod. Put the schema in its own file, like `lib/schemas/invite.ts`, and import it in the form and the server action.
 - **Before every PR,** ask your agent: "Use Playwright to screenshot this feature's loading, empty, error, and no-permission states at 375px and desktop width." Then look at them yourself, and try the flow with only a keyboard.
 - **For a throwaway prototype,** skip most of this but add a `loading.tsx` and `error.tsx` to each route. Without them you can't tell slow from broken.
 
-I'd add Playwright tests for the error and permission paths once a flow matters to revenue or trust.
+## The standard
+
+- **Playwright tests for the error and permission paths, not just screenshots.** Adopt them once a flow matters to revenue or trust.
+- **A speed budget, like "search answers in under 300ms for 95% of requests", measured with realistic data.** Adopt it once real users wait on the screen.
+- **Every caller checked before a shared component changes.** Adopt it once a second engineer works in the same components.
+- **In-between widths and landscape checked, with the main action reachable on a phone.** Adopt it once real users arrive on phones. More in [UI quality](../concerns/ui-quality.md).
 
 ## Before you ship, check
 

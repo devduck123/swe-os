@@ -74,10 +74,11 @@ Every guide is written as Tommy (see [Voice](../../profile/voice.md#know-which-v
 
 Code is plain SQL first wherever the lesson is about the database. It runs anywhere: Supabase's SQL editor, a Drizzle or Prisma migration, or `psql`. App code stays short and light on framework. Where a step differs by vendor, a short "On Neon" or "On Supabase" line covers it.
 
-Two sections are required in every guide, in this order, at the end:
+Every guide ends with three sections, in this order. They separate how I work from what you should know, so you can tell my habits from the standard:
 
-- **What I'd do.** Starting from the simplest option that works, then what would make me add more. Every item says how: a command, a file, or a prompt to give the agent.
-- **Before you ship, check.** What an AI-built happy path leaves out, as 3 to 6 checks the reader can paste to their agent before merging. Each check is something the stop taught, phrased so you can answer yes or no.
+- **How I do it.** What I do on my own side projects: the simplest option that works, labeled as mine. Every item says how: a command, a file, or a prompt to give the agent.
+- **The standard.** What professional teams do beyond that, and the signal that it's time for you to do it too: real users, real money, a second engineer, or scale. This is the part to come back to.
+- **Before you ship, check.** The floor, every time: 3 to 6 yes/no checks the reader can paste to their agent before merging. Each one is something the stop taught.
 
 Each guide's frontmatter records:
 

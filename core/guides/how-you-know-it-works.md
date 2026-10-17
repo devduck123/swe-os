@@ -10,7 +10,7 @@ reviewed: 2026-10-06
 concerns: [testing]
 ---
 
-A test is a claim about your app's behavior that you can check again for free, forever. "A user can't mark someone else's invoice paid" is a claim. A test turns it into something a machine re-proves on every change. What you want is confidence that the things people depend on still work after the next change. Coverage, the share of your code that tests run, tells you which lines ran, not whether anything checked what they did.
+A test is a claim about your app's behavior that you can check again for free, forever. "A user can't mark someone else's invoice paid" is a claim. A test turns it into something a machine re-proves on every change. You want confidence that what people depend on still works after the next change. Coverage, the share of your code that tests run, tells you which lines ran, not whether anything checked what they did.
 
 ## "It worked when I clicked it" expires with the next change
 
@@ -22,11 +22,11 @@ Clicking proves the code worked once, on the path you tried. With agents, code c
 
 Start where a silent break would hurt most:
 
-1. **The behavior users depend on.** The core action, sign-in, and anything involving money.
-2. **The failure paths.** The wrong user, invalid input, an expired session, a failed payment. AI-built code handles the happy path. These are where it doesn't.
+1. **The behavior users depend on.** The core action, sign-in, and anything with money.
+2. **The failure paths.** The wrong user, invalid input, an expired session, a failed payment. AI-built code handles the happy path, and these are where it doesn't.
 3. **The bug you just fixed.** Write a test that reproduces it first. It fails, you fix the code, it passes, and that bug can't quietly come back.
 
-Skip tests for throwaway prototypes, trivial glue, and what your framework already guarantees. Don't test that React renders a `div`.
+Skip tests for throwaway prototypes, trivial glue, and what your framework guarantees. Don't test that React renders a `div`.
 
 ## Each kind of test buys a different kind of confidence
 
@@ -53,7 +53,7 @@ test("a user can't mark someone else's invoice paid", async () => {
 });
 ```
 
-That one test covers the authorization check, the query, and the fact that nothing was written.
+That one test covers the authorization check, the query, and that nothing was written.
 
 **Isolate tests from day one.** If tests share rows, they pass alone and fail together. Empty the tables before each test, and run integration test files one at a time (Vitest's `fileParallelism: false`) so they can't wipe each other's rows.
 
@@ -99,13 +99,24 @@ Put formatting, lint (a scan for suspicious code), type checks, and tests behind
 
 A flaky test (one that fails at random) does more damage than its own failure. People learn to hit re-run, then to ignore red, and then a real failure ships looking like every other flake. Fix it, or skip it on purpose with an owner and a date.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - **A real Postgres for tests.** On Supabase, `supabase start` runs one locally. Install Docker Desktop first, which runs the database in a container (an isolated box on your machine). In CI, add the `supabase/setup-cli` action (a ready-made step) and run `supabase db start`. Otherwise, use the Docker setup from [local first, then managed](local-first-then-managed.md), and a [Neon branch](https://neon.com/docs/introduction/branching) per CI run.
 - **Tests for the rules.** Ask your agent: "Add Vitest integration tests against the local database proving a user can't read or change another user's invoices. Empty the tables before each test."
 - **One `check` script, required to merge.** [start-project](../../skills/start-project/SKILL.md) sets it up with one real smoke test.
 
-I'd add Playwright once the app has a flow I'd be embarrassed to see broken, usually sign-up and the core action. I'd ignore coverage percentages.
+I add Playwright once the app has a flow I'd be embarrassed to see broken, usually sign-up and the core action. I ignore coverage percentages.
+
+## The standard
+
+Teams go further once the signal shows up. More in the [testing concern](../concerns/testing.md#when-stakes-rise).
+
+- **Run end-to-end tests of critical flows in CI, at phone and desktop widths.** When people pay you or rely on it daily.
+- **Test with empty and production-sized data.** When real users bring real data.
+- **Test recovery, races, and abuse.** When money, shared data, or a public endpoint is involved.
+- **Treat a flaky test as a bug with an owner and a date.** When a second engineer starts re-running red builds.
 
 ## Before you ship, check
 

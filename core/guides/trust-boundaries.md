@@ -128,7 +128,9 @@ using (
 
 Update policies also need `with check`, which tests the row after the change, so nobody moves an invoice into another org. `org_members` needs a policy that lets users read their own rows.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - Ask your agent for a data access layer: query functions that take the user from the session, filter by owner, return only what the UI shows, and answer `404` when the row isn't theirs.
 - Count your own email and AI routes in a Postgres table, and keep your auth library's limits on.
@@ -136,7 +138,13 @@ Update policies also need `with check`, which tests the row after the change, so
 
 On Supabase, the dashboard's Security Advisor flags tables in `public` without RLS. Turn it on for each, add policies like the one above, and run the user-B test.
 
-I'd add Postgres RLS as a second wall when a forgotten `where` would leak another company's data, and a real permissions model once roles stop fitting in one `if`.
+## The standard
+
+- **Postgres RLS backs up the app's checks as a second wall.** Do it once a forgotten `where` would leak a real customer's data to another.
+- **Permissions live in a real model, not scattered `if`s.** Do it once roles stop fitting in one `if`.
+- **Someone walks the abuse cases:** sends what an attacker would, and checks the result. Do it once real users or real money show up ([security](../concerns/security.md)).
+- **Every copy of personal data is traced, and deletion reaches each one.** Do it once you hold real users' data, or GDPR applies ([privacy](../concerns/privacy.md)).
+- **The API has a written contract that changes only by adding fields.** Do it when another team's app calls it ([API contracts](../concerns/api-contracts.md)).
 
 ## Before you ship, check
 

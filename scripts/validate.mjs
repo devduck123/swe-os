@@ -115,11 +115,11 @@ for (const file of [
     // Every stop ends the same way: what to do, then checks to paste to the agent, then sources.
     const text = read(file).replace(/^```[^\n]*\n[\s\S]*?^```/gm, '');
     const heads = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
-    const end = heads.filter((h) => h !== 'Sources').slice(-2);
+    const end = heads.filter((h) => h !== 'Sources').slice(-3);
     assert.deepEqual(
       end,
-      ["What I'd do", 'Before you ship, check'],
-      `${file} must end with "## What I'd do", then "## Before you ship, check", then Sources`,
+      ['How I do it', 'The standard', 'Before you ship, check'],
+      `${file} must end with "## How I do it", "## The standard", then "## Before you ship, check", then Sources`,
     );
     // Plain bullets, not "- [ ]": a task-list checkbox renders as an unlabeled form input.
     const checks =

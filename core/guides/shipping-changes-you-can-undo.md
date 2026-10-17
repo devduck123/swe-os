@@ -100,13 +100,13 @@ Vercel's **Instant Rollback** points your domain back at an earlier production d
 
 After a rollback, merges to main stop going live until you undo the rollback in the Vercel dashboard.
 
-Remember what it can't undo: rows written, migrations run, messages sent, cards charged. Before you merge anything that does those, ask: "If I roll this back in ten minutes, what's still wrong?" If it's a lot, put it behind a flag or ship the risky part separately.
+Before you merge anything that writes rows, runs a migration, sends messages, or charges cards, ask: "If I roll this back in ten minutes, what's still wrong?" If it's a lot, put it behind a flag or ship the risky part separately.
 
 After each production deploy, load the real URL, run one critical flow, and watch error tracking for ten minutes. If anything looks wrong, roll back first and investigate second.
 
-## What I'd do
+## How I do it
 
-Every change gets a branch under a day old and a PR, and I click through its preview before merging. To set it up:
+On my own side projects, every change gets a branch under a day old and a PR, and I click through its preview before merging. To set it up:
 
 - **CI.** Add the `check.yml` above.
 - **Branch protection.** In the repo's GitHub settings, add a rule for main: require a PR, require `check` to pass, and include administrators.
@@ -114,7 +114,16 @@ Every change gets a branch under a day old and a PR, and I click through its pre
 - **Migrations.** Add a `db:migrate` script and set the `buildCommand` above. On Supabase, turn on the GitHub integration instead.
 - **Dependency updates.** Ask your agent: "Add a Dependabot config for npm and GitHub Actions." It's GitHub's bot that opens update PRs.
 
-I'd add a database-row flag once I want to try a feature on just my account in production, and a managed flag service once I need percentage rollouts.
+I add a database-row flag once I want to try a feature on just my account in production.
+
+## The standard
+
+Teams go further once the signal shows up. More in the [deployment concern](../concerns/deployment.md#when-stakes-rise).
+
+- **Write down the stop condition before a risky rollout**, like "if checkout errors pass 1%, roll back." When real users or money are on the line.
+- **Release risky features to a percentage of users first.** When one bad release would hit everyone at once.
+- **Script the post-deploy check.** When you deploy daily, or someone else deploys too.
+- **Rehearse data changes on a copy with real-sized data.** When a migration or backfill touches a table users depend on.
 
 ## Before you ship, check
 

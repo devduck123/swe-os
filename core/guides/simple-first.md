@@ -10,11 +10,11 @@ track: 4
 concerns: [performance, reliability, cost, dependencies]
 ---
 
-Build the simplest thing that fully solves today's problem. For most new web apps, that's one app talking to one database. Every piece you add after that, whether it's a service, a layer, a store, or a package, has to name the problem it solves and point at evidence that the problem is real. Each piece is something to deploy, secure, upgrade, keep in sync, and debug at 2 a.m., and you pay that every day whether or not it earns it.
+Build the simplest thing that fully solves today's problem. For most new web apps, that's one app talking to one database. Every service, layer, store, or package you add after that has to name the problem it solves and the evidence that it's real. Each piece is something to deploy, secure, upgrade, keep in sync, and debug at 2 a.m., and you pay that whether or not it earns it.
 
 ## The 50-user app an agent overbuilds
 
-You're building a booking app for a friend's yoga studio. About 50 regulars book classes, cancel, and get a confirmation email. You ask an agent to set it up properly, and what comes back looks like every tutorial at once. Go piece by piece and ask what each one solves for this app.
+You're building a booking app for a friend's yoga studio. About 50 regulars book classes, cancel, and get a confirmation email. You ask an agent to set it up properly, and what comes back looks like every tutorial at once. Ask what each piece solves here.
 
 - **A separate Express API next to Next.js.** Next.js already runs server code. Server components read the database, and server actions handle writes. A second server means two deploys, and two copies of what a booking looks like that slowly stop matching.
 - **A Zustand store (shared state in the browser) that copies bookings from the API.** Bookings live in Postgres. A client copy is a second source of truth, and every mutation has to update both or someone sees a class that's already full.
@@ -23,7 +23,7 @@ You're building a booking app for a friend's yoga studio. About 50 regulars book
 - **Docker Compose running Postgres, Redis, and the API.** Production is Vercel and Neon. A container stack that only exists on your laptop drifts from what actually runs. One Postgres container for local dev is fine ([local first, then managed](local-first-then-managed.md)).
 - **Twelve packages for the booking form.** Each one is code you didn't read, can break on update, and ships to the browser if a client component imports it. A native date input and one date library cover this form.
 
-The right architecture is one Next.js app on Vercel, Postgres on Neon, and an email provider, with a folder per feature like `bookings/` and `email/`, each holding one file of queries that checks who's asking.
+For this app, I'd pick one Next.js app on Vercel, Postgres on Neon, and an email provider, with a folder per feature like `bookings/` and `email/`, each holding one file of queries that checks who's asking.
 
 ## Every piece adds a way to fail
 
@@ -33,7 +33,7 @@ Layers and packages cost less each but add up. A layer is one more file to read 
 
 ## Adding is cheap later, removing is a rewrite
 
-Adding a cache to a working app is a small change you can make the week you need it. Folding a separate API back into the app, or deleting three layers from every feature, touches everything. When you're unsure, take the path you can still change cheaply ([prefer reversible decisions](../principles.md#prefer-reversible-decisions)). Martin Fowler's "MonolithFirst" makes the same case for a monolith (one app that does everything): you rarely know the right boundaries at the start.
+Adding a cache to a working app is a small change, made the week you need it. Folding a separate API back into the app, or deleting three layers from every feature, touches everything. When you're unsure, take the path you can still change cheaply ([prefer reversible decisions](../principles.md#prefer-reversible-decisions)). Martin Fowler's "MonolithFirst" makes the same case for a monolith (one app that does everything): you rarely know the right boundaries at the start.
 
 ## What earns each piece
 
@@ -45,11 +45,11 @@ Every trigger below is a measurement or a fact about today. "We might get big" i
 - **Client state store.** Earned by browser-only state shared across distant components, like an editor or canvas. Never a copy of server data.
 - **Repository layers.** Earned by the same query copied in three places, or a second data source you actually have.
 
-## What I'd do
+## How I do it
 
-My default is the [side-project stack](../recipes/side-project-stack.md): the architecture above, with Drizzle and managed auth. On Supabase, the shape is the same: one Next.js app and one Supabase project.
+On my own side projects, my default is the [side-project stack](../recipes/side-project-stack.md): the architecture above, with Drizzle and managed auth. On Supabase, the shape is the same: one Next.js app and one Supabase project.
 
-Before I add anything else, I write in `PROJECT.md` the problem it solves and the number that proves it, like "the bookings page takes 3 seconds, and 2.5 of that is one query." To get it, check the page in the browser's Network tab, then ask your agent: "Log how long each database query takes on this page."
+Before I add anything else, I write in `PROJECT.md` the problem it solves and the number that proves it, like "the bookings page takes 3 seconds, and 2.5 of that is one query." To get it, time the page in the Network tab, then ask your agent: "Log how long each database query takes on this page."
 
 When an agent proposes a new piece, ask it: "What problem does this solve today, and what's the evidence?"
 
@@ -58,6 +58,13 @@ When a trigger above fires, here's what I'd reach for:
 - **A cache:** Next.js caching first, Redis after.
 - **A job system:** [background jobs and webhooks](background-jobs-and-webhooks.md) covers which one.
 - **A second service,** once one part needs a different runtime, like a Python worker for a model.
+
+## The standard
+
+- **Every new piece gets a short written decision that another engineer reviews.** Do it when a second engineer joins.
+- **Each service has a billing alert, and a cost estimate for a bad month.** Do it once real money is on the line ([cost](../concerns/cost.md)).
+- **Dependencies get updated on purpose,** with Dependabot or Renovate and an audit in CI. Do it once real users depend on it ([dependencies](../concerns/dependencies.md)).
+- **Each service has an exit plan:** how you'd export the data, and what a swap would touch. Do it once real users' data lives there.
 
 ## Before you ship, check
 

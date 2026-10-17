@@ -106,7 +106,7 @@ CREATE TABLE jobs (
 );
 ```
 
-The request inserts a row, then processes it right away, inline or in `after()`. On success, set `status` to `done`. On an error, add one to `attempts` and save `last_error`. After five attempts, set `status` to `failed` and report it to Sentry, where a person will see it.
+The request inserts a row, then processes it right away, inline or in `after()`. On success, set `status` to `done`. On an error, add one to `attempts` and save `last_error`. After five attempts, set `status` to `failed` and report it to Sentry, where you'll see it.
 
 The cron sweep is the safety net. It picks up anything pending for more than a few minutes and processes it the same way:
 
@@ -144,15 +144,25 @@ Postgres session advisory locks are the textbook tool here, but they don't survi
 
 </details>
 
-## What I'd do
+## How I do it
 
-For a Next.js app on Vercel with Neon or Supabase:
+On my own side projects (Next.js on Vercel, with Neon or Supabase):
 
 - For slow work, ask your agent: "Move the slow part of this route into a `jobs` table with status, attempts, and last_error. Insert the row in the request and process it in `after()`."
 - For webhooks, copy the handler above. `stripe listen --forward-to localhost:3000/api/webhooks/stripe` sends test events to your machine.
-- Ask your agent: "Add a Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap." On Hobby it runs once a day, so a stuck job can wait a day and five attempts take five days. If that's too slow, sweep every few minutes with Vercel Pro or Supabase Cron.
+- Ask your agent: "Add a Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap." On Hobby a stuck job can wait a day, and five attempts take five days. Too slow? Sweep every few minutes with Vercel Pro or Supabase Cron.
 
-I'd move to a hosted job service once I need retries with backoff, steps that wait on each other, or runs longer than a function's time limit. Past that, I'd be rebuilding one badly in a table.
+I switch to a hosted job service once I need backoff or steps that outlast one function. Past that, I'd be rebuilding one badly in a table.
+
+## The standard
+
+Teams go further once the signal shows up. More in the [reliability concern](../concerns/reliability.md#when-stakes-rise).
+
+- **Alert on failed jobs and an aging backlog, and name who responds.** When real users wait on a job's result, like a receipt email.
+- **Tie every job and webhook to a request ID.** When support tickets or a second engineer show up.
+- **Send an idempotency key with every outbound charge or email.** When it's real money or real customers.
+- **Reconcile your records against Stripe's on a schedule.** When you take real money.
+- **Test the crash and race cases on purpose.** When a duplicate would cost money or trust.
 
 ## Before you ship, check
 

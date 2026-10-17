@@ -107,9 +107,9 @@ Good alerts for a side project:
 
 Bad alerts: every error event, CPU usage, one slow request. Look at those weekly. Then break each alerted thing once on purpose to see the alert fire.
 
-## What I'd do
+## How I do it
 
-Before the first real user:
+On my own side projects, before the first real user:
 
 - Run `npx @sentry/wizard@latest -i nextjs`, add `SENTRY_AUTH_TOKEN` in Vercel, then ask your agent: "Set Sentry's release to `VERCEL_GIT_COMMIT_SHA` and its environment to `VERCEL_ENV`."
 - Ask your agent: "Add a JSON `log()` helper, make a request ID at the top of every route handler and server action, log it with every error, tag it in Sentry, and show it on the error page."
@@ -117,7 +117,17 @@ Before the first real user:
 - Ask your agent: "Wrap <my most important job> in `Sentry.withMonitor`."
 - Ask your agent: "Add a Vercel cron route that runs once a day, counts yesterday's signups, payments received vs. marked paid, and failed jobs, and emails me the numbers."
 
-No dashboards, log platform, or tracing yet. I'd add a log drain (Vercel Pro forwarding every log line to a log service) once I keep needing logs older than a day, and tracing (a timeline of one request) once I can't tell which call in a slow request is slow.
+No dashboards, log platform, or tracing yet.
+
+## The standard
+
+The [observability concern](../concerns/observability.md) has the full list.
+
+- **Logs kept for weeks in a log service,** through a Vercel Pro log drain. Once you keep needing logs older than a day.
+- **Tracing,** a timeline of one request across every call it makes. Once you can't tell which call in a slow request is slow.
+- **Success rate and latency on each critical path, watched all day.** Once a few hours of failed payments would cost real money.
+- **An owner for every alert, and an on-call rotation.** Once there's a second engineer, or users would notice an outage before you wake up.
+- **A paid Sentry plan for the team.** With a second engineer, since the free plan has one user.
 
 ## Before you ship, check
 

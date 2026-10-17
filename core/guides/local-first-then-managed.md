@@ -134,15 +134,24 @@ Keep a Neon branch called `dev` that holds only seed data. Then create preview b
 
 </details>
 
-Free tiers have cliffs, and the one that hurts is rarely the obvious limit. Read [the side-project stack's cliffs](../recipes/side-project-stack.md#what-it-costs) before you sign up.
+Free tiers have cliffs, rarely where you'd expect. Read [the side-project stack's cliffs](../recipes/side-project-stack.md#what-it-costs) before you sign up.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - **Laptop first.** `npx supabase start` on Supabase, Postgres in Docker otherwise. Then ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)."
-- **Then previews.** Connect the repo to Vercel, then add Neon's integration. Once real users arrive, ask your agent: "Create each preview's Neon branch in CI from a `dev` branch that holds only seed data, never from production."
-- **Then one service per feature,** in the order above. [The side-project stack](../recipes/side-project-stack.md) puts the whole thing together.
+- **Then previews.** Connect the repo to Vercel, then add Neon's integration.
+- **Then one service per feature,** in the order above. [The side-project stack](../recipes/side-project-stack.md) puts it all together.
 
-I'd pick Supabase instead of Neon when I want its auth and storage too.
+I pick Supabase over Neon when I want its auth and storage too.
+
+## The standard
+
+- **Previews branch from seed data, never from production,** as in the Going deeper above. Adopt it once real users' data is in production.
+- **Backups, and a restore you've practiced.** Adopt them once users have data you can't recreate.
+- **A billing alert or hard cap on every service, and a written usage level where you'd switch.** Adopt it once a card is on file.
+- **A smoke test of the built app, and a release you can stop with a flag or a quick revert.** Adopt it once a second engineer ships or users would notice a bad deploy. More in [deployment](../concerns/deployment.md).
 
 ## Before you ship, check
 

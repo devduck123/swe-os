@@ -104,13 +104,19 @@ shadcn/ui is built on Radix or Base UI, unstyled component libraries that do the
 
 Automated tools are step 3 of 4 for a reason. In 2017, the UK's Government Digital Service ran ten checkers on a page seeded with 143 known barriers. The best one found about 40%. A tool can tell that an image has alt text. It can't tell whether the alt text is right.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - shadcn/ui for anything interactive (`npx shadcn@latest add dialog`), native elements for everything else, and a `<label>` on every input.
 - The five-minute check before merging any UI change.
 - Ask your agent: "Add `@axe-core/playwright` to the Playwright tests for signup and checkout, so accessibility violations fail CI."
 
-For anything people pay for, I'd add a pass with NVDA, a Windows screen reader, and keep a list of known barriers. If I'm selling to schools, governments, or enterprises, I'd pay for a proper audit.
+## The standard
+
+- **WCAG 2.2 AA, the numbers in the Going deeper above, as a written target.** Adopt it once a law like the European Accessibility Act or a customer contract could apply to you.
+- **A screen reader pass with NVDA, a Windows screen reader, on the critical journey, and a written list of known barriers.** Adopt it once people pay for the product.
+- **A proper audit by accessibility specialists.** Adopt it once you sell to schools, governments, or enterprises. More in [accessibility](../concerns/accessibility.md).
 
 ## Before you ship, check
 

@@ -105,16 +105,23 @@ A database branch is a copy you can wreck. Neon branches include the parent's da
 
 Before any destructive step, [restore a backup into a branch and check it](when-production-breaks.md).
 
-## What I'd do
+## How I do it
 
-For a Next.js app on Neon or Supabase:
+On my own side projects (Next.js on Neon or Supabase):
 
 - **Review the SQL.** On Drizzle, `push` locally, then `generate`, and read the SQL file in the PR. On Supabase, edit tables only locally, run `supabase db diff -f <name>`, and read that file.
 - **Split risky changes.** Additive changes go out in one step. For a rename, type change, or drop, ask your agent: "Plan this as expand, migrate, switch, contract, one PR per step."
 - **Guard big tables.** `SET lock_timeout = '5s';` first in any migration that touches one, and build indexes `CONCURRENTLY` with the `psql` command in "Going deeper".
 - **Script backfills.** Ask your agent: "Write a script that runs this batched `UPDATE` until it updates 0 rows, pausing between batches and logging progress." Rehearse it first.
 
-Once more than one person writes migrations, I'd add a migration linter, a tool that flags locking statements in the PR.
+## The standard
+
+Teams go further once the signal shows up. More in the [migrations concern](../concerns/migrations.md#when-stakes-rise).
+
+- **Lint migrations in CI**, with a tool that flags locking statements in the PR. When more than one person writes migrations.
+- **Write down when you'd stop and roll back** before any destructive step. When the table holds data users can't recreate.
+- **Practice restores on a schedule**, not only before a drop. When losing a day of data would hurt real users.
+- **Check the query plan for new indexes and frequent queries.** When a page slows down as a table grows.
 
 ## Before you ship, check
 
