@@ -24,7 +24,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 6. **Add the quality gates.** Formatter, linter, typecheck, and a test runner with one smoke test, all behind a single `check` script.
 7. **Add CI.** Run `check` on every PR. Recommend connecting the repo to Vercel for preview deploys.
 8. **Keep it local first.** `npm run dev`, or the equivalent, works with seed data and no paid service. Add external services later, one at a time, as features need them. See [local first, then managed services](../../core/guides/local-first-then-managed.md).
-9. **Verify from scratch.** Clone into a fresh directory, follow only the README, and confirm `check` passes. Then try committing a fake secret and confirm the scan blocks it.
+9. **Verify from scratch.** Clone into a temporary directory outside the project (`mktemp -d`), follow only the README, and confirm `check` passes. Delete the clone afterwards. Then try committing a fake secret and confirm the scan blocks it.
 
 ## Stop rules
 
