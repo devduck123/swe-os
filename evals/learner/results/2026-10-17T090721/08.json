@@ -1,0 +1,85 @@
+[
+  {
+    "takeaway": "Start on my laptop with Next.js, a local database, and fake seed data, and only sign up for a hosted service like auth, email, or payments when a feature I'm building actually needs it.",
+    "intended": "Build on your laptop first and add hosted services one at a time, on free tiers, only when a feature needs them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "as in the Going deeper above",
+        "why": "There's no Going deeper section above me, so I couldn't find what this rule refers to. It also seems to contradict 'How I do it', which says to add Neon's integration, when the previous section said Neon copies production's data into every preview. I don't know which one to follow."
+      },
+      {
+        "quote": "If your Vercel build command runs migrations",
+        "why": "I don't know if mine does or how to check. I've never looked at a build command. This sounds dangerous, but nothing tells me what to do about it."
+      },
+      {
+        "quote": "a release you can stop with a flag",
+        "why": "Flag, smoke test, and quick revert are all unexplained here. I skimmed that line because it read like it was for a team."
+      }
+    ],
+    "skimmed": [
+      "The Docker section, because I'm on Supabase and the page told me to skip it",
+      "The service order list after Payments, because 'webhooks, refunds, taxes' felt like a someday problem",
+      "The standard, because every bullet says 'adopt it once...' and I don't have users yet"
+    ],
+    "jargon": [
+      "webhooks",
+      "pricing cliff / cliffs",
+      "lint",
+      "types (as in tsc --noEmit)",
+      "transactional email provider",
+      "Drizzle / Prisma / drizzle-kit (named but never said what they are)",
+      "tsx",
+      "smoke test",
+      "flag (feature flag)",
+      "revert",
+      "image (Docker)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it says to add Neon's integration for previews, but the page just warned that Neon copies production's personal data into every preview. I need to be told what to do instead: turn off data copying, use Supabase branches, or that it's fine until I have users. On Supabase, I'm also not told whether I still need the db:migrate and db:seed scripts or what setup should look like.",
+    "cut": "The Errors row in the table ('Off, since the console is right there'). It's obvious, and error tracking is already covered in the numbered list. I'd also cut the one-line Supabase vs Neon preference in How I do it unless it explains when that choice matters for me.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Build on my laptop with a local database and a `npm run setup` that works from a fresh clone, then add hosted services one at a time only when a feature needs them, and never let preview deploys touch my real production database.",
+    "intended": "Start day one on your laptop, and add hosted services only when a feature needs them, one at a time, on their free tier.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "as in the Going deeper above",
+        "why": "There's no Going deeper above me. It points at something I can't see, so I don't know what 'previews branch from seed data' means or how to set it up. Is that a Neon setting? A Supabase thing? I'm stuck."
+      },
+      {
+        "quote": "Neon's Vercel integration creates a branch",
+        "why": "I know 'branch' from git. A database branch is glossed as a 'throwaway copy', but then 'each preview branch copies production's data' and 'Supabase preview branches start empty' made me unsure whether I'm on Neon, Supabase, or both, and which of these I'm supposed to be doing."
+      },
+      {
+        "quote": "That reset replaces `db:migrate` and `db:seed` below",
+        "why": "It references scripts I haven't seen yet. When I got to the package.json, I didn't know if I'm supposed to keep `setup` as written on Supabase or change it to `supabase db reset`. The stop never shows the Supabase version of `setup`."
+      }
+    ],
+    "skimmed": [
+      "The service table. Better Auth, Clerk, Mailpit, Sentry, Vercel Blob are just names to me, and I won't need most of them this week.",
+      "The Standard. Every bullet says 'adopt it once' something I don't have yet (users, a card on file, a second engineer), so it reads as not-for-me-now.",
+      "The Docker path, because I'm on Supabase."
+    ],
+    "jargon": [
+      "webhooks",
+      "smoke test",
+      "release you can stop with a flag",
+      "transactional email provider",
+      "image (in 'postgres:18 is the image to run')",
+      "port",
+      "Better Auth / Clerk (no hint what they are beyond being in the Auth row)",
+      "prettier, eslint, tsc, vitest (in the check script, named but not said which is format/lint/types/tests)",
+      "tsx",
+      "pricing cliff / free tier cliffs (never said what one looks like)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The Supabase version of the `setup` script, since I'm told it replaces two of the commands but not shown what to write. How to actually make previews use seed data instead of production. The standard points at a Going deeper that isn't there. One concrete example of a free-tier cliff, so I know what I'm watching for before I click the link.",
+    "cut": "The 'Each service leans on the ones before it' numbered list. The table right after already gives the order, and the reasons ('Mostly sent about users and their stuff') don't change anything I'd do.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

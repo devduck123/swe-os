@@ -114,7 +114,7 @@ On my own side projects:
 
 ## The standard
 
-- **WCAG 2.2 AA, the numbers in the Going deeper above, as a written target.** Adopt it once a law like the European Accessibility Act or a customer contract could apply to you.
+- **WCAG 2.2 AA as a written target,** the published standard the checks above come from. Adopt it once a law like the European Accessibility Act or a customer contract could apply to you.
 - **A screen reader pass with NVDA, a Windows screen reader, on the critical journey, and a written list of known barriers.** Adopt it once people pay for the product.
 - **A proper audit by accessibility specialists.** Adopt it once you sell to schools, governments, or enterprises. More in [accessibility](../concerns/accessibility.md).
 

@@ -148,7 +148,7 @@ I pick Supabase over Neon when I want its auth and storage too.
 
 ## The standard
 
-- **Previews branch from seed data, never from production,** as in the Going deeper above. Adopt it once real users' data is in production.
+- **Previews branch from seed data, never from production,** created in CI from a seed-only branch. Adopt it once real users' data is in production.
 - **Backups, and a restore you've practiced.** Adopt them once users have data you can't recreate.
 - **A billing alert or hard cap on every service, and a written usage level where you'd switch.** Adopt it once a card is on file.
 - **A smoke test of the built app, and a release you can stop with a flag or a quick revert.** Adopt it once a second engineer ships or users would notice a bad deploy. More in [deployment](../concerns/deployment.md).

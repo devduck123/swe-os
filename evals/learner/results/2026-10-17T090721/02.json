@@ -1,0 +1,86 @@
+[
+  {
+    "takeaway": "When something breaks, figure out which hop failed (browser, CDN, function, database), and check that my Vercel function region matches my database region.",
+    "intended": "A click travels through a chain of hops (browser, CDN, function, database), and debugging comes down to asking which hop broke.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a CORS error: the browser blocked",
+        "why": "I get that the browser blocked something, but not why it would, or what 'another site' means when it's my own API. I wouldn't know what to fix."
+      },
+      {
+        "quote": "Next.js adds `s-maxage` to pages it caches, like ones with `export const revalidate`",
+        "why": "Too dense. I don't know what revalidate does or whether my pages use it, so I can't tell if this applies to me. The scary part is buried: the CDN can show one user's page to everyone. It deserves its own plain sentence."
+      },
+      {
+        "quote": "a timeout, inside one deadline per request",
+        "why": "I don't know what a deadline is here, or how it differs from a timeout. It reads like it's written for someone else."
+      }
+    ],
+    "skimmed": [
+      "The standard: latency budgets, load tests, and rotation plans are for teams with real users. It says 'do it later', so I'd skip it.",
+      "The state list: six bullets of 'survives X'. I'd read the first few and slide past the rest, though the server memory paragraph after it caught me."
+    ],
+    "jargon": [
+      "CDN (only described as 'Vercel's servers near the user' in step 1, never named plainly)",
+      "CORS",
+      "504 / gateway",
+      "region / iad1 / fra1 (sort of clear from context)",
+      "connection pool ('a pool of open connections')",
+      "server actions",
+      "public (as a Cache-Control value)",
+      "revalidate",
+      "load test",
+      "deadline",
+      "least access / rotation plan"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The Supabase line says 'match that one' but never says where to see a Supabase project's region. The `server-only` tip doesn't say it's an npm package I might need to install. The agent prompt about s-maxage doesn't say what to do if it finds one (remove it? make the page dynamic?).",
+    "cut": "The Standard section. It's three future-tense items for a team I'm not on, and it pulls attention from the checklist right after it, which I'd actually use.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When my app breaks, I figure out which hop failed (browser, CDN, function, or database), and I set my Vercel function region to match my database's region so I'm not paying for trips across the ocean.",
+    "intended": "A click travels a chain of hops (browser, CDN, function, database), and knowing that chain turns debugging into asking which hop broke.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Next.js adds `s-maxage` to pages it caches, like ones with `export const revalidate`",
+        "why": "I had just started to follow max-age vs s-maxage, and then this throws in revalidate with no explanation. I don't know if my pages do this or how I'd tell. It's also unclear why the session cookie 'doesn't stop that'. Does that mean another user could see my dashboard? That's the scary part, and it goes by in half a sentence."
+      },
+      {
+        "quote": "dashboard under 300 ms for 95% of requests",
+        "why": "I don't know what a load test is or how to run one. 'Latency budget' and '95% of requests' read like on-call language. 'One deadline per request' and 'a rotation plan' are the same: I have no idea what doing these would look like."
+      },
+      {
+        "quote": "auth libraries sign theirs to spot edits",
+        "why": "I don't know what 'sign' means here. I can guess it's some kind of tamper check, but I can't tell whether I need to do anything."
+      }
+    ],
+    "skimmed": [
+      "The Standard: it's clearly for a team with real users and a second engineer. I'm not there, so I skipped it.",
+      "The state list: it's useful, but six bullets in the same pattern on a phone made my eyes glaze. I only remembered the server memory part because it got its own paragraphs.",
+      "The trust-boundaries and secrets links: I didn't tap them, and I didn't feel like I had to."
+    ],
+    "jargon": [
+      "route handlers",
+      "server actions",
+      "CORS (it says what happens but not why the browser does it)",
+      "pool of open connections",
+      "revalidate",
+      "public (as a Cache-Control value, it only shows up in the checklist)",
+      "latency budget",
+      "load test",
+      "95% of requests / p95",
+      "deadline per request",
+      "rotation plan",
+      "sign (cookies)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Changing the region and adding 'server-only' I can do right now. The caching check I'd have to hand to my agent blind: I don't know how to tell whether a page depends on who's signed in, or what to change if one does. A one-line 'if it does, remove s-maxage, or mark it private/no-store' would let me act. Same for the module-scope database client: I don't know if my current code creates it per request. Showing the wrong way next to the right way would help.",
+    "cut": "Cut 'How I do it' or 'Before you ship, check'. They're nearly the same five items, and reading both on a phone felt like reading the page twice. I'd keep the checklist since I can paste it, and fold the Network-tab tip into it.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

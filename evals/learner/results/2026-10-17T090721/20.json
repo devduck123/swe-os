@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Before letting the agent add Redis or any cache, time the slow page and count its queries, because it's probably one dumb query (like 51 queries in a loop) that a join or an index fixes.",
+    "intended": "Performance and cost work both start from a measured number: find the one slow thing (or the one billed thing) and fix that, instead of optimizing on a hunch.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AND (created_at, id) < ($1, $2)",
+        "why": "Code I couldn't follow. I get that OFFSET is slow when you page deep, but I don't know what a 'cursor' is, how comparing two columns at once works, or where $1 and $2 come from in my Next.js code. I'd just copy it and hope."
+      },
+      {
+        "quote": "the region is in the pooler host",
+        "why": "Unexplained term. I don't know what a pooler is. I'd open Supabase's Connect screen and hunt for something that says us-east-1, but I wouldn't be confident I'm reading the right string."
+      },
+      {
+        "quote": "data isn't cached unless you opt in",
+        "why": "A leap. Opt in how? It says every write has to 'clear the cached copy', but it never shows what clearing looks like in Next.js 16. I'd have to ask my agent, and then I couldn't check whether it got it right."
+      }
+    ],
+    "skimmed": [
+      "The standard: it reads like it's for a team with a second engineer and a launch. Latency budgets and load tests aren't me yet.",
+      "Core Web Vitals paragraph: three numbers I'd forget immediately. I kept 'use Speed Insights' and moved on.",
+      "Bound the work > Watch the bundle: one line about `next analyze` and Server Components. I half-understood it and didn't stop."
+    ],
+    "jargon": [
+      "invalidates / invalidation",
+      "cursor (pagination)",
+      "pooler / pooler host",
+      "load test",
+      "latency budget",
+      "payload",
+      "shared cache (where is 'somewhere it's shared'? a CDN? never named)",
+      "Server Components (I've heard it, couldn't explain why it keeps a library out of the browser)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it covers measuring well, but caching and rate limits stop short. If I do add a cache, it doesn't say how to opt in or clear it in Next.js 16. It says to rate-limit AI routes but only links elsewhere for how. For Supabase it says 'look for a loop' and gives no way to actually count queries like Drizzle's logger does.",
+    "cut": "The standard section. It's four items gated on things I don't have (real users depending on it, a second engineer, a growing bill), and it ends a practical page on a list I'll skip. Fold the billing-alert line into Know what you're billed for and drop the rest.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before letting the agent add Redis or any cache, time the slow page and count its queries. Mine is probably an N+1 that one join fixes.",
+    "intended": "Performance and cost work starts from a measured number: find the one slow thing (or the one billed thing) and fix that, instead of guessing.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AND (created_at, id) < ($1, $2)",
+        "why": "Code I couldn't follow. I don't know you can compare two columns at once like that, or where $1 and $2 come from in my app. The comment says 'the last row shown', but I don't see how my Next.js page passes that back in. I'd just tell the agent 'use cursor pagination' and hope."
+      },
+      {
+        "quote": "every write to that data has to clear the cached copy",
+        "why": "A leap. It tells me what has to happen, but not how. Is that revalidatePath? A tag? Also, how do I 'opt in' to caching in the first place? 'What invalidates it?' uses 'invalidates' without saying what that means in practice."
+      },
+      {
+        "quote": "the region is in the pooler host under **Connect**",
+        "why": "I don't know what a pooler host is. I'd open the Connect screen and squint at a long URL looking for something like 'us-east-1', without being sure I'm reading the right string."
+      }
+    ],
+    "skimmed": [
+      "The standard: latency budgets, load tests, a named owner, a second engineer. It's for a team I don't have, and it even says 'once there's a second engineer'.",
+      "Core Web Vitals paragraph: three numbers I won't remember. I'd just install Speed Insights like How I do it says.",
+      "The cursor pagination code block: too dense on a phone, and LIMIT/OFFSET is 'fine to start', so I'd stop there."
+    ],
+    "jargon": [
+      "invalidates",
+      "Seq Scan / Index Scan (half-explained by the comments, but I wouldn't recognize them in real output)",
+      "pooler host",
+      "load test",
+      "staleness window",
+      "Server Components (I've heard it, but don't know why a library 'never reaches the browser' there)",
+      "opt in (to caching in Next.js 16, with no hint of how)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "After EXPLAIN ANALYZE shows a Seq Scan, how do I know which index to create for my own query? The example gives one, but no rule of thumb like 'index the WHERE columns, then the ORDER BY column'. 'Set the provider's spend limit' needs a pointer to where that is. The checklist item 'cleared on every write' needs the actual Next.js call to ask the agent for.",
+    "cut": "The standard. None of it applies to me yet, and it adds four more things to feel bad about. The link to the performance concern could move into the opening.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

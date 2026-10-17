@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "Green CI doesn't mean the code is safe: I have to check that every route verifies who's signed in and that they're allowed to see that specific team's data, because the bug is usually what's missing.",
+    "intended": "Reading code tells you what's actually true about a system, and reviewing is deciding whether a change deserves to exist, which with agents is most of the job.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "sql`SELECT * FROM invoices WHERE team_id",
+        "why": "I got the point from the paragraph after, but I couldn't tell what the backtick sql thing is. Is that a Supabase thing? I use supabase.from('invoices'), so I'd have to trust the text that this is the bug."
+      },
+      {
+        "quote": "Ask Git why. Code tells you",
+        "why": "A leap. I commit with the agent and never look at history. I'd paste the prompt, but I wouldn't know if the answer is any good or what 'why' I'm looking for."
+      },
+      {
+        "quote": "branch protection",
+        "why": "Unexplained, and so is 'migrations' in the CODEOWNERS line. I skimmed past both."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's for teams with a second engineer, and I'm solo. It says so itself.",
+      "Read an unfamiliar codebase from the outside in: five steps, and I'm usually in my own codebase that the agent wrote. It feels like it's for someone joining a job.",
+      "The Google 100/1,000 lines sentence: fine, but I didn't need the citation."
+    ],
+    "jargon": [
+      "branch protection",
+      "migrations",
+      "entry points",
+      "edge cases",
+      "dependency (vet every new dependency)",
+      "env vars it expects (I know .env, but not 'expects')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The checklist says 'checks who's signed in and that they may access that record', but I never see what the fixed export route looks like. One corrected code block (get the user, check they're on teamId, return 403 otherwise) would let me actually spot it, not just know it's missing. Also nothing on what to do when the agent's review says everything's fine.",
+    "cut": "The Standard section. For me, as a solo dev on my phone, it's four 'when you have a team' items. The security concern link could go in one line under How I do it.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Green CI and a clean diff don't mean it's safe. The worst bug is often a check that's missing, like a route that never confirms I'm allowed to see that team's data, so I read auth, data, and money code line by line.",
+    "intended": "How to read code you didn't write to find out what's actually true, and how to decide whether an agent's change should be merged.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "What happens if the export has 100,000 rows?",
+        "why": "A leap. The self-check asks this as if I should know the answer, but nothing earlier explains why a big export is a problem (timeouts? memory? the bill?). I can't answer it, and the stop doesn't help me learn to."
+      },
+      {
+        "quote": "Review this PR with the review-change skill",
+        "why": "I don't know what a 'skill' is or whether my Cursor or Claude Code has it. Is it a file I install, or a phrase the agent already understands? The link goes to a SKILL.md, but on my phone I won't follow it."
+      },
+      {
+        "quote": "Teams go further once the signal shows up",
+        "why": "What signal? I couldn't tell if this meant 'when you hire someone' or something I'm supposed to notice. The bullets below explain it a bit, but the opening line lost me."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about teams, second engineers, and CODEOWNERS. I'm solo, so it felt like it was for someone else.",
+      "The Google 100 vs 1,000 lines line: fine, but I just need 'keep it small'."
+    ],
+    "jargon": [
+      "migrations (in CODEOWNERS bullet)",
+      "branch protection",
+      "abuse cases",
+      "edge cases",
+      "spec",
+      "diff (used a lot, never glossed, though I mostly get it from GitHub)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Show the fixed version of the export route, what 'check they're allowed to see this team' actually looks like in code. I use Supabase, so I'm also unsure whether row level security already covers this or whether I still need the check in the route. Without a fixed example, the checklist's first bullet is something I'd paste to the agent but couldn't verify myself.",
+    "cut": "The standard. It's for teams and apps with real users' data, and the solo reader this stop seems to target skims straight past it. A one-line link to the security concern would do.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
