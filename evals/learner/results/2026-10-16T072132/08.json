@@ -1,0 +1,82 @@
+[
+  {
+    "takeaway": "Run everything on my laptop first with Docker Postgres, a seed script, and one `npm run setup` command, then add hosted services one at a time only when a feature actually needs them, and never let previews touch prod data.",
+    "intended": "Build locally where feedback is instant and free, and add managed services one at a time on free tiers only when a feature needs them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "move preview branching to CI, as the details above show",
+        "why": "Nothing above shows how. I don't know what 'preview branching in CI' means or what to tell my agent, and this is the one step in What I'd do I couldn't start."
+      },
+      {
+        "quote": "a build that runs migrations runs them",
+        "why": "A leap. I didn't know a Vercel build could run migrations. Is mine doing that? Where would I check? It reads like a warning about something I can't see."
+      },
+      {
+        "quote": "GENERATED ALWAYS AS IDENTITY PRIMARY KEY",
+        "why": "The SQL block is the first migration I've ever seen, and nothing explains this line, `uuid`, or `timestamptz`. I got 'it makes a table' and moved on. Then `db:migrate` runs `drizzle-kit`, so I don't know if I write the SQL or Drizzle writes it."
+      }
+    ],
+    "skimmed": [
+      "The Stripe `stripe listen --forward-to` line: payments are week twelve for me, and I don't know what a webhook or a signing secret is.",
+      "The Neon paragraph about branches copying their parent's data. It felt important, but the 'quieter version' framing made me think it was a side note. I only got the point on a second read.",
+      "Most of the service table past Auth. I'd come back to it when I need email."
+    ],
+    "jargon": [
+      "webhooks",
+      "signing secret",
+      "transactional email provider",
+      "port (5432)",
+      "image (postgres:18)",
+      "primary key / identity",
+      "uuid",
+      "timestamptz",
+      "branch limit (Neon's Free plan)",
+      "CI preview branching"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Steps one and three I'd do today. Step two breaks: 'move preview branching to CI, as the details above show' points at details that aren't there. I need either the prompt to give my agent or one line saying what changes, like 'branch from a seeded empty database instead of production'. Also missing: should I write migrations as raw SQL or let Drizzle/Prisma generate them?",
+    "cut": "The Stripe webhook forwarding sentence under the table. It's the only line that's about week twelve on a day-one page, and it's full of terms I can't follow. It belongs on a payments page.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Run everything on my laptop first, with Postgres in Docker, a seed script, and one `npm run setup` command, and only sign up for a hosted service when a feature I'm actually building needs it.",
+    "intended": "Day-one setup: build locally where feedback is instant and free, then add managed services one at a time on free tiers as features need them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "move preview branching to CI, as the details above show",
+        "why": "Nothing above shows this. I scrolled back looking for how to do it and couldn't find it. It reads like it points at a section that's gone."
+      },
+      {
+        "quote": "Neon has a quieter version",
+        "why": "A quieter version of what? I couldn't tell if it meant a quieter risk or a Neon feature. I only got it on the second read: previews copy real user data."
+      },
+      {
+        "quote": "GENERATED ALWAYS AS IDENTITY PRIMARY KEY",
+        "why": "The SQL is dense and unexplained. I also don't know whether I write this file by hand or drizzle-kit makes it, since the next block uses drizzle without saying what it is."
+      }
+    ],
+    "skimmed": [
+      "The services table and the six-step list. They're useful later, but on day one I only need row one, so I glanced and moved on.",
+      "The `stripe listen` line. Payments are 'last', so a webhook command in a day-one stop is for future me.",
+      "The Supabase sentences mixed into the Docker path (`supabase init`, `db reset`). Two setups interleaved made me unsure which one I'm following."
+    ],
+    "jargon": [
+      "webhooks",
+      "signing secret",
+      "transactional email provider",
+      "drizzle-kit / prisma (named, never said what a migration tool is or which to pick)",
+      "timestamptz",
+      "port",
+      "image (in 'postgres:18 is the image')",
+      "Better Auth"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to 'move preview branching to CI', which is promised but never shown. Which migration tool to pick if I'm not on Supabase, and whether I write the SQL or the tool generates it. A clear fork at the top: Docker plus Neon, or Supabase, and then one path each instead of both interleaved.",
+    "cut": "The `stripe listen --forward-to ...` sentence. It's the most advanced line in a day-one stop, for the service the stop itself says comes last.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

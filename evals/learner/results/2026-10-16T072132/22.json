@@ -1,0 +1,86 @@
+[
+  {
+    "takeaway": "Every free tier has a hard cliff where things just stop working, so on Supabase I need custom SMTP before launch and should upgrade to Pro once real users' data is in there.",
+    "intended": "Here's a one-person web app stack (Next.js on Vercel, Postgres, auth, storage, email, payments, error tracking), why each piece is in it, and exactly where each free tier ends.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "100 CU-hours of compute a month",
+        "why": "Unexplained term. I don't know what a CU is, so I can't tell if 100 hours is a lot. The '17 days' line helps, but only for Neon, which I'm not using."
+      },
+      {
+        "quote": "each running copy of your function keeps its own count",
+        "why": "A leap. I didn't know Vercel runs several copies of my code at once, so I can't see why counting in memory breaks rate limits. I'd just paste the setting without understanding it."
+      },
+      {
+        "quote": "Pages read file URLs from Postgres, never from Blob's list()",
+        "why": "This rule only appears in the checklist. The body says list() counts toward the 2,000 operations, but never says 'don't use it to render pages, every page view burns one.' I had to piece that together."
+      }
+    ],
+    "skimmed": [
+      "Rate-limit auth in the database: it's mostly Better Auth config. I'm on Supabase, and my takeaway is one line ('built in, adjust in the dashboard').",
+      "Most of the What it costs price list: it's a wall of numbers for services I'm not using (Neon, Clerk, Blob). I jumped to the cliffs.",
+      "Getting it running: four links with no reason to click any of them right now."
+    ],
+    "jargon": [
+      "CU-hours",
+      "advanced operations",
+      "monthly retained users",
+      "short-lived signed token",
+      "signed webhook",
+      "connections (Postgres allows only so many)",
+      "transactional email provider",
+      "pg_dump",
+      "MFA",
+      "cron",
+      "TanStack Start"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For a Supabase user, it doesn't say what to do about Free pausing after a week of inactivity: upgrade, or ping it somehow? It doesn't say how to set up custom SMTP beyond 'under Authentication' (do I sign up for Resend first?). And there's no way to check whether something in my app 'queries every few minutes'.",
+    "cut": "The full What it costs price list. The cliffs list underneath carries the useful part, and the per-service pricing (Clerk Pro billed yearly, Sentry Team) is detail I'd look up when I actually upgrade.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Use one Next.js app on Vercel with managed free services, but know each free tier stops working suddenly, like Neon going dead around day 17 if something keeps pinging it, or Vercel Hobby being off-limits once I take payments.",
+    "intended": "Why each piece of a solo web-app stack is there, and exactly where each free tier ends, because those limits are abrupt.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "100 CU-hours of compute a month",
+        "why": "Unexplained unit. The '17 days' math saves it, but I don't know what a CU is or why the smallest database burns 100 of them in 17 days."
+      },
+      {
+        "quote": "never from Blob's `list()`",
+        "why": "This checklist rule appears from nowhere. The body only says list() counts as an 'advanced operation' and never says pages shouldn't call it or what happens if they do. 'Advanced operations' is never defined either."
+      },
+      {
+        "quote": "With supabase-js, queries go over HTTP",
+        "why": "A leap. I don't know why HTTP means no connection problem, or whether this applies if I'm on Supabase but using Drizzle. 'Each client holds open connections' also assumes I know what a connection is."
+      }
+    ],
+    "skimmed": [
+      "The 'What it costs' price list: a wall of plan names and numbers, and the cliffs section below repeats the parts that matter.",
+      "'Getting it running': it's only links, so on my phone I'd bookmark it and move on.",
+      "The Session/Stripe bullets under the diagram: 'short-lived signed token' and 'signed webhook' felt like they were for someone else."
+    ],
+    "jargon": [
+      "CU-hours",
+      "advanced operations",
+      "signed token / signed webhook",
+      "Checkout session",
+      "transactional email provider",
+      "monthly retained users",
+      "MFA / passkeys",
+      "pg_dump",
+      "open connections",
+      "TanStack Start",
+      "Neon 'Launch' (reads like a verb before I realize it's a plan name)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to tell whether something is keeping my Neon database awake. Whether Better Auth actually has MFA and passkeys for free: 'Better Auth over Clerk Pro if I need MFA' implies it, but nothing says so. Why reading from Blob's list() is wrong, so I can tell if my agent did it.",
+    "cut": "The per-service 'What it costs' bullet list. The cliffs list and the 'At 0 users… around 1,000…' paragraph already tell me what I need, and the plan-by-plan prices will go stale and make me skim.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

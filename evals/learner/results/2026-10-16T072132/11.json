@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Treat the AI call like a slow, pricey, sketchy outside API: cap what goes in and comes out, check what comes back, and never let it send anything without the user clicking Send.",
+    "intended": "A model call is a slow, expensive, unpredictable third-party API whose output can be steered by its input, so build around it like any flaky, untrusted service.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "OWASP says it's unclear whether foolproof",
+        "why": "Never heard of OWASP. It's quoted as an authority with no gloss, so I don't know why I should care what they say."
+      },
+      {
+        "quote": "AbortSignal.any([req.signal, AbortSignal.timeout(30_000)])",
+        "why": "The comment helps, but I've never used AbortSignal. I'd copy it without really knowing what 'any' does or what happens to my bill when it fires."
+      },
+      {
+        "quote": "it.each(cases)('$name', async",
+        "why": "I've never written a test. Vitest, it.each, and '$name' are all new to me. I get the idea from the comments, not the code."
+      }
+    ],
+    "skimmed": [
+      "The eval code block. I read the comments ('It parsed.', 'No invented dates.') and skipped the syntax because I don't write tests.",
+      "'Run it like a dependency you'll have to debug'. It's a short list that reads like ops stuff for someone with a dashboard. I don't know what a 'prompt version' is or where I'd log it."
+    ],
+    "jargon": [
+      "OWASP",
+      "abort signal / AbortSignal",
+      "Zod (I've seen it, but 'with .max() on every array and string' assumes I know the API)",
+      "prompt version",
+      "alias (for a model ID)",
+      "allow-list",
+      "vitest / it.each",
+      "idempotency (in a link title only, but it scared me)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where the spend cap actually lives (which dashboard, which setting). What to do when finishReason is 'length' or 'content-filter': show an error, retry, or show the partial text? How to run evals without burning money, since they hit the real API. What a 'prompt version' is and how I'd track it.",
+    "cut": "'Run it like a dependency you'll have to debug'. The pinning advice is already in the first code comment ('pinned, defined in lib/ai.ts') and the logging line is repeated in the checklist, so the section feels like a third copy.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Treat the model like a sketchy, expensive outside API: cap what goes in and out, check what comes back, and never let something that reads strangers' emails also send stuff without me clicking Send.",
+    "intended": "A model call is a slow, paid, unpredictable, and possibly attacker-steered third-party API, so build around it like any flaky, expensive, untrusted service.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Zod, with .max() on every array and string",
+        "why": "A leap. I get that Zod is the shape, but the page never says why I'd put .max() on everything. Is it to stop the model writing a huge list? It's buried in a code comment, so I'd just skip it."
+      },
+      {
+        "quote": "retries twice by default, and the abort signal caps the total wait",
+        "why": "I couldn't follow why retries matter here. Does that mean one call can cost me 3x, or take 90 seconds? The link title has 'idempotency', which I don't know, so it reads like it's for someone else."
+      },
+      {
+        "quote": "AbortSignal.any([req.signal, AbortSignal.timeout(30_000)])",
+        "why": "The comment above helps, but I'd never write this myself. I'd copy it and hope. I didn't know AbortSignal.any existed or that req.signal was a thing."
+      }
+    ],
+    "skimmed": [
+      "The eval code block: I don't know `it.each` or the '$name' syntax, so I read the comments ('It parsed.', 'No invented dates.') and skipped the rest.",
+      "'Run it like a dependency you'll have to debug': this felt like ops stuff for later, and the checklist at the bottom already covers logging."
+    ],
+    "jargon": [
+      "OWASP (dropped in with no gloss, so I don't know why I should trust them)",
+      "idempotency (in a link title)",
+      "alias (for model IDs: I don't know which model names are aliases and which are pinned)",
+      "prompt version (I don't version my prompts, so what would I even log?)",
+      "streaming / toTextStreamResponse (I sort of know it from the chat UI, but not what it changes on the server)",
+      "'put it in a query' (does this mean a database query? Why would that be bad?)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "What I'd do never says to split the job so the summarizer has no tools, but that's the main fix in the injection section. It also skips how to set up lib/ai.ts with a pinned model ID, even though the checklist and the logging section both assume I have it. And 'don't render remote images from model output' has no concrete step: in Next.js, does react-markdown render images by default? I'd need to know what to tell my agent.",
+    "cut": "The OWASP sentence ('OWASP says it's unclear whether foolproof prevention exists'). The lethal trifecta paragraph right after it makes the same point better, and OWASP means nothing to me.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

@@ -1,0 +1,91 @@
+[
+  {
+    "takeaway": "Every free tier has a hard cliff where things just stop, so on Supabase I need to set up Resend SMTP and move to Pro before real users show up, or sign-up emails die and the app pauses.",
+    "intended": "Why each piece of a solo Next.js/Vercel/Neon stack is there, and exactly where each free tier ends, because those limits are abrupt.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "checks a short-lived signed token itself",
+        "why": "No idea what a signed token is or why checking it without calling Clerk matters. Same with 'signed webhook' right after: I don't really know what a webhook is beyond 'Stripe hits a URL', and 'signed' is never explained."
+      },
+      {
+        "quote": "Each client holds open connections",
+        "why": "I don't know what a 'client' or an 'open connection' is here, or why one per request is bad. Then it says 'With supabase-js, skip this', so I'm not sure if this section is for me at all."
+      },
+      {
+        "quote": "Vercel Pro only alerts on spend unless you set an action",
+        "why": "Too dense. Set what action, where? I couldn't tell if I'm in danger of a surprise bill or not."
+      }
+    ],
+    "skimmed": [
+      "Most of 'Why each piece is here' for Neon, Drizzle, Better Auth, Clerk, and Blob: I'm on Supabase and the box at the top told me to stay, so these felt like someone else's stack.",
+      "'Rate-limit auth in the database': the code is Better Auth, and the Supabase line at the bottom was all I needed.",
+      "The first paragraph of 'What it costs': ranges of guesses that end with 'trust your own dashboards' made me skip ahead to the bullets.",
+      "'Getting it running': just a list of links, so I'd come back later, maybe."
+    ],
+    "jargon": [
+      "signed token",
+      "webhook / signed webhook",
+      "Checkout session",
+      "client / open connections",
+      "SMTP",
+      "cron / polling cron",
+      "health check",
+      "compute (Neon free hours)",
+      "pg_dump",
+      "MFA",
+      "TanStack Start, 'client-side and URL-driven'",
+      "Neon Launch (plan name, unexplained)",
+      "spend cap 'action'"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "As a Supabase user I can't tell which lines of 'What I'd do' and 'Before you ship, check' apply to me. The Blob `list()` item and the `lib/db.ts` item seem not to, but it never says so. The checklist also leaves out the two things the cliffs section made me most scared of: upgrade to Supabase Pro before real users (pausing, no backups) and checking that every query confirms the user owns the row. And 'parsed with Zod' needs a one-line example or I'll just paste it to the agent without understanding it.",
+    "cut": "The dollar-range paragraph at the start of 'What it costs' ('Around 1,000 monthly users, it's $0 to about $40 a month...'). It's hedged guesses that tell me to ignore them, and the cliff bullets right after are the useful part.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Free tiers don't slow down, they just stop, so before real users show up I'd move Supabase to Pro so it can't pause and plug Resend into its SMTP settings so sign-up emails keep sending.",
+    "intended": "Why each piece of a one-person Next.js stack is there, and exactly where each free tier ends.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "checks a short-lived signed token itself",
+        "why": "Signed how, and by whom? I don't know what a signed token is, so 'without calling Clerk' means nothing to me. The same goes for 'signed webhook' a few lines down. I've never written a webhook handler, and the stop sends me to another guide instead of saying what one is."
+      },
+      {
+        "quote": "Each client holds open connections",
+        "why": "I don't know what a connection is or why Postgres would run out of them. I'd just do what it says (one lib/db.ts) without understanding why. Then it says supabase-js users can skip this, which I am, so I'm not sure why I read it."
+      },
+      {
+        "quote": "`pg_dump` exports Postgres",
+        "why": "This comes at the very end as if I know it. I don't know if it's a command, a tool I install, or something in the dashboard. 'How I'd leave' is the part I'd actually want spelled out."
+      }
+    ],
+    "skimmed": [
+      "Rate-limit auth in the database: it's a Better Auth code block, and I'm on Supabase. My one line comes at the end, so I'd skip the whole section without noticing it.",
+      "The Neon cliff bullet: it's long and about a database I don't use. The '17 days a month' math is for someone else.",
+      "What it costs, first paragraph: so many hedges ('$0 to about $40', 'depending on Vercel's terms', 'trust your own dashboards over these guesses') that I came away with no number.",
+      "What's deliberately missing: a list of things I've never used (queue, Redis, Kubernetes). Fine, but I'd skim it.",
+      "Getting it running: just links, and I wouldn't tap them on my phone."
+    ],
+    "jargon": [
+      "webhook",
+      "signed token / signed webhook",
+      "SMTP",
+      "cron",
+      "connections (database)",
+      "compute / free hours",
+      "overages",
+      "pg_dump",
+      "Checkout session",
+      "URL-driven / TanStack Start",
+      "MFA (I sort of know it, but passkeys I don't)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For a Supabase reader, What I'd do is two bullets buried in a Neon/Vercel list. It doesn't say what Supabase Pro costs, and that's the thing I'd need to decide. 'The day real users' data matters' isn't a moment I can recognize; give me a trigger like 'the first non-friend signs up.' The checklist says 'never from Blob's list()', and I don't know if that applies to Supabase Storage too. It also never says how to check the Zod item if my agent wrote the code.",
+    "cut": "The first paragraph of What it costs. The ranges are so hedged I can't use them, and the cliffs list right below is what actually helps. Second choice: the 'Connect to the database once' section, if I'm on Supabase, since it tells me to skip it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

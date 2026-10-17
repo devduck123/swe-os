@@ -1,0 +1,77 @@
+[
+  {
+    "takeaway": "A feature isn't done when the happy-path screenshot looks good. I have to check it on a slow network, on a phone, with no data, with an error, and as a user without permission.",
+    "intended": "A complete frontend feature handles every state a real user can land on (slow network, empty account, error, phone), not just the one frame in the mockup.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "an error boundary shows one when it fails",
+        "why": "I've seen <Suspense> but never written an error boundary. It's named like I already know what it is, and nothing shows how to add one or where it goes."
+      },
+      {
+        "quote": "Store the moment, and format it",
+        "why": "Store the moment how? A timestamp? UTC? And where do I format it, the client? I got the problem but not the fix. I wouldn't know what to tell my agent."
+      },
+      {
+        "quote": "the server stops a double submit",
+        "why": "Said twice, but here it's only a link. I don't know what that looks like in my server action, so I can't check it myself."
+      }
+    ],
+    "skimmed": [
+      "The code block. I read the comments and the early-return line and skipped the type definition. The comments carried it.",
+      "The invisible parts. The bullets were quick and clear, but it felt like a misc list tacked on, so I sped through.",
+      "Make it feel fast without lying. I skimmed the useOptimistic part because I don't use it yet."
+    ],
+    "jargon": [
+      "error boundary",
+      "toast (I know it from using apps, but it's never named as the little popup)",
+      "query string",
+      "skeleton (sort of guessable from 'holds the shape')",
+      "server action",
+      "Playwright (I've heard of it, never used it)",
+      "opengraph-image"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "For time zones, one line saying what to store (an ISO/UTC timestamp) and where to format it (in a client component, with the browser's locale). For double submits, one sentence on what the server actually does, so I'm not trusting a link I won't tap on my phone.",
+    "cut": "The 'Show times where the user is' section. It's the only one that names a problem without a fix I could use, and it's the least about states. Either add the two-line fix or move it to its own stop. If I must cut something that already works, it's the closing line under What I'd do about revenue or trust, which is vague next to the concrete bullets above it.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "My feature isn't done when the screenshot looks right. I have to check the slow, empty, error, no-permission, and phone versions too, and the invite dialog with five users is how I'll remember it.",
+    "intended": "That a complete frontend feature handles every state a real user can hit (slow network, empty account, error, phone, no permission), not just the one state in the mockup.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Store the moment, and format it",
+        "why": "A leap. What does 'store the moment' mean in code? A timestamp? UTC? And how do I format it in the user's time zone if the server doesn't know it? Do I do it in a client component? I'd paste this to my agent and hope."
+      },
+      {
+        "quote": "an error boundary shows one when",
+        "why": "Unexplained term. Suspense gets a one-line gloss, but 'error boundary' doesn't, and I don't know if it's a component I import, a file, or something Next.js does for me. Is it the same as error.tsx later? Not said."
+      },
+      {
+        "quote": "The server still has to stop double submits",
+        "why": "Said twice (here and in the checklist), but I don't know how, and the link title has 'idempotency' in it, which is exactly a word I can't define. The checklist asks me to verify something I couldn't build or recognize."
+      }
+    ],
+    "skimmed": [
+      "'The invisible parts': the 404/error page bit is useful, but the link preview and theme colors feel like a different, smaller topic tacked on. I'd skim it on my phone.",
+      "'Reserve space so nothing jumps': the Cancel/Delete story is great, but the fix is one line and then a link, so I'd read the story and skip the rest."
+    ],
+    "jargon": [
+      "error boundary",
+      "server action",
+      "query string (shown by example, never named in plain words)",
+      "optimistic updates (explained by what it does, but 'reverts if the action throws' assumes I know 'throws')",
+      "root (glossed in the code comment, fine)",
+      "skeleton (as a loading pattern, half-explained by 'holds the shape')",
+      "idempotency (in the link title)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "The Playwright prompt is great and I'd actually use it. Missing: how I'd get the 'error' and 'no-permission' states to appear so Playwright can screenshot them. My agent will ask me how to fake a failing request or log in as a member. Also the checklist says 'the server stops a double submit' but What I'd do never tells me what to ask the agent for to make that true.",
+    "cut": "The 'Show times where the user is' section. It's real, but it's the one place I got lost and it doesn't connect to the invite dialog. Either give it a concrete fix (like 'format dates in a client component') or cut it.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

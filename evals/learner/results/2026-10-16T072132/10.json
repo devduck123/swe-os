@@ -1,0 +1,80 @@
+[
+  {
+    "takeaway": "If an agent gives me a clickable div instead of a real <button>, keyboard users can't use it, so I should use native elements and actually tab through my signup flow before merging.",
+    "intended": "Accessibility is correctness, not polish, and most bugs come from replacing a native element that already works with a div and not rebuilding what it did.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "with a `Controller`, pass `field.ref`",
+        "why": "Code I couldn't follow. I don't know what a Controller is, and I don't really get refs. I'd just paste this line to my agent and hope."
+      },
+      {
+        "quote": "appears along with its message often isn't announced",
+        "why": "A leap. Why would a screen reader miss an element that shows up already holding text? I follow the rule (always render it), but not the reason, so I'd probably forget it."
+      },
+      {
+        "quote": "Hide it visually instead of deleting it",
+        "why": "How? You don't say. If I use display:none, does the screen reader lose it too? I'd get stuck here."
+      }
+    ],
+    "skimmed": [
+      "The legal paragraph (ADA, European Accessibility Act). It reads like it's for a company, not me, and I skipped it on my phone.",
+      "The 2017 GDS study paragraph. The point lands in its last sentence, and the numbers are trivia to me.",
+      "The NVDA/audit paragraph under What I'd do. I'm not selling to governments.",
+      "Contrast, zoom, motion, and color. It's short but vague: 'strong contrast' with no number and no tool, so I skimmed past it."
+    ],
+    "jargon": [
+      "tab order",
+      "client-side navigation / route announcer",
+      "Controller (react-hook-form)",
+      "field.ref",
+      "Radix / Base UI",
+      "NVDA (glossed, but only as 'a Windows screen reader')",
+      "live region (glossed, but 'waits until it finishes speaking' is fuzzy about what 'it' is)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How to check contrast (a tool or a ratio to aim for, or does axe catch it?). How to visually hide a DialogTitle (shadcn's VisuallyHidden, or an sr-only class?). Whether VoiceOver is the right check if I'm on Windows.",
+    "cut": "The 2017 GDS study paragraph. 'A tool can tell that an image has alt text. It can't tell whether the alt text is right' makes the point alone. The 143 barriers and 40% are numbers I'll forget by tomorrow.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Don't let the agent fake a button with a styled div; use real HTML elements, then try the whole flow with just the keyboard before I ship.",
+    "intended": "Accessibility is correctness, not polish, and most bugs come from swapping a native element for a div without rebuilding what it did.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "with a `Controller`, pass `field.ref`",
+        "why": "Code I couldn't follow. I don't know what a Controller is in react-hook-form or where field.ref comes from. The agent wires up my forms, so I can't tell whether this applies to me."
+      },
+      {
+        "quote": "Hide it visually instead of deleting it",
+        "why": "A leap. How do I hide something visually but keep it for screen readers? CSS display:none? I'd guess wrong. This needs the actual class or component name."
+      },
+      {
+        "quote": "route announcer that reads the new page's title on client-side navigation",
+        "why": "Too dense. I mostly understood that I need a unique title per page, but 'client-side navigation' and the metadata vs generateMetadata choice went past me."
+      }
+    ],
+    "skimmed": [
+      "The legal paragraph (ADA, European Accessibility Act). It's scary but I can't do anything with it, so I'd skip it.",
+      "The 'For anything people pay for' paragraph about NVDA and audits. I'm not selling to governments, so it feels like it's for someone else.",
+      "Contrast, zoom, motion, and color. It says 'strong contrast' with no number and no tool to check it, so I'd nod and move on."
+    ],
+    "jargon": [
+      "tab order",
+      "DOM order",
+      "client-side navigation",
+      "Controller / field.ref (react-hook-form)",
+      "Playwright",
+      "CI",
+      "ADA",
+      "prefers-reduced-motion"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The axe-core prompt assumes I already have Playwright tests and CI. I have neither, so I don't know if I can paste it as-is or need to set those up first. Also missing: a way to check contrast (axe? a website?) and the exact way to visually hide a DialogTitle.",
+    "cut": "The 'For anything people pay for, I'd add a pass with NVDA... proper audit' paragraph. It's for a bigger company than mine, and the five-minute check already gives me something to do.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

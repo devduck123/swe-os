@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Don't trust my app code to keep data right. Put the rules (no negative stock, no double bookings, no orders pointing at deleted products) in the database itself, because two requests at the same second will slip past any check my code does.",
+    "intended": "Write what must always be true about your data into the schema as constraints, because code gets rewritten and forgets while the database checks every write forever.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "No row means sold out, so your app runs `rollback`",
+        "why": "A leap. The SQL block goes straight from begin to commit with no 'if' anywhere, so I can't see where my app gets to look at the result and decide to roll back. Is this one query or several? And how does `$3` get the price that `returning` sent back? I'd copy this block as-is and it wouldn't do what the bullets say."
+      },
+      {
+        "quote": "a Postgres function you call with `supabase.rpc()`",
+        "why": "I use Supabase, so this is the path I'd actually take, and it's one clause. I've never written a Postgres function and nothing here shows what one looks like or where it goes. That's the hardest step and it gets the least text."
+      },
+      {
+        "quote": "Postgres doesn't index foreign keys for you",
+        "why": "I just learned what an index is two sentences earlier. I don't know what it means to index a foreign key, or whether I'm supposed to add one for every `references` column. Also the `create index ... (user_id, created_at)` line appeared way back in the first SQL block before indexes were explained, with two columns and no reason given for why both."
+      }
+    ],
+    "skimmed": [
+      "The Drizzle equivalents in every section (`notNull()`, `.onConflictDoNothing()`, `drizzle-kit generate`). I'm on supabase-js, so those lines are for someone else. Fine to skip, but they add up.",
+      "The date vs timestamptz paragraph inside the uniqueness section. It's useful, but it's not about uniqueness, so I skimmed it as a side note and almost missed it."
+    ],
+    "jargon": [
+      "locks the row (what a lock is, and does this happen automatically?)",
+      "rollback (glossed as 'undo', but not how my app triggers it)",
+      "upsert",
+      "Postgres function / rpc",
+      "primary key / gen_random_uuid() (I can guess, but never explained)",
+      "seed / seeding",
+      "Seq Scan (explained as 'read every row', okay)",
+      "composite index on two columns (user_id, created_at)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For Supabase users, a concrete Postgres function for the hoodie checkout: the actual `create function ... ` SQL plus the one-line `supabase.rpc('buy_product', {...})` call, showing where the sold-out case returns an error. Without it, the transaction advice is something I'd just hand to my agent and hope it got right. The constraints and unique parts I could do today.",
+    "cut": "The date vs timestamptz paragraph in 'Uniqueness is a constraint, not a check'. It interrupts the double-tap story, and the same rule is already in What I'd do and the checklist. Move it next to the money section, where 'pick the right type' already lives.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't trust my app code to keep data right: put the rules (no negative stock, no double bookings, orders must point at real products) in the database itself, and do the stock check inside the update so two buyers can't both get the last hoodie.",
+    "intended": "Write what must always be true about your data into the schema as constraints, because code changes and forgets but the database checks every write forever.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "It also locks the row, so",
+        "why": "I've never thought about locks. I get the gist (the second buyer waits) but not why the update locks and the plain read in my old code didn't. That's the whole reason the fix works, and it gets one clause."
+      },
+      {
+        "quote": "Now the 51st hoodie fails",
+        "why": "In the original checkout the order is inserted before the stock update. So if the check rejects stock going to -1, does the order still exist? I only figured out you need the transaction for that two sections later, and I'm not sure I'm right."
+      },
+      {
+        "quote": "a Postgres function you call with",
+        "why": "I've never written a Postgres function and don't know where it lives on Supabase (a migration? the dashboard?). This is the Supabase path for transactions, and it's one line, so I'd have to ask my agent for everything."
+      }
+    ],
+    "skimmed": [
+      "The 'In app code: Drizzle's... supabase-js's...' lines. I use one or the other, so I skip half of each line, and the upsert one is long.",
+      "The calendar-day/timestamptz paragraph in the uniqueness section. It feels like a different topic dropped in the middle, so I skimmed it and only caught it again in the checklist."
+    ],
+    "jargon": [
+      "uuid primary key / gen_random_uuid() (I've seen them in Supabase but couldn't explain them)",
+      "join",
+      "upsert",
+      "no-op",
+      "locks the row",
+      "instant (as in 'timestamptz for instants')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to catch the unique-constraint error so I can show 'you're already booked' (what error do I check for in supabase-js?). What a minimal Postgres function for the checkout looks like and where I put it on Supabase. Without those two, the transaction step and the double-tap step are 'ask my agent and hope'.",
+    "cut": "The calendar day vs timestamptz paragraph inside 'Uniqueness is a constraint, not a check'. It's a good rule but it breaks the uniqueness story, and the checklist already covers it. I'd move it next to the money section, which is the same kind of 'pick the right column type' advice.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Green CI and a clean agent summary don't mean a PR is safe. I have to check for what's missing, especially whether a data route checks who's signed in and whether they're allowed to see that team's stuff.",
+    "intended": "How to read code you didn't write to find out what's actually true, and how to review a change, especially an agent's, well enough to decide whether it should be merged.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Ask Git why. Code tells you what",
+        "why": "A leap. I use git to commit and push, but I don't know how to 'ask' it anything or what history even shows me. It's handed to the agent, so I'd do it, but I wouldn't know how to check the answer, which the previous step just told me to do."
+      },
+      {
+        "quote": "If the PR changes what a function returns",
+        "why": "I get 'open its callers' thanks to the gloss, but I can't picture what this bug looks like. The CSV example made the auth bug click. This habit has no example, so it stays abstract."
+      },
+      {
+        "quote": "required approvals in GitHub's branch protection",
+        "why": "Never heard of branch protection. It's framed as 'later, once other people commit', so I let it go, but it's an unexplained term."
+      }
+    ],
+    "skimmed": [
+      "'Small PRs get real reviews': the Google 100/1,000 line stat felt like trivia. I kept only the 'ask the agent to split it' line.",
+      "Step 5 'Run it': I already click around my app, so this read as obvious.",
+      "The CODEOWNERS paragraph under What I'd do: I'm solo, so it's not for me yet."
+    ],
+    "jargon": [
+      "branch protection",
+      "edge cases",
+      "reproduction (in 'A finding with a reproduction gets fixed')",
+      "spec ('closest thing to a spec')",
+      "machinery (in 'Flag machinery the change doesn't need')"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "Show me where to see a PR's diff and how to tell which files touch auth, data, or money when the agent's change spans 15 files. Also, what should I do when I can't answer the self-check? Ask the agent to explain it, or reject the PR?",
+    "cut": "The Google code review guide sentence. 'Big PRs get skimmed' plus the split prompt already makes the point. The citation adds a number I won't remember.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Green CI and a clean-looking diff don't mean the code is safe: for anything touching data, check who's signed in and whether they're allowed to see that specific record, and don't merge anything I couldn't explain myself.",
+    "intended": "That reading code tells you what's actually true, that reviewing means deciding whether a change should exist, and that with agents writing the code these two skills are most of the job.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the database schema, the env vars",
+        "why": "I know env vars from Vercel, but 'database schema' isn't explained. Is that my Supabase tables page? A file? Where do I find it in the repo?"
+      },
+      {
+        "quote": "with the review-change skill",
+        "why": "What is a 'skill'? Do I have it, or do I need to install something? If I type this into Cursor, does it work or does the agent just pretend? Same for 'build-feature report format'."
+      },
+      {
+        "quote": "CODEOWNERS file ... for auth and migrations",
+        "why": "CODEOWNERS is explained, but 'migrations' isn't, and I've never written one. I change tables in the Supabase dashboard."
+      }
+    ],
+    "skimmed": [
+      "'Read an unfamiliar codebase from the outside in': it reads like advice for joining someone else's company repo. I mostly work in my own app, so I skimmed it, even though the agent wrote most of my code and it's basically unfamiliar to me too. Tell me that and I'd read it.",
+      "The correctness/data/security ordering paragraph: three abstract categories in a row. The 'ten comments about naming' line stuck, the rest didn't.",
+      "'Flag machinery the change doesn't need': a generic helper with one caller and a config option nobody sets mean nothing to me yet. I wouldn't spot these."
+    ],
+    "jargon": [
+      "database schema",
+      "migrations",
+      "edge cases",
+      "spec",
+      "skill (as in review-change skill / build-feature skill)",
+      "branch protection",
+      "the sql`...` template in the example (I use the Supabase client, not raw SQL, so I wasn't sure whether my code has this problem or whether Supabase protects me)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Two things. First, how to actually run the 'second opinion' step if I don't have the review-change skill: give me the prompt itself or tell me how to get the skill. Second, a line for Supabase users: does row-level security cover the teamId problem, or do I still need the check in my route? That's the first question I'd have after the example, and I'd ask it before acting.",
+    "cut": "'Once other people commit, I'd turn on required approvals... CODEOWNERS...': it's for teams, I'm solo, and it brings in 'migrations' without explaining it. The Google 100/1,000 lines stat is the second thing I'd cut. The point lands without it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -20,12 +20,12 @@ Run it from a normal terminal. It uses whatever account the `claude` CLI is logg
 
 ## Results so far
 
-October 2026, before this harness existed: four agents read the stops by hand, using the same reader. After the edits in PR #16, four different agents read them again.
+Rounds 1 and 2 were run by hand before this harness existed (four agents, one reader per stop). Round 3 used the harness with two readers per stop, so its match rate counts readers, not stops.
 
-|                                      | Before         | After    |
-| ------------------------------------ | -------------- | -------- |
-| Takeaway matched the intended lesson | 15 of 22 stops | 20 of 22 |
-| Usefulness                           | 4.6            | 4.7      |
-| Clarity                              | 3.7            | 3.7      |
+| Round | What changed before it                                               | Takeaway matched | Clarity | Usefulness |
+| ----- | -------------------------------------------------------------------- | ---------------- | ------- | ---------- |
+| 1     | (baseline)                                                           | 15 of 22 stops   | 3.7     | 4.6        |
+| 2     | glosses, Going deeper blocks, Supabase lines, actionable What I'd do | 20 of 22 stops   | 3.7     | 4.7        |
+| 3     | plain SQL first, "Before you ship, check"                            | 40 of 44 readers | 3.9     | 4.4        |
 
-What still holds clarity back: the code examples use Drizzle and Neon while this reader is on Supabase, and every reader skims "What the vibe-coded version misses" because it repeats the body. What readers liked most: the opening failure stories, a "Notice…" sentence before each code block, and copyable "Ask your agent" prompts.
+After round 3, a targeted pass on the two lowest stops moved the recipe from 3.0 to 3.5; stop 8 stayed at 3.5. What readers liked most, every round: the opening failure stories, a "Notice…" sentence before each code block, and copyable "Ask your agent" prompts. Summaries are in [results/](results/).

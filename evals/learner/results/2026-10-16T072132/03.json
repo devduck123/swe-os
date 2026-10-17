@@ -1,0 +1,70 @@
+[
+  {
+    "takeaway": "Before I ask an agent to build anything, I write half a page saying who it's for, the tiny first version, a 'Done when' list I can check by tapping, what I'm not building, and when I'd quit. Otherwise the agent builds the average app full of decisions I never made.",
+    "intended": "Shaping means deciding what to build, for whom, and how you'll know it worked before any code, so an agent doesn't decide for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "anything that touches a floor: auth",
+        "why": "'Floor' is never explained. I can guess from the list after the colon that it means risky stuff, but it reads like an inside term from another page."
+      },
+      {
+        "quote": "Shaping fixes both problems.",
+        "why": "I went back to look for the two problems. I think they're 'it builds the average app' and 'it won't ask who it's for', but the paragraph before reads like one problem."
+      },
+      {
+        "quote": "The \"Today\" line names your real competition",
+        "why": "This paragraph packs in four ideas: edge cases, tests, competition, and stop signals. The competition and stop-signal points are good, but I'd skim past them on my phone."
+      }
+    ],
+    "skimmed": [
+      "'Shape when the stakes justify it': it reads like rules for someone deciding what to bother with. I'd skim it and just shape everything new.",
+      "The last paragraph of 'What I'd do' about real specs from clients: I don't have clients or specs, so it isn't for me."
+    ],
+    "jargon": [
+      "floor (as in 'touches a floor')",
+      "UTC (I sort of know it, but not why it breaks 'today')",
+      "edge case (used before it's explained by the double-tap example)",
+      "non-goals (I figured out it means the Not-building list, but it switches between the two names)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "The 'Before you ship' list says 'you've shown me each one passing', but I don't know what a passing test looks like or how to tell whether the agent wrote a real test or a fake one that always passes. It also doesn't say what to do if something from Not building is already in the code.",
+    "cut": "The 'If someone hands me a real spec, at work or from a client' paragraph. It's for a different reader than me and it comes right before the checklist I actually want.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Before I let an agent build anything, I write half a page: who it's for, what they do now, the tiniest version, a 'Done when' list I could check by tapping, what I'm not building, and when I'd quit.",
+    "intended": "Shaping means deciding what to build, for whom, and how you'll know it worked before any code, so the agent doesn't decide for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "anything that touches a floor: auth",
+        "why": "'Floor' is never explained. The list after it helps, but I stopped and wondered whether 'floor' is a term I'm supposed to know from an earlier stop."
+      },
+      {
+        "quote": "one complete journey, thin, from the screen",
+        "why": "I mostly get it, but 'thin' and 'journey' are doing a lot of work. One plain sentence would fix it, like 'one thing a user can do start to finish, even if it's bare.'"
+      },
+      {
+        "quote": "Paste this to your agent before you merge",
+        "why": "The header says paste it to the agent, but the items say 'you've shown me' and 'someone besides me'. I couldn't tell who 'me' is. Also, why check that PROJECT.md has the shape at merge time? I'd have written it on day one."
+      }
+    ],
+    "skimmed": [
+      "'A vague request gets the average app': the habit tracker section already made this point, so the second paragraph felt like a recap",
+      "The last paragraph of What I'd do, about a spec from work or a client. I don't get handed specs, so it felt like it was for someone else"
+    ],
+    "jargon": [
+      "floor (as in 'touches a floor')",
+      "UTC (I've seen it, but couldn't explain why it matters without the example)",
+      "edge case (I sort of know it, but the checklist demands 'at least one edge case' and I'd have to guess what qualifies)",
+      "non-goals (used once before it's tied to 'Not building')"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How do I actually run the shape-project skill? Do I install something, or type a command? Also, what if 'Who' is just me with no friends to test with? What does 'Keep going if' look like for a solo user?",
+    "cut": "'A vague request gets the average app'. Its first paragraph repeats the habit tracker opener, and its useful bits (a schema isn't a slice; the Done-when list lets you tell 'done' from 'the agent says done') could move into the 'Notice what an agent wouldn't add' paragraph.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

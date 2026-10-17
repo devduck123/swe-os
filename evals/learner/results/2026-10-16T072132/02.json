@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "My app is a chain of browser, CDN, function, and database, so when something breaks I ask which hop broke, and I make sure my Vercel function runs in the same region as my database.",
+    "intended": "A click travels through browser, CDN, function, and database, and knowing that chain turns most debugging into finding which hop broke.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "The user's session cookie on the request doesn't stop that",
+        "why": "A leap. I think it means another user could get my cached dashboard, but the stop never says that outright, and that's the scary part. I only half got why the agent prompt about s-maxage matters."
+      },
+      {
+        "quote": "It holds a pool of open connections",
+        "why": "I don't know what a connection pool is or why opening a new connection per request is bad. I'll copy the recipe without understanding it."
+      },
+      {
+        "quote": "like ones with `export const revalidate`",
+        "why": "I've seen revalidate in code my agent wrote but don't know what it does. Same with the `public` value in Cache-Control: the checklist tells me to look for it, but nothing explains it."
+      }
+    ],
+    "skimmed": [
+      "Most of 'State lives in more places than you think'. The URL, React state, and localStorage bullets are stuff I mostly know. The server memory part after it was the useful bit, and I almost missed it.",
+      "The CORS and 504 bullets in the debug list. They're one-liners I'd only care about when I hit them."
+    ],
+    "jargon": [
+      "s-maxage / max-age",
+      "public (as a Cache-Control value)",
+      "connection pool",
+      "route handlers",
+      "revalidate",
+      "sign (cookies)",
+      "endpoint",
+      "gateway timeout"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For the s-maxage agent prompt: what do I do if the agent says yes, something per-user is cached? Tell me the fix, like removing s-maxage or making it private/no-store. Also, 'Then work inward' after checking x-vercel-cache is vague. What do I look at if it says MISS?",
+    "cut": "The first four bullets of the state list (URL, React state, cookies, localStorage). They're things I mostly know, they're for a different problem than the rest of the stop, and they bury the server-memory warning, which is the part that could actually burn me.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When my app breaks, I figure out which hop failed (browser, CDN, function, or database) by opening the Network tab, and I should move my Vercel function to the same region as my database.",
+    "intended": "A click travels through browser, CDN, function, and database, and if you know that chain, debugging becomes asking which hop broke.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "hands it to everyone. The user's session cookie",
+        "why": "A leap. I can tell this is bad but had to work out why myself. It never says it plainly: user B could get user A's cached dashboard. That's the scary part and it's buried."
+      },
+      {
+        "quote": "sets `s-maxage` or `public`",
+        "why": "Unexplained term. `public` shows up in What I'd do and the checklist but was never explained in the caching section. Only max-age and s-maxage were. Is it a header value? A keyword? No idea."
+      },
+      {
+        "quote": "Then work inward.",
+        "why": "Too vague. Work inward how? If it says MISS, what do I look at next? Function logs? The database? This is the part I'd actually need when something's broken."
+      }
+    ],
+    "skimmed": [
+      "The Neon bullet in Debug. I use Supabase, so I skipped it, and I don't know if Supabase also sleeps when idle.",
+      "Most of the 'State lives in more places' list. URL, React state, cookies, and localStorage felt like stuff I sort of know. I only slowed down at server memory.",
+      "'Before you ship, check'. It's What I'd do again, so I'd glance at it and move on."
+    ],
+    "jargon": [
+      "CDN (glossed as 'servers near the user', but never says it's a cache that serves the same copy to everyone)",
+      "gateway (in '504 gateway timeout')",
+      "round trips",
+      "pool of open connections",
+      "public (as a Cache-Control value)",
+      "export const revalidate",
+      "endpoints"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to find which region my Supabase project is in, and the matching Vercel region code (is fra1 the only example?). Whether `server-only` needs `npm install` or just works. What to tell the agent to do if it finds a per-user response with s-maxage: delete the header? Use something else? Right now I'd only get a report, not a fix.",
+    "cut": "'Before you ship, check'. It repeats What I'd do almost word for word. Merge them, or keep only the checklist and make it the thing I paste to my agent.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

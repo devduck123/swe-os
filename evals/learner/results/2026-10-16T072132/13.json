@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Anything running in the background or coming from a webhook can run twice or get lost, so I save it to a table first, make repeats do nothing, and have a cron job pick up whatever got stuck.",
+    "intended": "Background jobs and webhooks can show up late, twice, or never, so design for at least once: make repeats harmless and give every failure somewhere to land.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the primary key (the column Postgres keeps unique)",
+        "why": "The gloss helps, but I don't get why inserting a duplicate does nothing instead of erroring. `ON CONFLICT (id) DO NOTHING` is doing the real work, and the text never says so in plain words."
+      },
+      {
+        "quote": "A lease fixes it: one row",
+        "why": "Big leap. I followed 'one row says who's running', but not why `locked_until < now()` means only one run wins if two start at the same instant. That's the race-condition part, and it's skipped."
+      },
+      {
+        "quote": "runs steps that outlast one function",
+        "why": "I don't know what a 'step' is here or why it would outlast a function. That's the main reason to pick Inngest, and it's the one line I couldn't picture."
+      }
+    ],
+    "skimmed": [
+      "The full CREATE TABLE jobs block: the column comments are nice, but on a phone I scrolled past and trusted the agent prompt to build it",
+      "The Vercel Cron bullet list: I read the bold 'once a day' and skipped the rest until What I'd do repeated it"
+    ],
+    "jargon": [
+      "idempotent (glossed, but only once, then used like I know it)",
+      "jsonb",
+      "timestamptz",
+      "GENERATED ALWAYS AS IDENTITY",
+      "RETURNING",
+      "live mode (Stripe)",
+      "steps (in hosted job services)",
+      "lease"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "Where do I create these tables on Supabase or Neon? Paste into the SQL editor, or make it a migration? I've never written one by hand. Also, the jobs flow says 'after five attempts report to Sentry', but the agent prompt doesn't mention Sentry or the five-attempt cutoff, so I'd forget it.",
+    "cut": "The `after()` paragraph under 'Pick the smallest tool'. It says don't trust it for real work, then What I'd do tells me to process jobs in `after()` anyway. Keep one sentence explaining that it's fine because the row is already saved and cron catches failures.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Background jobs and webhooks can run twice or die halfway, so save the work as a row first, make repeats do nothing, and have a cron sweep pick up whatever got stuck.",
+    "intended": "Design background jobs and webhooks for 'at least once': assume anything can run twice, make the repeat harmless, and give every failure somewhere to land.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "`sql` is your Postgres client's query tag",
+        "why": "I use supabase-js, not a raw Postgres client. 'Query tag' means nothing to me, so I don't know what to import or whether I can even write this with Supabase."
+      },
+      {
+        "quote": "save the event, then answer `200`",
+        "why": "The handler saves the event as 'pending' and returns. Then what? Nothing shows who actually processes webhook_events rows. Is it the same cron sweep as the jobs table? I'd ship this and my payments would sit in a table forever."
+      },
+      {
+        "quote": "GENERATED ALWAYS AS IDENTITY PRIMARY KEY",
+        "why": "Too dense. The comments on the right help for kind/payload/status, but jsonb, timestamptz, and this id line are just noise I'd let the agent handle."
+      }
+    ],
+    "skimmed": [
+      "Stop a sweep from overlapping itself: I got the one-line idea (a lease row) and skipped the SQL, since the What I'd do prompt asks the agent for it anyway.",
+      "The hosted job service paragraph: three names and no sense of when I'd actually hit the limit, until the last line of What I'd do."
+    ],
+    "jargon": [
+      "query tag",
+      "Postgres client (vs. the Supabase client I actually use)",
+      "jsonb",
+      "timestamptz",
+      "RETURNING",
+      "Neon"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Who processes the stored webhook_events rows. Say whether the sweep covers them or whether they become jobs rows. Also, for a Supabase user, how to run these SQL writes (supabase-js, an RPC, or the SQL editor for the CREATE TABLE).",
+    "cut": "The lease SQL block. The paragraph above it explains the idea in plain words, and the agent prompt and checklist already ask for a lease, so I'm never going to type that SQL myself.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

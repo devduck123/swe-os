@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Before I call something done, I ask my agent who's allowed to do it, what it's trusting from the request, and what happens if it fails or runs twice, and I never let it take the user ID from the form.",
+    "intended": "The difference between a vibe coder and an engineer isn't the tools; it's asking 'what happens when it doesn't work?' before shipping, especially for secrets, auth, money, personal data, and deletes.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "your route runs twice. First, `onBeforeGenerateToken`",
+        "why": "Too dense. Why would my route run twice? Who calls it the second time, Blob? I read the paragraph twice and still had to piece the flow together from the code. The 'upload token (a one-time pass)' gloss helped, but `tokenPayload` and 'Blob calls `onUploadCompleted`' felt like a leap."
+      },
+      {
+        "quote": "const session = await auth();",
+        "why": "Where does `auth()` come from? It's never imported or explained. I use Supabase, so I don't know what this maps to in my app. `sql` got a note but `auth` didn't."
+      },
+      {
+        "quote": "maximumSizeInBytes: 5 * 1024 * 1024",
+        "why": "The bullet above says Vercel rejects anything over 4.5 MB, and then the fix allows 5 MB? I guessed it's fine because the file goes straight to storage now, but the stop never says so, and for a minute I thought the fix was wrong."
+      }
+    ],
+    "skimmed": [
+      "The Karpathy origin sentence. It's trivia; I already know what vibe coding means.",
+      "Half of 'The questions an engineer asks.' By the accessibility and undo bullets I was skimming, because the upload example didn't touch them, and the list felt like a preview of a page I hadn't opened."
+    ],
+    "jargon": [
+      "session / session check (I sort of know, but 'takes their ID from the session' assumes I know where the session lives in my stack)",
+      "500 (I know it means error, but not that it means 'your server broke' vs a 413)",
+      "webhook",
+      "incident",
+      "diff",
+      "throws (as in '`put` throws')",
+      "dropping columns"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'fails halfway or runs twice' problem is raised for the double-click and orphaned-file cases, but the engineered version doesn't fix it, and 'cleanup for the old photo' is one hand-wave sentence. So when the checklist says 'nothing is left half-done or doubled,' I don't know what a good answer from my agent looks like or how I'd check it. I also need one line on what to do when the agent's 'decisions I didn't specify' list comes back. What am I looking for in it?",
+    "cut": "'The questions an engineer asks' list. It overlaps with the five-bullet breakdown of the upload code, the floors list, and the 'Before you ship' checklist. That's four lists of roughly the same idea, and this one is the longest and least concrete. Link the concerns table and keep the example plus the checklist.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Never let the server trust who the user is from the form; take their ID from the session, and ask the agent what it decided that I didn't tell it.",
+    "intended": "The difference between a vibe coder and an engineer is asking \"what happens when it doesn't work?\" before calling a feature done, because the agent only handles the cases you name.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "tokenPayload carries the user ID along",
+        "why": "Too dense. Your route runs twice, a token gets handed out, a payload rides along, and Blob calls you back. I understand the first code block line by line. I only get the second one as 'trust me, this is safer.' I couldn't rebuild it without the agent."
+      },
+      {
+        "quote": "const session = await auth();",
+        "why": "Where does auth() come from? I use Supabase. Is this Supabase's getUser, NextAuth, or something else? The point (ID from session, not form) landed, but I couldn't wire this up myself."
+      },
+      {
+        "quote": "If the upload works and the database update fails",
+        "why": "This bullet names the problems (orphan files, double-click uploads, old avatars never deleted), but the engineered version doesn't show a fix for any of them. 'Add... cleanup for the old photo' is one throwaway line. So I don't know what 'fails halfway or runs twice' looks like when it's handled, and that's the item I'm least sure how to check."
+      }
+    ],
+    "skimmed": [
+      "The engineered code block: I read the comment line, the 'session not form' line, and the sentence after it, and skipped the middle.",
+      "The nine questions list: on my phone it's a wall, and it overlaps with the floors and the checklist. I read the bold parts only.",
+      "The Karpathy/Willison history sentence: I don't need to know who coined it in what month."
+    ],
+    "jargon": [
+      "session (I know it loosely as 'logged in', but 'session check' assumes more)",
+      "500 (413 got explained, 500 didn't)",
+      "webhook",
+      "diff",
+      "path (as in storage path, not a URL route)",
+      "client uploads",
+      "incident",
+      "concerns table (I don't know what that is until I click)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd paste the prompts, but I don't know how to judge the answers. When the agent lists 'every decision I didn't specify', what does a bad one look like? I'd also need one concrete example of 'runs twice' or 'fails halfway' being fixed, because that's the checklist item I couldn't verify on my own. And for my stack: how do I get the user ID from the session in Supabase?",
+    "cut": "The nine-question list in 'The questions an engineer asks'. The floors list and the 'Before you ship, check' list already give me what I'd act on. Nine more bullets in between is where I stopped reading carefully. Keep the line about a copy change versus a payment flow and point to the concerns table.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

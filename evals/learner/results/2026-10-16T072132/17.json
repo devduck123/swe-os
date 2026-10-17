@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Never rename or drop a column in one migration, because the old version of my app is still running during the deploy; add the new column, copy the data over, switch the code, and only then drop the old one.",
+    "intended": "During every deploy, old and new code share the same database, so big schema changes get split into small releases that each work for both versions.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "use the safer version in \"Going deeper\"",
+        "why": "There is no Going deeper section in what I can see. This happens three times (NOT NULL, \"It needs to run on its own\", and \"the psql command\"), so I hit a dead end exactly when I was told what to do."
+      },
+      {
+        "quote": "It needs to run on its own",
+        "why": "On its own from what? Outside a migration file? Not alongside other statements? I can't tell what I'd have to do differently."
+      },
+      {
+        "quote": "is one giant transaction",
+        "why": "Transaction isn't explained. I get from context that it means all or nothing, but \"Each batch saves on its own\" only makes sense if I already know what a transaction is."
+      }
+    ],
+    "skimmed": [
+      "The bullet list under \"Know what lock you're taking\": rewrites, table scans, and a fixed default feel like DBA detail. I'd skim it and just remember to set lock_timeout.",
+      "\"Rehearse on a branch first\": the Neon versus Supabase plan details read like a pricing page, and I don't use Neon."
+    ],
+    "jargon": [
+      "transaction",
+      "backfill (used as a step name before the batches section shows what it means)",
+      "rewrites the whole table",
+      "fixed default",
+      "psql",
+      "Neon branch / parent's data",
+      "seed.sql",
+      "cron job"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The NOT NULL fix and the CONCURRENTLY command both point to Going deeper, which I can't see, so two of my four bullets aren't actionable. I also have no way to tell whether a table is \"big\" or \"busy\": give me a row count or a rule of thumb. And \"push locally, then generate\" doesn't say what generate compares against, so I'm not sure the file will contain my changes.",
+    "cut": "The Supabase free versus paid plan sentence in \"Rehearse on a branch first.\" It's pricing trivia. Just say \"rehearse locally with supabase db reset.\"",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Old and new code hit the same database during a deploy, so never rename or drop a column in one step: add the new one, copy, switch, then drop it releases later.",
+    "intended": "Every schema change has to work for both old and new code at once, so big changes get split into small, individually safe releases.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "use the safer version in \"Going deeper\"",
+        "why": "There's no Going deeper section left for me, so this sends me nowhere. Same with 'with the psql command in \"Going deeper\"' in What I'd do. I don't know what psql is or how CONCURRENTLY 'needs to run on its own'."
+      },
+      {
+        "quote": "is one giant transaction",
+        "why": "I can't define a transaction. 'Each batch saves on its own' got me back on track, but say that up front: 'one giant transaction (it all saves at once or not at all)'."
+      },
+      {
+        "quote": "`push` locally, then `generate`",
+        "why": "The section above told me push is the shortcut to avoid. Now I'm told to use it. It's not clear that push is fine while experimenting and generate is what goes in the PR, or whether running both causes conflicts."
+      }
+    ],
+    "skimmed": [
+      "The Supabase vs Neon branching details in Rehearse on a branch. Paid plans and default-copy behavior felt like vendor fine print, so I skipped to the free-plan command.",
+      "The type/NOT NULL bullets in Know what lock you're taking. I don't know what 'rewrites the whole table' or 'scans' costs me, so I just took away 'these are slow, be careful'."
+    ],
+    "jargon": [
+      "transaction",
+      "backfill (used before it's explained by example)",
+      "fixed default",
+      "rewrites the whole table",
+      "psql",
+      "production-shaped data",
+      "cron job",
+      "big table / busy table (no sense of how big is big)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually run CREATE INDEX CONCURRENTLY and the safe NOT NULL, since both point to a section that's gone. A rough rule for what counts as a 'big' or 'busy' table on my app (10k rows? 1M?). Where the backfill script runs (locally against prod? a Vercel function? the Supabase SQL editor?).",
+    "cut": "The last paragraph of Rehearse on a branch, the Neon vs Supabase plan differences. 'Rehearse on a copy first; on Supabase free, use supabase db reset' is all I need on my phone.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

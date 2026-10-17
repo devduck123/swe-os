@@ -1,0 +1,73 @@
+[
+  {
+    "takeaway": "Being logged in isn't enough: every query has to check that this specific record belongs to this user, using the user from the session and never an ID or role from the request, because anyone can edit what the browser sends.",
+    "intended": "At every trust boundary, ask two questions: is this input shaped right (validation), and is this caller allowed to touch this specific thing (authorization).",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "A row in Postgres is enough",
+        "why": "A leap. I don't know how a row becomes a rate limiter. Do I count requests in it? Reset it? The real answer is behind a link, so this feels like homework."
+      },
+      {
+        "quote": "Wrapped in select, auth.uid() runs once",
+        "why": "Too dense. It's a performance detail in the middle of me trying to understand what a policy even is. I can't tell if skipping it breaks security or just makes things slow."
+      },
+      {
+        "quote": "I'd add Postgres RLS as a second wall",
+        "why": "This contradicts the section above it. That section said that on Supabase, RLS IS my authorization and I should turn it on for every table. Now it's an optional second wall for later? As a Supabase user, I don't know which applies to me."
+      }
+    ],
+    "skimmed": [
+      "The proxy.ts / 2025 Next.js bug paragraph. I got 'don't rely only on middleware' and skipped the history and the Vercel detail.",
+      "The bullet-by-bullet RLS breakdown. Seven bullets of SQL explanation on a phone is a lot. I read the first three and the m.user_id one, then stopped.",
+      "The second half of the rate-limit section. 'Rotates IPs' and 'email bomber' made sense, but I skimmed once it pointed to another page."
+    ],
+    "jargon": [
+      "publishable key (I sort of know it's the anon key, but the stop never connects the two)",
+      "with check",
+      "the actual control (in 'safeParse(input) is the actual control')",
+      "a real permissions model"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The data access layer prompt and the user-B 404 test are great, and I'd paste both today. But I can't act on 'count your own email and AI routes in a Postgres table' without knowing the shape of that table. As a Supabase user, I also need one clear line: if my browser calls Supabase directly, RLS comes first and isn't optional. Right now 'What I'd do' makes it sound like a later upgrade.",
+    "cut": "The 'Wrapped in select, auth.uid() runs once per query, not once per row' bullet. It's an optimization, not a security idea. It's the moment my brain checked out of the RLS section, and I can ask my agent about speed later.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Being logged in isn't enough: every query has to check that this record belongs to this user, using who they are from the session, not anything the browser sends.",
+    "intended": "At every trust boundary, check that input has the shape you expect (validation) and that this caller may touch this specific thing (authorization).",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "and org_id = ${session.orgId}",
+        "why": "My session from Supabase gives me a user, not an org. Where does orgId come from? Do I look it up first? The stop treats it like it's just there."
+      },
+      {
+        "quote": "A row in Postgres is enough",
+        "why": "A leap. I don't know how a database row becomes a rate limiter. Count what, reset when, checked where? The link helps, but this line alone doesn't tell me what to build."
+      },
+      {
+        "quote": "add Postgres RLS as a second wall",
+        "why": "Contradicts the section above, which says on Supabase RLS IS my authorization. I use Supabase from the browser. Is RLS my only wall or my second one? I couldn't tell which advice is for me."
+      }
+    ],
+    "skimmed": [
+      "The 2025 Next.js header bug history in the proxy.ts section. I skimmed it as news, not something I need to do.",
+      "The OWASP API Security Top 10 mention. The invoice story already convinced me, so the ranking felt like it was for someone else.",
+      "The last bullet of the RLS breakdown about auth.uid() running once per query. I'll just copy the pattern."
+    ],
+    "jargon": [
+      "route handler (vs server action, I'm fuzzy on the difference)",
+      "publishable key (I call it the anon key)",
+      "public schema (glossed, but 'schema' already means Zod schema earlier in the stop)",
+      "rotates IPs",
+      "data access layer (glossed, but I still don't picture the files)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Which path applies if I use Supabase from the browser vs. through server actions. Right now 'RLS is your authorization' and 'RLS as a second wall' fight each other. Also missing: how to get the user's org on the server, and a one-line sketch of the Postgres rate-limit counter.",
+    "cut": "The 'In 2025, a Next.js bug let anyone skip it with one header. Vercel-hosted apps were safe, but...' sentences. The rule 'check auth in each action' stands without the history, and 'Vercel was safe' made me wonder whether I should care at all.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

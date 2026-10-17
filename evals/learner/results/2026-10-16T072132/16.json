@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Ship small PRs that CI has to pass, click the preview before merging, and remember that rolling back fixes the code but not the emails, charges, or data the bad version already touched.",
+    "intended": "Safe shipping means making every change small enough to check and easy to undo, with a chain of stops (short branch, CI, preview, prod check, rollback), and knowing that rollback can't undo side effects.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "direct connection string, not the pooled one",
+        "why": "I have no idea what pooled vs direct means. Then the Supabase sentence says use the 'session pooler string', which sounds like the pooled one I was just told not to use. I'd paste this to my agent and hope."
+      },
+      {
+        "quote": "every migration must work with the old code too",
+        "why": "This is a leap. I get the column rename example, but I'd never know on my own whether my migration 'works with the old code'. The link to expand and contract helps, but on my phone I'm not clicking away mid-section."
+      },
+      {
+        "quote": "merges to main stop going live until",
+        "why": "Wait, so after I roll back, my fix won't deploy? This is a real gotcha but it's one dropped sentence. I'd forget it and panic when my hotfix 'didn't work'."
+      }
+    ],
+    "skimmed": [
+      "The YAML block. I read 'notice the last two lines' and looked only at those, which worked. The rest is noise to me, I'd just copy it.",
+      "Most of 'Run migrations in the Vercel build' after the first two paragraphs. The pooler stuff and the Supabase alternatives felt like they were for someone who already knows databases.",
+      "The flag service bullet. Percentage rollouts aren't my problem yet."
+    ],
+    "jargon": [
+      "pooled connection string / session pooler",
+      "lockfile (glossed as package-lock.json, but not why exact versions matter)",
+      "deployment protection",
+      "percentage rollouts and targeting",
+      "Hobby / Pro (I guess these are Vercel plans but it doesn't say)",
+      "schema"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "CI, branch protection, and Dependabot I'd do today, they're concrete. Previews and migrations I'd stall on: I don't know if I'm on Supabase's paid plan, whether to switch to Neon, or which connection string to put in which env var. One line like 'If you're on Supabase free: make a second project, put its URL in Preview's DATABASE_URL, done' would get me moving. Also no step for the post-deploy check, like which error tracker to set up.",
+    "cut": "The connection-string paragraph in the migrations section ('db:migrate is a package.json script... on merge.'). It's three options and two string types packed into two sentences. Either give me one default path or let the agent handle it.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Ship lots of tiny PRs that CI and a preview check first, because rolling back only swaps the code and can't undo emails, charges, or database rows the bad version already touched.",
+    "intended": "Make every change small enough to check and easy to take back, with a branch, CI, a preview, a production check, and a working undo, while knowing that undo doesn't reverse side effects.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "over the direct connection string, not the pooled one",
+        "why": "Unexplained terms. I've only ever seen one DATABASE_URL in Supabase. I don't know what pooled vs direct means, why it matters for migrations, or which one I have now. Then 'use the session pooler string' adds a third kind and I gave up on the paragraph."
+      },
+      {
+        "quote": "then runs your one `check` script",
+        "why": "A leap. It assumes I already have a `check` script. My package.json has dev, build, start, and maybe lint. Nothing says what goes in `check` (lint? typecheck? tests?), so if I copy check.yml as told, CI fails on the first run."
+      },
+      {
+        "quote": "every migration must work with the old code too",
+        "why": "Mostly followed thanks to the rename example, but I can't tell from this which changes are safe. Adding a column is fine? Making one required isn't? I'd have to click through to expand and contract to know if my migration is OK, and the checklist asks me to confirm exactly this."
+      }
+    ],
+    "skimmed": [
+      "The YAML block. I'd copy it without reading it. The 'notice the last two lines' pointer helped, but the rest is noise to me.",
+      "The `db:migrate` connection-string paragraph. Too dense and full of terms I don't know, so I'd skip it and hope my agent figures it out.",
+      "The flag service bullet (PostHog, percentage rollouts, targeting). Not where I am yet, and 'What I'd do' says so too."
+    ],
+    "jargon": [
+      "pooled connection string / direct connection string",
+      "session pooler",
+      "`npm ci` (vs npm install)",
+      "sandbox email sender",
+      "error tracking (what tool? I don't have one)",
+      "percentage rollouts and targeting",
+      "deployment protection",
+      "`supabase db diff`"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What goes in the `check` script, or a line saying 'add a check script that runs lint and typecheck', because without it the CI step breaks. On the Supabase free plan, how migrations reach the second Preview project, since 'turn on the GitHub integration instead' sounds like the Branching/paid path. Which error tracking to set up for the 'watch error tracking for ten minutes' step, since I have none. How to actually undo a rollback so merges go live again: it's mentioned as a gotcha but not as a step.",
+    "cut": "The `db:migrate` connection-string paragraph ('`db:migrate` is a `package.json` script you add...'). It's the densest part, it's for someone who already knows connection pooling, and the 'What I'd do' bullet plus my agent would cover it. I'd move it to Going deeper or the migrations stop.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

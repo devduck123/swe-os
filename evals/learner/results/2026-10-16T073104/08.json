@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Get the whole app running on my laptop with fake seed data first, and only sign up for a hosted service when a feature I'm actually building needs it.",
+    "intended": "Build on your laptop first, then add hosted services one at a time on their free tiers, only when a feature needs them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Neon's Vercel integration creates a branch",
+        "why": "I know git branches, not database branches. 'A throwaway copy of your database' helps, but then the next bit says it copies production's data, and I couldn't tell if that's the throwaway part or the dangerous part."
+      },
+      {
+        "quote": "If your Vercel build command runs migrations",
+        "why": "I've never set a build command. I don't know if mine runs migrations, so I can't tell if this warning applies to me."
+      },
+      {
+        "quote": "Create each preview's Neon branch in CI from a `dev` branch",
+        "why": "Too big a leap. CI, a 'dev' database branch, and wiring Neon into it at once. I'd paste it to my agent, but I couldn't check what it did."
+      }
+    ],
+    "skimmed": [
+      "The Docker section: I'm on Supabase, and the stop told me the Supabase path replaces it.",
+      "The CREATE TABLE migration block: the comments are nice, but on my phone it's a wall of SQL I won't write by hand.",
+      "The package.json scripts and the drizzle-kit line: on Supabase, `db reset` replaces them, so I skipped them."
+    ],
+    "jargon": [
+      "pricing cliff (used in the second paragraph, only sort of explained near the end)",
+      "transactional email provider",
+      "webhooks",
+      "build command",
+      "image (in the Docker comment)",
+      "port",
+      "database branch",
+      "tsx"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'Then previews' step says to add Neon's integration, but I'm on Supabase. Do I still add Neon? How do I turn on Supabase preview branches? Also, how do I check whether my Vercel build runs migrations against prod? That's the scary part, and there's no step for it.",
+    "cut": "The CREATE TABLE migration example. Most readers like me use Supabase or let the agent generate it, and on a phone it pushes the useful 'fresh clone' checklist and the previews warning further away.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Get the whole app running on my laptop first, with a fake database full of seed data and one `setup` command, and only sign up for a hosted service when a real feature needs it.",
+    "intended": "Build locally first and add hosted services one at a time, on free tiers, only when a feature needs them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "runs format, lint, types, and tests",
+        "why": "I know tests, but 'lint' and 'types' as separate steps aren't explained. The script later shows prettier, eslint, and tsc, and I can't map which is which or why I need all four."
+      },
+      {
+        "quote": "If your Vercel build command runs migrations",
+        "why": "A leap. I don't know whether my build command runs migrations, where I'd check, or why a preview would get the production database unless I set it up that way. I think it's because unscoped env vars fall through, but the stop doesn't say so."
+      },
+      {
+        "quote": "Neon branch in CI from a `dev` branch",
+        "why": "I just learned 'branch' means a copy of the database, but 'dev branch' reads like a git branch. 'In CI' means I'd have to write a workflow I've never written. I couldn't check whether my agent did this right."
+      }
+    ],
+    "skimmed": [
+      "The Docker section, because I'm on Supabase and the stop told me I could skip it.",
+      "The numbered 'Each service leans on the ones before it' list. The habit tracker example already gave me the order, and the table right after repeats it.",
+      "The `package.json` block, partly. It assumes Drizzle, and on Supabase it's 'replaced', so I wasn't sure which lines still apply to me."
+    ],
+    "jargon": [
+      "lint",
+      "image (in 'postgres:18 is the image to run')",
+      "schema (in 'generates it from your schema')",
+      "webhooks",
+      "transactional email provider",
+      "Better Auth (named like I'd know it)",
+      "integration (Neon's Vercel integration: is it a button, a plugin, something I install?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "When to move from local to Neon or Supabase hosted, meaning what the trigger is. How to scope env vars to Development, Preview, and Production on Vercel (one line on where that setting lives). On Supabase, what my `setup` script should look like instead of the Drizzle one. The 'once real users arrive' step needs a way for me to check the agent's work, not just a prompt to paste.",
+    "cut": "The numbered 'Each service leans on the ones before it' list. The habit tracker story and the table already cover the order, and three passes over the same six services is where I started skimming.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -14,26 +14,35 @@ A click is a chain of hops: browser, CDN, function, database, and back. Each hop
 
 ## One click, end to end
 
-You have a habit tracker on Next.js, deployed to Vercel, with Postgres on Neon. A signed-in user taps **Dashboard**.
+You have a habit tracker on Next.js, deployed to Vercel, with Postgres on Neon. A signed-in user taps **Dashboard**. Only the function box runs your code.
 
 ```
 browser ──▶ CDN (near the user) ──▶ function (one region) ──▶ Postgres
    ▲         static files and           server components,
    │         cached pages stop here     route handlers, auth
-   └──────────── HTML + RSC payload, streamed back ◀────────┘
+   └──────────── the rendered page, sent back ◀────────────┘
 ```
 
-1. **Getting there.** DNS turns your domain into an IP, and TLS proves the server is really yours. Both are cached after the first visit.
-2. **CDN.** Vercel's network near the user serves static files and cached pages without touching your code.
-3. **Function and database.** Anything dynamic runs in a function in one region. It queries Postgres and streams back HTML plus the RSC payload, React's compact description of the rendered components. The browser paints the HTML first, then makes it interactive.
+1. **CDN.** Vercel's servers near the user hand back static files and cached pages without running your code.
+2. **Function and database.** Anything dynamic runs in a function in one region. It queries Postgres and sends back the rendered page.
+
+## Debug by asking which hop broke
+
+- **Slow only after a quiet period:** on this stack, probably Neon. It suspends after 5 minutes idle and takes a few hundred milliseconds to wake.
+- **`504` (gateway timeout) or a function timeout:** the function was waiting on the database or an outside API.
+- **CORS error:** the browser blocked your page from reading another site's response. The server usually answered fine.
+- **Works locally, broken when deployed:** a missing environment variable, or a region far from the database.
+- **Stale data:** a cache you forgot ([below](#caching-happens-at-every-hop)).
 
 ## Put the function next to the database
 
-Round trips cost more than slow code. New Vercel projects run functions in Washington, D.C. (`iad1`) by default. If your Neon database is in Frankfurt, a dashboard that runs five queries in a row crosses the Atlantic ten times before the user sees anything. Moving the function next to the database beats any code tuning.
+Round trips cost more than slow code. New Vercel projects run functions in Washington, D.C. (`iad1`) by default. If your Neon database is in Frankfurt, a dashboard that runs five queries in a row crosses the Atlantic ten times before the user sees anything.
+
+To move it, open your Vercel project's **Settings → Functions → Function Regions** and pick the region closest to your database, or set `"regions": ["fra1"]` in `vercel.json`. On Supabase, each project is deployed to one region. Match that one.
 
 ## Your code runs in two places, and one of them is public
 
-In the App Router, components are **server components** by default. They run in the function, can read the database and secrets, and send only their rendered output to the browser.
+Components are **server components** by default. They run in the function, can read the database and secrets, and send only their rendered output to the browser.
 
 A file marked `'use client'` is a **client component**. Its JavaScript ships to the browser, along with everything it imports, so it can respond to clicks.
 
@@ -45,57 +54,51 @@ Put `import 'server-only'` at the top of any module that touches the database or
 
 "Where is this value stored?" answers most questions about stale, lost, and leaked data.
 
-| Where                        | Survives a refresh? | Survives a deploy?    | Who can read or change it                |
-| ---------------------------- | ------------------- | --------------------- | ---------------------------------------- |
-| The URL                      | Yes                 | Yes                   | The user, and anyone they share it with  |
-| React state                  | No                  | No                    | The user                                 |
-| Cookies                      | Yes                 | Yes                   | The user can edit them; sign them        |
-| `localStorage`               | Yes                 | Yes                   | Any script running on your page          |
-| Server memory (module scope) | Sometimes           | No                    | Every request on that instance           |
-| Next.js `use cache` entries  | Until they expire   | No, scoped per deploy | Everyone whose request hits the same key |
-| The database                 | Yes                 | Yes                   | Only your server code                    |
+- **The URL** survives refresh and deploys. Anyone it's shared with can read it.
+- **React state** is gone on refresh. Only that tab has it.
+- **Cookies** survive both. The user can edit them, so auth libraries sign theirs to spot edits.
+- **`localStorage`** survives both. Any script running on your page can read it.
+- **Server memory** sometimes survives a refresh, never a deploy. Every request on that instance shares it.
+- **The database** survives everything. Only your server code reaches it.
 
-Server memory is the tricky row. Instances come and go, so an in-memory counter quietly resets. And Vercel's Fluid compute, on by default for new projects, runs several requests on one instance at once. A module-level `let currentUser` is shared between users who land on the same instance. Keep per-request data inside the request, and anything you'd miss in the database.
+Server memory is the tricky one. An instance is one running copy of your function, and Vercel starts and stops them as traffic changes, so an in-memory counter quietly resets. One instance also handles several requests at once. So a variable at module scope (declared at the top of a file, outside any function), like `let currentUser`, is shared by every user who lands on that instance.
+
+Module scope is only for things that are the same for everyone, like the database client. It holds a pool of open connections that requests reuse, instead of opening a new one each time. Per-request data stays inside the request, and anything you'd miss goes in the database.
 
 ## Caching happens at every hop
 
-- **The browser** keeps responses according to `Cache-Control: max-age`.
-- **The CDN** keeps responses whose `Cache-Control` sets `s-maxage`, the lifetime for shared caches. Vercel skips the cache when the request carries an `Authorization` header, or the response sets a cookie, is marked `private`, or sends `Vary: Cookie`. A session cookie on the request alone doesn't stop it.
-- **Next.js** caches what you mark `'use cache'`, once `cacheComponents: true` is set in `next.config.ts`. The key includes the function's arguments and the build ID, so every deploy starts empty. By default, entries live in one instance's memory, which the next request may never reach.
+`Cache-Control` is a response header (a note sent with the response) that says who may keep a copy, and for how long:
 
-Stale data is almost always a cache you forgot. Check the `x-vercel-cache` response header to see whether the CDN answered, then work inward.
+- **The browser** keeps a response for `max-age` seconds.
+- **The CDN** keeps a response for `s-maxage` seconds, and hands it to everyone. The user's session cookie on the request doesn't stop that. Next.js adds `s-maxage` to pages it caches, like ones with `export const revalidate`, and agents add it by hand to route handlers.
 
-## Debug by asking which hop broke
-
-- **Name not resolved or certificate warning:** DNS or TLS.
-- **Slow only after a quiet period:** on this stack, probably Neon. It suspends after 5 minutes idle and takes a few hundred milliseconds to wake.
-- **`504` or a function timeout:** the function was waiting on the database or an outside API.
-- **CORS error:** the browser blocked your page from reading the response. The server usually answered fine.
-- **Works locally, broken when deployed:** a missing environment variable, or a region far from the database.
-
-## What the vibe-coded version misses
-
-- **A personalized response cached for everyone.** A route returns the user's data with `Cache-Control: public, s-maxage=60`. The CDN serves the first user's dashboard to everyone else for a minute, and you find out when someone screenshots a stranger's habits.
-- **Per-user data in module scope.** It leaks between users under concurrent load, and since it's intermittent, it passes every test you run alone.
-- **CORS "fixed" with `*`.** A Next.js app calling its own API is same-origin and needs no CORS. Browsers refuse `*` with cookies, so the next "fix" echoes any origin with `Access-Control-Allow-Credentials: true`, and now any website can make signed-in requests as your users.
-- **A function in one region and the database in another.** The page is slow no matter how good the code is, and you burn a weekend tuning queries that were never the problem.
-- **A new database connection on every call.** Under load you hit Postgres's connection limit and requests fail. Copy the pooled setup from the [side-project stack](../recipes/side-project-stack.md).
+In the browser's Network tab, click the request and check its `x-vercel-cache` header: `HIT` means the CDN answered and your code never ran. Then work inward.
 
 ## What I'd do
 
-- One Next.js app, with the Vercel function region set to match Neon's.
-- Server components for reading data, client components only where something is interactive.
-- `import 'server-only'` in every module that touches the database or a secret.
-- One connection pool at module scope, set up like the [recipe](../recipes/side-project-stack.md). Per-user data never goes there.
-- `'use cache'` only for data that's the same for every user. Nothing personal gets cached at the CDN.
-- When something breaks, walk the chain from the browser inward with the network tab before guessing.
+- Set the Vercel function region to match the database's, in **Settings → Functions**.
+- Read data in server components. Add `'use client'` only where something is interactive.
+- Put `import 'server-only'` at the top of every module that touches the database or a secret.
+- Create the database client once at module scope, copied from the [recipe](../recipes/side-project-stack.md). Nothing per-user goes there.
+- Ask your agent: "Find every response that sets `s-maxage` or `public`, and tell me whether any of them depends on who's signed in."
+- When something breaks, open the browser's Network tab, click the failing request, and read its status, timing, and `x-vercel-cache` header before guessing.
+
+## Before you ship, check
+
+Paste this to your agent before you merge:
+
+- Nothing that depends on who's signed in is cached with `s-maxage` or `public`.
+- No per-user data lives in a variable at module scope.
+- The function region matches the database's.
+- The database client is created once at module scope, not per request.
+- Every module that touches the database or a secret starts with `import 'server-only'`.
 
 ## Sources
 
 - [Next.js: Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
-- [Next.js: `use cache`](https://nextjs.org/docs/app/api-reference/directives/use-cache), for `cacheComponents`, cache keys, and in-memory entries on serverless
 - [Vercel: Configuring regions for functions](https://vercel.com/docs/functions/configuring-functions/region)
-- [Vercel: CDN cache](https://vercel.com/docs/caching/cdn-cache), for the cacheable response criteria
-- [Vercel: Fluid compute](https://vercel.com/docs/fluid-compute)
+- [Vercel: CDN cache](https://vercel.com/docs/caching/cdn-cache), for the cacheable response criteria and `s-maxage`
+- [Next.js: Incremental Static Regeneration](https://nextjs.org/docs/app/guides/incremental-static-regeneration), for `revalidate` adding `Cache-Control` headers
+- [Vercel: Fluid compute](https://vercel.com/docs/fluid-compute), for several requests sharing one instance
 - [Neon: Scale to zero](https://neon.com/docs/introduction/scale-to-zero)
-- [MDN: CORS and credentialed requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS#credentialed_requests_and_wildcards)
+- [Supabase: Regions](https://supabase.com/docs/guides/platform/regions)
