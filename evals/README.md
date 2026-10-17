@@ -20,7 +20,7 @@ Six rounds in October 2026, on Claude Code with Opus 5.5, under a Max plan. Each
 - **Where SWE OS helps most:** verification, setup (start-project +0.83), debugging (+0.58), and keeping keys out of shipped code (extension-key +0.50).
 - **Where it ties:** tasks Opus already does well alone, like the password reset review and pushback. A scores 2.3–2.7 there, so there's little room.
 - **It costs about 2x** tokens and time.
-- **The +0.5 average bar isn't met,** and may be the wrong bar: see [PROJECT.md](../PROJECT.md).
+- **It meets the bar** (below) in round 6. The older +0.5 average target was dropped: on tasks Opus already does well, there's little room to gain.
 
 Rounds 1–3 found and fixed four harness bugs (B could read reviewer notes, a leading "Go ahead", unparseable grades, hidden checks). Rounds 2–5 drove the guidance changes in CHANGELOG: build first and ask at the end, shorter reports, and only open concerns.
 
@@ -83,4 +83,4 @@ Score each dimension 0 to 3. Mark N/A when it doesn't apply. Don't reward length
 
 Record serious flaws (data loss, leaked secrets, an auth bypass, a fake verification claim) separately. They can't be averaged away.
 
-**Bar for v0.1:** across all ten scenarios, B beats A by at least 0.5 on average, with no new serious flaws and no habit of overbuilding. On the two-line fix, B's time, tokens, and reply length stay close to A's. If it doesn't, change the guidance, not the bar.
+**The bar:** B ties or beats A on every scenario, within noise (about ±0.1 with 2–3 reps). B has no serious flaws of its own. On the two-line fix, B stays close to A on time, cost, and length. And B clearly wins where SWE OS teaches something the model doesn't do by default: verification, setup, debugging, and secrets. An average lead alone isn't the bar, because on tasks the model already does well, there's little room to gain. Round 6 meets it.

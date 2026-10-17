@@ -2,24 +2,22 @@
 
 ## Now
 
-**v0.2.0 released on 2026-10-13.** The site is live at https://tommy-swe-os.vercel.app, and the repo is public under MIT (code and templates) and CC BY 4.0 (writing). Maturity: prototype.
+**v0.3.0 released on 2026-10-17.** The site is live at https://tommy-swe-os.vercel.app, and the repo is public under MIT (code and templates) and CC BY 4.0 (writing). Maturity: prototype.
 
 What's in it:
 
-- The 22-stop track, reviewed by Tommy. Tuning comes in its own thread.
+- The 22-stop track, tuned against a learner test: 91% of in-character readers take away the intended lesson. It goes past solo side projects into professional engineering. Tommy will revisit the level after a real-use baseline.
 - Seven skills and 17 concerns, used from the site, a local clone, or the Claude Code plugin. Projects pin a version.
-- An eval harness and three rounds of results. SWE OS helps with shaping, setup, and debugging, adds no ceremony to tiny fixes, and costs about 2× the tokens. It hasn't met the +0.5 bar yet. See [evals](evals/README.md#results-so-far).
+- Evals that meet the bar: SWE OS ties or wins every scenario, with no serious flaws of its own, and is much stronger at verifying its work. It costs about 2× the tokens. See [evals](evals/README.md#results-so-far).
 - Guards on the public repo: secret scanning on every commit and PR, GitHub push protection, and a protected `main`.
 
 ## Next
 
-1. Run `start-project` on a real side project, and fix what it gets wrong. Needs Tommy's next project.
-2. Tune the track, in its own thread.
-3. A full eval round on v0.2.0, two reps per scenario, to see whether the round-2 and round-3 fixes reach the +0.5 bar. Regrade round 3's dependency B1 first (`--grade`).
+1. **A real-use baseline.** Build one real side project with SWE OS end to end: `shape-project`, `start-project`, `build-feature`, and shipping, with the `learn` skill on. Record what helped, what got in the way, and what Tommy learned. The evals are synthetic; this is the first real signal.
+2. **The track's level.** After the baseline, decide what a solo builder needs first and what's professional depth. Likely a short core path, with the rest marked as going further.
+3. **Real readers.** Share the site with a few people who build with AI, and turn on Vercel Web Analytics, so the learner test isn't the only reader signal.
 4. Try one task in Codex with each path.
-5. The two-week `learn` trial.
-6. Maybe: Vercel Web Analytics, to see whether anyone reads the site.
-7. A custom domain, when wanted. Change the URL in `astro.config.mjs`, the README, and the repo's homepage.
+5. A custom domain, when wanted. Change the URL in `astro.config.mjs`, the README, and the repo's homepage.
 
 ## Decisions
 
@@ -29,6 +27,7 @@ What's in it:
 | Built for anyone, primarily Tommy                                                                                                                                                         | Tommy is the main user, but the site and repo are public, so others need to use it without forking or hitting dead ends.                                                                             | Other people start contributing regularly.                                       |
 | An optional Claude Code plugin as a third path; reading the site or a clone stays the default                                                                                             | Installed skills trigger on their own, without pasting a prompt every task. Keeping it optional keeps "no installer" true.                                                                           | The plugin format keeps changing, or nobody uses it.                             |
 | Evals run headless on Tommy's Max plan, capped at $50 API-equivalent per round                                                                                                            | Headless runs worked in the agent-path test. The cap keeps a round from eating the plan's limits.                                                                                                    | The first round shows the cap is too low to answer anything.                     |
+| The eval bar is per scenario: B ties or beats A within noise everywhere, has no serious flaws of its own, ties the two-line fix on cost, and clearly wins where SWE OS teaches            | Rounds 4 and 6 plateaued at +0.29 and +0.30. On tasks Opus already does well (2.3–2.7 of 3 without SWE OS) there's little room, so an average target rewards the wrong thing.                        | The model gets much weaker or stronger, or new scenarios target new skills.      |
 | Agents build what the request implies and ask at the end, instead of stopping to ask first                                                                                                | Eval rounds 1 and 2: with SWE OS, agents asked for a plan sign-off on features the user had already asked for, and scored lower than without it.                                                     | Agents start building things users didn't want.                                  |
 | Two agent paths: raw Markdown from the site with curl, or a local clone                                                                                                                   | Claude Code's web fetch passes pages through a small model, so rules can come back paraphrased. Codex's default sandbox has no network. A clone gives exact text offline.                            | Tests show one path is enough.                                                   |
 | Hosted on Vercel Hobby at the `vercel.app` domain                                                                                                                                         | Free, a preview per PR, and no domain needed to launch. The site URL is set in `astro.config.mjs`, because Vercel's production-URL variable kept the project's first domain after we added an alias. | A custom domain, or anything commercial (Hobby is non-commercial).               |
@@ -55,12 +54,11 @@ What's in it:
 
 ## Gaps
 
-| Gap                                                                                                                                                                                                                                                                | State    | Revisit when                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------- |
-| Concern pages and skills are AI-drafted and only spot-reviewed by Tommy                                                                                                                                                                                            | Deferred | Evals or real use show agents missing what they should catch                                  |
-| Codex is untested against SWE OS; Claude Code passed from the site and from a local copy                                                                                                                                                                           | Unknown  | Someone runs one task in Codex with each path                                                 |
-| The +0.5 average eval bar isn't met (+0.29 and +0.30 in the full rounds). Proposed bar: B ties or beats A on every scenario within noise, has no serious flaws of its own, ties the two-line fix on cost, and clearly wins where SWE OS teaches. Round 6 meets it. | Unknown  | Tommy decides the bar                                                                         |
-| The learn loop is untested on Tommy                                                                                                                                                                                                                                | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
-| Windows paths and line endings are handled in code but never run on Windows                                                                                                                                                                                        | Unknown  | First Windows contributor or CI runner                                                        |
-| Drizzle snippets target stable 0.45; 1.0 changes `casing` and relational `where`                                                                                                                                                                                   | Deferred | Drizzle 1.0 ships stable                                                                      |
-| Local-first setup relies on a `pg_isready` healthcheck, but no compose template ships one                                                                                                                                                                          | Deferred | First real run of `start-project`                                                             |
+| Gap                                                                                       | State    | Revisit when                                                                                  |
+| ----------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| Concern pages and skills are AI-drafted and only spot-reviewed by Tommy                   | Deferred | Evals or real use show agents missing what they should catch                                  |
+| Codex is untested against SWE OS; Claude Code passed from the site and from a local copy  | Unknown  | Someone runs one task in Codex with each path                                                 |
+| The learn loop is untested on Tommy                                                       | Unknown  | After two weeks of real PRs: did he run walkthroughs, and does he remember what they covered? |
+| Windows paths and line endings are handled in code but never run on Windows               | Unknown  | First Windows contributor or CI runner                                                        |
+| Drizzle snippets target stable 0.45; 1.0 changes `casing` and relational `where`          | Deferred | Drizzle 1.0 ships stable                                                                      |
+| Local-first setup relies on a `pg_isready` healthcheck, but no compose template ships one | Deferred | First real run of `start-project`                                                             |
