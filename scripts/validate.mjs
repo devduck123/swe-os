@@ -24,7 +24,7 @@ const markdownIn = (dir) =>
 const sources = [
   ...readdirSync(root).filter((file) => file.endsWith('.md')),
   ...['core', 'profile', 'skills', 'templates', 'evals'].flatMap(markdownIn),
-].filter((file) => !file.startsWith('evals/results/')); // Eval output, not content.
+].filter((file) => !/^evals\/(project\/)?results\//.test(file)); // Eval output, not content.
 
 // 1. Every relative link resolves to a file in the repo.
 let links = 0;
