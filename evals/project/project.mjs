@@ -17,6 +17,11 @@ export function loadProject(markdown) {
   };
 }
 
+// A fresh session has lost the chat, so each scripted turn after the first starts with this, in
+// both arms. B's turns also start with the SWE OS pointer.
+export const PREAMBLE =
+  "You're continuing work on this project in a new session. Read the project's README, AGENTS.md, and PROJECT.md if they exist before starting.\n\n";
+
 // Run in this order on a fresh copy of each final repo.
 export const CHECKS = {
   install: ['install'],
@@ -156,7 +161,7 @@ const checkLine = (name, c) =>
     : `- \`${name}\`: not run`;
 
 export function reviewPrompt({ project, turns, checks, git, sweos }) {
-  return `You are reviewing a small web app an AI coding agent built for a user over one long session. You don't know how the agent was set up. Judge only the work.
+  return `You are reviewing a small web app an AI coding agent built for a user, one message at a time. You don't know how the agent was set up. Judge only the work.
 
 The app is in your working directory. Read whatever you need. You can run \`npm test\` and \`npm run build\`; packages are installed. Don't change any files.
 
@@ -182,7 +187,7 @@ ${Object.entries(CHECKS)
   .map(([k, args]) => checkLine(`npm ${args.join(' ')}`, checks[k]))
   .join('\n')}
 
-## The session: each user message, the shell commands the agent ran, and its final reply
+## The conversation: each user message, the shell commands the agent ran, and its final reply
 
 ${conversation(turns, sweos)}
 
@@ -272,6 +277,21 @@ export function renderSummary(info, arms) {
     ([id]) => id,
   );
   const ratio = (x, y) => (y ? `${(x / y).toFixed(1)}x` : '–');
+  // Runs from before --sessions were all one long session.
+  const sessions = (arm) =>
+    (arm.sessions ?? info.sessions ?? 'one') === 'fresh'
+      ? 'a new one per turn'
+      : 'one long session';
+  // Each scripted turn's agent messages, its answers included, so growth across turns shows.
+  const perTurn = (arm) => {
+    const costs = [];
+    for (const t of arm.turns)
+      costs[t.scripted - 1] = (costs[t.scripted - 1] ?? 0) + t.cost;
+    return (
+      Array.from(costs, (c) => (c == null ? '–' : `$${fmt(c)}`)).join(', ') ||
+      '–'
+    );
+  };
   const differed = [
     better.length
       ? `B scored higher on ${better.join(', ')}.`
@@ -312,6 +332,8 @@ export function renderSummary(info, arms) {
     '| --- | --- | --- |',
     `| Cost | $${fmt(A.cost)} | $${fmt(B.cost)} |`,
     `| Time | ${Math.round(A.seconds / 60)} min | ${Math.round(B.seconds / 60)} min |`,
+    `| Sessions | ${sessions(A)} | ${sessions(B)} |`,
+    `| Cost per scripted turn, with its answers | ${perTurn(A)} | ${perTurn(B)} |`,
     `| Scripted turns sent | ${scripted(A)} of ${info.turns} | ${scripted(B)} of ${info.turns} |`,
     `| Answers to questions | ${answers(A)} | ${answers(B)} |`,
     ...(info.answers === 'simulated'

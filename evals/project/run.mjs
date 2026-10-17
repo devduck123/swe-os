@@ -1,10 +1,12 @@
 #!/usr/bin/env node
-// The project eval: a person builds a whole app over one long Claude Code session, once without
-// SWE OS (A) and once with it (B). Then each final repo is installed, tested, built, and reviewed
-// blind. Runs on whatever Claude account the `claude` CLI is logged into. Start it from a normal
-// terminal, not inside a Claude Code session. See README.md.
+// The project eval: a person builds a whole app with Claude Code, once without SWE OS (A) and
+// once with it (B). Each scripted turn starts a fresh session by default, the way SWE OS says to
+// work. Then each final repo is installed, tested, built, and reviewed blind. Runs on whatever
+// Claude account the `claude` CLI is logged into. Start it from a normal terminal, not inside a
+// Claude Code session. See README.md.
 //
 //   node evals/project/run.mjs                        both arms, $120 budget, $12 per message
+//   node evals/project/run.mjs --sessions one         every turn in one long session per arm
 //   node evals/project/run.mjs --dry-run              print the plan, spend nothing
 //   node evals/project/run.mjs --fixed-answers        answer questions with the fixed facts
 //   node evals/project/run.mjs --grade <results dir>  redo the checks and reviews of a finished run
@@ -40,6 +42,7 @@ import { parseGrade } from '../harness/parse-grade.mjs';
 import {
   CHECKS,
   NO_REPLY,
+  PREAMBLE,
   blindRepo,
   completeReviewPrompt,
   loadProject,
@@ -55,6 +58,7 @@ const { values: opts } = parseArgs({
     'per-turn': { type: 'string', default: '12' },
     'review-budget': { type: 'string', default: '3' },
     'fixed-answers': { type: 'boolean', default: false },
+    sessions: { type: 'string', default: 'fresh' },
     'dry-run': { type: 'boolean', default: false },
     grade: { type: 'string' },
     out: { type: 'string' },
@@ -64,6 +68,11 @@ const PROJECT = 'book-club';
 const project = loadProject(
   readFileSync(join(import.meta.dirname, `${PROJECT}.md`), 'utf8'),
 );
+if (!['fresh', 'one'].includes(opts.sessions))
+  throw new Error(`--sessions is fresh or one, not "${opts.sessions}"`);
+// Fresh: every scripted turn starts a new session in the same folder, and only the simulated
+// user's answers resume it. One: the whole build is one long session.
+const fresh = opts.sessions === 'fresh';
 const budget = Number(opts.budget);
 const reviewReserve = 2 * Number(opts['review-budget']);
 const TURN_TIMEOUT = 45 * 60_000;
@@ -239,7 +248,7 @@ function transcript(arm, turns) {
     `# Arm ${arm}`,
     '',
     ...turns.flatMap((t) => [
-      `## Message ${t.n} (turn ${t.scripted}${t.kind === 'answer' ? ', an answer to its question' : ''})`,
+      `## Message ${t.n} (turn ${t.scripted}${t.kind === 'answer' ? ', an answer to its question' : ''}${t.newSession ? ', a new session' : ''})`,
       '',
       `**Sent:** ${t.sent}`,
       '',
@@ -283,6 +292,7 @@ function saveArm(a) {
   const data = {
     arm: a.arm,
     sweos: a.arm === 'B',
+    sessions: opts.sessions,
     model: a.model ?? null,
     cost: sumOf(a.turns, 'cost'),
     seconds: sumOf(a.turns, 'seconds'),
@@ -376,8 +386,13 @@ if (opts['dry-run']) {
   }).trim();
   console.log(
     [
-      `Project eval "${PROJECT}": ${project.turns.length} turns, sent in order to one session per arm. Turns alternate A, B, A, B so a budget stop leaves both at the same point.`,
-      `A runs without SWE OS. B gets a snapshot of SWE OS at ${commit} (--add-dir) and its first message starts with: ${pointer('<snapshot>').trim()}`,
+      `Project eval "${PROJECT}": ${project.turns.length} turns, sent in order${fresh ? ', each in a new session in the same folder' : ' to one session per arm'}. Turns alternate A, B, A, B so a budget stop leaves both at the same point.`,
+      `A runs without SWE OS. B gets a snapshot of SWE OS at ${commit} (--add-dir) and ${fresh ? 'each turn' : 'its first message'} starts with: ${pointer('<snapshot>').trim()}`,
+      ...(fresh
+        ? [
+            `Every turn after the first, in both arms, also starts with: ${PREAMBLE.trim()}`,
+          ]
+        : []),
       `Budget $${budget} overall, $${opts['per-turn']} per message, $${opts['review-budget']} per review. Results in ${root}.`,
       '',
       ...project.turns.map(
@@ -422,6 +437,7 @@ const info = {
   budget,
   perTurn: Number(opts['per-turn']),
   answers: opts['fixed-answers'] ? 'fixed' : 'simulated',
+  sessions: opts.sessions,
   turns: project.turns.length,
   sweos,
 };
@@ -446,14 +462,26 @@ const arms = ['A', 'B'].map((arm) => {
   };
 });
 
+// What a scripted turn's message starts with. In a fresh session, B's pointer comes first on
+// every turn, and both arms get the same preamble after turn 1, since the chat is gone. In one
+// long session, only B's first message gets the pointer.
+function opening(a, scripted) {
+  if (!fresh && scripted > 1) return '';
+  return (
+    (a.arm === 'B' ? pointer(sweos) : '') +
+    (fresh && scripted > 1 ? PREAMBLE : '')
+  );
+}
+
 async function send(a, text, kind, scripted) {
   const n = a.turns.length + 1;
-  const prompt = n === 1 && a.arm === 'B' ? pointer(sweos) + text : text;
+  const newSession = kind === 'scripted' && (fresh || !a.session);
+  const prompt = kind === 'scripted' ? opening(a, scripted) + text : text;
   const t0 = Date.now();
   const r = await claude(
     [
       ...agentArgs(a.arm, sweos),
-      ...(a.session ? ['--resume', a.session] : []),
+      ...(newSession ? [] : ['--resume', a.session]),
       '--',
       prompt,
     ],
@@ -461,13 +489,14 @@ async function send(a, text, kind, scripted) {
     join(a.home, `transcript-${n}.jsonl`),
     { timeoutMs: TURN_TIMEOUT },
   );
-  a.session = r.sessionId ?? a.session;
+  a.session = r.sessionId ?? (newSession ? null : a.session);
   a.model ??= r.model;
   spent += r.cost;
   const turn = {
     n,
     scripted,
     kind,
+    newSession,
     sent: text,
     reply: r.reply,
     commands: r.commands,
@@ -516,13 +545,14 @@ async function userAnswer(a, t) {
 }
 
 // One scripted turn for one arm. A message that errors (its per-message budget ran out, a
-// timeout) doesn't end the session: like a real person, the next turn carries on.
+// timeout) doesn't end the build: like a real person, the next turn carries on. Without a
+// session to resume, its questions go unanswered, and in one long session the arm stops.
 async function turn(a, text, scripted) {
   if (a.dead) return;
   const r = await send(a, text, 'scripted', scripted);
   if (stopReason) return;
   if (!a.session) {
-    a.dead = true;
+    a.dead = !fresh;
     return;
   }
   // Answer questions at most twice per turn, the same way for both arms. Never a "go ahead".
