@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import {
   DIMENSIONS,
+  PREAMBLE,
   blindRepo,
   loadProject,
   renderSummary,
@@ -24,6 +25,10 @@ import {
 
 const projectFile = readFileSync('evals/project/book-club.md', 'utf8');
 const project = loadProject(projectFile);
+// What arm A sends on scripted turn i (from 0) with fresh sessions, the default.
+const scriptedA = (i) => (i === 0 ? '' : PREAMBLE) + project.turns[i];
+const POINTER =
+  /^Use Tommy's SWE OS at \S+ for this task\. Start at skills\/README\.md and follow the skill that fits\.\n\n/;
 
 test('the project file has seven turns, the facts, and reviewer notes', () => {
   assert.equal(project.turns.length, 7);
@@ -164,10 +169,19 @@ test('the summary puts both arms side by side, serious problems first', () => {
     turns: [
       {
         kind: 'scripted',
+        scripted: 1,
+        cost: 4,
         error: null,
         user: { answer: 'One vote each.', cost: 0.1 },
       },
-      { kind: 'answer', error: null, user: { answer: null, cost: 0.05 } },
+      {
+        kind: 'answer',
+        scripted: 1,
+        cost: 1,
+        error: null,
+        user: { answer: null, cost: 0.05 },
+      },
+      { kind: 'scripted', scripted: 2, cost: 3, error: null },
     ],
     checks: {
       install: { command: 'npm install', ok: true, seconds: 30 },
@@ -193,14 +207,23 @@ test('the summary puts both arms side by side, serious problems first', () => {
         { where: 'a.ts:1', problem: 'Minor thing.', serious: false },
         { where: 'b.ts:2', problem: 'Anyone can vote twice.', serious: true },
       ]),
-      B: arm({ ...scores(2), simplicity: 0 }, [], { cost: 20 }),
+      B: arm({ ...scores(2), simplicity: 0 }, [], {
+        cost: 20,
+        sessions: 'fresh',
+      }),
     },
   );
   assert.match(out, /\| works \| 1 \| 2 \| \+1 \|/);
   assert.match(out, /\| simplicity \| 1 \| 0 \| -1 \|/);
   assert.match(out, /\| `npm test` \| fail \(9s\) \| fail \(9s\) \|/);
   assert.match(out, /\| `npm run build` \| not run/);
-  assert.match(out, /Scripted turns sent \| 1 of 7/);
+  assert.match(out, /Scripted turns sent \| 2 of 7/);
+  // A has no session mode, like runs from before --sessions: one long session.
+  assert.match(out, /\| Sessions \| one long session \| a new one per turn \|/);
+  assert.match(
+    out,
+    /\| Cost per scripted turn, with its answers \| \$5\.00, \$3\.00 \| \$5\.00, \$3\.00 \|/,
+  );
   assert(out.indexOf('Anyone can vote twice') < out.indexOf('Minor thing'));
   assert.match(out, /B scored higher on works/);
   assert.match(out, /A scored higher on simplicity/);
@@ -276,20 +299,35 @@ test('a full run: both arms, every turn, checks, blind reviews, summary', () => 
   assert.doesNotMatch(users[1].prompt, /SWE ?OS|Worth learning|swe-os-/);
   assert.notEqual(users[0].cwd, agents[0].cwd);
   const [firstA, firstB] = [agents.find((c) => !isB(c)), agents.find(isB)];
-  assert.equal(prompt(firstA), project.turns[0]);
-  assert.match(
-    prompt(firstB),
-    /^Use Tommy's SWE OS at \S+ for this task\. Start at skills\/README\.md/,
-  );
-  assert(prompt(firstB).endsWith(project.turns[0]));
-  assert(!firstA.args.includes('--resume'));
-  for (const c of agents.filter((c) => c !== firstA && c !== firstB)) {
-    assert(c.args.includes('--resume'));
-    assert.doesNotMatch(prompt(c), /SWE OS/);
-  }
   const answers = agents.filter((c) => prompt(c).startsWith('Fake owner:'));
   assert.equal(answers.length, 2);
   assert.match(prompt(answers[0]), /Who organizes the club\?/);
+  // Fresh sessions: every scripted turn starts a new session in the same folder. Both arms get
+  // the preamble after turn 1, and B gets the pointer on every turn.
+  const scripted = (b) =>
+    agents.filter((c) => isB(c) === b && !answers.includes(c));
+  for (const b of [false, true]) {
+    const calls = scripted(b);
+    assert.equal(calls.length, 7);
+    assert.equal(new Set(calls.map((c) => c.session)).size, 7);
+    assert.equal(new Set(calls.map((c) => c.cwd)).size, 1);
+    for (const [i, c] of calls.entries()) {
+      assert(!c.args.includes('--resume'));
+      assert.equal(c.resumed, false);
+      if (b) assert.match(prompt(c), POINTER);
+      assert.equal(prompt(c).replace(POINTER, ''), scriptedA(i));
+      if (!b) assert.doesNotMatch(prompt(c), /SWE OS/);
+    }
+  }
+  assert.equal(prompt(firstA), project.turns[0]);
+  // An answer resumes the session of the turn it answers, and gets no preamble or pointer.
+  for (const answer of answers) {
+    const before = agents.slice(0, agents.indexOf(answer));
+    const asked = before.filter((c) => isB(c) === isB(answer)).at(-1);
+    assert(answer.args.includes('--resume'));
+    assert.equal(answer.session, asked.session);
+    assert.doesNotMatch(prompt(answer), /SWE OS|new session/);
+  }
   assert(
     agents.every(
       (c) =>
@@ -312,7 +350,20 @@ test('a full run: both arms, every turn, checks, blind reviews, summary', () => 
     summary,
     /Answers from the simulated user \| 1, \$0\.05 \| 1, \$0\.05 \|/,
   );
+  assert.match(
+    summary,
+    /\| Sessions \| a new one per turn \| a new one per turn \|/,
+  );
+  assert.match(
+    summary,
+    /\| Cost per scripted turn, with its answers \| \$0\.50(, \$0\.25){6} \|/,
+  );
   const A = JSON.parse(readFileSync(join(run.out, 'A.json'), 'utf8'));
+  assert.equal(A.sessions, 'fresh');
+  assert.deepEqual(
+    A.turns.map((t) => t.newSession),
+    [true, false, true, true, true, true, true, true],
+  );
   assert.equal(A.turns.length, 8);
   assert.equal(A.cost, 2);
   assert.match(A.turns[0].user.answer, /^Fake owner:/);
@@ -349,6 +400,38 @@ test('a full run: both arms, every turn, checks, blind reviews, summary', () => 
   rmSync(run.dir, { recursive: true });
 });
 
+test('--sessions one keeps every turn in one long session', () => {
+  const run = runEval(['--sessions', 'one']);
+  assert.equal(run.status, 0, run.stderr);
+  for (const b of [false, true]) {
+    const [first, ...rest] = run.calls.filter(
+      (c) => c.role === 'agent' && isB(c) === b,
+    );
+    assert.equal(rest.length, 7);
+    assert(!first.args.includes('--resume'));
+    assert.equal(prompt(first).replace(POINTER, ''), project.turns[0]);
+    assert.equal(POINTER.test(prompt(first)), b);
+    for (const c of rest) {
+      assert(c.args.includes('--resume'));
+      assert.equal(c.session, first.session);
+      assert.doesNotMatch(prompt(c), /SWE OS|new session/);
+    }
+  }
+  assert.match(
+    readFileSync(join(run.out, 'summary.md'), 'utf8'),
+    /\| Sessions \| one long session \| one long session \|/,
+  );
+  rmSync(run.dir, { recursive: true });
+});
+
+test('--sessions takes only fresh or one', () => {
+  const run = runEval(['--sessions', 'many']);
+  assert.notEqual(run.status, 0);
+  assert.match(run.stderr, /--sessions is fresh or one/);
+  assert.equal(run.calls.length, 0);
+  rmSync(run.dir, { recursive: true });
+});
+
 test('the simulated user answers at most twice per turn', () => {
   const run = runEval([], { FAKE_CLAUDE_ASK: 'always' });
   assert.equal(run.status, 0, run.stderr);
@@ -357,7 +440,7 @@ test('the simulated user answers at most twice per turn', () => {
     .map(prompt);
   assert.equal(sent.length, 21);
   for (let i = 0; i < 7; i++) {
-    assert.equal(sent[3 * i], project.turns[i]);
+    assert.equal(sent[3 * i], scriptedA(i));
     assert.match(sent[3 * i + 1], /^Fake owner:/);
     assert.match(sent[3 * i + 2], /^Fake owner:/);
   }
@@ -372,7 +455,10 @@ test('the simulated user never answers "keep going?"', () => {
   const sent = run.calls
     .filter((c) => c.role === 'agent' && !isB(c))
     .map(prompt);
-  assert.deepEqual(sent, project.turns);
+  assert.deepEqual(
+    sent,
+    project.turns.map((_, i) => scriptedA(i)),
+  );
   const A = JSON.parse(readFileSync(join(run.out, 'A.json'), 'utf8'));
   assert(A.turns.every((t) => t.user && t.user.answer === null));
   rmSync(run.dir, { recursive: true });
@@ -386,7 +472,7 @@ test('--fixed-answers sends the facts once per turn, never a nudge', () => {
     .map(prompt);
   assert.equal(sent.length, 14);
   for (let i = 0; i < 7; i++) {
-    assert.equal(sent[2 * i], project.turns[i]);
+    assert.equal(sent[2 * i], scriptedA(i));
     assert.match(
       sent[2 * i + 1],
       /^Answers to your questions: The club has 12 members/,
@@ -448,6 +534,8 @@ test('--dry-run prints every turn and spends nothing', () => {
   assert.equal(run.calls.length, 0);
   for (const [i, turn] of project.turns.entries())
     assert(run.stdout.includes(`${i + 1}. ${turn.slice(0, 60)}`));
+  assert.match(run.stdout, /each in a new session in the same folder/);
+  assert(run.stdout.includes(PREAMBLE.trim()));
   assert(!existsSync(run.out));
   rmSync(run.dir, { recursive: true });
 });
