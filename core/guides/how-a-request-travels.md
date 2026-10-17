@@ -74,14 +74,21 @@ Module scope is only for things that are the same for everyone, like the databas
 
 In the browser's Network tab, click the request and check its `x-vercel-cache` header: `HIT` means the CDN answered and your code never ran. Then work inward.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - Set the Vercel function region to match the database's, in **Settings → Functions**.
-- Read data in server components. Add `'use client'` only where something is interactive.
-- Put `import 'server-only'` at the top of every module that touches the database or a secret.
+- Read data in server components, and add `'use client'` only where something is interactive.
 - Create the database client once at module scope, copied from the [recipe](../recipes/side-project-stack.md). Nothing per-user goes there.
 - Ask your agent: "Find every response that sets `s-maxage` or `public`, and tell me whether any of them depends on who's signed in."
-- When something breaks, open the browser's Network tab, click the failing request, and read its status, timing, and `x-vercel-cache` header before guessing.
+- When something breaks, read the failing request's status, timing, and `x-vercel-cache` header in the Network tab before guessing.
+
+## The standard
+
+- **Each main page has a latency budget, checked with realistic data and a load test,** like "dashboard under 300 ms for 95% of requests." Do it once real users depend on it, or before a launch. See [performance](../concerns/performance.md).
+- **Every database and API call has a timeout, inside one deadline per request.** Do it once real users wait on it ([how](timeouts-retries-idempotency.md)).
+- **Each secret has the least access it needs, and a rotation plan.** Do it when a second engineer gets access ([security](../concerns/security.md)).
 
 ## Before you ship, check
 

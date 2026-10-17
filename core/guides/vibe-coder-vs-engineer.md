@@ -97,7 +97,7 @@ In plain words (the [concerns](../concerns/README.md) are the full list):
 - **How would I know it broke** before a user tells me?
 - **Can I undo it** if the deploy goes wrong?
 
-Asking is one more sentence in the prompt. Not asking means the answer shows up later as an incident. A copy change triggers almost none of these, and a payment flow triggers most. The [concerns table](../concerns/README.md#pick-the-concerns) does that routing for you.
+Asking is one more sentence in the prompt. Not asking means the answer shows up later as an incident. A copy change triggers almost none of these, and a payment flow triggers most.
 
 ## Vibe coding is fine, until it crosses a floor
 
@@ -113,14 +113,21 @@ Some things never get a pass, even in a prototype. I call these the floors:
 
 You can't take any of these back. A leaked key is leaked the moment it's pushed. A double charge has already hit someone's card. A dropped column doesn't come back with a redeploy.
 
-## What I'd do
+## How I do it
 
-- Vibe code a prototype whenever Willison's harm test says nobody gets hurt. It's the cheapest experiment there is.
+On my own side projects:
+
+- Vibe code a prototype whenever Willison's harm test says nobody gets hurt.
 - Engineer the floors from the first commit. Ask your agent: "Before you build this, tell me where the secrets live, where the server checks who's signed in, and what touches money or personal data."
 - Before calling a feature done, run the [build-feature](../../skills/build-feature/SKILL.md) skill, or ask: "List every decision you made that I didn't specify, like limits, defaults, and what happens on failure." Read that list before the diff.
 - Don't merge code I couldn't explain to someone else. If I can't, I ask the agent to walk me through it, or run the [learn](../../skills/learn/SKILL.md) skill.
 
-Once real users or real money show up, everything gets the engineered treatment, not just the floors. Keep the rest [simple](simple-first.md).
+## The standard
+
+- **Every change gets the engineered treatment, not just the floors.** Do it once real users or real money show up. Engineered still means [simple](simple-first.md).
+- **Each change goes through the "When stakes rise" checks of every concern it touches.** Do it for real users. The [concerns table](../concerns/README.md#pick-the-concerns) says which.
+- **Someone besides the author reads every diff before it merges.** Do it when a second engineer joins. Until then, [review your own](reading-and-reviewing-code.md).
+- **Tests and alerts catch breakage before users do, and every deploy can be undone.** Do it once anyone else relies on the app. Stops [14](how-you-know-it-works.md), [16](shipping-changes-you-can-undo.md), and [18](knowing-it-broke.md) cover each.
 
 ## Before you ship, check
 

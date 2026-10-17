@@ -1,0 +1,80 @@
+[
+  {
+    "takeaway": "Checking that someone is logged in isn't enough: every query has to check that the thing belongs to them, using who they are from the session and never an ID they sent me.",
+    "intended": "At every point where outside data enters my app, check that it's shaped right (validation) and that this person is allowed to touch this specific thing (authorization).",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "In 2025, a Next.js bug let anyone skip it with one header",
+        "why": "A leap. I don't know what a header is in practice or how sending one skips a check. 'Vercel-hosted apps were safe' then made me wonder whether I need to care at all, since I deploy to Vercel. The takeaway (check in each action) is clear, but this story muddied it."
+      },
+      {
+        "quote": "Wrapped in `select`, `auth.uid()` runs once per query",
+        "why": "I followed the policy bullets until here. I don't know why once per row is bad or whether it breaks anything. It reads like a performance detail for someone else, and I can't tell if skipping it is a security bug."
+      },
+      {
+        "quote": "Count your own email and AI routes in a Postgres table",
+        "why": "I get why, but not how. A 'counter' in a row: per IP? per minute? What do I check before each request? The link goes to a different stop, so the instruction here doesn't stand alone."
+      }
+    ],
+    "skimmed": [
+      "The standard: 'a real model', 'abuse cases', 'GDPR', 'another team's app'. None of that is my life yet, so I skipped it after the first bullet.",
+      "Check auth where the data is, not only in `proxy.ts`: I skimmed the 2025 bug story and kept only the last sentence.",
+      "The bullet-by-bullet breakdown of the RLS policy: useful but long on a phone. I read the first four and skimmed the rest."
+    ],
+    "jargon": [
+      "endpoint ('they're public endpoints')",
+      "route handler",
+      "header",
+      "proxy.ts / middleware.ts (what it is, not just its old name)",
+      "publishable key",
+      "with check",
+      "OWASP",
+      "GDPR",
+      "unknown keys get stripped (does Zod do this by default? I assume so but wasn't sure)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Rate limiting: no concrete shape for the Postgres counter (table columns, the check before each request, what limit to pick). Also, for Supabase, it isn't clear whether I need the data access layer AND RLS, or RLS alone if the browser talks to Supabase directly. A one-line 'if your app does X, do Y' would settle it.",
+    "cut": "The 2025 Next.js bug paragraph in the proxy.ts section. It confuses more than it convinces, especially the 'Vercel-hosted apps were safe' line. 'Server actions are public endpoints, so check auth inside each one' is enough on its own.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Being logged in isn't enough: every query has to check that the record belongs to the user from the session, because anyone can change the ID or the request body and send it themselves.",
+    "intended": "At every place outside data enters my app, check that it's the right shape (validation) and that this user is allowed to touch this specific thing (authorization).",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Update policies also need `with check`",
+        "why": "A leap. The stop shows only a select policy, then says update, insert, and delete each need their own and update needs this extra clause, but never shows one. I'd have to hand the whole thing to my agent and hope."
+      },
+      {
+        "quote": "Vercel-hosted apps were safe, but",
+        "why": "I can't tell why Vercel was safe or whether my app is on the safe side. It reads like a footnote for people who followed the news. The real point, don't rely on proxy.ts alone, gets buried."
+      },
+      {
+        "quote": "Count your own email and AI routes",
+        "why": "I don't know what counting in a Postgres table looks like: one row per request? per IP? how do I reset it? The link points to a different stop, so here I can't act on it."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's written for a team with customers, GDPR, and other teams calling my API. I'm not there, so I'd scroll past.",
+      "The bullet-by-bullet breakdown of the RLS policy: it helped for the first few lines, but by `(select auth.uid())` running once per query I was skimming on my phone.",
+      "The rate-limit section after the first two sentences: the IP-vs-account reasoning is fine, but there's nothing I can copy."
+    ],
+    "jargon": [
+      "endpoint / POST (\"public endpoints\", \"POST to an exported action\")",
+      "curl",
+      "with check",
+      "schema in the Postgres sense (`public` is glossed, but the idea of schemas isn't)",
+      "permissions in \"a real model\"",
+      "abuse cases",
+      "data access layer (glossed, but I still don't know what the file looks like)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd paste the user-B test prompt and the pre-ship checklist to my agent today. What's missing: a full RLS example covering insert, update with `with check`, and the org_members read policy, or a prompt I can paste to get them written. Also a concrete sketch or prompt for the Postgres rate-limit counter.",
+    "cut": "The standard. None of it applies to me yet, and the stop already ends well with How I do it and the checklist. It makes the page feel longer and like it's for someone else.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

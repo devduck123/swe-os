@@ -172,15 +172,24 @@ limit 20;
 
 In JavaScript, `0.1 + 0.2` is `0.30000000000000004`. Store `1999` with a `currency` column, the way Stripe takes amounts.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - Ask your agent: "List the rules this data must always follow, and enforce each one as a constraint."
 - In every `create table`: integer cents for money, `timestamptz` for instants, `date` for calendar days.
 - Run any action that writes related rows in a transaction: Drizzle's `db.transaction`, or on Supabase, a Postgres function called with `rpc()`.
-- To add a rule to an existing table, write a migration. On Supabase, `supabase migration new`, then `supabase db push`. With Drizzle, edit the schema, then `npx drizzle-kit generate` and `npx drizzle-kit migrate`. If existing rows break the rule, the migration fails, so fix them first. Big tables take [extra steps](database-changes-without-downtime.md).
+- To add a rule to an existing table, write a migration. On Supabase, `supabase migration new`, then `supabase db push`. With Drizzle, edit the schema, then `npx drizzle-kit generate` and `npx drizzle-kit migrate`. If existing rows break the rule, the migration fails, so fix them first.
 - Seed a few thousand rows (on Supabase, in `supabase/seed.sql`, which runs on `supabase db reset`), then `explain analyze` each main page's query.
 
 I'd add caching only when `explain` says a query is as good as it gets and it's still too slow. Constraints are cheapest on day one.
+
+## The standard
+
+- **Backups get a practiced restore,** because a backup you haven't restored is a hope. Do it once real users' data lives there ([data and storage](../concerns/data.md)).
+- **Money paths get a test that races two requests, and an [idempotency key](timeouts-retries-idempotency.md) on every charge, email, and webhook.** Do it once real money moves ([concurrency](../concerns/concurrency.md)).
+- **Orders get reconciled against Stripe's records on a schedule.** Do it once real money moves.
+- **Schema changes on big tables follow the [no-downtime steps](database-changes-without-downtime.md).** Do it at scale.
 
 ## Before you ship, check
 

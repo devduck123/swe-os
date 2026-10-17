@@ -128,17 +128,26 @@ The missing guard, test, or alert that let it through and let it get worse.
 Each change with a link to its PR or issue.
 ```
 
-## What I'd do
+## How I do it
 
-Before launch:
+On my own side projects, before launch:
 
 - Know my three stop buttons: Instant Rollback, a flag on each risky feature, and **Disable Cron Jobs**. Ask your agent: "Put bulk archive and delete behind a flag in a settings table, so I can turn them off without a deploy."
 - Soft-delete what users create: mark it deleted instead of removing the row. Ask your agent: "Add a `deleted_at` column to projects, hide deleted rows everywhere, and refuse any delete or archive over 100 rows."
 - Do one restore drill.
 
-Once real users' data is in the database, I'd move to Neon Launch or Supabase Pro for a multi-day window. Until then on Supabase Free, I'd copy Supabase's nightly `db dump` workflow, a GitHub Actions file (a script GitHub runs on a schedule), into a private repo. It's the only backup there is.
+Once real users' data is in the database, I move to Neon Launch or Supabase Pro for a multi-day window. Until then on Supabase Free, I copy Supabase's nightly `db dump` workflow, a GitHub Actions file (a script GitHub runs on a schedule), into a private repo. It's the only backup there is.
 
-After anything that hits users, I'd write the postmortem and ship at least one of its changes.
+After anything that hits users, I write the postmortem and ship at least one of its changes.
+
+## The standard
+
+The [data](../concerns/data.md) and [reliability](../concerns/reliability.md) concerns have more.
+
+- **Point-in-time recovery with a window of days.** Once losing a day of writes would cost users money or work.
+- **Restore drills on a schedule, with real-shaped data.** Once paying customers depend on the data.
+- **Reconciliation against systems that hold a copy, like Stripe.** Once you take real money.
+- **One person leads the incident, another talks to users, and the team reviews the postmortem.** Once there's a second engineer.
 
 ## Before you ship, check
 

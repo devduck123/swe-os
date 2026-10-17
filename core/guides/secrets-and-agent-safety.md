@@ -118,13 +118,20 @@ ALTER DEFAULT PRIVILEGES FOR ROLE migration_role IN SCHEMA public
 
 </details>
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - **Day one,** ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)." It adds the `.gitignore`, the `.env.example`, and a gitleaks scan, then proves the scan by committing a fake key.
 - **Keys:** dev keys on my laptop, with a spend cap set in each provider's dashboard. Prod keys only in Vercel, saved as the Secret type.
 - **Agents never see prod.** If one truly needs production data, it gets the read-only MCP URL or role above, for one session.
 
-I'd add a secret manager once several people or services share credentials, or rotating by hand starts getting skipped.
+## The standard
+
+- **Every credential has a known owner and a rotation path,** using the steps above. Adopt it once a second engineer has access.
+- **Push protection on private repos too,** as the paid add-on. Adopt it once a team or a customer's code lives in the repo.
+- **GitHub Actions pinned to a commit SHA (the commit's exact ID) instead of a moving tag, with tokens scoped to the least they need.** Adopt it once CI holds deploy or production credentials.
+- **A secret manager.** Adopt it once several people or services share credentials, or rotating by hand starts getting skipped. More in [security](../concerns/security.md).
 
 ## Before you ship, check
 

@@ -141,14 +141,21 @@ Run them before every prompt or model change. Use a model as grader only for fuz
 - **Log every call:** prompt version, model ID, latency, tokens, cost, finish reason, and an internal user ID. Leave out the email contents.
 - **Pin the model in one file.** Use a fixed model ID, not an alias that moves to newer models. Every feature goes through `lib/ai.ts`, so an upgrade is a one-file change that runs the evals first.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - Ask your agent: "Give every model route auth, a per-user daily limit, an input length cap, `maxOutputTokens`, and an abort signal with a timeout."
 - Set a spend cap in the provider's dashboard.
 - Write 20 eval cases like the ones above before the second prompt change.
 - Give every tool that sends, pays, or deletes a confirm step that shows exactly what's about to happen, even in a prototype.
 
-I'd add a second provider once outages hurt users, and a cheaper model for easy cases once the bill says so.
+## The standard
+
+- **Human review, or a clear way to appeal, for output that affects money, health, access, or someone's reputation.** Adopt it the day the feature makes one of those calls.
+- **Long inputs chunked or retrieved, so the model reads only what the task needs.** Adopt it once users need the whole 40-page contract, not the first part.
+- **A second provider to fail over to.** Adopt it once outages hurt users.
+- **A cheaper model for the easy cases, checked against the same evals.** Adopt it once the bill says so. More in [AI features](../concerns/ai-features.md).
 
 ## Before you ship, check
 

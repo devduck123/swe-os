@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Have the agent add a short quiz to every PR and answer it from memory before I merge, because letting the AI do everything feels like learning when it isn't.",
+    "intended": "Shipping with agents doesn't make you a better engineer unless you deliberately add a step to understand what they wrote, and you can't tell by feel whether you're learning.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Once anyone else runs or reads your code.",
+        "why": "This is a sentence fragment hanging off the rule. I couldn't tell if it means the rule only applies once others use my code, or something else. The same 'Once…' pattern repeats on every bullet in The standard and reads like broken sentences."
+      },
+      {
+        "quote": "the core as one `TODO(human)`, with a failing test",
+        "why": "I don't write tests. I don't know what a failing test is for here or what 'the core' of a feature means. This is the step I'd most want to try, and it's the one I can't picture doing."
+      },
+      {
+        "quote": "Paste this to your agent before you merge",
+        "why": "The list under it reads like questions for me ('I answered them from memory first'). Why would I paste that to the agent? It can't know whether I answered from memory. I couldn't tell if this is a prompt or my own checklist."
+      }
+    ],
+    "skimmed": [
+      "What actually builds understanding: the three bullets are clear, but the 61% vs 40% study felt like a detour. I'd skim it on my phone once I got the gist (quiz yourself, don't reread).",
+      "The standard: the names (Simon Willison, Geoffrey Litt) mean nothing to me, the 'Once…' fragments confused me, and the team bullet ('how much work to hand them') isn't for someone working solo."
+    ],
+    "jargon": [
+      "async library",
+      "failing test",
+      "TODO(human)",
+      "<details> block",
+      "non-trivial",
+      "boilerplate",
+      "compounds (in 'where it compounds')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Step 1 is concrete because I can paste the prompt today. Step 3 doesn't say where the week's notes collect or how I find them again, so I'd just never do it. Step 4 assumes I know how tests work. It needs a plain-English example of what 'the core' looks like in a Next.js + Supabase feature and what to do when the test fails.",
+    "cut": "The standard. It mostly repeats 'understand what you merge' from earlier, adds names I don't recognize, and the 'Once…' fragments made me reread it twice without getting it.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Having the agent write code feels like learning but isn't, so before I merge I should answer a few questions about the change from memory, which the agent writes for me in the PR.",
+    "intended": "Agents make you faster but not better unless you add a deliberate comprehension step, because finishing work feels like learning even when it isn't.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "write the core yourself... one `TODO(human)`, with a failing test",
+        "why": "I don't write tests. I don't know what a 'failing test' is for here or how I'd use it, and 'the core' of a feature is vague. Which part is the core of a signup flow?"
+      },
+      {
+        "quote": "Once anyone else runs or reads your code.",
+        "why": "This reads like a broken sentence. It took me a second pass to realize 'Once...' means 'this applies when...'. All three bullets in The standard do it."
+      },
+      {
+        "quote": "Paste this to your agent before you merge:",
+        "why": "The checklist includes 'I answered them from memory first.' How would my agent check that? It reads like a list for me, so I don't know why I'm pasting it to the agent."
+      }
+    ],
+    "skimmed": [
+      "What actually builds understanding: the three bullets are fine, but the 61% vs 40% study detail is for someone who wants to be convinced. I already was after the first section.",
+      "The standard: 'Once a team decides how much work to hand them' isn't me. I'm solo, so I skimmed the whole section as being for teams.",
+      "The learn skill line: 'a saved workflow you ask your agent for' didn't tell me how to get it or turn it on, so I moved on."
+    ],
+    "jargon": [
+      "async library",
+      "failing test",
+      "TODO(human)",
+      "non-trivial (what counts?)",
+      "models that take actions",
+      "skill (in the SWE OS sense)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The paste-into-CLAUDE.md prompt is great and I'd do it today. Missing: what to do when I get quiz answers wrong (block the merge? ask the agent to explain?); what 'non-trivial' means in practice; where the week's 'Worth learning' notes actually collect for the weekly catch-up (do I hunt through closed PRs?); and a plain explanation of the failing-test step, or I'll skip step 4 entirely.",
+    "cut": "The standard. It mostly repeats 'understand your code' with names attached, the 'Once...' fragments confused me, and the team-measurement bullet doesn't apply to a solo dev. The Willison/Litt quotes could move into the opening section as one line of social proof.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
