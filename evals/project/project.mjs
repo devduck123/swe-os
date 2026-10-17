@@ -108,10 +108,47 @@ export function conversation(turns, sweos) {
         .filter(Boolean)
         .slice(0, 60)
         .map((c) => `- ${clip(c, 200).replace(/\n/g, ' ')}`);
-      return `### Message ${t.n}${t.kind === 'answer' ? ' (answers to its questions)' : ''}\n\nUser: ${t.sent}\n\nShell commands the agent ran:\n${commands.join('\n') || '- none'}\n\nAgent's final reply:\n\n${clip(neutralize(t.reply, sweos), 6000)}${t.error ? `\n\n(This message ended in an error: ${clip(t.error, 200)})` : ''}`;
+      return `### Message ${t.n}${t.kind === 'answer' ? ' (the user answering its question)' : ''}\n\nUser: ${t.sent}\n\nShell commands the agent ran:\n${commands.join('\n') || '- none'}\n\nAgent's final reply:\n\n${clip(neutralize(t.reply, sweos), 6000)}${t.error ? `\n\n(This message ended in an error: ${clip(t.error, 200)})` : ''}`;
     })
     .join('\n\n');
 }
+
+// When an agent's reply ends with a question, a separate Claude plays the project owner and
+// answers it. Both arms get this same template; only the messages and the reply differ.
+export const NO_REPLY = 'NO_REPLY';
+
+export function userPrompt({ facts, messages, reply, sweos }) {
+  return `You're playing the owner of a small project in a test of an AI coding agent. You've been sending the agent messages, and its last reply asks you something. Write your next message to it.
+
+Rules:
+- Answer only what it asked, in one to three plain sentences.
+- Answer from the facts below and your earlier messages.
+- If those don't settle a question, pick the option the agent recommended, or the simpler one if it didn't recommend one, and say that's what you picked.
+- What your messages asked for still stands. If it asks whether to drop or change something you asked for, keep it.
+- Never add scope or features, and never ask for more than your messages did.
+- Never tell it to go ahead, keep going, or start the next step. If it asks what to build next, say you'll send the next step yourself.
+- If its only questions are whether to continue or what to do next, reply with exactly ${NO_REPLY}.
+- Reply with only your message to the agent: no preamble, no quotes.
+
+Facts you know:
+<facts>
+${facts}
+</facts>
+
+Your messages to the agent so far, in order:
+<messages>
+${messages.map((m, i) => `${i + 1}. ${m}`).join('\n')}
+</messages>
+
+The agent's last reply:
+<reply>
+${clipStart(neutralize(reply, sweos), 8000)}
+</reply>`;
+}
+
+// The question is at the end of a reply, so a long reply loses its start, not its end.
+const clipStart = (text, n) =>
+  text.length > n ? `[...cut]\n${text.slice(-n)}` : text;
 
 const checkLine = (name, c) =>
   c
@@ -161,6 +198,21 @@ Reply with only this JSON:
 {"scores":{${DIMENSIONS.map(([id]) => `"${id}":n`).join(',')}},"reasons":{${DIMENSIONS.map(([id]) => `"${id}":"one sentence"`).join(',')}},"problems":[{"where":"path/to/file.ts:12","problem":"one sentence","serious":true}]}`;
 }
 
+// The dimensions a review left without a score or a reason. In the first real run, one
+// reviewer gave a reason for only the first dimension.
+export function reviewGaps(review) {
+  if (!review?.scores) return [];
+  return DIMENSIONS.map(([id]) => id).filter(
+    (id) =>
+      typeof review.scores[id] !== 'number' ||
+      typeof review.reasons?.[id] !== 'string' ||
+      !review.reasons[id].trim(),
+  );
+}
+
+export const completeReviewPrompt = (gaps) =>
+  `Your JSON is missing a score or a reason for: ${gaps.join(', ')}. Reply with only the complete JSON in the same format: a score and a one-sentence reason for every dimension, and every problem you found.`;
+
 const fmt = (n, d = 2) => (n == null ? '–' : Number(n).toFixed(d));
 const mean = (xs) =>
   xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
@@ -187,6 +239,12 @@ export function renderSummary(info, arms) {
   const scripted = (arm) =>
     arm.turns.filter((t) => t.kind === 'scripted').length;
   const answers = (arm) => arm.turns.filter((t) => t.kind === 'answer').length;
+  // Each turn that asked something records what the simulated user said, or null if it
+  // declined to answer (the agent only asked whether to keep going).
+  const asked = (arm) => arm.turns.filter((t) => t.user);
+  const generated = (arm) => asked(arm).filter((t) => t.user.answer).length;
+  const declined = (arm) => asked(arm).filter((t) => !t.user.answer).length;
+  const userCost = (arm) => asked(arm).reduce((n, t) => n + t.user.cost, 0);
   const problems = (arm) => {
     const list = [...(arm.review?.problems ?? [])].sort(
       (x, y) => Number(!!y.serious) - Number(!!x.serious),
@@ -201,9 +259,11 @@ export function renderSummary(info, arms) {
           `- ${p.serious ? '**Serious.** ' : ''}\`${p.where}\`: ${p.problem}`,
       );
   };
+  const reason = (arm, id) =>
+    arm.review?.reasons?.[id] ??
+    (arm.review?.scores ? '(The reviewer gave no reason.)' : '–');
   const reasons = DIMENSIONS.map(
-    ([id]) =>
-      `- **${id}.** A: ${A.review?.reasons?.[id] ?? '–'} B: ${B.review?.reasons?.[id] ?? '–'}`,
+    ([id]) => `- **${id}.** A: ${reason(A, id)} B: ${reason(B, id)}`,
   );
   const better = DIMENSIONS.filter(([id]) => score(B, id) > score(A, id)).map(
     ([id]) => id,
@@ -226,7 +286,7 @@ export function renderSummary(info, arms) {
   return [
     `# Project eval ${info.started}: ${info.project}`,
     '',
-    `SWE OS at \`${info.commit}\`, model \`${A.model ?? B.model ?? 'unknown'}\`. Spent $${fmt(info.spent)} API-equivalent (budget $${info.budget}, $${info.perTurn} per message).${info.stopped ? ` ${info.stopped}` : ''}`,
+    `SWE OS at \`${info.commit}\`, model \`${A.model ?? B.model ?? 'unknown'}\`. Spent $${fmt(info.spent)} API-equivalent (budget $${info.budget}, $${info.perTurn} per message). ${info.answers === 'simulated' ? 'A simulated user answered questions.' : 'Questions got the fixed facts.'}${info.stopped ? ` ${info.stopped}` : ''}`,
     '',
     'One run per arm is one data point. Each arm was reviewed once, blind, by Claude with read access to the final repo. Blinding is approximate.',
     '',
@@ -254,6 +314,12 @@ export function renderSummary(info, arms) {
     `| Time | ${Math.round(A.seconds / 60)} min | ${Math.round(B.seconds / 60)} min |`,
     `| Scripted turns sent | ${scripted(A)} of ${info.turns} | ${scripted(B)} of ${info.turns} |`,
     `| Answers to questions | ${answers(A)} | ${answers(B)} |`,
+    ...(info.answers === 'simulated'
+      ? [
+          `| Answers from the simulated user | ${generated(A)}, $${fmt(userCost(A))} | ${generated(B)}, $${fmt(userCost(B))} |`,
+          `| Questions it left unanswered (only "keep going?") | ${declined(A)} | ${declined(B)} |`,
+        ]
+      : []),
     `| Messages that ended in an error | ${A.turns.filter((t) => t.error).length} | ${B.turns.filter((t) => t.error).length} |`,
     `| Review cost | $${fmt(A.review?.cost)} | $${fmt(B.review?.cost)} |`,
     '',

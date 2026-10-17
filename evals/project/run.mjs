@@ -4,8 +4,9 @@
 // blind. Runs on whatever Claude account the `claude` CLI is logged into. Start it from a normal
 // terminal, not inside a Claude Code session. See README.md.
 //
-//   node evals/project/run.mjs                        both arms, $40 budget, $6 per message
+//   node evals/project/run.mjs                        both arms, $120 budget, $12 per message
 //   node evals/project/run.mjs --dry-run              print the plan, spend nothing
+//   node evals/project/run.mjs --fixed-answers        answer questions with the fixed facts
 //   node evals/project/run.mjs --grade <results dir>  redo the checks and reviews of a finished run
 import { execFileSync, spawn } from 'node:child_process';
 import {
@@ -38,17 +39,22 @@ import {
 import { parseGrade } from '../harness/parse-grade.mjs';
 import {
   CHECKS,
+  NO_REPLY,
   blindRepo,
+  completeReviewPrompt,
   loadProject,
   renderSummary,
+  reviewGaps,
   reviewPrompt,
+  userPrompt,
 } from './project.mjs';
 
 const { values: opts } = parseArgs({
   options: {
-    budget: { type: 'string', default: '40' },
-    'per-turn': { type: 'string', default: '6' },
+    budget: { type: 'string', default: '120' },
+    'per-turn': { type: 'string', default: '12' },
     'review-budget': { type: 'string', default: '3' },
+    'fixed-answers': { type: 'boolean', default: false },
     'dry-run': { type: 'boolean', default: false },
     grade: { type: 'string' },
     out: { type: 'string' },
@@ -61,6 +67,9 @@ const project = loadProject(
 const budget = Number(opts.budget);
 const reviewReserve = 2 * Number(opts['review-budget']);
 const TURN_TIMEOUT = 45 * 60_000;
+// The simulated user answers at most this many questions per scripted turn, for this much each.
+const ANSWERS_PER_TURN = 2;
+const USER_BUDGET = '1';
 const CHECK_TIMEOUT = 10 * 60_000;
 let spent = 0;
 // Set when a message fails in a way every later one would too, like a login or usage limit.
@@ -98,8 +107,24 @@ const agentArgs = (arm, sweos) => [
   ...(arm === 'B' ? ['--add-dir', sweos] : []),
 ];
 
+// The simulated user: no tools, the same isolation as the agents, and an empty folder, so no
+// project's CLAUDE.md or AGENTS.md reaches it. Identical for both arms.
+const userArgs = (prompt) => [
+  '-p',
+  '--output-format',
+  'stream-json',
+  '--verbose',
+  ...ISOLATION,
+  '--tools',
+  '',
+  '--max-budget-usd',
+  USER_BUDGET,
+  '--',
+  prompt,
+];
+
 // The reviewer can read the repo and run its tests and build, nothing else.
-const reviewerArgs = (prompt) => [
+const reviewerArgs = (prompt, resume) => [
   '-p',
   '--output-format',
   'stream-json',
@@ -117,6 +142,7 @@ const reviewerArgs = (prompt) => [
   'Bash(ls:*)',
   '--max-budget-usd',
   opts['review-budget'],
+  ...(resume ? ['--resume', resume] : []),
   '--',
   prompt,
 ];
@@ -213,7 +239,7 @@ function transcript(arm, turns) {
     `# Arm ${arm}`,
     '',
     ...turns.flatMap((t) => [
-      `## Message ${t.n} (turn ${t.scripted}${t.kind === 'answer' ? ', answers to its questions' : ''})`,
+      `## Message ${t.n} (turn ${t.scripted}${t.kind === 'answer' ? ', an answer to its question' : ''})`,
       '',
       `**Sent:** ${t.sent}`,
       '',
@@ -229,6 +255,12 @@ function transcript(arm, turns) {
       '',
       t.reply,
       '',
+      ...(t.user && !t.user.answer
+        ? [
+            `_The simulated user didn't answer${t.user.error ? `: ${t.user.error.slice(0, 200)}` : ' (it only asked whether to keep going)'}._`,
+            '',
+          ]
+        : []),
     ]),
   ].join('\n');
 }
@@ -264,15 +296,15 @@ function saveArm(a) {
 async function gradeArm(arm, data, sweos) {
   const dir = join(root, 'runs', arm);
   // A neutral folder name: the reviewer sees its working directory, which shouldn't say A or B.
-  const review = join(mkdtempSync(join(tmpdir(), 'review-')), PROJECT);
-  cpSync(join(dir, 'repo'), review, {
+  const copy = join(mkdtempSync(join(tmpdir(), 'review-')), PROJECT);
+  cpSync(join(dir, 'repo'), copy, {
     recursive: true,
     verbatimSymlinks: true,
   });
-  data.blindedLines = blindRepo(review, sweos);
+  data.blindedLines = blindRepo(copy, sweos);
   data.checks = {};
   for (const [name, args] of Object.entries(CHECKS)) {
-    data.checks[name] = await runCheck(args, review);
+    data.checks[name] = await runCheck(args, copy);
     console.log(
       `${arm} ${data.checks[name].command}: ${data.checks[name].ok ? 'pass' : 'FAIL'}, ${data.checks[name].seconds}s`,
     );
@@ -287,7 +319,7 @@ async function gradeArm(arm, data, sweos) {
   writeFileSync(join(dir, 'review-prompt.md'), prompt);
   const r = await claude(
     reviewerArgs(prompt),
-    review,
+    copy,
     join(dir, 'review-transcript.jsonl'),
     {
       timeoutMs: 30 * 60_000,
@@ -295,14 +327,29 @@ async function gradeArm(arm, data, sweos) {
   );
   spent += r.cost;
   stopReason = stopReasonFor(r.error) ?? stopReason;
-  data.review = {
-    ...(r.error ? { error: r.error } : parseGrade(r.reply)),
-    cost: r.cost,
-  };
+  let review = r.error ? { error: r.error } : parseGrade(r.reply);
+  let cost = r.cost;
+  // A review missing scores or reasons gets one request to finish it, in the same session.
+  const gaps = reviewGaps(review);
+  if (gaps.length && r.sessionId && !stopReason) {
+    const more = await claude(
+      reviewerArgs(completeReviewPrompt(gaps), r.sessionId),
+      copy,
+      join(dir, 'review-transcript-2.jsonl'),
+      { timeoutMs: 10 * 60_000 },
+    );
+    spent += more.cost;
+    cost += more.cost;
+    stopReason = stopReasonFor(more.error) ?? stopReason;
+    const fuller = more.error ? null : parseGrade(more.reply);
+    if (fuller?.scores && reviewGaps(fuller).length < gaps.length)
+      review = fuller;
+  }
+  data.review = { ...review, cost };
   console.log(
-    `${arm} review: $${r.cost.toFixed(2)}${data.review.error ? `, ERROR ${data.review.error.slice(0, 120)}` : ''}`,
+    `${arm} review: $${cost.toFixed(2)}${data.review.error ? `, ERROR ${data.review.error.slice(0, 120)}` : ''}`,
   );
-  rmSync(dirname(review), { recursive: true, force: true });
+  rmSync(dirname(copy), { recursive: true, force: true });
   writeFileSync(join(root, `${arm}.json`), JSON.stringify(data, null, 2));
 }
 
@@ -337,7 +384,9 @@ if (opts['dry-run']) {
         (t, i) => `${i + 1}. ${t.length > 110 ? `${t.slice(0, 110)}...` : t}`,
       ),
       '',
-      `If a turn ends with a question, the agent gets one answer: "Answers to your questions: ${project.facts.slice(0, 90)}..."`,
+      opts['fixed-answers']
+        ? `If a turn ends with a question, the agent gets one answer: "Answers to your questions: ${project.facts.slice(0, 90)}..."`
+        : `If a message ends with a question, a separate Claude playing the owner answers it from the facts, at most ${ANSWERS_PER_TURN} times per turn ($${USER_BUDGET} each). It never says "go ahead".`,
       'Then, on a blinded copy of each final repo: npm install, npm test, npm run build (10 minutes each), and one blind reviewer.',
     ].join('\n'),
   );
@@ -372,6 +421,7 @@ const info = {
   commit,
   budget,
   perTurn: Number(opts['per-turn']),
+  answers: opts['fixed-answers'] ? 'fixed' : 'simulated',
   turns: project.turns.length,
   sweos,
 };
@@ -429,9 +479,40 @@ async function send(a, text, kind, scripted) {
   a.turns.push(turn);
   stopReason = stopReasonFor(r.error) ?? stopReason;
   console.log(
-    `${a.arm} turn ${scripted}${kind === 'answer' ? ' (answers)' : ''}: $${r.cost.toFixed(2)}, ${turn.seconds}s${r.error ? `, ERROR ${r.error.slice(0, 120)}` : ''}  (spent $${spent.toFixed(2)})`,
+    `${a.arm} turn ${scripted}${kind === 'answer' ? ' (answer)' : ''}: $${r.cost.toFixed(2)}, ${turn.seconds}s${r.error ? `, ERROR ${r.error.slice(0, 120)}` : ''}  (spent $${spent.toFixed(2)})`,
   );
-  return r;
+  return turn;
+}
+
+// The simulated user's reply to the question that ends message t, recorded on t. Null when it
+// declines (the agent only asked whether to keep going) or fails.
+async function userAnswer(a, t) {
+  const prompt = userPrompt({
+    facts: project.facts,
+    messages: a.turns.map((m) => m.sent),
+    reply: t.reply,
+    sweos,
+  });
+  const dir = mkdtempSync(join(tmpdir(), 'owner-'));
+  const r = await claude(
+    userArgs(prompt),
+    dir,
+    join(a.home, `user-${t.n}.jsonl`),
+    { timeoutMs: 5 * 60_000 },
+  );
+  rmSync(dir, { recursive: true, force: true });
+  spent += r.cost;
+  stopReason = stopReasonFor(r.error) ?? stopReason;
+  const said = r.reply.trim();
+  t.user = {
+    answer: r.error || !said || said.includes(NO_REPLY) ? null : said,
+    cost: r.cost,
+    ...(r.error ? { error: r.error } : {}),
+  };
+  console.log(
+    `${a.arm} simulated user: ${t.user.answer ? JSON.stringify(t.user.answer.slice(0, 160)) : r.error ? `ERROR ${r.error.slice(0, 120)}` : 'no answer'}`,
+  );
+  return t.user.answer;
 }
 
 // One scripted turn for one arm. A message that errors (its per-message budget ran out, a
@@ -444,14 +525,24 @@ async function turn(a, text, scripted) {
     a.dead = true;
     return;
   }
-  // Answer a question once per turn, with the same facts for both arms. Never a "go ahead".
-  if (!r.error && asksQuestion(r.reply))
-    await send(
-      a,
-      `Answers to your questions: ${project.facts}`,
-      'answer',
-      scripted,
-    );
+  // Answer questions at most twice per turn, the same way for both arms. Never a "go ahead".
+  // With --fixed-answers, one answer per turn: the facts, whatever was asked.
+  const fixed = opts['fixed-answers'];
+  let last = r;
+  for (
+    let i = 0;
+    i < (fixed ? 1 : ANSWERS_PER_TURN) &&
+    !last.error &&
+    asksQuestion(last.reply);
+    i++
+  ) {
+    const answer = fixed
+      ? `Answers to your questions: ${project.facts}`
+      : await userAnswer(a, last);
+    if (stopReason || !answer) return;
+    last = await send(a, answer, 'answer', scripted);
+    if (stopReason) return;
+  }
 }
 
 let lastRound = 0;

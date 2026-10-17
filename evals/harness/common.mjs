@@ -67,7 +67,12 @@ export function claude(
   { timeoutMs = 20 * 60_000 } = {},
 ) {
   return new Promise((done) => {
-    const child = spawn('claude', args, { cwd, env: process.env });
+    // No stdin: with an open pipe, `claude -p` waits 3 seconds for input on every call.
+    const child = spawn('claude', args, {
+      cwd,
+      env: process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
     let out = '';
     child.stdout.on('data', (chunk) => (out += chunk));
     child.stderr.on('data', (chunk) => (out += chunk));
