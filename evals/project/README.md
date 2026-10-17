@@ -2,7 +2,7 @@
 
 The scenario evals test one task at a time. Real use is one long session where early choices stick: the schema from turn 3 has to hold the vote in turn 5, and the final review has to catch what earlier turns missed. This eval builds a whole app that way, twice: once without SWE OS (A) and once with it (B). Then it checks and reviews both final repos blind.
 
-Nobody has run it with Claude yet. It's tested end to end with a stand-in CLI (see [Testing it](#testing-it)).
+It's been run once with Claude, and that run stopped after 3 of 7 turns at a $40 budget, so there are no full results yet. It's tested end to end with a stand-in CLI (see [Testing it](#testing-it)).
 
 ## The project
 
@@ -13,15 +13,30 @@ A web app for a book club of 8 to 15 people, in seven turns: shape it, set up Ne
 - **Two sessions, one difference.** Each arm builds in its own empty temp folder named `book-club`, and each turn resumes the same session with `--resume`. B's first message starts with "Use Tommy's SWE OS at <a snapshot of the current commit>…", and B gets `--add-dir` to the snapshot. A gets the same messages alone.
 - **The same setup as the scenario evals.** Same model, tools, and isolation flags as the [harness](../harness/run.mjs), from the shared [common.mjs](../harness/common.mjs). Pushing, `gh`, deploys, and Docker are denied in both arms.
 - **Turns alternate A, B, A, B.** Both arms run one at a time, so their local databases and dev servers can't collide on a port. If the budget runs out, both arms stop at the same turn.
-- **One answer per turn, never a nudge.** If a turn's reply ends with a question, the agent gets one message: "Answers to your questions:" and the facts from book-club.md. Then the next scripted turn. A reply that asks "Want me to keep going?" gets the facts, not a "go ahead".
+- **A simulated user answers questions, never with a nudge.** See [below](#the-simulated-user).
 - **A failed message doesn't end the session.** If a message runs out of its per-message budget or times out (45 minutes), the next turn continues, like a person would. A login failure or a usage limit stops everything.
+
+## The simulated user
+
+Agents end turns with design questions: "One vote each or several?", "Should I drop the sign-up request?" The first run answered every question with the same fixed facts, which don't answer design questions. Arm B asked the same question again, got the same facts, and never built sign-in. That measured the harness, not the agent.
+
+Now, when a message ends with a question, a separate `claude -p` call plays the owner and writes the reply. It gets the facts from book-club.md, the user's messages so far, and the agent's last reply. Its rules:
+
+- Answer only what was asked, in one to three plain sentences, from the facts.
+- If the facts don't settle it, pick the option the agent recommended, or the simpler one if it didn't recommend one, and say so.
+- What the scripted turns asked for still stands. If the agent asks whether to drop sign-up, the answer is no.
+- Never add scope or features. Never say "go ahead" or push past the current turn. If the agent only asks whether to keep going, the user doesn't answer and the next scripted turn comes.
+
+It answers at most twice per scripted turn. Each answer is recorded on the message it answers (`user` in `A.json` and `B.json`), and the summary counts them.
+
+To keep it fair, both arms get the same prompt template, model, and flags: no tools, the agents' isolation flags, an empty folder, and $1 per answer. The agent's reply goes through the same filter as the reviewer's, so the user doesn't see SWE OS named. The arms can still get different answers, because they ask different questions. `--fixed-answers` restores the old behavior, one fixed facts message per turn.
 
 ## How it's graded
 
 On a fresh copy of each final repo:
 
 1. **Checks.** `npm install`, `npm test`, and `npm run build`, 10 minutes each, with `CI=1`. Pass or fail and the end of the output go into the results.
-2. **One blind reviewer per arm.** `claude -p`, working in the copy, with Read, Grep, Glob, and permission to run only `npm test`, `npm run build`, and `ls`. It sees the user's messages, the reviewer notes, which paths Git ignores, the check results, and each turn's shell commands and final reply. It scores eight dimensions 0 to 3 with a one-sentence reason each, and lists problems with file and line:
+2. **One blind reviewer per arm.** `claude -p`, working in the copy, with Read, Grep, Glob, and permission to run only `npm test`, `npm run build`, and `ls`. It sees the user's messages (scripted and simulated), the reviewer notes, which paths Git ignores, the check results, and each turn's shell commands and final reply. It scores eight dimensions 0 to 3 with a one-sentence reason each, and lists problems with file and line:
 
 | Dimension        | What it asks                                                                                               |
 | ---------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -44,8 +59,9 @@ What's left can still give B away: code comments that mention SWE OS (code is le
 
 ```sh
 node evals/project/run.mjs --dry-run                       # the plan, spends nothing
-node evals/project/run.mjs                                 # both arms, $40 budget
-node evals/project/run.mjs --budget 60 --per-turn 8
+node evals/project/run.mjs                                 # both arms, $120 budget
+node evals/project/run.mjs --budget 150 --per-turn 15
+node evals/project/run.mjs --fixed-answers                 # answer questions with the fixed facts
 node evals/project/run.mjs --grade evals/project/results/<date>   # redo checks and reviews
 ```
 
@@ -53,21 +69,23 @@ Run it from a normal terminal, not inside Claude Code. It uses whatever account 
 
 ## Costs
 
-The defaults are a $40 budget, at most $6 per message, and $3 per review, in API-equivalent dollars. The script holds $6 back for the two reviews, and before each turn it stops if that turn would probably go over, judged by what the last turn cost both arms. Each message is also capped by `--max-budget-usd`, so no single message can run away.
+The defaults are a $120 budget, at most $12 per message, $3 per review, and $1 per simulated answer, in API-equivalent dollars. The script holds $6 back for the two reviews, and before each turn it stops if that turn would probably go over, judged by what the last turn cost both arms. That guard stops both arms at the same turn. Each message is also capped by `--max-budget-usd`, so no single message can run away.
 
-Real cost and time aren't known until the first run. A turn that builds a feature can take many minutes, so plan on a few hours for both arms.
+The first run spent about $32 on 3 turns for both arms: 10 agent messages, about 20 minutes per arm. Turn 3 alone cost $21. Answers weren't cheap either: resuming a session re-reads all of it, so even a one-line answer cost $3 to $6. Sessions grow, so later turns cost more. A full seven-turn run is roughly $100 to $120 and a few hours. The simulated user's own calls cost cents. What costs money is the agent message each answer triggers, which is why the user answers at most twice per turn and skips "keep going?".
+
+If a review comes back missing a score or a reason, the reviewer gets one follow-up in the same session asking for the complete JSON. In the first run, A's reviewer gave a reason for one dimension of eight.
 
 ## What it saves
 
 In `results/<date>/`:
 
 - `summary.md`: scores side by side, check results, cost and time per arm, top problems, and a generated paragraph on what differed. Read the reviews and rewrite that paragraph before committing.
-- `A.json` and `B.json`: every message's cost, time, commands, and reply, plus the checks and the review.
+- `A.json` and `B.json`: every message's cost, time, commands, reply, and the simulated user's answer, plus the checks and the review.
 - `round.json`: the SWE OS commit, budget, and total spent.
-- `runs/` (ignored by Git): raw transcripts, `transcript.md` per arm, the reviewer's prompt and transcript, and each final repo without `node_modules`, `.next`, or `.git`.
+- `runs/` (ignored by Git): raw transcripts (`user-<n>.jsonl` for each simulated answer), `transcript.md` per arm, the reviewer's prompt and transcript, and each final repo without `node_modules`, `.next`, or `.git`.
 
 Commit `summary.md`, `A.json`, `B.json`, and `round.json`.
 
 ## Testing it
 
-`npm test` runs the whole eval against [a stand-in `claude`](../../tests/fake-claude/claude) that prints stream-json, builds a tiny app on the setup turn, and answers reviews with JSON. The tests check that B alone gets the pointer and the snapshot, that questions get one answer per turn, that the reviewer's copy and prompt don't mention SWE OS, that a usage limit stops before grading, and that the budget stops both arms at the same turn.
+`npm test` runs the whole eval against [a stand-in `claude`](../../tests/fake-claude/claude) that prints stream-json, builds a tiny app on the setup turn, and answers reviews with JSON. The stand-in also plays the simulated user and can ask a design question or "keep going?" on every reply. The tests check that B alone gets the pointer and the snapshot, that the simulated user answers a design question, answers at most twice per turn, skips "keep going?", and gets the same prompt template in both arms, that `--fixed-answers` still sends the facts once per turn, that an incomplete review gets one follow-up, that the reviewer's copy and prompt don't mention SWE OS, that a usage limit stops before grading, and that the budget stops both arms at the same turn.

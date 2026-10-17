@@ -14,7 +14,7 @@ What's in it:
 ## Next
 
 1. **A real-use baseline.** Build one real side project with SWE OS end to end: `shape-project`, `start-project`, `build-feature`, and shipping, with the `learn` skill on. Record what helped, what got in the way, and what Tommy learned. The evals are synthetic; this is the first real signal.
-2. **Run the [project eval](evals/project/README.md) once.** It builds a whole app over one session, with and without SWE OS, on a $40 budget. It's synthetic, so it adds to the baseline above instead of replacing it.
+2. **Run the [project eval](evals/project/README.md) to the end.** It builds a whole app over one session, with and without SWE OS. The first run stopped after 3 of 7 turns at $40, and fixed facts couldn't answer the agents' design questions, so a simulated user answers them now. A full run is roughly $100 to $120. It's synthetic, so it adds to the baseline above instead of replacing it.
 3. **The track's level.** After the baseline, decide what a solo builder needs first and what's professional depth. Likely a short core path, with the rest marked as going further.
 4. **Real readers.** Share the site with a few people who build with AI, and turn on Vercel Web Analytics, so the learner test isn't the only reader signal.
 5. Try one task in Codex with each path.
