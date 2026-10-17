@@ -177,7 +177,9 @@ for (const file of tracked) {
     /[\w.%+-]+@([a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,})\b/gi,
   )) {
     assert(
-      exampleDomain.test(domain),
+      // No-reply addresses (commit attribution in recorded eval runs) aren't anyone's inbox.
+      exampleDomain.test(domain) ||
+        /^noreply@|@users\.noreply\.github\.com$/i.test(address),
       `${file} contains a real-looking email address (${address}). Use an example domain like name@example.com.`,
     );
   }
