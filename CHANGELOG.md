@@ -4,8 +4,17 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+## v0.3.0 (2026-10-17)
+
+- **The track, tuned with a learner test.** Agents read every stop as the target reader. 91% now take away the intended lesson (from 68%), and clarity is 3.9/5 (from 3.7).
+  - Database lessons show plain SQL first, with short "On Neon" / "On Supabase" lines.
+  - Every stop ends with "What I'd do" and "Before you ship, check": yes/no checks to paste to your agent.
+  - Terms are explained on first use, and expert detail moves into collapsible "Going deeper" blocks.
+  - Supabase paths are added, including an RLS policy walkthrough, restores by plan, and capturing dashboard schema edits with `supabase db diff`.
+
 - **Shorter reports.** build-feature and debug reports have fewer sections (What changed, Evidence, Open, Worth learning) and aim for 150–250 words. Only open concerns are listed; the evidence shows what's handled. Worth learning is one point, never repeating the reply. Rule 13's feedback line appears only when guidance actually caused a problem, written for the user. Eval round 6: communication went from −0.15 to +0.07 against no SWE OS, and median reply length dropped from 3,593 to 2,847 characters.
 - **The learner test.** `node evals/learner/run.mjs` checks whether each track stop teaches its reader.
+- **A new eval bar, and it's met.** SWE OS ties or beats no-SWE-OS on every scenario within noise, has no serious flaws of its own, ties the two-line fix on cost, and clearly wins on verification, setup, debugging, and secrets (round 6).
 
 ## v0.2.0 (2026-10-13)
 
