@@ -13,7 +13,7 @@ What's in it:
 
 ## Next
 
-1. **Tommy reviews his design system.** [profile/design.md](profile/design.md) is drafted from his portfolio's and OpenPacks' tokens, with four colors darkened to pass contrast. Then a UI eval scenario: does a feature built with it stay on tokens and look right in both themes?
+1. **A UI eval.** [Design taste](profile/design.md) gives agents freedom on direction, art, and motion, with fixed rules for contrast, reduced motion, and tokens. Test it: does a feature built with it feel designed (states, micro-interactions, real art) and still pass the rules, in both themes?
 2. **More `learn` evals.** The walkthrough eval exists: SWE OS now scores 2.92 vs 2.53 (3 reps). Catch-up and own-a-piece are still untested.
 3. **Trim the agent guidance to what earns its place.** The first ablation cut the step-by-step procedure from debug, review-change, and explain, and all three scored lower than a same-day control (−0.25, −0.06, −0.11), so the steps stay. Next to test: the concerns README and the rules in skills/README.md.
 4. **A real-use baseline with Tommy.** The project eval gave the synthetic one: with a fresh session per feature, SWE OS scored 2.63 vs 2.50 at 1.8× the cost (see [project eval](evals/project/README.md)). Next, Tommy builds one real side project with it, with a learning area named in its AGENTS.md, and records what helped and what got in the way.

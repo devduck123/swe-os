@@ -1,28 +1,46 @@
 ---
-title: Design system
-description: My design taste as rules and tokens. Every project with a UI starts from these colors for light and dark, type, spacing, radius, shadows, and motion, unless it has its own.
+title: Design taste
+description: What I want UIs to feel like, the freedom agents have to get there, and the few rules that never bend.
 freshness: durable
 ---
 
-I don't design much by hand anymore. Agents go straight to code, and that's fine as long as the result has taste. Taste an agent can follow has to be written down as rules and values, so here they are. A project with its own design system keeps it. Everything else starts here.
+I don't design much by hand anymore. Agents go straight to code, and some of the best UIs I've shipped came from an agent trying something I wouldn't have thought of. So this page isn't a template. It's what I like, what separates a site with soul from a vibe-coded one, and the few rules that keep a bold design usable.
 
-The values come from my [portfolio](https://www.ducktommy.com/) and [OpenPacks](https://backpacks-app.vercel.app/), with a few colors darkened so text passes contrast.
+## Go further than the default
 
-## What I'm going for
+Default framework styling shipped as-is isn't a design. Every product gets its own visual direction: a palette, type, shapes, and motion that fit what it is and who it's for. Pick one with conviction, and surprise me. If you're torn between two directions, build the bolder one and say what the quieter one would look like.
 
-- **Quiet surfaces, one focal point.** Each screen has one thing that's obviously most important. Everything else steps back.
-- **Color means something.** Tinted neutrals carry the page. One primary color marks the main action. Red, green, amber, and blue appear only to say error, success, warning, or info.
-- **Never pure black or white.** Light mode is warm paper. Dark mode is deep slate with warm off-white text. A little tint keeps both from feeling sterile.
-- **Type makes the hierarchy, not boxes.** Size, weight, and tight tracking on big headings do the work before borders and cards do.
-- **Dark mode is designed, not inverted.** Surfaces get lighter as they rise. Borders do more of the work than shadows.
-- **Motion is small and has a reason.** It shows that something changed or where it went. Only one focal visual per page gets to move slowly.
-- **Product screens stay minimal. Personal and landing pages get more character.** Product screens look like OpenPacks: neutral, but not bland. My portfolio and this site's landing page show the other end: a big editorial serif, small uppercase labels, a soft glow, and room to breathe.
+What I keep noticing on sites I love:
 
-Default framework styling shipped as-is isn't a design. Neither is decoration that fights the content.
+- **Micro-interactions.** A button that gives a little when pressed, a checkbox that draws its tick, a count that rolls up, a card that lifts toward the cursor, a toast that settles instead of popping. They're what make a site feel thought out.
+- **Real art.** Illustrations, stickers, icons, and graphics drawn for this product, usually as inline SVG, instead of stock images or an emoji in a circle. A mascot, a hand-drawn empty state, a hero graphic with one slow, glowing motion.
+- **Motion with character.** Things enter and leave with intent. Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened.
+- **Personality in the small places.** Empty states, loading states, errors, and the 404 get the same care as the main screen, in words and in pictures.
+- **Type with a point of view.** A display face that carries the mood, like an editorial serif or something rounded and friendly, with a quiet text face doing the reading.
+- **Cute, artsy, and expressive is welcome.** Friendly beats corporate. Restraint is a choice for a product that needs it, not the default.
 
-## Start from these tokens
+## What I've liked
 
-They use [shadcn/ui's](https://ui.shadcn.com/docs/theming) token names, so every shadcn component picks them up. Put them in the global CSS file (`app/globals.css`) in place of the defaults `shadcn init` writes.
+- [My portfolio](https://www.ducktommy.com/): a big editorial serif, a dark, quiet palette, one focal visual with a soft glow and slow motion, small uppercase labels, and room to breathe.
+- This site's landing page: the playful end, a little cute and a little animated, with a mascot.
+- [OpenPacks](https://backpacks-app.vercel.app/): a product screen kept neutral on purpose. That's the floor for a tool, not the goal.
+- [Mobbin](https://mobbin.com/) for real-world patterns, and [Framer](https://www.framer.com/) sites for polish and motion ideas.
+
+## The rules that don't bend
+
+Expressive never costs someone the ability to use the thing.
+
+- **Contrast.** Text is at least 4.5:1 against what's behind it, large text 3:1, and a form field's edge and focus ring 3:1. Check every color pair you add, in every theme the product has.
+- **Reduced motion.** Under `prefers-reduced-motion: reduce`, keep fades and drop movement, parallax, and looping animation. Anything that loops for more than five seconds gets a pause control.
+- **Motion never blocks.** Nobody waits for an animation to finish before they can act. UI transitions take 150 to 300ms. Animate `opacity` and `transform`, which don't make the page recompute its layout.
+- **Art is accessible and light.** A decorative graphic is hidden from screen readers (`aria-hidden="true"` or empty `alt`), and a meaningful one gets a text alternative. Inline SVG and CSS before big images and heavy animation libraries. The page's main content still loads fast on a phone.
+- **Keyboard and touch work.** Every interactive thing has a visible focus state and works by keyboard. Hover effects are a bonus, never the only way to find a control. Primary touch targets are about 44px.
+- **One system per project.** Whatever direction you pick, write it down as tokens in the theme file: colors for light and dark, type, radius, shadows, and motion timing. Components use the tokens, never raw hex or one-off values, so the tenth screen matches the first. With shadcn/ui, that's its [theme variables](https://ui.shadcn.com/docs/theming), and new ones go through `@theme inline`.
+
+<details>
+<summary>One palette I like, if a product wants this feel</summary>
+
+My portfolio's colors as shadcn/ui tokens: warm paper (hue 90) and ink in light mode, deep slate (hue 260) with warm off-white text in dark. I darkened four light-mode text colors from the original so each passes 4.5:1 on the background, on `muted`, and on its own 10% tint. `--input` is darker than `--border` so form fields have a 3:1 edge. This was built with Tailwind 4.3.3 and checked in both themes. Tailwind ignores `--shadow-*` set in `:root`, which is why shadows and easing map through `@theme inline`.
 
 ```css
 :root {
@@ -95,49 +113,11 @@ They use [shadcn/ui's](https://ui.shadcn.com/docs/theming) token names, so every
 }
 ```
 
-Notice what the numbers do. Every neutral shares one hue (260, a cool slate) or the paper's warm 90, so nothing clashes. Lightness is the only thing that changes between surfaces.
-
-- **Status colors are text-safe.** Each passes 4.5:1 as text on the background, on `muted`, and on its own 10% tint. So an error reads as `bg-destructive/10 text-destructive`, and a solid badge as `bg-success text-status-foreground`.
-- **`--input` is darker than `--border` on purpose.** A form field's edge needs 3:1 contrast so people can find it. A card's border is decoration and can stay faint.
-- **To brand a product,** change `--primary` and `--ring` to the brand's hue at the same lightness, and check contrast again. Keep the neutrals.
-
-## Type
-
-- **Product screens:** one sans. The system stack (`ui-sans-serif, system-ui`) is fine, or one webfont loaded with `next/font`. Two weights carry most screens: 400 and 600.
-- **Personal and landing pages:** add an editorial serif for big display text only.
-- **Scale:** Tailwind's steps. Body is 16px (`text-base`) at line height 1.5. Secondary text is 14px (`text-sm`). Nothing smaller than 12px.
-- **Headings** tighten as they grow: `tracking-tight` from 24px up. Reading text stays under about 70 characters a line (`max-w-prose`).
-- **Labels:** 12px, uppercase, medium weight, a little tracking (`text-xs uppercase font-medium tracking-wide text-muted-foreground`). Use them sparingly.
-
-## Space, shape, and depth
-
-- **Spacing:** Tailwind's 4px steps, mostly 2, 3, 4, 6, 8, 12, and 16 (8px to 64px). Related things sit closer than unrelated things. When in doubt, add space before adding a border.
-- **Phones:** a 16px side gutter (`px-4`), and touch targets at least 44px tall for primary actions.
-- **Radius:** `--radius` is 8px. shadcn derives the rest from it, so buttons and inputs come out a little rounder than sharp and cards a little more. Full pills are only for tags and avatars.
-- **Depth:** in light mode, the three soft shadows above, and only on things that float (menus, dialogs, a hovered card). In dark mode, a lighter surface (`card`, `popover`) shows height better than a shadow.
-
-## Motion
-
-- **150ms** for hover and press, **200 to 250ms** for menus, dialogs, and toasts, always with the `ease-out` class, which these tokens point at the smooth curve. Things enter faster than you'd think, and leave faster still.
-- **Slow motion** (half a second or more) only for one focal visual, like a hero glow.
-- **Animate opacity and transform only.** They don't make the page recompute its layout.
-- **Respect reduced motion.** Under `prefers-reduced-motion: reduce`, keep the fades and drop the movement.
-
-## Icons
-
-[Lucide](https://lucide.dev/), at 16px inline with text and 20px in buttons, in `currentColor`, so they follow the text color in both themes.
-
-## How agents use this
-
-- **New project with a UI:** set these tokens up during [start-project](../skills/start-project/SKILL.md), with dark mode following the system setting by default and a toggle to override it.
-- **In features:** use the tokens only. No hex values or palette classes like `bg-blue-500` in components. If a color is missing, add a token with a light and a dark value, and check its contrast.
-- **Check every screen in both themes,** at phone and desktop widths.
-- **An existing project's design system wins.** Match it, and only suggest moving toward this one.
+</details>
 
 ## Sources
 
 - [shadcn/ui theming](https://ui.shadcn.com/docs/theming) and [dark mode](https://ui.shadcn.com/docs/dark-mode)
-- [WCAG 2.2: contrast minimum (1.4.3)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) and [non-text contrast (1.4.11)](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html)
-- [Apple's guidance on hit targets](https://developer.apple.com/design/human-interface-guidelines/accessibility#Buttons-and-controls)
+- WCAG 2.2: [contrast minimum (1.4.3)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), [non-text contrast (1.4.11)](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html), and [pause, stop, hide (2.2.2)](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html)
 - [MDN: prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion)
-- [Lucide](https://lucide.dev/)
+- [Apple's guidance on hit targets](https://developer.apple.com/design/human-interface-guidelines/accessibility#Buttons-and-controls)

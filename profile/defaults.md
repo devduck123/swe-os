@@ -56,7 +56,7 @@ Free tiers are fine until they aren't. Before picking a service, find its pricin
 
 ## UI taste
 
-My taste, written down as rules and default light and dark tokens, is in [Design system](design.md).
+What I want UIs to feel like, and the rules that never bend, are in [Design taste](design.md).
 
 ## Sources
 

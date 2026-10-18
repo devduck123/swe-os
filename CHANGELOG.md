@@ -4,7 +4,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
-- **A design system.** [profile/design.md](profile/design.md) turns my UI taste into rules and default light and dark tokens in shadcn/ui's format, with every text color checked for contrast. start-project sets the theme up, and build-feature uses only its tokens. Drafted from my portfolio and OpenPacks; waiting on my review.
+- **Design taste.** [profile/design.md](profile/design.md) replaces the UI taste paragraph. Agents pick each product's own visual direction and are pushed past default styling: micro-interactions, real art, motion with character. A few rules don't bend: contrast, reduced motion, motion that never blocks, accessible art, and one token system per project. My portfolio's palette is there as an option, with its contrast fixed.
 - **The skills keep their steps.** An ablation rewrote debug, review-change, and explain as outcomes only. All three scored lower than the current versions run the same day, so nothing was cut.
 - **Talk to Tommy, not about him.** Graders caught replies saying "Tommy's default" to Tommy. Voice now says "your defaults".
 - **A learn eval, and a fix it found.** A new scenario walks through a PR and quizzes a simulated user who gets two things wrong. The first round tied, and one SWE OS run never corrected the user because it was busy writing LEARNING.md. The walkthrough is now one outcome, corrections first, and SWE OS scores 2.92 vs 2.53. LEARNING.md is gitignored in public repos unless you say otherwise.

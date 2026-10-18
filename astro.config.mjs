@@ -164,7 +164,7 @@ export default defineConfig({
           label: 'How I build',
           items: [
             { label: 'My defaults', slug: 'profile/defaults' },
-            { label: 'My design system', slug: 'profile/design' },
+            { label: 'My design taste', slug: 'profile/design' },
             ...pages('core/recipes').map((p) => ({ slug: `recipes/${p}` })),
             { label: 'All recipes', slug: 'recipes' },
           ],
