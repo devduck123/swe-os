@@ -14,17 +14,30 @@ What I keep noticing on sites I love:
 
 - **Micro-interactions.** A button that gives a little when pressed, a checkbox that draws its tick, a count that rolls up, a card that lifts toward the cursor, a toast that settles instead of popping. They're what make a site feel thought out.
 - **Real art.** Illustrations, stickers, icons, and graphics drawn for this product, usually as inline SVG, instead of stock images or an emoji in a circle. A mascot, a hand-drawn empty state, a hero graphic with one slow, glowing motion.
-- **Motion with character.** Things enter and leave with intent. Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened.
+- **Motion with character.** Things enter and leave with intent. Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened. CSS transitions first. In React, [Motion](https://motion.dev/) (formerly Framer Motion) is the reference for springs, gestures, layout, and exit animations.
 - **Personality in the small places.** Empty states, loading states, errors, and the 404 get the same care as the main screen, in words and in pictures.
 - **Type with a point of view.** A display face that carries the mood, like an editorial serif or something rounded and friendly, with a quiet text face doing the reading.
 - **Cute, artsy, and expressive is welcome.** Friendly beats corporate. Restraint is a choice for a product that needs it, not the default.
+
+## Look at what others do first
+
+Before designing a screen or a flow, look at how two or three similar products handle it. [Mobbin](https://mobbin.com/) collects real app screens by flow, like onboarding, paywalls, and empty states. It needs my account, so ask me for screenshots instead of signing in, or visit the products' own sites. [Framer](https://www.framer.com/) sites are good for polish and motion ideas. Borrow patterns, not looks, and say in your report what you borrowed and from where. Then go straight to code. There's no mockup step.
 
 ## What I've liked
 
 - [My portfolio](https://www.ducktommy.com/): a big editorial serif, a dark, quiet palette, one focal visual with a soft glow and slow motion, small uppercase labels, and room to breathe.
 - This site's landing page: the playful end, a little cute and a little animated, with a mascot.
 - [OpenPacks](https://backpacks-app.vercel.app/): a product screen kept neutral on purpose. That's the floor for a tool, not the goal.
-- [Mobbin](https://mobbin.com/) for real-world patterns, and [Framer](https://www.framer.com/) sites for polish and motion ideas.
+
+## Keep the art: it's an asset
+
+The mascots, stickers, icons, illustrations, and animations an agent draws for a product are some of the most valuable things in the repo, and the hardest to recreate exactly. Treat them like code: named, kept, and reused.
+
+- **Each piece is a component.** Inline SVG in `components/brand/`, like `Mascot.tsx` or `EmptyInbox.tsx`, with props for size and pose. Colors come from theme tokens or `currentColor`, so it works in both themes. Its animation lives with it, reduced motion included. Files the browser fetches on their own, like the favicon and social image, go in `public/`.
+- **One style, written down.** `docs/brand.md` describes the look: the mascot's character and proportions, stroke width, corner shape, the colors art may use, and how things move. New art follows it. To change the style, change the doc first.
+- **An index.** `docs/brand.md` lists every asset in one line: what it is and where it's used. Once there are more than a few, a page that shows them all in both themes makes drift easy to spot.
+- **Reuse before drawing new.** Give the mascot a new pose before inventing a second character.
+- **Don't replace or restyle an existing piece** unless asked. Add a variant instead.
 
 ## The rules that don't bend
 
@@ -120,4 +133,5 @@ My portfolio's colors as shadcn/ui tokens: warm paper (hue 90) and ink in light 
 - [shadcn/ui theming](https://ui.shadcn.com/docs/theming) and [dark mode](https://ui.shadcn.com/docs/dark-mode)
 - WCAG 2.2: [contrast minimum (1.4.3)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), [non-text contrast (1.4.11)](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html), and [pause, stop, hide (2.2.2)](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html)
 - [MDN: prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion)
+- [Motion for React](https://motion.dev/docs/react)
 - [Apple's guidance on hit targets](https://developer.apple.com/design/human-interface-guidelines/accessibility#Buttons-and-controls)

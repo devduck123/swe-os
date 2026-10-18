@@ -13,7 +13,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 ## Steps
 
 1. **Check the idea is shaped.** If there's no clear goal and first slice yet, run [shape-project](../shape-project/SKILL.md) first. Setup decisions follow from what's being built.
-2. **Pick the stack.** Start from Tommy's [defaults](../../profile/defaults.md) unless the project calls for something else, and say in one line why for each piece. Scaffold with the framework's official CLI. Don't hand-roll what the CLI generates. If the app has a UI, give it its own visual direction and set it up as theme tokens for light and dark (see Tommy's [design taste](../../profile/design.md)).
+2. **Pick the stack.** Start from Tommy's [defaults](../../profile/defaults.md) unless the project calls for something else, and say in one line why for each piece. Scaffold with the framework's official CLI. Don't hand-roll what the CLI generates. If the app has a UI, give it its own visual direction, set up as theme tokens for light and dark, and start `docs/brand.md` (see Tommy's [design taste](../../profile/design.md)).
 3. **Write the project context.** Create `AGENTS.md`, `PROJECT.md`, and `CLAUDE.md` from the [templates](../../templates/project/AGENTS.md), and fill in the goal, the first slice, maturity, and exposure. If shaping produced a design and costs, copy them into `docs/design.md`. Don't invent one here. Pin the SWE OS version: the latest tag at https://github.com/devduck123/swe-os/releases.
 4. **Protect secrets from the first commit.**
    - Make sure `.gitignore` covers `.env*` except `.env.example` before any secret exists.
