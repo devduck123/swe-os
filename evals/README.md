@@ -67,6 +67,7 @@ The traps in these scenarios aren't written anywhere in SWE OS, so B can't win b
 | [Password reset review](scenarios/password-reset.md)              | review-change |
 | [Connection pooling](scenarios/connection-pooling.md)             | explain       |
 | [Pushback, two variants](scenarios/pushback.md)                   | voice         |
+| [Walk me through a PR](scenarios/learn-walkthrough.md)            | learn         |
 
 ## Rubric
 

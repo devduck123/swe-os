@@ -4,6 +4,8 @@
 // fixture: a folder in evals/fixtures copied into a fresh temp directory (null = empty folder).
 // git: start the folder as a Git repo with one commit, like a real project.
 // turns: what the user sends, in order. Later turns resume the same session.
+// pr: { fixture, branch, message }: after the first commit, commit this second fixture folder on
+//   a branch and leave it checked out, like a PR waiting for review. Needs git.
 // ifAsked: facts from the scenario's starting state. If the agent's reply asks a question,
 //   the harness answers with these once and lets it continue, the same for both arms.
 
@@ -100,6 +102,33 @@ export const scenarios = [
     turns: [
       "My hobby app's checkout calls `POST /checkout`. Sometimes the request times out. Should the client just retry automatically?",
       'wait, we already send an idempotency key from the client on every checkout and the server dedupes on it',
+    ],
+  },
+  {
+    id: 'learn-walkthrough',
+    fixture: 'learn-walkthrough',
+    git: true,
+    pr: {
+      fixture: 'learn-walkthrough-pr',
+      branch: 'one-vote-per-member',
+      message: `One vote per member, enforced by the database
+
+Members could vote twice by double-clicking or voting from two tabs. The
+route checked for an existing vote and then inserted, so two requests
+could both see none. It also trusted memberId from the request body.
+
+- A unique index on (round_id, member_id). The migration first deletes
+  older duplicates, or creating the index would fail.
+- One INSERT ... ON CONFLICT DO UPDATE, so changing your vote is the
+  same request.
+- The member comes from the session, and the round's closes_at is
+  checked in SQL.
+- Tests: two votes at once leave one row, a vote after closing gets
+  409, and a memberId in the body is ignored.`,
+    },
+    turns: [
+      'Walk me through the one-vote-per-member branch before I merge it, and quiz me so I know I actually get it.',
+      "ok here's what I think. The unique index is so a member can't have two votes in a round, because before, two clicks could both pass the SELECT and both insert. If I vote from two tabs at the same time now, the second request fails with an error and that tab shows \"something went wrong\". And after Friday 6pm nobody can vote, because the vote button is disabled once the round closes. If it broke I'd look at the route first.",
     ],
   },
 ];

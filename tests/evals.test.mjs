@@ -21,6 +21,13 @@ test('every scenario file has a harness entry, and every entry has its files', (
         existsSync(join('evals/fixtures', s.fixture)),
         `${s.id} fixture is missing`,
       );
+    if (s.pr) {
+      assert(s.git, `${s.id} has a PR but no git`);
+      assert(
+        existsSync(join('evals/fixtures', s.pr.fixture)),
+        `${s.id} PR fixture is missing`,
+      );
+    }
   }
 });
 
