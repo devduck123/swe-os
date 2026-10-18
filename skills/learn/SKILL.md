@@ -18,13 +18,9 @@ Make sure Tommy can explain what his agents built without the code in front of h
 
 ## Walkthrough
 
-1. Read the diff, the PR description, and its "Worth learning" items.
-2. Walk the decisions in order, not the files. For each, say what changed, why, and what it rules out, quoting small snippets of real code. Skip the routine parts.
-3. Ask three to five questions he answers from memory: why this approach, what fails if something specific goes wrong, and where he'd look if it broke. No multiple choice.
-4. Grade against the code, not his confidence. Correct misses plainly and point to the line that proves it.
-5. Write a record for what he showed he understands.
+Walk the decisions in the diff and its PR description, not the files, then ask three to five questions he answers from memory: why this approach, what fails if something specific goes wrong, and where he'd look if it broke. No multiple choice, and don't answer them yourself.
 
-Keep it under ten minutes. If he skips the questions, name what he didn't check.
+When he answers, in whatever shape, grade every claim against the code in that same reply. Confirm what's right, and correct each miss with the line or test that proves it. Corrections come first. The record comes last, in a line. Keep the whole thing under ten minutes, and if he skips the questions, name what he didn't check.
 
 ## Catch-up
 
@@ -39,7 +35,7 @@ The agent building the feature leaves the core decision for Tommy: one `TODO(hum
 
 ## Records
 
-Keep records in `LEARNING.md` at the project root. Only this skill writes to it, so parallel agents don't collide. If the repo is public, ask once whether to commit it or gitignore it, and note the answer at the top. Write a record only when he shows understanding: a correct answer, an unprompted explanation, or a corrected misconception.
+Keep records in `LEARNING.md` at the project root. Only this skill writes to it, so parallel agents don't collide. In a public repo, add it to `.gitignore` unless he's said to commit it, and say so once. Write a record only when he shows understanding: a correct answer, an unprompted explanation, or a corrected misconception.
 
 ```
 ## 2026-10-06: Idempotency keys for retried POSTs
