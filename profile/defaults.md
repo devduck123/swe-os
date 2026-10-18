@@ -1,6 +1,6 @@
 ---
 title: Defaults
-description: What Tommy reaches for on side projects, how he works with agents, and his UI taste.
+description: What Tommy reaches for on side projects and how he works with agents.
 freshness: fast-moving
 reviewed: 2026-10-06
 ---
@@ -56,13 +56,7 @@ Free tiers are fine until they aren't. Before picking a service, find its pricin
 
 ## UI taste
 
-I don't design much by hand anymore. Agents go straight to code, and that's fine as long as the result has taste.
-
-- **Product screens:** refined and minimal. Clear hierarchy, quiet surfaces, color used as an accent rather than decoration, small purposeful motion. [OpenPacks](https://backpacks-app.vercel.app/) shows the floor: AI-built and deliberately kept neutral. Clean is the minimum; aim for more character than that when the product allows it.
-- **Personal and landing pages:** more character, still restrained. [My portfolio](https://www.ducktommy.com/) is the main reference: a big editorial serif, a dark, quiet palette, one focal visual with a soft glow and slow motion, small uppercase labels, and room to breathe. This site's landing page shows the more playful end: a little cute, a little animated.
-- **References:** Mobbin for real-world patterns, Framer for polish and motion ideas.
-
-Default framework styling shipped as-is isn't a design. Neither is decoration that fights the content.
+My taste, written down as rules and default light and dark tokens, is in [Design system](design.md).
 
 ## Sources
 

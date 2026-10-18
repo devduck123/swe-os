@@ -164,6 +164,7 @@ export default defineConfig({
           label: 'How I build',
           items: [
             { label: 'My defaults', slug: 'profile/defaults' },
+            { label: 'My design system', slug: 'profile/design' },
             ...pages('core/recipes').map((p) => ({ slug: `recipes/${p}` })),
             { label: 'All recipes', slug: 'recipes' },
           ],
@@ -188,7 +189,11 @@ export default defineConfig({
           label: 'About me',
           // Reading order: who Tommy is, how SWE OS sounds, then how he learns.
           items: ['tommy', 'voice', 'writing', 'learning']
-            .concat(pages('profile').filter((p) => p !== 'defaults'))
+            .concat(
+              pages('profile').filter(
+                (p) => !['defaults', 'design'].includes(p),
+              ),
+            )
             .filter((p, i, all) => all.indexOf(p) === i)
             .map((p) => ({ slug: `profile/${p}` })),
         },
