@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Checking that someone is logged in isn't enough; every query has to check that this specific record belongs to them, so ask my agent for a test where user B tries to open user A's invoice by ID and gets a 404.",
+    "intended": "At every trust boundary, ask two questions: is this data shaped like I expect (validation), and is this caller allowed to do this to this thing (authorization).",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "owners skip RLS unless it's forced",
+        "why": "I don't know what a database 'role' is, who 'owns' a table, or what 'forced' means here. I couldn't tell whether my Supabase app has this problem."
+      },
+      {
+        "quote": "counts every function instance shares, not kept in memory",
+        "why": "This is a leap. Nobody explained that my server runs as several copies that don't share variables, so I don't see why an in-memory counter fails."
+      },
+      {
+        "quote": "A row in Postgres is enough",
+        "why": "It's enough for what? I don't know what goes in the row or how it counts requests, and the link points to a different stop, so I can't act on this here."
+      }
+    ],
+    "skimmed": [
+      "The standard: every item says 'do it once…' some later stage, so I'd assume it isn't for me yet and skip it.",
+      "The Next.js 2025 header bug paragraph: it's history about a bug that's already fixed. I kept only 'don't rely on proxy.ts' and skimmed the rest.",
+      "The line-by-line RLS bullets: I'd skim them, and they read fine. But I'd copy the policy rather than understand the `exists` subquery, and the 'runs once per query, not once per row' line meant nothing to me."
+    ],
+    "jargon": [
+      "route handler",
+      "publishable key",
+      "Postgres role / table owner",
+      "function instance",
+      "with check",
+      "endpoint",
+      "GDPR (named but not explained)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The user-B test is the action I'd most want to do, but on Supabase with RLS I don't know how to sign in as two different users in a test, and my agent might write a test that uses the service key and passes falsely. The rate-limit step only links elsewhere. Also, 'Ask your agent for a data access layer' sits under 'On my own side projects', so I can't tell whether this is what you do or what I should do.",
+    "cut": "The Standard section. Every bullet is for a stage I'm not at (real money, a mobile app, the EU, a permissions function), and the RLS-as-second-wall bullet adds the role-owner confusion right at the end. A single line linking to the security concern would do.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Never trust what the browser sends: check the input's shape with Zod, and make every query filter by the owner from the session (or RLS on Supabase) so user B gets a 404 on user A's stuff.",
+    "intended": "At every trust boundary, ask two questions: is the data shaped right (validation), and is this caller allowed to touch this specific thing (authorization)?",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Connect as a role that doesn't own the tables",
+        "why": "I don't know what a database role is, which one my app uses, or what it means to own a table or 'force' RLS. I couldn't act on this, and it sounds like a trap I could be in right now."
+      },
+      {
+        "quote": "counts every function instance shares, not kept in memory",
+        "why": "What's a function instance? I'm guessing it's a Vercel serverless thing, but the earlier rate-limit section never said why an in-memory counter fails, so this checklist line is the first time it comes up."
+      },
+      {
+        "quote": "Vercel-hosted apps were safe, but the advice",
+        "why": "Too much story for a phone read. I'm on Vercel, so do I care or not? The point lands only in the next sentence, after I'd already decided to skim it."
+      }
+    ],
+    "skimmed": [
+      "The standard: every bullet is 'do it once X', and I'm not at X. It reads like it's for a team.",
+      "The second paragraph of Rate-limit (Better Auth vs Supabase Auth): I only use one, so half of it isn't for me.",
+      "The 2025 proxy.ts bug story: I just wanted the rule, not the history."
+    ],
+    "jargon": [
+      "route handler (vs server action, never contrasted)",
+      "publishable key",
+      "OWASP",
+      "function instance",
+      "a role that doesn't own the tables / owners skip RLS unless it's forced",
+      "Better Auth (assumed I know it)",
+      "data access layer (glossed, but I wouldn't know what one looks like in my repo)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The user-B test prompt is great and I'd paste it. The other two bullets aren't paste-ready. 'Ask your agent for a data access layer' needs the actual prompt to paste. 'A counter in Postgres' needs a prompt or a pointer to what that looks like, since the AI-features link is a whole other page. The voice also flips between 'Ask your agent' and 'my own email routes', so I couldn't tell which are instructions for me. And for the Supabase-only case, it doesn't say how to run the user-B test when there's no server, like using two logged-in accounts in two browsers.",
+    "cut": "The standard. It's five 'later, when you're bigger' items, and the RLS-as-second-wall bullet introduces the scariest unexplained idea on the page (table owners bypass RLS) without helping me fix it.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

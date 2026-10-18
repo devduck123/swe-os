@@ -1,0 +1,74 @@
+[
+  {
+    "takeaway": "Before I ask an agent to build something, I write half a page saying who it's for, the smallest thing that helps, a list of 'done when' checks I could tap through, what I'm not building, and when I'd quit, or the agent builds the average bloated app for me.",
+    "intended": "Shaping means deciding what to build, for whom, and how you'll know it worked before any code, so the agent doesn't decide for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "anything that touches a floor: auth",
+        "why": "'A floor' is never explained. I guessed it means 'stuff that can't go wrong,' but it reads like insider language from another page."
+      },
+      {
+        "quote": "not the next one in UTC",
+        "why": "I've seen UTC but don't really get why my app would use it instead of my time. The example assumes I already know the bug it's preventing."
+      },
+      {
+        "quote": "one complete journey, thin, from the screen to the database",
+        "why": "A small leap. I mostly got it from the habit example, but 'thin' and 'design the schema first isn't a slice' assume I know what a schema is and why someone would start there."
+      }
+    ],
+    "skimmed": [
+      "The standard: 'beyond you and your friends', 'a spec with one owner', 'a second person decides what gets built, at work or for a client' read like they're for someone with a team or clients. I'd skip the last bullet entirely.",
+      "Shape when the stakes justify it: the skip list was useful, but I'd skim the 'new product deserves an hour' part."
+    ],
+    "jargon": [
+      "a floor (auth, money, personal data, deleting)",
+      "UTC",
+      "schema",
+      "acceptance criteria (glossed, but only on its second use, after it already showed up as 'Done when')",
+      "spec",
+      "edge case (glossed only by example: 'the double tap')"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "I don't have the shape-project skill installed and don't know how to get it. A one-line 'if you don't use the skill, copy this template' pointer, or just saying 'copy the habit tracker block and fill it in', would let me act today. Also, 'show me each one passing': I wouldn't know what a passing test looks like or how to run it myself.",
+    "cut": "The last bullet of The standard ('Every piece of work has a spec with one owner...'). It's about work and client settings I'm not in. Everything else in that section at least connects to the habit example.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Before I ask an agent to build something, I write half a page: who it's for, what they do now, the tiniest version, a 'done when' list I can check by tapping, what I'm not building, and when I'd quit.",
+    "intended": "Shaping means deciding what to build, for whom, and how you'll know it worked before any code, so the agent doesn't decide for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "anything that touches a floor: auth",
+        "why": "Unexplained term. I have no idea what a 'floor' means here. I guessed it's 'the dangerous stuff' from the list that follows, but it reads like jargon from some other page I haven't read."
+      },
+      {
+        "quote": "taps twice and counts the rows",
+        "why": "A leap. I've never written a test. How does a test 'tap'? What rows, database rows? I believe it can happen, but I couldn't picture it or tell whether the agent's test actually does that."
+      },
+      {
+        "quote": "not the next one in UTC",
+        "why": "I've seen 'UTC' in Supabase timestamps but couldn't explain it. It's mostly clear from context that the server's clock is different from mine, but a few words saying that would help."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about strangers, review dates, and specs with owners at work. It feels like it's for a team lead, not me shipping side projects, so I'd scroll past it.",
+      "The second paragraph of 'A vague request gets the average app': it mostly re-explains why the shaped example was good, which I already got from the example itself."
+    ],
+    "jargon": [
+      "floor (as in 'touches a floor')",
+      "UTC",
+      "edge case (I sort of know it, but it's never defined)",
+      "empty state (guessable)",
+      "schema (I know it vaguely from Supabase)",
+      "spec with one owner"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How do I check the agent's tests are real and not faked to pass? 'Show me each one passing' assumes I can read a test. Also, two of the Done-when lines ('one thumb on a phone', 'only a keyboard') don't sound like things an agent can write a test for, so what do I do with those?",
+    "cut": "The standard. Every bullet is conditional on strangers, other people's money, or a second decision-maker, so for me it's three paragraphs of 'not yet'. A one-line pointer would do.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

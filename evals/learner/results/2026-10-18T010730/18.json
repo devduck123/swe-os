@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Before real users touch my app, set up Sentry with releases and source maps, so a broken webhook shows up within a minute with the deploy that caused it, instead of a customer emailing me three days later.",
+    "intended": "Observability means answering 'is it broken, for whom, and why' from data you already collected, and for a solo dev that's error tracking, structured logs, a health check, a few outcome counts, and alerts you act on.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "On Neon, a health check that queries",
+        "why": "I use Supabase, not Neon. I don't know what 'sleeping' or 'compute hours' mean here, or whether this applies to me. I was told not to touch the database but never really told why in my terms."
+      },
+      {
+        "quote": "Stripe then retries, and Sentry records it",
+        "why": "Packed into a code comment. I sort of get that returning an error makes Stripe try again, but I didn't know webhooks retry at all, and it's the main lesson of the code hidden at the end of a line."
+      },
+      {
+        "quote": "Wrap <my most important job> in",
+        "why": "What counts as a 'job' in my app? I have API routes and maybe a cron. I don't know what Sentry.withMonitor does beyond 'pings Sentry', or if I even have a job to wrap."
+      }
+    ],
+    "skimmed": [
+      "The standard: log drains, tracing, p95 latency, paging, on-call rotation. That's for a team I don't have, so I scrolled past.",
+      "The lib/log.ts helper code. I trusted it and moved on, since How I do it says to have the agent write it anyway."
+    ],
+    "jargon": [
+      "p95 latency",
+      "log drain",
+      "tracing (glossed, but abstract)",
+      "on-call rotation",
+      "paging alert",
+      "Neon / compute hours / sleeping",
+      "release (as a Sentry concept, half-explained)",
+      "Sentry 'issue' vs 'error event'",
+      "Sentry.withMonitor"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to make Sentry actually notify me (email? phone app?) when a new issue appears; is that on by default or an alert rule I set up? Which email provider to use for the daily summary, and whether I need one already. Whether the health check and outcome-count steps change on Supabase. What to do if I have no background jobs, so I know whether to skip the withMonitor step.",
+    "cut": "The Neon paragraph in 'Prove it's up'. It's about a database I don't use and adds a cost cliff that distracts from the point. Just say 'don't query the database in the health check, Sentry catches database errors anyway' and link out.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before real people use my app, install Sentry with releases and source maps, put a request ID on every error log and the error screen, and set alerts only for things I'd actually get up and fix, because users won't tell me when payments silently break.",
+    "intended": "Set up a small observability kit (error tracking, structured logs, a health check, outcome counts, and alerts you act on) so you can tell what's broken, for whom, and why without waiting for a user to email you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "On Neon, a health check that queries",
+        "why": "I use Supabase and don't know what Neon is. I also don't get why a database 'sleeping' matters or what 'free compute hours' are. It feels like a warning for someone else's stack, and it makes me unsure whether my Supabase setup has the same problem."
+      },
+      {
+        "quote": "Wrap <my most important job> in `Sentry.withMonitor`",
+        "why": "I'm not sure what counts as a 'job' in my app. Is a webhook a job? A cron route? I don't think I have background jobs at all, so I don't know whether this step applies to me or what to fill in."
+      },
+      {
+        "quote": "Success rate and p95 latency",
+        "why": "'p95' is never explained. I'm guessing it means 'slow-ish requests', but I couldn't tell you exactly."
+      }
+    ],
+    "skimmed": [
+      "The standard: every bullet starts with 'once you have a second engineer' or 'once you pay for Pro', so it's clearly for later me. Log drain, tracing, paging, and on-call rotation are all things I'll skip on my phone.",
+      "Before you ship, check: it mostly repeats How I do it. I'd paste it to my agent but not read it closely."
+    ],
+    "jargon": [
+      "p95 latency",
+      "Neon (and a database 'sleeping' / compute hours)",
+      "log drain",
+      "on-call rotation",
+      "paging alert",
+      "Sentry.withMonitor",
+      "Hobby / Pro (I sort of know these as Vercel plans, but it's never said)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The Alert section lists good alerts, but How I do it never says how to set them up. Does Sentry alert on new issues by default? Where do I turn off per-event emails? How do I make the uptime check alert only after two failures? 'Email yourself through your email provider' assumes I have one set up (Resend? Supabase's?). And I don't know whether the cron monitor step applies if I don't have background jobs. Also, my outcome counts would come from Supabase tables, but I've never written that SQL. One example query would help.",
+    "cut": "The Neon paragraph in the health check section. It's about a database I don't use, it explains a billing cliff with jargon, and the only thing I need from it ('don't query the DB in the health check') is already said in the line before and again in the checklist.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

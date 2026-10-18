@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "When stuff breaks, stop whatever is still writing first (rollback, flag, pause cron), and know before launch that my free Supabase plan has no backups unless I set up a nightly dump myself.",
+    "intended": "The order for handling a production break (stop the bleeding, understand, fix, prevent repeats) plus how to make sure backups exist, cover the right moment, and can actually be restored.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "SET session_replication_role = replica",
+        "why": "Code I couldn't follow. The comment says it 'skips triggers' but I don't know what a trigger is or why skipping one matters. 'Session pooler string' in the sentence before also lost me. This whole Supabase Free restore block reads like it's for someone else, and it's exactly my plan."
+      },
+      {
+        "quote": "Notice it's one transaction:",
+        "why": "Transaction is one of the words I can't define. The comment helps a little ('a failure leaves nothing half-loaded'), but 'Notice' assumes I know why that's the thing to notice."
+      },
+      {
+        "quote": "the Sentry issue, the request ID",
+        "why": "I don't have Sentry set up and don't know what a request ID is or where I'd find one. This section is two sentences and points me to a skill, so I came away with 'don't redeploy guesses' and not how to actually debug."
+      }
+    ],
+    "skimmed": [
+      "Restore next to production: the Neon command and the psql block. I'm on Supabase, so the Neon part isn't mine, and the psql part is too dense to follow on a phone.",
+      "The standard: everything starts with 'once there's a second engineer' or 'once you take real money', so it reads like later-me's problem.",
+      "Debug from evidence: too short to teach anything; it's mostly a link."
+    ],
+    "jargon": [
+      "Sentry",
+      "request ID",
+      "transaction",
+      "triggers / session_replication_role",
+      "Session pooler string",
+      "reconciliation",
+      "postmortem (used in step 'write down the time... for the postmortem' before it's explained)",
+      "real-shaped data"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually set up the nightly db dump: 'copy Supabase's nightly db dump workflow' doesn't link to it or say where to find it, and it's the one step the stop says is 'the only backup there is.' The drill says 'restore a copy from an hour ago, or your latest backup' but on Supabase Free I don't know which of the restore steps above I'd follow, and the psql one lost me. I'd also want the flag/soft-delete agent prompts in the pre-ship checklist, not just the outcomes.",
+    "cut": "The psql code block with session_replication_role. I'd replace it with an agent prompt ('Restore my latest db dump into a new Supabase project') like the other sections use, and link the details. It's the densest part, and it's the part I most need to understand.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When prod breaks, first stop everything that's still changing data (roll back AND pause cron jobs), and remember Supabase Free has no backups at all unless I set up a dump myself.",
+    "intended": "The order for handling a production incident (stop the bleeding, understand, fix, prevent), plus making sure backups exist, cover the right moment, and that you know how to restore them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "--command 'SET session_replication_role = replica'",
+        "why": "Code I couldn't follow. Three files, roles, a 'Session pooler string', triggers. The comment says it 'skips triggers' but I don't know why I'd want that or what breaks if I don't. I'd just paste this to my agent and hope."
+      },
+      {
+        "quote": "Notice it's one transaction",
+        "why": "'Notice' assumes I know why a transaction matters. The comment below half-explains it ('nothing half-loaded'), but the sentence reads like it's for someone who already knows."
+      },
+      {
+        "quote": "can't hard-delete more than 100 rows",
+        "why": "'Hard-delete' shows up in the postmortem section, but soft-delete isn't explained until 'How I do it' further down. I guessed the meaning, but only after I got there."
+      }
+    ],
+    "skimmed": [
+      "The Supabase Free psql block: too dense, and I'd hand it to my agent anyway",
+      "The standard: it's about teams, paying customers, and Stripe reconciliation, and that's not me yet",
+      "Debug from evidence: two sentences and a link, nothing I'd act on from my phone"
+    ],
+    "jargon": [
+      "transaction",
+      "session_replication_role / triggers",
+      "Session pooler string",
+      "request ID",
+      "hard-delete (before soft-delete is explained)",
+      "reconciliation",
+      "postmortem (used in 'Stop the bleeding' before it's explained)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "'Copy Supabase's nightly db dump workflow' has no link. I don't know where that file lives or what secrets it needs. The drill steps also don't say how to do step 1 on Supabase Free, where there's no 'restore from an hour ago'.",
+    "cut": "The Supabase Free psql block. It's the densest part, I can't follow it, and 'ask your agent to restore my db dump into a new project' would do the same job for me.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

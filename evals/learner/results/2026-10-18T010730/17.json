@@ -1,0 +1,85 @@
+[
+  {
+    "takeaway": "During a deploy the old and new code hit the same database at once, so never rename or drop a column in one go: add the new one, copy the data, switch reads, and drop the old one later.",
+    "intended": "Old and new code share the database during every deploy, so schema changes must work for both, and big changes get split into several small, individually safe releases.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "use the safer version in \"Going deeper\" below",
+        "why": "I scrolled down looking for it and there's nothing there. For NOT NULL on a big table I'm left with 'it's dangerous' and no idea what to do instead."
+      },
+      {
+        "quote": "is one giant transaction",
+        "why": "'Transaction' is never explained. I get the gist from 'can't be paused' and 'each batch saves on its own', but I couldn't tell you what a transaction actually is."
+      },
+      {
+        "quote": "The migration's version is then a no-op there",
+        "why": "The whole index bullet lost me. Why can't CONCURRENTLY run in a migration? What's $DIRECT_DATABASE_URL vs my normal URL? What's 'no-op'? How do I find and drop an 'INVALID' index? I'd be running psql against prod on faith."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's for teams with multiple people writing migrations, and I'm solo.",
+      "On Drizzle: I'm on Supabase, so I skipped it.",
+      "The lock-cost bullet list: I read 'adding a column is instant' and skimmed the rest. Type change and NOT NULL felt like edge cases I'd hit later."
+    ],
+    "jargon": [
+      "transaction",
+      "backfill (I inferred it means copying data into the new column, but it's never said plainly)",
+      "cron job",
+      "schema",
+      "rows locked vs table locked",
+      "no-op",
+      "INVALID index",
+      "DIRECT_DATABASE_URL",
+      "psql",
+      "fixed default"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where do I actually run the backfill script (locally against prod? a one-off route? a Supabase function?) and how do I connect to prod safely. Where DIRECT_DATABASE_URL comes from on Neon/Supabase and why it's different. The exact command to drop an INVALID index. How long to wait before 'Contract': 'once you're sure you won't roll back' is vague for someone who's never rolled back. The NOT NULL safe version the text promises but doesn't show.",
+    "cut": "The standard. Every item is gated on a team or stakes I don't have yet, and it's the third time backups-before-DROP comes up. I'd skip it anyway.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Old and new code run against the same database during a deploy, so never rename or drop a column in one shot: add the new one, copy the data over, switch reads, and drop the old one releases later.",
+    "intended": "Every schema change has to work for both old and new code at once, so big changes get split into small, individually safe steps across several releases.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "use the safer version in \"Going deeper\" below",
+        "why": "There's nothing below. It points me to a section I can't see, so I don't know what to do about NOT NULL on a big table."
+      },
+      {
+        "quote": "The migration's version is then a no-op there",
+        "why": "This is a leap. I build the index by hand, but the migration also has a CREATE INDEX? 'No-op' is jargon, and the reason I need both is only half explained. 'It can't run inside a migration' never says why. I also don't know what $DIRECT_DATABASE_URL is or where I'd get it."
+      },
+      {
+        "quote": "is one giant transaction",
+        "why": "'Transaction' is never explained. I get that it's 'one big thing that locks stuff', but I couldn't tell you why batches fix it beyond 'smaller is better'."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's explicitly for teams, and Squawk/CI linting isn't me yet.",
+      "Rehearse on a branch first: the Neon vs Supabase paid-plan details read like product docs. I'd only come back when I'm actually setting it up.",
+      "Before you ship, check: I wouldn't read it, I'd just paste it to the agent."
+    ],
+    "jargon": [
+      "transaction",
+      "backfill (used in step 2 before it's explained, though the batch section helps later)",
+      "cron job",
+      "no-op",
+      "psql",
+      "DIRECT_DATABASE_URL",
+      "INVALID index",
+      "fixed default",
+      "seed.sql",
+      "lint / CI",
+      "schema"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to tell if a table is 'big' or 'busy' enough to need the careful path. Where DIRECT_DATABASE_URL comes from and how to run psql against production. How to find and drop an INVALID index. The NOT NULL safer version, which points to a missing section. How long to wait before the contract step ('days'?).",
+    "cut": "The standard. It's for teams with signals I don't have, and the migrations concern link already covers it. Second choice: the Supabase-branches-need-a-paid-plan detail in Rehearse, which repeats the How I do it bullet.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

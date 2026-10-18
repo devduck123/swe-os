@@ -1,0 +1,82 @@
+[
+  {
+    "takeaway": "Clicking through my app only proves it worked once, so I should have tests (especially ones against a real database) that re-check the stuff people depend on every time an agent changes code, and I should watch for agents faking green by skipping or editing tests.",
+    "intended": "A test is a re-checkable claim about your app's behavior, and you want confidence that what people depend on still works after the next change, which coverage numbers don't give you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Empty the tables before each test",
+        "why": "I get why, but not how. Is that a SQL command, a Vitest hook, a Supabase thing? There's no code for it, and it's in the paste-to-agent checklist, so I can't tell if the agent did it right."
+      },
+      {
+        "quote": "Vitest's `fileParallelism: false`",
+        "why": "I don't know where this goes. Is it a config file? Is it per file? It reads like something to copy, but I don't know where to paste it."
+      },
+      {
+        "quote": "add the `supabase/setup-cli` action",
+        "why": "The local part made sense, but the CI part lost me. Where does that action go, and then the 'Otherwise, Docker setup... Neon branch per CI run' line is a second path I can't evaluate. I don't know which one I'm in."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's for teams and people paying me. I'm solo, so I'd skip it, and 'races' and 'abuse' aren't explained anyway.",
+      "The second half of the CI section about flaky tests: I don't have CI yet, so it felt like a future problem.",
+      "The 'Otherwise, use the Docker setup... Neon branch' sentence: I'm on Supabase, so I skipped it."
+    ],
+    "jargon": [
+      "authorization check",
+      "integration test (defined by example, but 'real database work together' is fuzzy)",
+      "smoke test",
+      "races",
+      "recovery",
+      "production-sized data",
+      "action (glossed as 'a ready-made step', but where it lives isn't explained)",
+      "rejects.toThrow"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it tells me to set up a local Supabase and ask the agent for tests, but there's no command to actually run the tests (npm test? vitest?), no hint about where markPaid and getInvoice come from, and no example of emptying tables, so I can't check that the agent did the isolation right. It's also unclear whether I need to set up Vitest myself or whether start-project already did it.",
+    "cut": "The standard. It says 'teams go further', and every bullet starts with 'when' something I'm not doing yet. It's one more list I'd skim, and it links out to the concern anyway.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Clicking through once proves nothing after the next agent change, so I should have the agent write tests for who-can-change-what and money stuff against a real local Supabase database, and make sure a new test fails before the fix.",
+    "intended": "Tests turn claims about your app into checks a machine re-proves on every change, so you know what people depend on still works; coverage doesn't tell you that.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "run integration test files one at a time",
+        "why": "I didn't know tests ran in parallel or what a 'test file' boundary means for rows. `fileParallelism: false` is a config flag, and the stop doesn't say where it goes. 'Empty the tables before each test' also never says how: a beforeEach? a SQL command? I'd just have to trust the agent."
+      },
+      {
+        "quote": "add the `supabase/setup-cli` action",
+        "why": "This turns into a pile of names: setup-cli action, `supabase db start` vs `supabase start`, Docker setup from another page, Neon branch per CI run. I don't know which one applies to me or what a Neon branch is. I'd stop reading here."
+      },
+      {
+        "quote": "Test recovery, races, and abuse.",
+        "why": "Three words I can't define, with no gloss. 'Races' especially. I couldn't tell you what testing a race even looks like."
+      }
+    ],
+    "skimmed": [
+      "The standard: it says 'teams' and 'a second engineer'. I'm solo, so this felt like it was for someone else.",
+      "The CI paragraph's second half on flaky tests. I got the point in one line ('people learn to ignore red') and skipped the rest.",
+      "The Playwright section after the code: I don't write UI tests yet and the stop itself says to add them later."
+    ],
+    "jargon": [
+      "Postgres (I know Supabase uses it, but 'a real Postgres' as a noun threw me)",
+      "races",
+      "smoke test",
+      "Neon branch",
+      "fileParallelism",
+      "getByRole / role 'status' (what's a role?)",
+      "happy path",
+      "assertion / loosened assertions",
+      "production-sized data",
+      "authorization check (I sort of know it, not precisely)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd paste the agent prompt from How I do it, but I don't know how to check whether 'empty the tables before each test' actually happened, or what file `fileParallelism` goes in. I also need one line on what I do with the checklist answers: if the agent says 'no integration test for X', do I block the merge, or ask it to write one? And the CI setup is a list of names rather than a step: 'ask your agent to add a GitHub Actions workflow that runs `npm run check` with `supabase start`' would get me there.",
+    "cut": "The standard. It's for teams with a second engineer and paying customers, it uses words I don't know (races, abuse, production-sized data), and it links somewhere else for the real content anyway. The flaky-test point is already made in the CI section.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

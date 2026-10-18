@@ -41,16 +41,16 @@ Three findings from learning science hold up across decades of studies:
 
 This research comes from classrooms and labs, not agent workflows, so applying it here is a bet. It's a cheap one.
 
-## What I'd do
+## How I do it
 
-Your attention lands on the PR anyway, so that's where learning goes.
+On my own projects, learning goes in the PR, where my attention lands anyway.
 
-1. **Every agent leaves a "Worth learning" note and a short quiz** in its PR. The agent writes both; you answer.
-2. **Before merging anything non-trivial, answer the quiz from memory,** then check the answers. It takes five to ten minutes. Geoffrey Litt's rule is that he won't [send code to others until he can pass the quiz](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html). Simon Willison's version: don't commit code you couldn't explain to someone else.
-3. **Once a week, catch up.** Group the week's "Worth learning" notes, learn the one or two that matter most, and finish with one recall question from an older lesson. That's the spacing.
-4. **Once per feature, in an area you want to own, write the core yourself.** Ask your agent: "Leave me the core as one `TODO(human)`, with a failing test."
+1. **Every agent leaves a "Worth learning" note and a short quiz** in its PR. The agent writes both; I answer.
+2. **Before merging anything non-trivial, I answer the quiz from memory,** then check the answers. It takes five to ten minutes. Simon Willison's rule is the same idea: don't commit code you couldn't explain to someone else. Geoffrey Litt won't [send code to others until he can pass the quiz](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html).
+3. **Once a week, I catch up.** I group the week's "Worth learning" notes, learn the one or two that matter most, and finish with one recall question from an older lesson. That's the spacing.
+4. **Once per feature, in an area I want to own, I write the core myself.** I ask the agent: "Leave me the core as one `TODO(human)`, with a failing test."
 
-For step 1, paste this into `AGENTS.md` or `CLAUDE.md`, the file your agent reads first. Pushing straight to main, without PRs? The note goes in the commit message, the quiz in the agent's reply. Answer before you push. Notice that the answers stay hidden until you've tried:
+For step 1, this goes in `AGENTS.md` or `CLAUDE.md`, the file the agent reads first. Copy it into yours. No PRs? The prompt covers commits too. Notice that the answers stay hidden until you've tried:
 
 ```text
 When you open a PR, add a "Worth learning" section to its description
@@ -66,13 +66,19 @@ Put the answers in a collapsed <details> block below the questions.
 
 The [learn skill](../../skills/learn/SKILL.md) (a saved workflow you ask your agent for) runs the PR quiz, the weekly catch-up, and writing the core yourself.
 
+## The standard
+
+- **The PR author can explain every line in review, and agent-written code gets the same review as human code.** Once anyone else reviews or runs your code. See [reading and reviewing code](reading-and-reviewing-code.md).
+- **Whoever reviews an auth, data, or money change can explain how that part works.** Once real users or real money depend on it.
+- **Measure what agents speed up, like cycle time and how often their PRs need rework, instead of trusting how it feels.** Once a team decides how much work to hand them.
+
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
 - There's a "Worth learning" note, or "Nothing new".
 - There are 3 to 5 questions, with the answers hidden.
-- I answered them from memory first.
+- For a non-trivial change, I've answered the questions from memory. If I haven't, ask me them now.
 - I can explain any auth, data, or money change without the code.
 
 ## Sources

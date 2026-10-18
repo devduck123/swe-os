@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Treat the AI like a flaky, expensive stranger: cap what goes in and comes out, check its answer before using it, and never let the part that reads outside emails also send things without the user clicking Send.",
+    "intended": "A model call is a slow, paid, unpredictable, possibly attacker-steered API call, so build around it like any flaky, expensive, untrusted service.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AbortSignal.any([req.signal, AbortSignal.timeout(30_000)])",
+        "why": "Code I couldn't follow. The comment helps, but I've never used AbortSignal. I don't know what a 'signal' is or what happens to the stream when it fires. I'd just copy it."
+      },
+      {
+        "quote": "In-memory limits don't hold on serverless.",
+        "why": "A leap. I deploy to Vercel, but I don't know why a limit kept in memory wouldn't work there, or what 'counted in Postgres' looks like in Supabase. It's one sentence tacked onto the end of a bullet."
+      },
+      {
+        "quote": "but OWASP says it's unclear",
+        "why": "I don't know who or what OWASP is, so I can't tell how seriously to take it. It reads like a name I'm supposed to recognize."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's all 'adopt it once...' for situations I'm not in yet (failover, cheaper models, chunking), so I'd skim it on my phone.",
+      "The eval code block: I got the idea from the paragraph above it ('check what must always hold'). The vitest it.each syntax is extra I'd skip.",
+      "Run it like a dependency: the logging list is useful, but it reads like a checklist I'd hand to the agent, not something I'd read closely."
+    ],
+    "jargon": [
+      "OWASP",
+      "serverless (as a reason limits break)",
+      "abort signal (never defined, just 'the signal that stops it')",
+      "fail over",
+      "alias (for a model ID; I sort of got it from context)",
+      "provider spend cap (I get it, but don't know where it lives)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How to actually count a per-user daily limit in Postgres/Supabase, even one line on what the table looks like, since the page says the in-memory version I'd naturally write won't work. Also what to show the user when finishReason is 'length' or 'content-filter': retry, show a partial, or show an error?",
+    "cut": "The standard section. Every item is for later ('once outages hurt users', 'once the bill says so'), and it pushes the very useful 'Before you ship, check' further down the page.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Treat the AI like a sketchy, expensive outside API: lock the route behind login and limits, cap everything, check what comes back, and never let the same model that reads strangers' emails also send stuff without me clicking Send.",
+    "intended": "Build around a model call like any flaky, expensive, untrusted third-party service, and most AI production problems shrink.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AbortSignal.any([req.signal, AbortSignal.timeout(30_000)])",
+        "why": "I've never used AbortSignal. The comment saves it, but I'm copying it, not understanding it. I don't know what happens to the user when it fires, or whether I still pay for the tokens."
+      },
+      {
+        "quote": "In-memory limits don't hold on serverless.",
+        "why": "This is dropped at the end of a bullet with no explanation. Why wouldn't a counter in my code work on Vercel? I'd just trust it, and I'd have no idea how to 'count in Postgres' myself."
+      },
+      {
+        "quote": "but OWASP says it's unclear",
+        "why": "I don't know who OWASP is. It sounds official, so I nodded along."
+      }
+    ],
+    "skimmed": [
+      "The standard: everything there is 'adopt it later' (failover, cheaper model, chunking), so on my phone I'd skip it for now.",
+      "Most of the eval code: I got the idea (check rules, not exact wording), but `it.each` and `'$name'` are Vitest stuff I've never written."
+    ],
+    "jargon": [
+      "OWASP",
+      "abort signal",
+      "serverless (why in-memory fails there)",
+      "fail over",
+      "prompt version (am I supposed to version prompts? how?)",
+      "streaming / toTextStreamResponse",
+      "alias (model alias)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How to work out the cost of a call so I can log it (where do I get the tokens and price?). What a 'prompt version' is in practice: a constant? a file? What a user sees when the limit, the 413, or the timeout hits.",
+    "cut": "How I do it. It's almost the same list as Before you ship, which I'd actually paste. I'd fold the two lines that are unique there (the provider spend cap, and writing 20 evals before the second prompt change) into the checklist and delete the rest.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

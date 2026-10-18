@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Before adding a cache or anything fancy, time where the slowness actually is (usually the database, like a query inside a loop), and fix that one thing; and put a hard spend cap on anything that bills by usage, especially AI routes.",
+    "intended": "Find the one slow thing with a number before optimizing, and do the same for the bill.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AND (created_at, id) < ($1, $2)",
+        "why": "Cursor pagination came out of nowhere. I don't know what comparing two things in parentheses does, what $1/$2 are in practice, or where I'd get them in my Next.js code. I'd copy it blindly or skip it."
+      },
+      {
+        "quote": "the pooler host under **Connect**",
+        "why": "Never heard of a pooler. I'd go hunting in Supabase for a 'host' and not be sure I found the right string."
+      },
+      {
+        "quote": "In Next.js 16, data isn't cached unless you opt in",
+        "why": "Opt in how? It says every write has to 'clear the cached copy' but never shows what clearing looks like (revalidateTag? something else?). I'd nod and not know what to do."
+      }
+    ],
+    "skimmed": [
+      "Core Web Vitals paragraph: three numbers at once with no names I'd remember; I got 'use Speed Insights' and moved on",
+      "The Standard: every item is 'once there's a second engineer' or 'once it makes money', so not for me yet",
+      "The cursor pagination code block: too dense, and the sentence above already said OFFSET is fine to start"
+    ],
+    "jargon": [
+      "ORM is glossed, but 'N+1' is only defined by the story; I got it from the story, though",
+      "p95 (glossed, but I had to read it twice)",
+      "Seq Scan / Index Scan",
+      "cursor (pagination)",
+      "pooler",
+      "Server Components (I've heard it, couldn't say what moves to the server)",
+      "invalidates"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The How I do it list is clear for Speed Insights, the region, and EXPLAIN ANALYZE. Missing: how to actually set a spend limit on the AI provider and what number to pick, and a ready-to-paste prompt for 'log queries in dev' with supabase-js (it only says Drizzle has a logger; for Supabase it just says 'look for a loop'). Also no prompt for adding a rate limit; it links out.",
+    "cut": "The Core Web Vitals paragraph. It packs three thresholds and two tools into four sentences, and the only action I take from it is 'install Speed Insights', which How I do it already says.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before letting the agent add Redis or any cache, time the slow page; it's probably one dumb database thing like a query running once per row, so fix that, and put a hard spend cap on anything that bills per use, especially AI routes.",
+    "intended": "Performance and cost work should start from a measured number and fix the one thing actually causing it, not a hunch.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AND (created_at, id) < ($1, $2)",
+        "why": "Code I couldn't follow. I've never seen two columns compared to two values at once, and the $1/$2 comment didn't tell me where those come from in my Next.js code. I got that cursors beat OFFSET, but I couldn't write this."
+      },
+      {
+        "quote": "the region is in the pooler host",
+        "why": "Unexplained term. I don't know what a pooler is or which string under Connect is the 'host'. I'd have to guess which part says us-east-1."
+      },
+      {
+        "quote": "every write to that data has to clear the cached copy",
+        "why": "A leap. It doesn't say how to opt in or how to clear the copy in Next.js 16. 'What invalidates it?' and 'write path' assume I know what invalidation looks like in code."
+      }
+    ],
+    "skimmed": [
+      "The standard: every item is 'once there's a second engineer' or 'once it makes money', so it's not for me yet",
+      "Bound the work > cursor pagination code block: too dense, I took 'use LIMIT' and moved on",
+      "The Core Web Vitals paragraph, half-read: I got the three numbers but didn't connect them to what I'd actually do"
+    ],
+    "jargon": [
+      "invalidates / invalidation",
+      "write path",
+      "pooler host",
+      "cursor (pagination)",
+      "load test",
+      "latency budget",
+      "Seq Scan / Index Scan (the comments help a bit, but not enough for me to read real EXPLAIN output)",
+      "Server Components (I sort of know it, but not why a library 'never reaches the browser')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to read EXPLAIN ANALYZE output beyond spotting 'Seq Scan', since real output is a wall of numbers. Where exactly Anthropic's Console spend limit lives. How to count queries with supabase-js, since 'look for a loop' isn't counting and there's no logger flag like Drizzle has. 'A number crosses a line you care about' is vague for the server side: what p95 should make me act?",
+    "cut": "The standard. Every bullet is gated on things I don't have yet (a second engineer, revenue, a launch), and the concern pages it links already cover 'more'. It's the first thing I'd drop on my phone.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

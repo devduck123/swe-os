@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Anything that runs later, whether my own job or a Stripe webhook, can run twice or die halfway, so I save it as a row in a table first and write it so a second run does nothing.",
+    "intended": "Background jobs and webhooks can arrive late, twice, or never, so design for at least once: make repeats harmless and give every failure somewhere to land.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Insert the row in the request and process it in `after()`",
+        "why": "A leap. Earlier the stop says that if `after()` throws, 'the work is gone, with no record and no retry.' Now it tells me to use `after()`. I eventually worked out that the row is the record and the sweep retries it, but nobody says that out loud, and for a minute I thought the stop contradicted itself."
+      },
+      {
+        "quote": "WHERE id = $1 AND status = 'pending'",
+        "why": "Code I couldn't fully follow. I don't know what `$1` and `$2` are, and the code never shows where the API call happens relative to this UPDATE. So 'it makes the write land once, even if the API call repeats' made sense as a claim, but I couldn't see it in the code."
+      },
+      {
+        "quote": "its retries take most of a week",
+        "why": "A leap. I had to stop and do the math myself: five attempts, one sweep a day, so roughly five days. One clause connecting this back to 'after five attempts' would fix it."
+      }
+    ],
+    "skimmed": [
+      "The Standard: it's for teams with support tickets and on-call people. I'm not there, and I skimmed past 'reconciliation'.",
+      "The CREATE TABLE column types (`GENERATED ALWAYS AS IDENTITY`, `jsonb`, `timestamptz`): the comments told me what each column is for, so I skipped the syntax.",
+      "The middle of the Stripe handler's try/catch: I trust I'd copy it as-is."
+    ],
+    "jargon": [
+      "signature / signing secret (I never learned what signing a request actually means or why it proves the sender is Stripe)",
+      "re-serialize",
+      "`$1` / `$2` query placeholders",
+      "`RETURNING`",
+      "Stripe idempotency key",
+      "reconciliation",
+      "outlasts one function (I mostly get that it means a serverless function's time limit, but it's never said)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where I actually run the `CREATE TABLE` and the one-time `INSERT INTO job_locks`. I've never written a migration by hand, so do I paste it into the Supabase SQL editor, or ask my agent for a migration file? Also missing: one line saying the sweep route calls the same processing function the request uses, and how to split the 5,000 rows into jobs of 100 (one row per batch, with `fromRow` in the payload?). The agent prompts help, but I'd want to know what to check in what the agent hands back.",
+    "cut": "The Standard. Every bullet starts with 'when' something I don't have yet: real money, a second engineer, support tickets. It's the one section I scrolled past entirely. The checklist below it is what I'd actually use.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Anything running in the background or coming from a webhook can run twice or not at all, so I save it to a table first, make the second run do nothing, and have a cron sweep pick up whatever got stuck.",
+    "intended": "Design background jobs and webhooks for 'at least once' delivery: assume anything can run twice, make the repeat harmless, and give every failure somewhere to land.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Parse and re-serialize the JSON",
+        "why": "I don't really know what 'signing' the body means or what 're-serialize' is. I got the rule (use req.text(), not req.json()) but not why the bytes would change."
+      },
+      {
+        "quote": "save the event, then answer 200",
+        "why": "The handler saves the event as 'pending', and then nothing ever processes it. The sweep only reads the `jobs` table, not `webhook_events`. If I copy the handler as told, my payments just sit there. I couldn't tell what's supposed to pick them up."
+      },
+      {
+        "quote": "its retries take most of a week",
+        "why": "Took me a second to work out this means five attempts at one sweep per day. It's a leap, but I got there."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's labeled for teams with on-call and support tickets, which isn't me yet",
+      "Before you ship, check: it says to paste it to my agent, so I'd paste it without reading closely",
+      "The CREATE TABLE types (bigint GENERATED ALWAYS AS IDENTITY, jsonb, timestamptz): I read the comments and skipped the types"
+    ],
+    "jargon": [
+      "signature / signs the raw body",
+      "re-serialize",
+      "Reconciliation against Stripe",
+      "Stripe idempotency key",
+      "jsonb",
+      "timestamptz",
+      "Sentry (I've heard of it but never set it up)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Who processes the rows in webhook_events after the 200? Either the sweep should also read webhook_events, or the handler should insert a `jobs` row. Right now the copy-paste path stores payments and never acts on them. Also missing: a line on how to split one import into jobs of 100 rows. The payload hints at it with fromRow, but the steps never say it.",
+    "cut": "The standard. Every bullet says 'when X shows up,' and none of those apply to me yet. The reliability-concern link is enough.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

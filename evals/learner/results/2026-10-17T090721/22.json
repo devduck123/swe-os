@@ -1,0 +1,95 @@
+[
+  {
+    "takeaway": "Every service in this stack is free until it suddenly isn't, and the free-tier limits shut things off hard, so know the cliffs (Neon never sleeping, Blob's 2,000 operations, Resend's 100 emails a day, Supabase pausing) before real users show up.",
+    "intended": "What stack to use to build a real web app alone, why each piece is there, and exactly where each free tier ends.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a client per request runs out",
+        "why": "I don't know what a 'database client' or a 'connection' really is. I get 'do it once in lib/db.ts', but I couldn't tell if my code already does the bad thing. Then 'With supabase-js, skip this' left me unsure whether I'm even affected, since I use Supabase."
+      },
+      {
+        "quote": "signed webhook",
+        "why": "Webhook is never explained (I sort of know it's Stripe calling my server), and 'signed' means nothing to me. It just links out to the background jobs guide, so I'd go into the Stripe part not knowing what I'm supposed to verify."
+      },
+      {
+        "quote": "checks a short-lived signed token itself",
+        "why": "Token, signed, 'without calling Clerk': I can't tell why this matters or what I'd do differently. It reads like it's for someone comparing auth designs, not someone picking one."
+      }
+    ],
+    "skimmed": [
+      "The Session/Stripe bullets under the diagram: too abstract on a phone, and nothing I'd act on.",
+      "'The standard': point-in-time recovery, on-call rotation, second region. That's for a company, not me. Each line says 'once X', which told me I could skip it.",
+      "'Getting it running': just a list of links. I'd come back to it later, maybe.",
+      "The Neon cliffs, mostly. I'm on Supabase, so I jumped to the Supabase bullets."
+    ],
+    "jargon": [
+      "webhook",
+      "signed (token / webhook)",
+      "session",
+      "database client / connections",
+      "under load",
+      "rate limit (never defined, though I can guess)",
+      "MFA",
+      "passkeys",
+      "SMTP",
+      "cron",
+      "compute (as in 'Neon Free's compute')",
+      "pg_dump",
+      "point-in-time recovery",
+      "failover",
+      "TanStack Start",
+      "env vars parsed (what does 'parsed' mean here?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'Before you ship' list is great to paste to my agent, but I can't check most of it myself. For example, how do I know whether something queries my database every few minutes, or whether my Supabase app has the connection problem at all? One line on how to check each item, or what it looks like when it's wrong, would help. Also, for Supabase users the list mixes in items that don't apply to me (Better Auth rate limits, lib/db.ts), and I'm not sure which ones to drop.",
+    "cut": "The Session/Stripe bullets right under the diagram. They're the densest jargon on the page, they come before I've learned why any piece exists, and the Stripe sentence gets repeated later in 'Why each piece is here' anyway.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Free tiers don't send you a bill when you go over, they just stop working (Neon runs out if something keeps pinging it, Supabase pauses after a quiet week, Blob dies after 2,000 uploads), so I need to know which limit I'll hit first.",
+    "intended": "Which managed services to use for a solo Next.js app, why each one is there, and exactly where each free tier ends.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "checks a short-lived signed token itself",
+        "why": "I don't know what a signed token is or why skipping a call to Clerk matters. 'Signed webhook' a few lines later lost me the same way. I gave up on the Session bullet."
+      },
+      {
+        "quote": "Each client holds open connections, and Postgres",
+        "why": "I don't know what a database connection is, or how a 'client per request' would even happen in my Next.js code. I can't tell if I'm doing it wrong. The supabase-js line told me to skip this, so I did, without understanding why."
+      },
+      {
+        "quote": "then run Better Auth's migration",
+        "why": "I've never run a migration by hand. Earlier it says Drizzle 'generates migrations', but it never says how I run one or where. I'm on Supabase anyway, so I wasn't sure this section applied to me until the last line."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about second engineers, on-call, and regions. That's not me, so I skipped it.",
+      "Most of 'Why each piece is here' for Neon, Drizzle, Better Auth, and Blob. I'm staying on Supabase, so I only read until I saw names I don't use.",
+      "The middle of the cliffs list. It's long and dense on a phone. I read the Supabase ones and the Vercel Hobby non-commercial one and skimmed the rest.",
+      "The cost paragraph at the top of 'What it costs'. Too many 'about' and 'plus' numbers to hold in my head."
+    ],
+    "jargon": [
+      "signed token",
+      "signed webhook",
+      "database connections / client",
+      "migration (glossed once, but never how to run one)",
+      "SMTP / custom SMTP",
+      "compute (Neon)",
+      "advanced operations",
+      "MFA / passkeys (I sort of know MFA)",
+      "point-in-time recovery",
+      "restore drills",
+      "pg_dump",
+      "env vars parsed (why would I parse env vars?)",
+      "TanStack Start"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "There's no 'What I'd do' section. 'How I do it' is about upgrades, not about what I should do this week. As a Supabase reader, I wanted a short list just for me: set up Resend SMTP, upgrade to Pro before real users, check that nothing pings the database. Instead I had to pick my items out of a mixed list. The checklist's first two items don't say whether they apply on Supabase. The Zod item doesn't show me what 'parse with Zod' looks like for a webhook or AI output, so I'd just paste it to my agent and hope.",
+    "cut": "The standard. It's for a team with paying customers. It made me feel the page wasn't for me right at the end, and it's the densest jargon on the page (point-in-time recovery, restore drills, on-call rotation, failover).",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

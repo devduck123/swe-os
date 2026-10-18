@@ -151,6 +151,8 @@ export default defineConfig({
             { label: 'The track', slug: 'guides' },
             ...stages.map((stage) => ({
               label: stage[0].toUpperCase() + stage.slice(1),
+              // Collapsed so How I build and Standards stay in view. Starlight opens the current page's stage.
+              collapsed: true,
               items: pages('core/guides')
                 .filter((p) => guideStage(p) === stage)
                 .map((p) => ({ slug: `guides/${p}` })),
@@ -158,30 +160,35 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Recipes',
+          // Tommy's own way: his defaults and the stack he'd ship.
+          label: 'How I build',
           items: [
-            { label: 'All recipes', slug: 'recipes' },
+            { label: 'My defaults', slug: 'profile/defaults' },
             ...pages('core/recipes').map((p) => ({ slug: `recipes/${p}` })),
+            { label: 'All recipes', slug: 'recipes' },
           ],
         },
         {
-          label: 'Principles',
-          items: [{ label: 'The fourteen', slug: 'principles' }],
-        },
-        {
-          label: 'Concerns',
-          collapsed: true,
+          // The professional standard: judgment, then one page per risk (the concerns).
+          label: 'Standards',
           items: [
-            { label: 'Picking concerns', slug: 'concerns' },
-            ...pages('core/concerns').map((p) => ({ slug: `concerns/${p}` })),
+            { label: 'The fourteen principles', slug: 'principles' },
+            { label: 'All standards', slug: 'concerns' },
+            {
+              label: 'By risk',
+              collapsed: true,
+              items: pages('core/concerns').map((p) => ({
+                slug: `concerns/${p}`,
+              })),
+            },
           ],
         },
         { label: 'Skills', items: skillItems },
         {
-          label: 'Tommy',
-          // Reading order: who Tommy is, how SWE OS sounds, then the situational pages.
-          items: ['tommy', 'voice', 'writing', 'learning', 'defaults']
-            .concat(pages('profile'))
+          label: 'About me',
+          // Reading order: who Tommy is, how SWE OS sounds, then how he learns.
+          items: ['tommy', 'voice', 'writing', 'learning']
+            .concat(pages('profile').filter((p) => p !== 'defaults'))
             .filter((p, i, all) => all.indexOf(p) === i)
             .map((p) => ({ slug: `profile/${p}` })),
         },

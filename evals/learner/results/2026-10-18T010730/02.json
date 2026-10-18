@@ -1,0 +1,85 @@
+[
+  {
+    "takeaway": "When something breaks, figure out which hop (browser, CDN, function, database) broke, and check that my Vercel region matches my database region.",
+    "intended": "A click travels through a chain of hops (browser, CDN, function, database), each can be slow, fail, or cache, so debugging means asking which hop broke.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Next.js adds `s-maxage` to pages it caches",
+        "why": "The caching section turns into a pile of header names (`max-age`, `s-maxage`, `CDN-Cache-Control`, `revalidate`) with no example of what goes wrong. I never see the actual bad outcome, like another user seeing my dashboard, spelled out, so I don't feel why it matters."
+      },
+      {
+        "quote": "It holds a pool of open connections",
+        "why": "I don't know what a connection pool is or why opening a new connection each time is bad. The sentence assumes I already care about this."
+      },
+      {
+        "quote": "One instance also handles several requests at once",
+        "why": "This is a leap. I thought each request got its own function run. It's stated as fact with no picture of two users hitting the same instance, so the `let currentUser` danger is easy to nod past without really getting it."
+      }
+    ],
+    "skimmed": [
+      "The Standard: latency budget, load test, and tracing are for teams with real users. It reads like it's for someone else.",
+      "The State bullet list: six bullets of 'survives X, Y can read it' blur together on a phone. I'd remember the URL and database ones and lose the rest.",
+      "Your code runs in two places: the first half I mostly knew from Next.js docs. I'd skim to `server-only`."
+    ],
+    "jargon": [
+      "CDN (never glossed beyond 'servers near the user'; I kind of get it)",
+      "region / `iad1` / `fra1`",
+      "round trips",
+      "instance (glossed, but late)",
+      "connection pool",
+      "response header (glossed, good)",
+      "`s-maxage` vs `max-age`",
+      "`revalidate`",
+      "CORS",
+      "load test",
+      "tracing",
+      "latency budget"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd change the Vercel region today, that step is concrete. The `server-only` tip is clear. But for caching I'd just paste the agent prompt and wouldn't understand the answer: what do I do if it says yes, a page with `revalidate` depends on the signed-in user? No fix is given. Same for the timeout bullet: I don't know how to add a timeout to a Supabase or fetch call, and it sends me to another page.",
+    "cut": "The State section's six-bullet list. The point that matters for this stop is module scope being shared across users, and the list buries it. Keep the server-memory paragraphs and drop the rest, or move it to its own stop.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When my app breaks or is slow, figure out which hop (browser, CDN, function, or database) is the problem, and put my Vercel function in the same region as my database.",
+    "intended": "A click travels through a chain of hops (browser, CDN, function, database), and knowing that chain turns most debugging into asking which hop broke.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "The user's session cookie on the request doesn't stop that",
+        "why": "A leap. I think this means the CDN could show one user's dashboard to another user, but the stop never says that outright. That's the scary part and I had to guess it."
+      },
+      {
+        "quote": "sometimes in a separate CDN-Cache-Control header",
+        "why": "Too dense. This one sentence has Next.js adding s-maxage, `export const revalidate` (never explained), agents adding headers by hand, and a second header name. By the end I didn't know what I was supposed to look for."
+      },
+      {
+        "quote": "server actions are public endpoints",
+        "why": "Unexplained term. I use server actions, but 'endpoint' isn't explained and I don't see why calling my own function is public. The link might explain it, but I'm on my phone and won't tap it."
+      }
+    ],
+    "skimmed": [
+      "The standard: latency budget, load test, and tracing are explicitly for later, so I scrolled past.",
+      "The CDN half of 'Caching happens at every hop': I read the browser line, then my eyes glazed at s-maxage and CDN-Cache-Control.",
+      "Parts of the state list. The URL and React state lines I already knew, but the server memory part was actually useful."
+    ],
+    "jargon": [
+      "revalidate",
+      "s-maxage",
+      "route handlers",
+      "endpoints",
+      "latency budget",
+      "load test",
+      "tracing",
+      "pool of open connections (half explained)",
+      "public (as a Cache-Control value)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "If my agent says yes, a signed-in page is cached, what do I tell it to change? Something like 'use private or no-store' is never said. Also, is `server-only` a package I have to install, or built in? And there's no example of how to add a timeout to a Supabase or fetch call; it just links away.",
+    "cut": "The standard. It's two bullets about things I'm told not to do yet, full of words I don't know (latency budget, load test, tracing). It made the end of the stop feel like it was for someone else.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

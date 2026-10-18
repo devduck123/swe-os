@@ -112,23 +112,36 @@ Opt in with Cache Components: set `cacheComponents: true` in `next.config.ts`, m
 
 **Estimate at 10x before you need to.** Users, times actions per user per day, times 30, times the cost per action. Say 200 users each run 5 AI summaries a day. That's 30,000 calls a month. Now do 2,000 users. Then do the bad month: one bot sending 10 requests a second for a day is 864,000 calls. If either number scares you, add the limit now.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - Ask your agent: "Install `@vercel/speed-insights` and add `<SpeedInsights />` to the root layout."
 - Match the Vercel function region to the database's, in **Settings > Functions**.
 - Log queries in development, and add `Server-Timing` to any route that feels slow.
 - When something's slow, run `EXPLAIN ANALYZE` and fix the query before touching caching.
 - Before shipping anything usage-billed, put the 10x estimate in the PR and set the provider's spend limit. On Vercel Pro, turn on Spend Management with the pause action.
+- Before adopting a usage-billed service, write down its pricing cliff: the usage level where the bill or the limits jump, and what I'd switch to. Mine are in [the side-project stack](../recipes/side-project-stack.md#what-it-costs).
 
 I'd add a cache when a measured path is still too slow after fixing the query, and the data can be stale for a known window.
+
+## The standard
+
+The [performance](../concerns/performance.md) and [cost](../concerns/cost.md) concerns have more.
+
+- **A latency budget per key route, like "search answers in under 300ms at p95", measured with realistic data.** Once real users depend on it.
+- **A load test, to see what breaks first.** Before a launch you expect traffic from.
+- **A bundle-size or Lighthouse budget checked in CI,** so a regression fails the build instead of slipping in. Once there's a second engineer.
+- **A billing alert with a named owner, on top of the hard cap.** Once there's a second engineer.
+- **Cost per user or per feature, reviewed monthly.** Once it makes money.
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
 - No query runs inside a loop over rows.
-- Every list is paginated.
-- Each cache has a known staleness window and is cleared on every write.
+- Every list that grows with user data is paginated.
+- Each cache has a known staleness window and is cleared on every write that changes its data.
 - The function region matches the database's.
 - Every AI route requires a session, a rate limit, and `max_tokens`.
 - Anything usage-billed has a 10x estimate and a spend limit.

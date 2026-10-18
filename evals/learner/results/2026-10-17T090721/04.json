@@ -1,0 +1,86 @@
+[
+  {
+    "takeaway": "Start with one Next.js app and one database, and before letting an agent add anything else, make it tell me what problem that piece solves today and what number proves it.",
+    "intended": "Build the simplest thing that fully solves today's problem, and only add a service, layer, store, or package when you can name the problem and show evidence it's real.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every mutation has to update both",
+        "why": "Unexplained term. I don't know what 'mutation' means here. I'm guessing it means any change to a booking, but the Zustand bullet hinges on it."
+      },
+      {
+        "quote": "once route handlers in the same app no longer fit",
+        "why": "A leap. I don't know what a route handler is compared to a server action, so I can't tell when one 'no longer fits.' The trigger is too vague to act on."
+      },
+      {
+        "quote": "with Drizzle and managed auth",
+        "why": "Two unexplained terms in one line. I use Supabase, so I don't know what Drizzle is or whether 'managed auth' means Supabase Auth. I got unsure whether this stop applies to my stack until the next sentence."
+      }
+    ],
+    "skimmed": [
+      "The standard: it opens with 'when a second engineer joins,' and the other items depend on 'real money' and 'real users,' so it reads as later-me stuff.",
+      "The Dan McKinley and Martin Fowler quotes: names I don't know backing a point the yoga example already made.",
+      "The Docker Compose bullet: I've never used Docker Compose, so I skipped it once I saw 'one Postgres container for local dev is fine.'"
+    ],
+    "jargon": [
+      "mutation",
+      "network hop",
+      "server actions (I've seen the term but couldn't explain it)",
+      "route handlers",
+      "Drizzle",
+      "managed auth",
+      "runtime",
+      "Dependabot or Renovate",
+      "audit in CI",
+      "timeouts, retries",
+      "source of truth (I got it from context, barely)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Nothing tells me what to do when an agent has already built the overbuilt version, which is my actual situation. I need a prompt or steps to collapse it back, like 'remove the Zustand store and read bookings in server components.' Also, 'Next.js caching first' doesn't say how. One line or a prompt to give the agent would help.",
+    "cut": "The standard section. Every item is gated on a future I don't have yet (a second engineer, real money, real users), and the checklist right after it is what I'd actually use.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I let the agent add anything beyond one Next.js app and one database, I ask it what problem that piece solves today and what proves it, and if there's no number, I don't add it.",
+    "intended": "Build the simplest thing that solves today's problem, one app and one database, and make every extra service, layer, store, or package name a real problem and evidence before it gets added.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every mutation has to update both",
+        "why": "I don't know 'mutation' precisely. I guess it means a write like booking or cancelling, but the sentence relies on it. 'Second source of truth' is also a phrase I nod at without fully getting."
+      },
+      {
+        "quote": "once route handlers in the same app no longer fit",
+        "why": "I sort of know route handlers are the api/ folder thing, but I have no idea when they 'no longer fit'. That trigger is the only vague one in the list. The others give me something I can check."
+      },
+      {
+        "quote": "Next.js caching first, Redis after",
+        "why": "What is 'Next.js caching'? Is it a setting, a function, or something it does automatically? I'd have to ask the agent, and I wouldn't know if its answer was right."
+      }
+    ],
+    "skimmed": [
+      "The standard: every bullet says 'do it when a second engineer joins' or 'once real money is on the line'. That isn't me yet, so I skipped it after the first two.",
+      "The Dan McKinley and Martin Fowler mentions: they read like credentials for someone else. The sentence around them already made the point."
+    ],
+    "jargon": [
+      "mutation",
+      "source of truth",
+      "network hop",
+      "drifts (as in the container stack drifts)",
+      "timeouts, retries",
+      "route handlers",
+      "runtime (different runtime)",
+      "Drizzle",
+      "managed auth",
+      "Dependabot / Renovate",
+      "audit in CI",
+      "Neon (I can guess it's hosted Postgres from context)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "What to do if the agent already built the overbuilt version. Do I ask it to rip out Express and Zustand, and how do I know nothing broke? Also, one line on what 'Next.js caching' actually is, so the cache trigger leads somewhere I can follow.",
+    "cut": "The standard. It's four rules for teams, money, and real users, and each one tells me to do it later. On my phone, that's where I stopped caring. The checklist right after it is what I'd actually use.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

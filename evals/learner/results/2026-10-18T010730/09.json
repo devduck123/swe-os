@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "A feature isn't done when the screenshot looks good. I have to check it slow, empty, broken, on a phone, and as someone without permission, because that's where my users actually are.",
+    "intended": "A complete frontend feature handles every state a real user can land in (slow network, empty account, error, phone, no permission), not just the one perfect frame in the mockup.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Times are stored as `timestamptz`",
+        "why": "This shows up for the first time in the checklist. The time zone section only says 'Store the moment', which I didn't understand either. I don't know what timestamptz is or whether my Supabase columns already use it."
+      },
+      {
+        "quote": "and an error boundary shows one",
+        "why": "Unexplained term. I don't know if it's a component I import, a file, or something Next.js does for me with error.tsx. The Partial bullet packs Suspense and this into one sentence."
+      },
+      {
+        "quote": "`min-w-0` plus `truncate` fixes it",
+        "why": "I'd copy it, but I don't know where it goes (the text? the parent? the flex item?). Without that, I'd paste it on the wrong element and nothing would change."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about Storybook, visual regression, and a second engineer. That isn't me yet, and the 'adopt once' lines tell me to skip it.",
+      "The code block: I got the point from the sentence above it ('on failure, the dialog stays open'). I skimmed the TypeScript union type.",
+      "The invisible parts: useful, but it felt like a bonus list, not the main lesson."
+    ],
+    "jargon": [
+      "error boundary",
+      "timestamptz",
+      "server action",
+      "visual regression tests",
+      "Storybook",
+      "query string (the example helps, but the term isn't glossed)",
+      "useOptimistic / optimistic updates (half-explained)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How to make the no-permission and error states actually show up so Playwright can screenshot them. Do I tell the agent to fake a 403? Seed an empty account? Throttle the network? Without that, 'screenshot the error state' is a prompt I'd paste and then not know whether the result was real.",
+    "cut": "The standard. It's for teams with paying users and multiple engineers, it adds Storybook jargon, and How I do it already gives me the version I'd actually use.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "A feature isn't done when the screenshot looks good; I have to check the slow, empty, error, no-permission, and phone versions too, because each of those is something a real user actually sees.",
+    "intended": "A complete frontend feature handles every state a real user can land on, not just the one in the mockup: slow network, empty account, errors, phones.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Store the moment, and format it",
+        "why": "I don't know what 'store the moment' means in practice. Then the checklist says `timestamptz`, which never appears in the body. I have no idea how to format a time in the user's time zone if the server can't do it. Do I do it in a client component? This section tells me what's broken but not the fix."
+      },
+      {
+        "quote": "an error boundary shows one when",
+        "why": "'Error boundary' is unexplained. Is it a component I import? A file? I know `<Suspense>` vaguely. Is `error.tsx` from later the same thing? I can't tell."
+      },
+      {
+        "quote": "reverts if the action throws",
+        "why": "I half-follow 'throws'. But I don't get how useOptimistic knows to revert, or what I write to 'tell the user' when it does. I'd have to ask my agent."
+      }
+    ],
+    "skimmed": [
+      "The standard: Storybook and visual regression tests are for teams, and it says so. I'd skip it on my phone.",
+      "Most of the code block: I read the comments and the early `return` callout, not the type union. The prose already gave me the point.",
+      "The invisible parts: useful, but it reads like a list I'd hand to my agent without needing to understand it."
+    ],
+    "jargon": [
+      "timestamptz (only in the checklist, never explained)",
+      "error boundary",
+      "server action",
+      "pagination (I know it roughly, but not how to pick it over search)",
+      "visual regression tests",
+      "Storybook",
+      "opengraph-image",
+      "root (it's glossed in a code comment, but I'd miss it)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How to actually format times in the user's time zone in Next.js: which component, which API, and what `timestamptz` is and where I set it in Supabase. Also a one-line prompt for checking the 'no permission' state, since I don't know how to log in as a member to test it.",
+    "cut": "The standard. It's for a team I'm not on yet. The 'adopt once…' lines are the only useful part, and they could sit as one sentence at the end of How I do it.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

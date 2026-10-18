@@ -1,0 +1,89 @@
+[
+  {
+    "takeaway": "Use the managed stack (Next.js on Vercel, Neon or Supabase, Better Auth, Blob, Resend, Stripe, Sentry), and know the free-tier limits, because when you hit one, the feature just stops working until next month.",
+    "intended": "Which stack to use to build a real web app alone, why each piece is there, and exactly where each free tier ends.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "checks a short-lived signed token itself",
+        "why": "I don't know what a signed token is or why it matters that it doesn't call Clerk. I can't tell if this is a reason to pick Clerk or a detail I can ignore."
+      },
+      {
+        "quote": "Each client holds open connections",
+        "why": "What's a connection, and why does a client hold several? I get 'do it once in lib/db.ts', but not why. And with supabase-js I can skip this? I'm on Supabase but I also use Drizzle sometimes, so I don't know which case I'm in."
+      },
+      {
+        "quote": "run Better Auth's migration to create the table",
+        "why": "I've never run a migration by hand. Is this a CLI command? Drizzle generates migrations; is this the same thing? The code block shows the setting but not the command."
+      }
+    ],
+    "skimmed": [
+      "The Standard section: it's all 'once there's a second engineer' or 'once a customer's security review asks'. Not me yet, so I scrolled past.",
+      "'What's deliberately missing': I wasn't going to add Kubernetes anyway.",
+      "Half the cliffs list. I'm on Supabase, so the Neon items were noise, and it's long on a phone. I'd want the cliffs grouped by vendor so I could jump to mine.",
+      "The cost paragraph: '$0 to about $40 depending on Vercel's terms and how long the database stays awake' is too many hedges to remember."
+    ],
+    "jargon": [
+      "webhook (used a lot, never glossed; I sort of know it from Stripe)",
+      "signed token / signed webhook",
+      "connections (database connections)",
+      "compute / compute hours",
+      "SMTP",
+      "preview (as in 'each preview its own copy of the database'; I know Vercel previews, but not that the database copies too)",
+      "advanced operations",
+      "pg_dump",
+      "failover",
+      "region",
+      "TanStack Start (no idea what it is)",
+      "MFA is glossed, good; transactions and constraints are glossed, good"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it is a list of upgrade triggers, which is useful, but there's no 'day one' list of what to actually set up. The checklist at the bottom is closer to that. The Better Auth migration step needs the actual command. For Supabase users, a short 'your version of this list' would help, since I had to mentally filter out Neon, Blob, and Better Auth items everywhere.",
+    "cut": "'What's deliberately missing'. It's for people tempted to over-build, and the reader on a phone already isn't reaching for Kubernetes. Second choice: the region/failover line in The Standard.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Use one Next.js app with managed services that all start free, but know exactly where each free tier cuts off, because when you hit the limit things just stop working.",
+    "intended": "Which stack to use to build a real web app alone, why each piece is there, and exactly where each free tier ends.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a short-lived signed token itself",
+        "why": "I don't know what a signed token is or why checking it without calling Clerk matters. The Session bullet assumes I already know how sessions work. 'Signed webhook' in the Stripe bullet has the same problem."
+      },
+      {
+        "quote": "Each client holds open connections, and Postgres",
+        "why": "I didn't know a 'client' holds 'connections' or that Postgres limits them. I get the rule (make it once in lib/db.ts), but not why 'per request' happens or what it looks like in my code. Then 'With supabase-js, skip this' made me wonder whether I'm using supabase-js. I think I am?"
+      },
+      {
+        "quote": "the smallest database never sleeps, and",
+        "why": "Why 'the smallest'? Is there a bigger one I'd have? '17 days a month' needs math I can't check. I got the point (pings keep it awake, then it dies), but this sentence made me reread."
+      }
+    ],
+    "skimmed": [
+      "The Standard: it's all about second engineers, EU users, and second regions. Not me yet, so I'd scroll past.",
+      "Parts of What it costs: about half the cliffs are Supabase-only and half are Neon/Vercel-only. I'm on Supabase but host on Vercel, so I had to read every bullet to sort out which ones apply. A long list on a phone.",
+      "Getting it running: just links. I'd tap one at most."
+    ],
+    "jargon": [
+      "signed token / signed webhook",
+      "webhook (used often, never glossed)",
+      "connections / connection limit",
+      "MFA is glossed, but 'passkeys' isn't",
+      "SMTP",
+      "cron",
+      "advanced operations",
+      "compute / compute hours",
+      "pg_dump",
+      "TanStack Start, 'client-side and URL-driven'",
+      "failover",
+      "transactional email (glossed only by example)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it says what to upgrade and when, but for a Supabase person like me it's unclear what my whole list is. The only Supabase-specific line is custom SMTP, but the cliffs say Supabase Free pauses after a week and goes read-only at 500 MB. Does that mean go Pro before launch? A short 'If you're on Supabase, your list is: X, Y, Z' would let me act. I'd also want one line on how to tell whether I'm creating the DB client per request.",
+    "cut": "The Standard. It's a list of future triggers (second engineer, EU users, multi-region) for someone who isn't me yet, and the reader it's aimed at would skip it. If it has to stay, a one-line link to it would do.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

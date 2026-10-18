@@ -1,0 +1,81 @@
+[
+  {
+    "takeaway": "When stuff breaks, stop whatever is still writing (rollback, kill the cron job) before trying to fix it, and my Supabase Free app basically has no backup unless I set up the db dump thing myself.",
+    "intended": "The order for handling a production incident (stop the bleeding, understand, fix, prevent), plus making sure backups exist, cover the right moment, and that you know how to restore them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "SET session_replication_role = replica",
+        "why": "Code I couldn't follow. The comment says it 'skips triggers' but I don't know what triggers are or why skipping them matters. The roles/schema/data split and the 'Session pooler string' also lost me. This whole block felt like it was for someone else."
+      },
+      {
+        "quote": "Notice it's one transaction",
+        "why": "Unexplained term. The comment helps a bit ('a failure leaves nothing half-loaded') but 'Notice it's one transaction' assumes I know what a transaction is and why I'd care."
+      },
+      {
+        "quote": "copies the projects with these IDs",
+        "why": "A leap. Which IDs? How do I figure out which projects were lost versus which exist? The page skips the step of working out what's missing, and that seems like the hard part when I'm panicking."
+      }
+    ],
+    "skimmed": [
+      "The Supabase Free psql code block: too much terminal stuff I'd never type myself. I'd just hand it to my agent.",
+      "The Standard: most of it is 'once you have a second engineer / paying customers', which isn't me yet.",
+      "The postmortem template: I got the idea from the paragraph above it, and the markdown skeleton felt like filler on my phone."
+    ],
+    "jargon": [
+      "transaction",
+      "triggers / session_replication_role",
+      "Session pooler string",
+      "hard-deletes",
+      "postmortem (never defined, though I can guess from context)",
+      "reconciliation",
+      "request ID",
+      "reproduce (in the debugging sense)",
+      "roles / schema (in the dump files)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually set up the nightly db dump: a link to Supabase's workflow, and what secrets it needs. 'I copy Supabase's nightly db dump workflow' assumes I know where it is. Also, in a real incident, how do I figure out which rows were lost so I can tell my agent the IDs?",
+    "cut": "The Supabase Free psql code block. I'd never run it by hand, it's the densest part of the page, and 'ask your agent to load the dump into a new project' would teach me the same thing. Second choice: the postmortem markdown template.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When stuff breaks, roll back and pause anything still writing before I try to fix it, and my Supabase Free project has no backups at all unless I set up a dump myself.",
+    "intended": "When production breaks, stop the bleeding, understand, fix, and prevent recurrence in that order, and make sure a restorable backup actually exists.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "SET session_replication_role = replica",
+        "why": "Code I couldn't follow. The comment says it 'skips triggers' but I don't know what a trigger is or why skipping them matters. Also 'one transaction' is explained only by the comment, and I'm not sure what roles.sql is."
+      },
+      {
+        "quote": "the Session pooler string from Connect",
+        "why": "Unexplained term. I don't know what a pooler is or why it has to be the Session one and not the other options on that screen."
+      },
+      {
+        "quote": "Supabase's nightly db dump workflow, a GitHub Actions file",
+        "why": "A leap. I don't know where to find this workflow, and putting my database password in a GitHub repo sounds scary. Secrets aren't mentioned."
+      }
+    ],
+    "skimmed": [
+      "The Supabase Free psql restore block: it's dense shell for a situation I'd hand to my agent anyway",
+      "The standard: status pages, reconciliation with Stripe, and a second engineer aren't my life yet",
+      "Debug from evidence: it's two sentences pointing elsewhere. I got 'don't redeploy guesses' and moved on"
+    ],
+    "jargon": [
+      "postmortem (sort of guessable, never defined)",
+      "hard-delete vs soft-delete (soft-delete is explained, hard-delete only by contrast)",
+      "triggers",
+      "transaction",
+      "Session pooler",
+      "PITR is defined, but 'database branch' is only half-explained",
+      "reconciliation",
+      "row counts (I'd figure it out, but how do I check them?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to set up the nightly db dump: where the workflow lives, which secret to add, and how to keep the dump private. Also, the restore drill says 'check row counts' without saying how, like which SQL or which dashboard screen. The flag ask is clear, but I'd want one line on where the flag check goes, so the agent doesn't just hide the button.",
+    "cut": "The Supabase Free psql block. It's the hardest part of the page and the least likely thing I'd type myself. I'd replace it with an agent prompt like 'load my latest dump into a new Supabase project in one transaction' and keep the one-transaction point in prose.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

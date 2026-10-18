@@ -1,0 +1,83 @@
+[
+  {
+    "takeaway": "Put the rules your data must follow (stock never below zero, one booking per person, orders must point at a real product) into the database itself, because the agent's code will forget them but the database checks every write.",
+    "intended": "Write what must be true about your data into the schema as constraints, because code changes constantly and constraints are enforced on every write forever.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "It also locks the row",
+        "why": "Locking is new to me. I get roughly that the second buyer waits, but I don't know what a lock is, how long it lasts, or whether it's why 'other writes wait' later. This is the key step and it goes by in one clause."
+      },
+      {
+        "quote": "a Postgres function you call with `supabase.rpc()`",
+        "why": "I use supabase-js, so this is the path I'd take, and it's one line. I've never written a Postgres function and don't know where it goes (a migration?) or how my begin/update/insert/commit SQL turns into one. I also don't know how 'your app runs rollback' works from supabase-js."
+      },
+      {
+        "quote": "Index your `where`, `join`, and `order by` columns",
+        "why": "Too dense. I barely write SQL, so I don't know which columns my supabase-js calls filter on, and I don't know what a join is in practice. Then 'Postgres doesn't index foreign keys for you' reads like a gotcha I'm supposed to already care about."
+      }
+    ],
+    "skimmed": [
+      "The standard: everything is 'do it once real money moves' or 'at scale', and it uses words I don't know (reconciled, idempotency key, no-downtime steps), so it felt like it was for later or for someone else.",
+      "How I do it: mostly repeats the checklist below it. I only slowed down for the migration commands.",
+      "The date vs timestamptz paragraph: it felt like a side trip in the middle of the uniqueness section."
+    ],
+    "jargon": [
+      "primary key",
+      "uuid / gen_random_uuid()",
+      "locks the row",
+      "Postgres function",
+      "join",
+      "Seq Scan (glossed, but I'd only half trust myself reading the explain output)",
+      "idempotency key",
+      "webhook",
+      "reconciled",
+      "no-downtime steps"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For supabase-js users: a short example of the checkout as a Postgres function called with rpc(), with a line on where that file lives. Also how to recognize the unique-violation error in supabase-js so I can show 'you're already booked'. As written, I'd paste the checklist to my agent and trust it, but I couldn't check whether it did the transaction part right.",
+    "cut": "The standard section. Every item is deferred ('once real money moves', 'at scale') and leans on terms the stop never explains. The two links that matter (idempotency, concurrency) could move to the transaction section.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't trust my app code to keep data right: put the rules (no negative stock, no double bookings, no orphan orders) into the table definitions so the database itself refuses bad writes, and do the stock check inside the update in one transaction.",
+    "intended": "Write what must always be true about your data into the schema as constraints, because code gets rewritten and forgets but the database checks every write forever.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "It also locks the row, so",
+        "why": "A leap. I've never thought about rows being locked. 'Waits, rechecks stock > 0, and changes nothing' is three new ideas in one clause. I believe it, but I couldn't explain why the second buyer doesn't also get a hoodie."
+      },
+      {
+        "quote": "a Postgres function you call with `supabase.rpc()`",
+        "why": "I use Supabase, so this is the line that matters to me, and it's never shown. The whole transaction example is raw SQL with begin/commit, which I can't run from supabase-js. I don't know what a Postgres function looks like, where it lives, or how 'your app runs rollback' works from inside one."
+      },
+      {
+        "quote": "Catch that error and show \"you're already booked.\"",
+        "why": "How? What does the error look like in supabase-js, and how do I tell it apart from other errors? I'd have to ask my agent."
+      }
+    ],
+    "skimmed": [
+      "The standard: it reads like a later-life checklist (backups, reconciling against Stripe, 'at scale'). Backups have nothing to do with constraints, so I'd skip it.",
+      "The Drizzle half of every 'In app code' line: I'm on supabase-js, so I skip it each time.",
+      "The date vs timestamptz paragraph: it's useful, but it felt like a side trip in the middle of the uniqueness section."
+    ],
+    "jargon": [
+      "uuid / primary key default gen_random_uuid()",
+      "upsert",
+      "Postgres function / rpc",
+      "lock (row lock)",
+      "idempotency key (linked, never glossed)",
+      "reconciled",
+      "seed / seed.sql",
+      "join",
+      "no-downtime steps"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For a Supabase user, a short example of the checkout as a Postgres function called with rpc(), including what happens when no row comes back (the rollback). Also how to detect the unique-violation error in supabase-js so I can show 'already booked.' I can do the constraints and indexes today, but I'd be guessing at the transaction part.",
+    "cut": "The standard. It mixes backups, Stripe reconciliation, and big-table migrations into a stop about constraints. All of it is labeled 'later' or 'at scale', so on my phone it's just more text after I've already got the point.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

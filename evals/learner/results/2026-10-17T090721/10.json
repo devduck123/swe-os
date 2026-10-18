@@ -1,0 +1,83 @@
+[
+  {
+    "takeaway": "Use a real <button>, <a>, and <label> instead of a clickable div, then tab through my signup flow with just the keyboard before I ship, because a div button means keyboard users literally can't sign up.",
+    "intended": "Accessibility is correctness, not polish, and most bugs come from swapping a native element that already works for a div and not rebuilding what it did.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the numbers in the Going deeper above",
+        "why": "There's no Going deeper section, and no numbers. The contrast section just says 'strong contrast' and never gives a ratio, so I don't know what WCAG 2.2 AA actually asks for or how to check it."
+      },
+      {
+        "quote": "with a `Controller`, pass `field.ref`",
+        "why": "I don't know what a Controller is or when I'd have one instead of register. The agent writes my forms, so I can't tell which case I'm in. This bullet lost me."
+      },
+      {
+        "quote": "Next.js has a route announcer",
+        "why": "'Client-side navigation' and 'route announcer' are new to me. I got that every page needs a unique title, but not why the announcer matters or what happens without it."
+      }
+    ],
+    "skimmed": [
+      "The legal paragraph (ADA, European Accessibility Act). I'm a solo dev, it read like it was for a company, so I skipped it.",
+      "The Standard section. NVDA passes, written barrier lists, and specialist audits are for when I have paying enterprise customers, which I don't.",
+      "The GDS 2017 study paragraph. I believed 'tools miss stuff' without the numbers."
+    ],
+    "jargon": [
+      "tab order",
+      "DOM order / source",
+      "aria-describedby (explained what it does, but I'd never have guessed the id-matching thing without the code)",
+      "Controller / field.ref",
+      "client-side navigation",
+      "route announcer",
+      "Radix / Base UI (glossed, but 'unstyled component libraries' still went past me)",
+      "WCAG 2.2 AA (what level AA means)",
+      "contrast ratio (never given)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How to check contrast: a number to aim for and a tool. 'Strong contrast' isn't something I can verify. Also, the checklist leaves out the DialogTitle, the unique page titles, and alt text, even though the stop told me to do all three.",
+    "cut": "The 'There's legal exposure too' paragraph in the first section. The div story already convinced me, and the law part reads like it's for a company, so it's where I started skimming.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Use real `<button>`, `<a>`, and `<label>` elements instead of styled divs, then actually try my signup flow with only the keyboard before shipping.",
+    "intended": "Accessibility is correctness, not polish, and most bugs come from swapping a working native element for a `div` without rebuilding what it did.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the numbers in the Going deeper above",
+        "why": "There's no Going deeper section above me, so I don't know what numbers it means. The contrast section never gives a contrast number either, so 'WCAG 2.2 AA' is just a label to me."
+      },
+      {
+        "quote": "with a `Controller`, pass `field.ref`",
+        "why": "I don't know what a Controller is, or when I'd have one instead of `register`. This is where I stopped following the form section and just hoped my agent handles it."
+      },
+      {
+        "quote": "DOM order is focus order",
+        "why": "I sort of know what the DOM is, but not how CSS 'moves things around visually' differently from the source. I don't know what I'd check for."
+      }
+    ],
+    "skimmed": [
+      "The Standard: NVDA passes and specialist audits are for a company, not me shipping a side project. I read the 'Adopt it once' lines and moved on.",
+      "The GDS 2017 study paragraph: I got the point from 'step 3 of 4' and skipped the numbers.",
+      "Contrast, zoom, motion: short, but 'strong contrast' gives me nothing to measure, so it felt like a reminder for people who already know."
+    ],
+    "jargon": [
+      "accessible name (glossed, but only barely)",
+      "DOM order",
+      "Radix / Base UI",
+      "route announcer",
+      "`Controller` / `field.ref`",
+      "`metadata` / `generateMetadata`",
+      "ADA",
+      "WCAG 2.2 AA (WCAG is glossed, AA isn't)",
+      "axe DevTools (no link or description of what it is)",
+      "tab order"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "A real contrast target (like 4.5:1) and a way to check it, since the standard points at numbers I never saw. Also a link or install line for axe DevTools.",
+    "cut": "The Standard section's second and third bullets. They're for teams with paying customers and audits, and the first bullet references a section I can't see.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

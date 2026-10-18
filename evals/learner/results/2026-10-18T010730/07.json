@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Pass Stripe an idempotency key built from my order ID so a double click can't charge twice, and don't auto-retry stuff a user is staring at.",
+    "intended": "Timeouts, retries, and idempotency work as a set: timeouts handle calls that never answer, retries handle temporary failures, and idempotency makes repeats safe.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Both clicks have to land on the same order",
+        "why": "A leap. My Buy button just creates the Stripe session; I don't have an order row before checkout. I don't know where order.id comes from or how two clicks would end up on one order. The link sends me to another page for the part I'd need first."
+      },
+      {
+        "quote": "NOTIFY pgrst, 'reload config';",
+        "why": "Unexplained. What is pgrst? 'Reload the API' means nothing to me, and I wouldn't paste this without knowing what it does."
+      },
+      {
+        "quote": "Leave the migration role alone",
+        "why": "I've never written a migration by hand and don't know I have more than one database user. Is that a thing in my Supabase project or not?"
+      }
+    ],
+    "skimmed": [
+      "The standard: every bullet starts with 'adopt it when' something that isn't me yet (volume, other services calling my API, a second engineer).",
+      "The fetchWithRetry code: I got the idea from the sentence above it. `2 ** attempt` and the loop with no end condition I'd just trust.",
+      "The plain-Postgres ALTER ROLE app_user part: I'm on Supabase, and two paragraphs later it says it's already set, so I'd skip to that."
+    ],
+    "jargon": [
+      "server-to-server syncs",
+      "pgrst / reload the API",
+      "migration role",
+      "stripe-node",
+      "4xx (I know 404, not the group)",
+      "role (half-explained)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to get an order ID before checkout if I don't have one. Right now my code just creates the Stripe session, so the key example doesn't fit my app. Also a one-line 'on Supabase with supabase-js, you're done with database timeouts' so I know I can skip the SQL.",
+    "cut": "The generic Postgres `ALTER ROLE app_user` paragraph plus the migration-role line. For a Supabase reader it's a detour that the next paragraph undoes, and it's where I started doubting which instructions were mine. The How I do it bullet already says Supabase sets it.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When a user clicks Buy twice, pass Stripe an idempotency key built from the order ID so both clicks get the same checkout, and put a short timeout on every fetch instead of retrying while someone stares at a spinner.",
+    "intended": "Timeouts, retries, and idempotency work together: timeouts cover calls that never answer, retries cover failures that might pass, and idempotency makes repeats safe.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Both clicks have to land on the same order",
+        "why": "A leap. If my Buy button creates the order on click, then two clicks make two orders with two IDs, and `checkout-${order.id}` doesn't help. It says 'back the order with a unique constraint' but not on which column. Unique on what? The cart? The user? I'd have to leave the page to find out, and this is the bug the whole section is about."
+      },
+      {
+        "quote": "NOTIFY pgrst, 'reload config';",
+        "why": "No idea what pgrst is or why I'm notifying it. I'd paste it and hope. 'Reload the API' doesn't tell me which API."
+      },
+      {
+        "quote": "Code using the connection string runs as `postgres`",
+        "why": "I don't know if my app uses 'the connection string' or supabase-js, or both (Prisma? Drizzle?). The section switches between DATABASE_URL, app_user, the migration role, anon, authenticated, and postgres, and I lost track of which role is mine. 'Leave the migration role alone' assumes I know I have one. I've never written a migration."
+      }
+    ],
+    "skimmed": [
+      "The standard: every item starts with 'Adopt it when…' something I don't do yet, like being called by other services, working at volume, or having a second engineer. It reads as a list for later, so I'd skip it.",
+      "The retry helper code: I got the idea from the sentence above it. The `2 ** attempt` math I'd trust and copy, not read.",
+      "The Supabase role paragraph after the first ALTER ROLE: too many role names in a row on a phone."
+    ],
+    "jargon": [
+      "role (Postgres role, beyond the one-line gloss)",
+      "migration role",
+      "pgrst / PostgREST",
+      "upstream",
+      "4xx (I roughly know 404, not the category)",
+      "connection (\"stops holding a connection\")",
+      "queued work",
+      "stripe-node (I'd guess it's the Stripe npm package, but it's not said)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "1) How to make two clicks land on the same order: create the order before the button, or which unique constraint to add. 2) What timeout to use for model calls. 3 seconds would kill an LLM response, and 'sized from how long the user waits' doesn't help when streaming takes 20 seconds. 3) How to tell whether my app talks to the DB via supabase-js, DATABASE_URL, or both, so I know which ALTER ROLE line applies to me.",
+    "cut": "The Standard section. Every item is gated on a situation I'm not in. Two of them (Retry-After, your own endpoints accepting keys) I can't act on, and it adds a whole screen of scrolling after the part I'd actually use.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

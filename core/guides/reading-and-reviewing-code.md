@@ -74,23 +74,31 @@ Big PRs get skimmed. Google's code review guide calls 100 lines usually reasonab
 
 Agents don't feel the cost of a big PR, so ask: "Split this into small PRs: the database change, then the server logic, then the UI." And ask for the description in the [build-feature report format](../../skills/build-feature/SKILL.md#report), which says how it was verified and what wasn't, so you know where to look.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - **Every change goes through a small PR**, even when I'm the only reviewer. Ask your agent to open one instead of pushing to main.
-- **Read auth, data, and money line by line.** Skim the rest.
-- **Get a second opinion.** Ask your agent: "Review this PR with the review-change skill." Then answer the self-check questions yourself.
+- **Read the risky files line by line.** Ask your agent: "List the files in this PR that touch auth, money, deletes, or the database." I read those closely and skim the rest.
+- **Get a second opinion.** Ask a fresh session, or Codex if Claude Code wrote it: "Review this PR with the review-change skill." Then answer the self-check questions above yourself.
 
-Once other people commit, I'd turn on required approvals in GitHub's branch protection and add a `CODEOWNERS` file (it names who must review which folders) for auth and migrations.
+## The standard
+
+Teams go further once the signal shows up. More in the [security concern](../concerns/security.md#when-stakes-rise).
+
+- **Require an approval from someone other than the author before merge**, in the ruleset on `main`. When a second engineer commits.
+- **Add a `CODEOWNERS` file** (it names who reviews which folders) for auth and migrations, and turn on "Require review from Code Owners" so their approval is required. When different people own different parts of the code.
+- **Vet every new dependency: who maintains it, what it can reach.** When real users depend on the app.
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Every route that touches data checks who's signed in and that they may access that record.
-- Every change touching auth, money, deletes, or the database is listed for me to read line by line.
-- Every caller of a changed function still works with what it now returns.
+- Every route and server action that reads or writes user data checks the session, and filters by the owner from the session, not only by an ID from the request.
+- The PR description lists every file that touches auth, money, deletes, or the database.
+- Every caller of a function whose arguments or return value changed still works.
 - Each claim in the PR description is true of the code.
-- The PR is small and does one thing.
+- The PR does one thing, and changes well under 1,000 lines, not counting lockfiles and generated files.
 
 ## Sources
 

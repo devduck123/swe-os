@@ -4,6 +4,9 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **My habits, apart from the standard.** Every track stop now ends with "How I do it" (what I do on my own side projects, labeled as mine), "The standard" (what teams add beyond that, each with the signal that it's time), and "Before you ship, check" (the floor, every time). "What I'd do" is gone. The sections are agent-drafted for now, and I'll rewrite them in my own words.
+- **A sidebar split the same way.** Learn (the track, stages collapsed), How I build (my defaults and the recipes), Standards (the principles and one page per risk), Skills, and About me. The landing page's Concerns card is now Standards, and the How I build card links my defaults.
+- **Guidance fills gaps, not defaults.** skills/README.md and AGENTS.md now say SWE OS covers only what agents skip by default, plus my preferences. Where an agent's own defaults already do the job, it keeps them. "The standard" applies only when PROJECT.md says the project's maturity or exposure calls for it, and a rule stays only while evals show it helps.
 - **The project eval.** `node evals/project/run.mjs` builds a book club app over one seven-turn session, with and without SWE OS, then runs `npm install`, `npm test`, and `npm run build` on each final repo and reviews both blind. It's tested end to end with a stand-in `claude`. The scenario harness now shares its Claude helpers through `evals/harness/common.mjs`.
 - **A simulated user in the project eval.** When the agent ends a message with a question, a separate Claude playing the owner answers it from the facts, at most twice per turn, and never says "go ahead". `--fixed-answers` keeps the old fixed reply. The defaults are now a $120 budget and $12 per message, enough for all seven turns, and a review missing reasons gets one follow-up.
 

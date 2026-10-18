@@ -123,9 +123,9 @@ Each has a local stand-in and a free tier:
 
 On Vercel, every environment variable is scoped to Development, Preview, or Production, so each gets its own keys. Every PR gets a preview deploy, its own URL running that PR's code, which needs a database. Neon's Vercel integration creates a branch, a throwaway copy of your database, for each preview. Turn on its cleanup of old branches, or you'll hit the Free plan's branch limit.
 
-Never point a preview at production data. Preview code hasn't been reviewed, and preview URLs get shared. If your Vercel build command runs migrations, every preview build runs them against whatever database it's given, so an unreviewed PR can change production's tables.
+Never point a preview at the production database. Preview code hasn't been reviewed, and preview URLs get shared. If your Vercel build command runs migrations, every preview build runs them against whatever database it's given, so an unreviewed PR can change production's tables.
 
-Neon's integration adds another risk: each preview branch copies production's data. Once you have users, every preview holds their personal data. Supabase preview branches start empty, and a seed file fills them.
+Neon's integration adds another risk: each preview branch copies production's data. That's fine until real users' data is in production. After that, every preview holds their personal data, so branch from seed data instead. Supabase preview branches start empty, and a seed file fills them.
 
 <details>
 <summary>Going deeper: branching Neon previews from seed data</summary>
@@ -134,26 +134,34 @@ Keep a Neon branch called `dev` that holds only seed data. Then create preview b
 
 </details>
 
-Free tiers have cliffs, and the one that hurts is rarely the obvious limit. Read [the side-project stack's cliffs](../recipes/side-project-stack.md#what-it-costs) before you sign up.
+Free tiers have cliffs, rarely where you'd expect. Read [the side-project stack's cliffs](../recipes/side-project-stack.md#what-it-costs) before you sign up.
 
-## What I'd do
+## How I do it
 
-- **Laptop first.** `npx supabase start` on Supabase, Postgres in Docker otherwise. Then ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)."
-- **Then previews.** Connect the repo to Vercel, then add Neon's integration. Once real users arrive, ask your agent: "Create each preview's Neon branch in CI from a `dev` branch that holds only seed data, never from production."
-- **Then one service per feature,** in the order above. [The side-project stack](../recipes/side-project-stack.md) puts the whole thing together.
+On my own side projects:
 
-I'd pick Supabase instead of Neon when I want its auth and storage too.
+- **Laptop first.** Ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)." Then run `npx supabase init && npx supabase start` on Supabase, or Postgres in Docker otherwise.
+- **Then previews.** Connect the repo to Vercel. On Neon, add its Vercel integration and turn on cleanup of old branches. On Supabase, turn on Branching, which fills each preview from `seed.sql`. Copying production data into Neon previews is fine until real users' data is in production.
+- **Then one service per feature,** in the order above, each with a spend cap ([performance and cost](performance-and-cost.md#know-what-youre-billed-for)). [The side-project stack](../recipes/side-project-stack.md) puts it all together.
+- **Before launch,** backups and one restore drill, as in [when production breaks](when-production-breaks.md#practice-the-restore-on-a-copy).
+
+I pick Supabase over Neon when I want its auth and storage too.
+
+## The standard
+
+- **Previews branch from seed data, never from production,** created in CI from a seed-only branch. Adopt it once real users' data is in production. More in [deployment](../concerns/deployment.md).
+- **A written usage level for each service where you'd move to a paid plan or another provider.** Adopt it once a card is on file. The hard cap stays the floor, and [performance and cost](performance-and-cost.md) covers the billing alert on top of it.
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- A fresh clone runs from the README and `npm run setup` alone.
-- `.nvmrc`, the lockfile, `.env.example`, and seed data are committed.
-- CI runs the same `check` script as my laptop.
-- Nothing local or in previews connects to the production database.
-- Development, Preview, and Production each have their own keys.
-- Every hosted service is one a shipped feature needs.
+- A fresh clone reaches a running app with seed data by following only the README and `npm run setup`.
+- `.nvmrc`, the lockfile, `.env.example` (names only, no values), and the seed script are committed.
+- CI runs `npm run check`, the same script I run locally.
+- No local or preview environment has the production database's URL, so no preview build can migrate it.
+- Development, Preview, and Production each have their own keys in Vercel.
+- Every hosted service this change adds is used by a feature in this repo.
 
 ## Sources
 

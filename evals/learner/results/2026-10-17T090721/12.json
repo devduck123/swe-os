@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Never paste a key into the agent chat or rename it to NEXT_PUBLIC_ to make an error go away, and if a key leaks, make a new one before doing anything else, because deleting the commit doesn't help.",
+    "intended": "What a secret is and how agents create new ways for it to leak, through your files, your shell, and their transcripts.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a connection string for a read-only role",
+        "why": "I don't know what a database 'role' is or how to make one. The Supabase URL is copy-pasteable, but this Neon/Postgres line isn't something I could act on."
+      },
+      {
+        "quote": "strip the rest in Sentry's `beforeSend` hook",
+        "why": "I don't use Sentry yet, and there's no example of what to strip or what the code looks like. 'Strip the rest' of what? I nodded and moved on."
+      },
+      {
+        "quote": "saved as the Secret type, which is write-only",
+        "why": "'Write-only' sounds backwards. I'm guessing it means you can't view it again after saving, but I'm not sure, and I don't know why that matters."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's all 'once a second engineer' or 'once a team', and I'm solo, so I skipped it. 'Pinned to a commit SHA' also meant nothing to me even with the gloss.",
+      "Logs and error reports: the console.log(process.env) part landed, but the Sentry half is for someone who has Sentry.",
+      "The Neon/plain Postgres line under least privilege: I'm on Supabase."
+    ],
+    "jargon": [
+      "CI (used everywhere, never explained; I sort of know it's the GitHub checks thing)",
+      "role (database role)",
+      "rotation path",
+      "recognized secret format",
+      "write-only",
+      "revoke (I can guess, but 'turn off' was clearer earlier)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Day one assumes a new repo. What do I do with the meal planner I already have? Can I run start-project on an existing repo, or how do I add gitleaks to CI myself? Also, where do I set a spend cap? It just says 'each provider's dashboard' and points to another stop.",
+    "cut": "The standard. Every item is gated on having a team, customers, or several services, and none of that is me. It's the one section where I felt the page stopped talking to me.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "If a key ever leaves .env or Vercel's settings (pasted in a chat, hardcoded, or renamed to NEXT_PUBLIC_ to make an error go away), treat it as stolen and rotate it right away, because deleting the commit doesn't help.",
+    "intended": "A secret lets anyone act as you, so it lives only in .env locally and in the platform's env settings, and agents add new ways for it to leak (reading files, running your shell, keeping transcripts).",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "blocks its file-reading tool from opening",
+        "why": "I didn't know Claude Code had deny rules, where I'd write `Read(./.env)`, or how the agent could run 'a script' that reads the file anyway. The fix ('what's in the file') was clear, but the setup before it lost me."
+      },
+      {
+        "quote": "Sentry's `beforeSend` hook, which edits each report",
+        "why": "I'd have to look up what beforeSend looks like. There's no snippet, so I'd ask the agent and hope it gets it right."
+      },
+      {
+        "quote": "a connection string for a read-only role",
+        "why": "'Role' isn't explained. I don't know how to make one in Postgres or where the agent's connection string would come from."
+      }
+    ],
+    "skimmed": [
+      "The standard: every item says 'once a second engineer' or 'once a team'. That isn't me yet, so I scrolled past it.",
+      "The Expo sentences in 'Anything with a public prefix is public': I don't ship mobile apps.",
+      "Scan in CI: I read the bold lead-ins, but the details about paid add-ons and the --redact flags were for later."
+    ],
+    "jargon": [
+      "MCP server (glossed as 'plugins', but I still don't know if I'm using one)",
+      "prompt injection (named here, explained only via a link)",
+      "revoke (versus rotate: I inferred the difference from the steps)",
+      "role (database role)",
+      "commit SHA (glossed, but only in a section I skipped)",
+      "secret manager",
+      "beforeSend hook",
+      "legacy anon / service_role (I know these from Supabase, but 'legacy' made me wonder if my project is old)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "There's no 'What I'd do' section. The closest is 'How I do it', and the checklist was easy to act on. But two steps I couldn't do alone: how to set a Claude Code deny rule (where the file goes, an example), and how to check whether my existing repo already leaked something. The `gitleaks git` command appears only in the leak steps, not as 'run this once on your current repos today'. That one-time scan would be my first action.",
+    "cut": "The standard. It's four items for teams I'm not on, and each opens a new concept (SHA pinning, secret managers, paid push protection) right after the part I could act on. It made the end feel like it was for someone else.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

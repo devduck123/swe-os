@@ -37,7 +37,7 @@ That's four deploys instead of one. Every step but the last is reversible, and b
 
 A lock is how Postgres keeps changes from colliding: while one statement holds a table's lock, others that need it wait. Most `ALTER TABLE` statements take the strongest lock, which blocks every read and write. For a quick change, that's milliseconds. The trap is the queue. If a slow query is already running, your `ALTER` waits for it, and every query after waits behind your `ALTER`. A one-millisecond change can freeze the table for as long as that slow query runs.
 
-So start risky migrations with a lock timeout, which makes them give up after 5 seconds instead of waiting:
+So start every migration that changes an existing table with a lock timeout, which makes it give up after 5 seconds instead of waiting:
 
 ```sql
 SET lock_timeout = '5s';
@@ -48,7 +48,7 @@ If it times out, retry later. A failed migration is better than a frozen app. He
 - **Adding a column** that's nullable, or has a fixed default, is instant.
 - **Changing a column's type** usually rewrites the whole table while holding the lock. Use add, copy, switch, drop.
 - **Adding `NOT NULL` to an existing column** scans the whole table while holding the lock. On a big table, use the safer version in "Going deeper" below.
-- **Adding an index** (a lookup structure that makes queries on a column fast) normally blocks writes until it's built. On a busy table, use `CREATE INDEX CONCURRENTLY`, which doesn't. It needs to run on its own (see "Going deeper").
+- **Adding an index** (a lookup structure that makes queries on a column fast) normally blocks writes until it's built. On a busy table, use `CREATE INDEX CONCURRENTLY`, which doesn't. It can't run inside a migration, so you build it by hand first. The steps are in "How I do it" below.
 
 <details>
 <summary>Going deeper: NOT NULL on a big table, and index builds that don't block</summary>
@@ -65,13 +65,15 @@ ALTER TABLE users DROP CONSTRAINT display_name_not_null;
 
 Foreign keys can use the same `NOT VALID` then `VALIDATE` trick. Adding a `NOT NULL` column with no default to a table that has rows fails outright, which an empty dev database never shows you.
 
-`CREATE INDEX CONCURRENTLY` can't run inside a transaction (a group of statements that all apply or none do), and Drizzle's migrator wraps your migrations in one. So run it on its own with `psql`, Postgres's command-line client, over your database's direct (unpooled) connection string:
+`CREATE INDEX CONCURRENTLY` can't run inside a transaction (a group of statements that all apply or none do), and Drizzle's migrator wraps your migrations in one. So the migration file keeps a plain `CREATE INDEX IF NOT EXISTS`, which gives every database the index. On production, you build it first with `psql`, Postgres's command-line client, over your database's direct (unpooled) connection string:
 
 ```sh
-psql "$DIRECT_DATABASE_URL" -c "CREATE INDEX CONCURRENTLY invoices_team_id_idx ON invoices (team_id);"
+psql "$DIRECT_DATABASE_URL" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS invoices_team_id_idx ON invoices (team_id);"
 ```
 
-If a concurrent index build fails, it leaves an `INVALID` index behind. Drop it and try again.
+When the migration reaches production, the index already exists, so its version does nothing.
+
+If a concurrent index build fails, it leaves an `INVALID` index behind, and `IF NOT EXISTS` would skip right past it. Drop it and try again.
 
 </details>
 
@@ -105,27 +107,35 @@ A database branch is a copy you can wreck. Neon branches include the parent's da
 
 Before any destructive step, [restore a backup into a branch and check it](when-production-breaks.md).
 
-## What I'd do
+## How I do it
 
-For a Next.js app on Neon or Supabase:
+On my own side projects (Next.js on Neon or Supabase):
 
 - **Review the SQL.** On Drizzle, `push` locally, then `generate`, and read the SQL file in the PR. On Supabase, edit tables only locally, run `supabase db diff -f <name>`, and read that file.
 - **Split risky changes.** Additive changes go out in one step. For a rename, type change, or drop, ask your agent: "Plan this as expand, migrate, switch, contract, one PR per step."
-- **Guard big tables.** `SET lock_timeout = '5s';` first in any migration that touches one, and build indexes `CONCURRENTLY` with the `psql` command in "Going deeper".
-- **Script backfills.** Ask your agent: "Write a script that runs this batched `UPDATE` until it updates 0 rows, pausing between batches and logging progress." Rehearse it first.
+- **Set a lock timeout.** Every migration that changes an existing table starts with `SET lock_timeout = '5s';`.
+- **Build indexes on busy tables by hand first.** The migration file keeps a plain `CREATE INDEX IF NOT EXISTS invoices_team_id_idx ON invoices (team_id);` (add the `IF NOT EXISTS` to the generated SQL). Before merging, build the same index on production without blocking writes: `psql "$DIRECT_DATABASE_URL" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS invoices_team_id_idx ON invoices (team_id);"`. The migration's version is then a no-op there. If the build fails, drop the `INVALID` index it leaves before retrying.
+- **Script backfills.** Ask your agent: "Write a script that runs this batched `UPDATE` until it updates 0 rows, pausing between batches and logging progress."
+- **Rehearse on a copy.** On Neon, `neonctl branches create --name rehearse` copies production. Run the migration and backfill against `neonctl connection-string rehearse`, then `neonctl branches delete rehearse`. On Supabase's free plan, run `supabase db reset` locally. Before any `DROP`, also [restore a backup into a branch and check it](when-production-breaks.md).
 
-Once more than one person writes migrations, I'd add a migration linter, a tool that flags locking statements in the PR.
+## The standard
+
+Teams go further once the signal shows up. More in the [migrations concern](../concerns/migrations.md#when-stakes-rise).
+
+- **Lint migrations in CI** with a tool like Squawk, which flags locking statements in the PR. When more than one person writes migrations.
+- **Write down when you'd stop and roll back** before any destructive step. When the table holds data users can't recreate.
+- **Practice restores on a schedule**, not only once and before a drop. When losing a day of data would hurt real users.
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- No migration renames, drops, or retypes a column the running code still uses.
-- Every schema change is a SQL migration file in this PR.
-- Migrations that touch a big table start with `SET lock_timeout`.
-- New indexes on busy tables use `CREATE INDEX CONCURRENTLY`.
-- Backfills run in small batches that are safe to rerun.
-- The migration and backfill ran on a branch or local copy first.
+- No migration renames, drops, or changes the type of a column or table the code in production still reads or writes.
+- Every schema change is a SQL migration file in this PR. An index on a table with live traffic is a plain `CREATE INDEX IF NOT EXISTS` there, built on production first with `CONCURRENTLY`.
+- Every migration that changes an existing table starts with `SET lock_timeout = '5s'`.
+- Backfills update a limited batch per statement (like `LIMIT 1000`), and a rerun skips rows already done.
+- The migration and any backfill ran on a branch or local copy first.
+- Before any `DROP`, a backup was restored into a branch and checked.
 
 ## Sources
 
@@ -135,6 +145,8 @@ Paste this to your agent before you merge:
 - [Drizzle: Migrations](https://orm.drizzle.team/docs/migrations)
 - [Drizzle source: the Postgres migrator wraps all pending migrations in one transaction](https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/pg-core/dialect.ts)
 - [Neon: Branching](https://neon.com/docs/introduction/branching)
+- [Neon CLI: `branches`](https://neon.com/docs/reference/cli-branches) and [`connection-string`](https://neon.com/docs/reference/cli-connection-string)
+- [Squawk, a Postgres migration linter](https://squawkhq.com/)
 - [PostgreSQL: psql (`-c` runs a single command)](https://www.postgresql.org/docs/current/app-psql.html)
 - [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching), [pricing (branching on paid plans)](https://supabase.com/pricing), [database migrations (dashboard edits, `db diff`, `db push`, `db reset`, `seed.sql`)](https://supabase.com/docs/guides/deployment/database-migrations), and [CLI: `supabase db diff`](https://supabase.com/docs/reference/cli/supabase-db-diff)
 - [Vercel: Managing cron jobs (running jobs during deploys)](https://vercel.com/docs/cron-jobs/manage-cron-jobs)

@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "A feature isn't done when the happy-path screenshot looks good: I have to check loading, empty, error, no-permission, and phone, and I can have my agent screenshot those states before every PR.",
+    "intended": "A complete frontend feature handles every state a real user can land on (slow network, empty account, error, phone), not just the one state in the mockup.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Store the moment, and format it",
+        "why": "What's 'the moment'? A UTC timestamp? And if the server doesn't know my user's time zone, where do I format it? On the client? There's no code here, and this is the one section where I'd need it."
+      },
+      {
+        "quote": "an error boundary shows one when it fails",
+        "why": "Suspense gets a gloss, but 'error boundary' doesn't. I don't know if it's a component I import, a file like error.tsx, or something I write myself."
+      },
+      {
+        "quote": "The server still has to stop double submits",
+        "why": "This is the train scenario from the top, and here it's handed off to a link about 'idempotency', a word I can't define. I don't know what the server actually does to stop the second invite."
+      }
+    ],
+    "skimmed": [
+      "The standard: 'a second engineer', 'under 300ms for 95% of requests', 'revenue or trust'. This reads like it's for a team at a company, not me, so I'd scroll past.",
+      "The invisible parts: I'd skim it. It's useful, but it reads like a checklist and doesn't connect to the dialog story."
+    ],
+    "jargon": [
+      "error boundary",
+      "idempotency (only in a link title)",
+      "query string (the example helps)",
+      "re-parses with inviteSchema",
+      "'the moment' (as in a stored timestamp)",
+      "opengraph-image",
+      "'95% of requests' as a measurement"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The checklist tells me what should be true, but for three items I don't know how to make it true: (1) how the server stops a double submit, in one or two plain sentences, not just a link; (2) how to show times in the user's time zone in Next.js, like a client component calling toLocaleString, or a one-line example; (3) how to read and write URL state in Next, since nobody tells me useSearchParams or router.push is the tool. I'd also want the Playwright screenshot prompt in the checklist itself, because that's the step I'd actually copy.",
+    "cut": "The standard. It's written for a team I'm not on yet, and every 'adopt it once…' line tells me it's not for me today. 'How I do it' already gives me what to do now.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "A feature isn't done when the screenshot looks good. I have to check it on a slow connection, with an empty account, when it errors, without permission, and on a phone, because that invite dialog broke five different ways.",
+    "intended": "A complete frontend feature handles every state a real user can land on (slow network, empty, error, no permission, phone), not just the one state the mockup shows.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "an error boundary shows one when it fails",
+        "why": "Unexplained term. I don't know what an error boundary is or how to add one, and the whole 'Partial' bullet is two React concepts in one breath. I got that a bad section shouldn't blank the page, but not how."
+      },
+      {
+        "quote": "Store the moment, and format it",
+        "why": "A leap. 'Store the moment' means nothing to me. Store it how, as a timestamp? Then how do I format it in the user's time zone if the server doesn't know it? Every other section has a concrete fix and this one has none, so I wouldn't know what to tell my agent."
+      },
+      {
+        "quote": "the server stops a double submit",
+        "why": "I understand the problem from the train example, but 'the server stops it' is hand-waved and pushed to a link. I'd paste the checklist line and have no way to tell whether the agent actually did it."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's for teams and revenue-critical apps ('once a second engineer works in the same components', '95% of requests'). It reads as not for me yet, so I'd skip it.",
+      "The invisible parts: useful but feels like a grab bag. I'd glance at the bullet titles only.",
+      "The code block: I can read it, but on my phone I'd skim the comments and trust the 'early return keeps the dialog open' line above it."
+    ],
+    "jargon": [
+      "error boundary",
+      "Suspense (named, but only half-explained)",
+      "Store the moment",
+      "query string (the example helps, but the term isn't glossed)",
+      "server action",
+      "'95% of requests' (I don't know why it's not just 'average')"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How I'd verify the agent got the time-zone fix and the server-side double-submit check right. Those two checklist lines are the only ones I couldn't confirm by looking at a screenshot. One concrete example for time zones (store a UTC timestamp, format it in the browser) would close the first.",
+    "cut": "The standard. It's aimed at a team I'm not on, and the line between it and 'How I do it' feels arbitrary from where I sit. 'Reserve space so nothing jumps' could also go, or fold into 'Make it feel fast', since it's one sentence plus a link.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

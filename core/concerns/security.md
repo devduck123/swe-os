@@ -14,6 +14,7 @@ description: Who can do what, what input you trust, and where secrets live.
 - Verify webhook signatures before parsing the body.
 - On Supabase, turn on row-level security (RLS) for every exposed table, and keep the `service_role` or secret (`sb_secret_...`) key out of client code. Both bypass RLS.
 - Keep secrets out of client code, logs, error messages, Git, and agent chats. Load them from the environment. Variables with a public prefix (`NEXT_PUBLIC_`, `VITE_`, `EXPO_PUBLIC_`) ship to the browser or the app, where anyone can read them.
+- Turn on MFA for every account that can deploy, read production data, or move money: GitHub, hosting, the database, payments, email, and the domain registrar.
 - Give agents and tools their own scoped, dev-only keys. Production keys live only in the hosting platform. See [secrets and agent safety](../guides/secrets-and-agent-safety.md).
 - Use parameterized queries and the framework's escaping. Never build SQL or HTML by string concatenation.
 

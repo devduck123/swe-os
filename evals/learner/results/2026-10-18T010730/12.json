@@ -1,0 +1,81 @@
+[
+  {
+    "takeaway": "Never paste a key into the agent chat or rename it to NEXT_PUBLIC_ to fix an undefined error. Keys go in .env and Vercel only, and if one leaks you make a new key before doing anything else.",
+    "intended": "Secrets let anyone act as you, and agents create new ways for them to leak (files, shell, transcripts), so keep them in two places and limit the damage when they escape.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "gitleaks in CI scans every PR",
+        "why": "CI is never explained, and the whole section leans on it ('CI is the baseline'). I deploy with Vercel. I don't know what CI is or how I'd add something to it."
+      },
+      {
+        "quote": "a connection string for a read-only role",
+        "why": "Neither 'connection string' nor 'role' is explained. I've never made a database user, so I wouldn't know how to do this."
+      },
+      {
+        "quote": "strip the rest in Sentry's `beforeSend` hook",
+        "why": "I don't use Sentry, so it felt like it was for someone else. Even if I did, there's no code showing what stripping looks like."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's for teams, 'once a second engineer has access', and I'm solo. Pinned SHAs and permissions blocks went right past me.",
+      "Logs and error reports leak too: the first sentence (don't console.log process.env) landed, but I skimmed the Sentry half.",
+      "Scan in CI: dense with paid plans, Team and Enterprise, and pre-commit flags. I gave up halfway and figured start-project does it."
+    ],
+    "jargon": [
+      "CI",
+      "connection string",
+      "role (database)",
+      "server route (I sort of know API routes, but the link isn't spelled out)",
+      "restricted keys (rk_)",
+      "preview (as an environment)",
+      "redeploy vs. new deployment",
+      "MCP (glossed as 'plugins', which helped, but only barely)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "A tiny before/after showing the client component calling a server route instead of the model API directly. That's the exact trap described, and I'd still ask the agent to do it for me. Also, where to find the spend cap setting in OpenAI or Anthropic. The read-only role steps for non-Supabase databases are missing too.",
+    "cut": "The standard: four team-scale rules for a reader who just learned what .env is. It ends a useful page on 'not for you yet'.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Never put a key in code, chat, or anything starting with NEXT_PUBLIC_, and if one leaks, make a new key and kill the old one before doing anything else.",
+    "intended": "A secret lets anyone act as you, so it can only live in .env or the platform's env settings, and agents create new ways for it to leak.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Sentry's `beforeSend` hook, which edits each report",
+        "why": "I don't use Sentry and don't know what a hook is in code terms or what I'd write in it. The whole logs section assumes I already have error reporting set up."
+      },
+      {
+        "quote": "GitHub Actions pinned to a commit SHA",
+        "why": "Never written a workflow file. 'Moving tag', 'permissions: block', 'workflow's token' all went past me. It says adopt later, so I let it go."
+      },
+      {
+        "quote": "runs queries as a read-only database user",
+        "why": "I didn't know a database has its own users or 'roles'. 'Give the agent a connection string for a read-only role' sounds like a thing I can't do without another tutorial."
+      }
+    ],
+    "skimmed": [
+      "The Standard: every item says 'adopt once a second engineer / team / customer', so it's not for me yet",
+      "Most of 'Scan in CI': push protection pricing tiers for Team and Enterprise aren't my world",
+      "The Expo sentence about `extra` in app.config.ts: I don't build mobile apps"
+    ],
+    "jargon": [
+      "CI (never defined, used as if I know it)",
+      "MCP server (gets a half-gloss, 'plugins give an agent tools', which helped some)",
+      "revoke",
+      "role (database role)",
+      "connection string",
+      "deny rule",
+      "beforeSend hook",
+      "commit SHA / moving tag",
+      "preview (as an environment)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The gitleaks-in-CI part depends on a start-project skill I've never used. If I don't use it, there's no copy-paste workflow file and I wouldn't know where CI even lives. For the read-only role on plain Postgres, there's no SQL or link, so I'd skip it. The 'disconnect the MCP server or drop the role' step doesn't say how.",
+    "cut": "The Expo/VITE_ sentences in the public prefix section. The NEXT_PUBLIC_ story right after them is the one that lands, and they dilute it for a Next.js reader. Second choice: the 'Standard' section is all future-me, so it could be one line linking elsewhere.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

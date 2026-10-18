@@ -1,0 +1,81 @@
+[
+  {
+    "takeaway": "Build on my laptop with a local database and fake seed data first, and only sign up for a hosted service when a feature actually needs it — and never let preview deploys touch the production database.",
+    "intended": "Start on your laptop, then add hosted services one at a time on free tiers only when a feature needs them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "If your Vercel build command runs migrations",
+        "why": "I don't know what my build command is or whether it runs migrations. I've never touched it. I can't tell if this warning applies to me, so I just felt vaguely scared."
+      },
+      {
+        "quote": "created in CI from a seed-only branch",
+        "why": "A leap. Earlier, 'branch' meant a Neon copy of my database. Now there's a 'seed-only branch' created 'in CI'. Is that a git branch or a database branch? Who creates it and how? No idea."
+      },
+      {
+        "quote": "money brings webhooks, refunds, taxes",
+        "why": "Webhooks is never explained. Refunds and taxes I get, but I couldn't tell you why webhooks are a way to be wrong."
+      }
+    ],
+    "skimmed": [
+      "The SQL migration block. The comments are nice, but I'd let my agent write this. I glanced at it and moved on.",
+      "The package.json scripts block. I skimmed it because it's code I'd copy, not read. I noticed 'drizzle-kit' and 'tsx' and didn't know if I need them.",
+      "The Standard section. 'Adopt it once a card is on file' told me it's not for me yet, so I skipped it.",
+      "The Docker path, since I'm on Supabase. Good that it let me skip it."
+    ],
+    "jargon": [
+      "migrations (glossed as 'SQL files applied in order', but I still don't know why I'd need more than one, or what 'recorded so it runs once' means in practice)",
+      "lint",
+      "types (as in 'format, lint, types, and tests')",
+      "webhooks",
+      "transactional email provider",
+      "port 5432",
+      "image (Docker)",
+      "Drizzle / Prisma (named, never said what they are beyond generating SQL)",
+      "spend cap vs. hard cap vs. billing alert (three money terms, never told how they differ)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Tell me how to check whether my existing Vercel build runs migrations and how to stop it if so, since that's the scariest line and I can't act on it. Also say whether 'npm run setup' works on Supabase as written, or what I replace it with: the Supabase paragraph says 'db reset replaces db:migrate and db:seed', but the How I do it steps never show the Supabase version of the setup script.",
+    "cut": "The second paragraph of the opening ('Every service you add is another account, another set of keys, and another pricing cliff...'). It says the same thing as the first paragraph and the habit tracker example says it better. Second choice: the Standard section, which is for a later me and uses words I can't follow.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Build everything on my laptop with local Supabase and fake seed data, add a real hosted service only when a feature actually needs it, and never let a preview deploy touch my production database.",
+    "intended": "Start on your laptop where feedback is instant and free, and add hosted services one at a time, on free tiers, only when a feature needs them.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "If your Vercel build command runs migrations",
+        "why": "A leap. I don't know whether my build command runs migrations or how I'd check. Until here, migrations were something I run locally, and now they're apparently happening on Vercel too. This is the scariest warning in the stop, and I can't tell if it applies to me."
+      },
+      {
+        "quote": "created in CI from a seed-only branch",
+        "why": "Too dense. CI was glossed once as 'the checks that run on every push', but now CI creates database branches? And what's a 'seed-only branch': a git branch or a Neon branch? I couldn't follow it."
+      },
+      {
+        "quote": "another pricing cliff",
+        "why": "Unexplained in the opening. I guess it means a sudden jump to paying, but 'cliff' comes up again later ('Free tiers have cliffs') and the explanation is behind a link."
+      }
+    ],
+    "skimmed": [
+      "The Docker section: I'm on Supabase, and the stop told me the Supabase path replaces it, so I skipped the docker run block entirely.",
+      "The services table: useful to glance at, but Better Auth, Mailpit, Clerk, and Vercel Blob are names I don't know, and I'm not adding most of them yet.",
+      "The standard: both bullets say 'adopt it once...' and describe a future I'm not in yet, so it felt like it was for someone else."
+    ],
+    "jargon": [
+      "pricing cliff",
+      "webhooks",
+      "transactional email provider",
+      "lint (in 'format, lint, types, and tests')",
+      "restore drill",
+      "seed-only branch",
+      "spend cap / hard cap (not sure where I set one)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How my local Supabase migrations get to the real hosted Supabase project. I can run `supabase start` and `db reset` locally, but nothing says how production gets those tables (link the project? push?). It also never shows where in Vercel I scope a variable to Development, Preview, or Production, or how to tell if my build runs migrations.",
+    "cut": "The standard. Both bullets are 'later, once you have real users or a card on file', and the first repeats the preview-data warning that's already said twice above (in the Neon paragraph and in How I do it).",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

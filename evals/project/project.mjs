@@ -7,7 +7,7 @@ import { hideSweos, neutralize } from '../harness/neutralize.mjs';
 
 export function loadProject(markdown) {
   const turns = section(markdown, 'Turns')
-    .split('\n')
+    .split(/\r?\n/)
     .map((line) => line.match(/^\d+\.\s+(.+)$/)?.[1])
     .filter(Boolean);
   return {

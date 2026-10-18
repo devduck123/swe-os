@@ -1,0 +1,73 @@
+[
+  {
+    "takeaway": "Before I ask an agent to build anything, I write half a page saying who it's for, the smallest version, a 'done when' list I can check by tapping, what I'm not building, and when I'd quit. Otherwise the agent builds the average app and I'm stuck owning all of it.",
+    "intended": "Shaping means deciding what to build, for whom, and how you'll know it worked before any code, so the agent doesn't decide for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "anything that touches a floor: auth, money",
+        "why": "'Floor' is never explained. The list after the colon helps me guess, but it reads like a term from some other page I haven't seen. Is a floor a rule? A minimum?"
+      },
+      {
+        "quote": "taps twice and counts the rows",
+        "why": "I don't know how a test 'taps'. Is that clicking in a browser, or some code thing? I've never written a test, so 'each line becomes a test' is a leap. The link helps, but here it sounds like magic."
+      },
+      {
+        "quote": "not the next one in UTC",
+        "why": "I kind of know UTC is a timezone thing, but not why my app would be using it instead of my time. I'd copy the line without understanding why it's a bug."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about strangers, review dates, and 'someone owns the spec' at work or for a client. That's not me yet, so I'd skip it.",
+      "'A vague request gets the average app', first paragraph: the habit tracker intro already made this point, so it felt like a repeat."
+    ],
+    "jargon": [
+      "floor (as in 'touches a floor')",
+      "UTC",
+      "spec",
+      "schema (used as an example of what's not a slice, never glossed)",
+      "model integration",
+      "non-goals (the meaning is clear from 'Not building', but the word switches)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd write the shaped block and paste it in, no problem. What I can't do is check the agent's work on 'Users only ever see their own habits'. In Supabase I don't know what makes that true, and I wouldn't know if the test the agent shows me actually proves it. Same with 'show me each one passing': I don't know what a real passing test looks like versus a fake one.",
+    "cut": "The first paragraph of 'A vague request gets the average app'. The habit tracker opener already showed me the agent adding every feature. Saying it again in abstract terms is where I'd start thumbing past things.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I ask an agent to build something, I write half a page: who it's for, what they do now, the smallest version, a 'Done when' list I can check by tapping, what I'm not building, and when I'd quit.",
+    "intended": "Shaping means deciding what to build, for whom, and how you'll know it worked before any code, so the agent doesn't decide for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "anything that touches a floor",
+        "why": "'Floor' is never explained. I guessed from the list after the colon (auth, money, personal data, deleting), but it reads like a term from an earlier stop I didn't read."
+      },
+      {
+        "quote": "not the next one in UTC",
+        "why": "I've seen UTC but couldn't tell you why my app would use it instead of my time. It needs half a sentence: servers store time in UTC, so 11:50 p.m. in California is already tomorrow there."
+      },
+      {
+        "quote": "Users only ever see their own habits.",
+        "why": "I get why it's on the list, but not how I'd check it by tapping like the stop promised. With Supabase, do I log in as two people? Is this the RLS thing? The stop just leaves it there."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about clients, a second person owning the spec, and review dates once someone else's money is in. That's not me yet, so I'd scroll past.",
+      "A vague request gets the average app: the first half repeats the habit tracker section. I'd skim it until the 'Design the schema first isn't a slice' line, which was actually useful."
+    ],
+    "jargon": [
+      "floor (as in 'touches a floor')",
+      "UTC",
+      "spec",
+      "acceptance criteria (glossed, but late, after the example already used 'Done when')",
+      "edge case (used in the checklist as if I know the definition; the double-tap example helps but never says 'that's what an edge case is')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it assumes I'll run the shape-project skill, and I don't know how to install or run a skill. A blank copy-paste template of the six headings (Who, Today, Smallest slice, Done when, Not building, Keep going/Stop if) right there would let me do it tonight without leaving the page. Also, how to actually check 'users only see their own habits' in Supabase.",
+    "cut": "The standard. It's three bullets for working with clients or a team, and it breaks the flow between How I do it and the checklist I'd actually use. If it has to stay, it should go after the checklist.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

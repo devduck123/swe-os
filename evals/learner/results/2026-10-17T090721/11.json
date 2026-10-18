@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Treat a model call like a slow, pricey, untrustworthy stranger: lock the route behind auth and a limit, cap input, output, and time, check what comes back before using it, and never let the thing that reads strangers' emails also send stuff without me clicking.",
+    "intended": "Build AI features as if the model were a flaky, expensive, untrusted third-party service, and most production problems shrink.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AbortSignal.any([req.signal, AbortSignal.timeout(30_000)])",
+        "why": "The comment helps, but I've never used AbortSignal. I don't get what 'any' combines or whether I'd write this myself or just ask my agent for it."
+      },
+      {
+        "quote": "retries twice by default, and the abort signal caps the total wait",
+        "why": "A leap. Why do retries matter here, and is retrying bad? It points to another page without one sentence on why I should care."
+      },
+      {
+        "quote": "Long inputs chunked or retrieved",
+        "why": "'Retrieved' from where? I've heard RAG mentioned but couldn't explain it, and 'chunked' isn't explained either."
+      }
+    ],
+    "skimmed": [
+      "The standard: 'fail over to a second provider' and 'cheaper model for the easy cases' feel like problems for a company with real traffic, not me.",
+      "The eval code block: I got the idea from the sentence 'nothing here compares strings', but I skipped working through it.each and '$name' on my phone."
+    ],
+    "jargon": [
+      "OWASP",
+      "fail over",
+      "alias (model alias)",
+      "chunked or retrieved",
+      "Zod .max()",
+      "grader",
+      "toTextStreamResponse"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'How I do it' list tells me to add a per-user daily limit, but not where that count lives (a Supabase table? Vercel KV?). 'Set a spend cap' doesn't say which dashboard setting or roughly what number. 'Write 20 eval cases' doesn't say how to run them: they hit the real API, so do they need my key and cost money every run? It also never says to split the summarizer from the send tool, which was the scariest part of the page.",
+    "cut": "The standard section. Three of its four bullets are for later or for teams (failover, cheaper model, retrieval), and the human-review point is already implied by the confirm-before-send advice.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Treat the AI call like a sketchy outside service: cap what goes in and comes out, check what it returns, and never let it send anything without the user clicking Send.",
+    "intended": "A model call is a slow, expensive, unpredictable, possibly-hijacked third-party API, so build around it like any flaky, untrusted service.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "AbortSignal.any([req.signal, AbortSignal.timeout(30_000)])",
+        "why": "Code I couldn't follow. The comment helps a bit, but I've never used AbortSignal, and I don't know what req.signal is or why I'd combine two of them. I'd just copy it and hope."
+      },
+      {
+        "quote": "with .max() on every array and string",
+        "why": "A leap. Why would I cap arrays in my schema? The page doesn't say this stops the model from returning 5,000 action items. I'd skip it."
+      },
+      {
+        "quote": "OWASP says it's unclear whether foolproof",
+        "why": "I don't know who OWASP is, so the appeal to authority means nothing to me. 'Security experts say' would land the same."
+      }
+    ],
+    "skimmed": [
+      "The Evals code block: I don't write tests, and `it.each`, `$name`, and vitest are new to me. I got the idea from the paragraph above it ('check what must always hold'), but I'd skip the code on my phone.",
+      "The standard: it's all 'adopt it once…' for problems I don't have yet. I'd skip it until I had real users.",
+      "Run it like a dependency: two bullets, so I'd read them, but 'alias that moves to newer models' went past me."
+    ],
+    "jargon": [
+      "OWASP",
+      "AbortSignal / req.signal",
+      "finishReason (it's glossed, but I'd still ask where it comes from, since the code example uses generateText's output, not finishReason)",
+      "alias (model alias)",
+      "chunked or retrieved",
+      "fail over",
+      "idempotency (only in a link title, but it made me feel behind)",
+      "200 (I sort of know it means OK, but it's never stated)",
+      "streaming / toTextStreamResponse"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "There's no section called What I'd do. The closest is How I do it, and it's actionable: I'd paste the first bullet straight into Claude Code. What's missing is where the spend cap lives. Which dashboard, and what number should I set for a side project? Also, 'Write 20 eval cases' assumes I can set up vitest. A line saying 'ask your agent to set up vitest and turn these into cases' would get me there.",
+    "cut": "The standard. It's four future-tense items for a bigger app than mine, and the 'second provider to fail over to' line is the least relevant thing on the page for me. It also overlaps with the concerns page it links to.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

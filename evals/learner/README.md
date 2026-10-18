@@ -1,6 +1,6 @@
 # Learner test
 
-Does each stop on the track teach its reader what it means to? Claude reads every stop in character as the reader the track is for, then reports what it would remember, where it got lost, which words it didn't know, and whether it could act on "What I'd do".
+Does each stop on the track teach its reader what it means to? Claude reads every stop in character as the reader the track is for, then reports what it would remember, where it got lost, which words it didn't know, and whether it could act on "How I do it".
 
 The reader is in [reader.md](reader.md): self-taught, ships Next.js and Supabase apps with AI agents, reads on a phone, and can't define index, transaction, race, or idempotency. Collapsed "Going deeper" blocks and Sources are removed before reading, because this reader skips them.
 
@@ -27,5 +27,7 @@ Rounds 1 and 2 were run by hand before this harness existed (four agents, one re
 | 1     | (baseline)                                                           | 15 of 22 stops   | 3.7     | 4.6        |
 | 2     | glosses, Going deeper blocks, Supabase lines, actionable What I'd do | 20 of 22 stops   | 3.7     | 4.7        |
 | 3     | plain SQL first, "Before you ship, check"                            | 40 of 44 readers | 3.9     | 4.4        |
+| 4     | "How I do it" and "The standard" endings                             | 40 of 44 readers | 3.9     | 4.3        |
+| 5     | fixes from a four-agent review of those endings                      | 39 of 44 readers | 3.9     | 4.2        |
 
-After round 3, a targeted pass on the two lowest stops moved the recipe from 3.0 to 3.5; stop 8 stayed at 3.5. What readers liked most, every round: the opening failure stories, a "Notice…" sentence before each code block, and copyable "Ask your agent" prompts. Summaries are in [results/](results/).
+After round 3, a targeted pass on the two lowest stops moved the recipe from 3.0 to 3.5; stop 8 stayed at 3.5. Rounds 4 and 5 checked that splitting each ending into two layers didn't cost clarity; it didn't. The lowest stop is now 16 (shipping changes you can undo) at 3.0, lost at connection strings and migration commands. What readers liked most, every round: the opening failure stories, a "Notice…" sentence before each code block, and copyable "Ask your agent" prompts. Summaries are in [results/](results/).

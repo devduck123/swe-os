@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Set up Sentry with release tags before real users arrive, because stuff like a broken Stripe webhook fails silently and Vercel's logs are gone in an hour, and log JSON with a request ID so I can find the error a user complains about.",
+    "intended": "Observability means you can tell from data you already collected whether the app is broken, for whom, and why, and for a solo dev that's error tracking, structured logs, a health check, outcome counts, and alerts you have to act on.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "On Neon, a health check that queries",
+        "why": "I use Supabase, not Neon. Why would a health check make the database not sleep, and why does that burn compute hours? This is why the health check 'never touches the database', but I only half get it, and I'm not sure if it applies to me."
+      },
+      {
+        "quote": "Wrap <my most important job> in `Sentry.withMonitor`",
+        "why": "I don't know what my 'job' is. Do I even have background jobs? Is a webhook a job? I'd paste this to the agent without knowing what to fill in."
+      },
+      {
+        "quote": "Success rate and latency on each critical path",
+        "why": "'latency' and 'critical path' aren't explained. The rest of The standard section explains its terms, so this one stood out."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's all 'once you have a second engineer / Pro plan', which isn't me yet. I read the bold words and moved on.",
+      "The log() helper code: I got the point from the sentence above it (fixed event name, request ID, only IDs). I didn't read the code line by line.",
+      "Prove it's up: I skimmed the outcomes part. SQL counts emailed daily sounds like something I'd just ask the agent for."
+    ],
+    "jargon": [
+      "structured logs (in the opening, before it's explained)",
+      "stack trace",
+      "latency",
+      "critical path",
+      "log drain",
+      "on-call rotation",
+      "Neon compute hours / database sleeping"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it never says to set up the alerts themselves: which Sentry alert rules to turn on (new issue, uptime failed twice), how the 'signups went to zero' alert works when the daily email only sends numbers, and the 'break it on purpose to see the alert fire' step. It also doesn't say how to pick the most important job, or what to do if I don't have one.",
+    "cut": "The Neon sentence in the health check section. It's about a database I don't use, and it confused me about why the health check skips the database. 'Don't query the DB, Sentry catches DB errors anyway' would be enough.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Set up Sentry with releases and source maps, a request ID on every log, and a daily email of key counts, so a broken webhook shows up in minutes instead of when a customer emails three days later.",
+    "intended": "Observability means answering 'is it broken, for whom, and why' from data you already collected, and for a solo dev that's error tracking, structured logs, a health check, outcome counts, and alerts you act on.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "On Neon, a health check that",
+        "why": "I use Supabase. Neon appears out of nowhere, and 'keeps it from sleeping, so the free compute hours run out' is a leap. Is this a problem for me or not? I also didn't get why a health check would query the database in the first place, so 'notice that it never touches the database' just confused me."
+      },
+      {
+        "quote": "Wrap <my most important job> in `Sentry.withMonitor`",
+        "why": "I don't know what counts as a 'job' in my app. Is a webhook a job? A cron route? I have no background jobs that I know of, so I wouldn't know what to put in the brackets."
+      },
+      {
+        "quote": "const event = await verifyStripeEvent(req);",
+        "why": "This function is never defined or explained. Also, if it throws, it's outside the try, so does it get logged? I couldn't tell if that's on purpose."
+      }
+    ],
+    "skimmed": [
+      "The standard: log drain, tracing, latency, on-call rotation. That's for a team I don't have, so I scrolled past it.",
+      "The paragraph about Vercel log retention (1 hour Hobby, 1 day Pro), after the first mention in the story. Got it the first time."
+    ],
+    "jargon": [
+      "structured logs (only explained later as 'log JSON')",
+      "server action",
+      "log drain",
+      "tracing",
+      "latency",
+      "critical path",
+      "on-call rotation",
+      "Neon / compute hours",
+      "Sentry.withMonitor"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Two of the four good alerts have no setup step. Nothing tells me how to get an alert when an outcome count drops to zero, since a daily email isn't an alert I'd notice. Nothing tells me how to make Sentry notify me on a new issue: is that on by default, or do I configure it? I'd also want one line on how to 'break each alerted thing once on purpose', like throwing in a test route. And it should say what my 'most important job' is likely to be in a Next.js and Supabase app.",
+    "cut": "The Neon sentence in the health check section. It's about a database I don't use, and it made me doubt a section I otherwise understood. The note that a broken database shows up in Sentry anyway is enough.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

@@ -16,7 +16,7 @@ Accessibility is whether someone can use your app without a mouse, without seein
 
 An agent builds your signup page with a styled `<div onClick>` as the "Create account" button. It looks perfect. A keyboard user presses Tab, focus skips right past it, and there's no way to sign up. Your analytics just show a visitor who left.
 
-Build it right from day one, because retrofitting touches every component. There's legal exposure too: ADA lawsuits in the US, and the European Accessibility Act, which has applied since June 2025 to services like e-commerce.
+Build it right from day one, because retrofitting touches every component. There's legal exposure too: ADA lawsuits in the US, and the European Accessibility Act, which has applied since June 2025 to services like e-commerce from all but the smallest businesses.
 
 ## Start with the element that already works
 
@@ -104,24 +104,30 @@ shadcn/ui is built on Radix or Base UI, unstyled component libraries that do the
 
 Automated tools are step 3 of 4 for a reason. In 2017, the UK's Government Digital Service ran ten checkers on a page seeded with 143 known barriers. The best one found about 40%. A tool can tell that an image has alt text. It can't tell whether the alt text is right.
 
-## What I'd do
+## How I do it
+
+On my own side projects:
 
 - shadcn/ui for anything interactive (`npx shadcn@latest add dialog`), native elements for everything else, and a `<label>` on every input.
 - The five-minute check before merging any UI change.
-- Ask your agent: "Add `@axe-core/playwright` to the Playwright tests for signup and checkout, so accessibility violations fail CI."
+- Ask your agent: "Add `@axe-core/playwright` to the Playwright tests for the main flows, checking only WCAG A and AA rules with `withTags`, so violations fail CI."
 
-For anything people pay for, I'd add a pass with NVDA, a Windows screen reader, and keep a list of known barriers. If I'm selling to schools, governments, or enterprises, I'd pay for a proper audit.
+## The standard
+
+- **WCAG 2.2 AA as a written target,** the published standard the checks on this page come from. AA is the middle of its three levels, and the one laws point to. Adopt it once a customer contract requires it, or you sell in the EU and are past a microenterprise (10 or more people, or over €2 million a year), which the European Accessibility Act exempts. US ADA lawsuits have no such exemption.
+- **A screen reader pass on the main flow with NVDA (free, on Windows, where most screen reader users are) and VoiceOver on an iPhone, plus a written list of barriers you haven't fixed.** Adopt it once people pay for the product.
+- **An audit by accessibility specialists.** Adopt it once you sell to schools, governments, or enterprises. They'll ask for a VPAT, a report of how the product meets each WCAG criterion. More in [accessibility](../concerns/accessibility.md).
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Actions are `<button>`s, links are `<a href>`, and every input has a `<label>`.
-- Every icon-only button has an `aria-label`.
-- Each field error is visible text, linked with `aria-describedby`, with `aria-invalid` on the input.
-- A failed submit moves focus to the first invalid field.
-- Messages like "Saved" go in a `role="status"` element rendered from page load.
-- The flow works by keyboard alone, with visible focus, and at 200% zoom.
+- Actions are `<button>`s and navigation is `<a href>`, with no clickable `div` or `span`, and every input has a `<label>`.
+- Every icon-only button has an `aria-label` that names the action, like "Delete invite".
+- Each field error is visible text whose `id` the input's `aria-describedby` points at, with `aria-invalid` on the input.
+- A failed submit moves focus to the first invalid field, with react-hook-form's ref reaching the input.
+- Messages like "Saved" go in a `role="status"` element that's rendered from page load, with only its text changing.
+- The main flow finishes with only Tab, Shift+Tab, Enter, Space, and Escape, with focus always visible, and nothing overlaps or scrolls sideways at 200% zoom.
 
 ## Sources
 

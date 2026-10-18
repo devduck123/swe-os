@@ -1,0 +1,82 @@
+[
+  {
+    "takeaway": "Don't trust my app code to keep data right. Put the rules (stock can't go negative, no double bookings) into the database itself so it blocks bad writes, even when two people click at the same time.",
+    "intended": "Write what must always be true about your data into the schema as constraints, because the database checks them on every write and your code forgets.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "with the recipe's `pg` driver (Neon's",
+        "why": "What recipe? What's a driver, and why can't Neon's HTTP one do transactions? I use Supabase, and this line made me wonder if I'm missing a setup step."
+      },
+      {
+        "quote": "a Postgres function you call with",
+        "why": "This shows up twice as the Supabase way to do transactions, but it never shows what one looks like or how to make one. The SQL block has begin/commit, but I can't call that from supabase-js, right? So how do I turn it into a function? That's the exact step I'd need."
+      },
+      {
+        "quote": "It also locks the row, so",
+        "why": "Locks sort of makes sense, but 'waits, rechecks stock > 0, and changes nothing' was a leap. I had to reread it to see why this fixes the 51st hoodie when the earlier check didn't."
+      }
+    ],
+    "skimmed": [
+      "The standard: restore drills, reconciling against Stripe. That's for people with real customers. It reads like a to-do list for later, not for me now.",
+      "The date vs timestamptz paragraph in the uniqueness section. It's useful, but it felt like a detour from the double-tap point, so I skimmed it.",
+      "Most of the explain analyze section. I'd come back to it when a page is actually slow."
+    ],
+    "jargon": [
+      "primary key",
+      "uuid / gen_random_uuid()",
+      "driver (pg driver, Neon's HTTP driver)",
+      "Postgres function / rpc()",
+      "lock (row lock)",
+      "join"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually 'catch that error' from a unique constraint in supabase-js or Drizzle (what does the error look like, and how do I tell it's a duplicate?). A tiny example of wrapping the hoodie transaction in a Postgres function and calling it with supabase.rpc(). And how to find and fix existing rows that break a new rule before the migration fails.",
+    "cut": "The standard section. Each bullet says 'do it once real money moves' or 'once paying customers depend on it,' so it's not for me yet, and it breaks momentum right before the checklist I'd actually use.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Put the rules about my data, like stock can't go below zero or one booking per person, into the database itself, so it refuses bad writes even when my code or my agent gets it wrong.",
+    "intended": "Write what must always be true about your data into the schema as constraints, because the database enforces them on every write and your code forgets.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "with the recipe's `pg` driver (Neon's HTTP driver can't)",
+        "why": "What recipe? I don't know what a driver is or which one I'm using. This reads like it's for someone with a setup I've never seen, and it's in the section I'm supposed to act on."
+      },
+      {
+        "quote": "No row means sold out, so your app runs `rollback`",
+        "why": "A leap. The SQL block shows begin, update, insert, commit straight through, so where does my app get to look at the result and decide? And if the price comes back from the update, how does it end up in `$3`? I can't picture the code that does this."
+      },
+      {
+        "quote": "a Postgres function you call with `supabase.rpc()`",
+        "why": "This is the route I'd actually use, since I'm on Supabase, and I've never written a Postgres function. There's no example, so I'd be stuck asking the agent and hoping."
+      }
+    ],
+    "skimmed": [
+      "The standard: restores, racing tests, and matching against Stripe all sound like later-me with paying customers. 'Restores' of what? I skipped it.",
+      "The date vs timestamptz paragraph inside the uniqueness section: it's useful but feels like a side trip in the middle of the double-tap point, so I half-read it.",
+      "The Drizzle half of each 'In app code' line, since I'm on Supabase."
+    ],
+    "jargon": [
+      "primary key",
+      "uuid / gen_random_uuid()",
+      "locks the row",
+      "driver (pg, Neon's HTTP driver)",
+      "Postgres function",
+      "rpc",
+      "upsert",
+      "no-op",
+      "SQL client",
+      "restores",
+      "real-shaped data",
+      "an index on two columns, (user_id, created_at), and why both"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "A copy-pasteable Supabase version of the hoodie checkout as a Postgres function plus the `supabase.rpc()` call, since that's the path a Supabase user takes and it's the one with no example. Also how to tell the 'already booked' unique error apart from other errors when I catch it.",
+    "cut": "The standard. It's three things I won't do yet, each pointing to another page, and it waters down the checklist right after it, which is the part I'd actually paste.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

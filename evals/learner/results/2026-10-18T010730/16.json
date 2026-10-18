@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Rolling back only puts the old code back, not the emails, charges, or database rows the bad version already touched, so ship small PRs and ask 'what's still wrong if I roll this back?' before merging anything that writes data.",
+    "intended": "Safe shipping means making every change small enough to check and easy to take back, using short branches, required CI, previews, a production check, and a working rollback, while knowing a rollback doesn't undo side effects.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "over the direct connection string, not the pooled one",
+        "why": "Unexplained terms. I've only ever pasted one DATABASE_URL from Supabase. Then 'use the session pooler string (Vercel can't reach the direct one)' made it worse: now there are three strings and I don't know which one I have."
+      },
+      {
+        "quote": "every migration must work with the old code too",
+        "why": "A leap. The rename example helped a bit, but I don't really get why the old code is still running during a build. I had to reread it, and I'm still not sure what 'works with' means for something like adding a column."
+      },
+      {
+        "quote": "watch error tracking for ten minutes",
+        "why": "What error tracking? I don't have any. Nothing in the stop tells me to set it up or what to use, so this step is something I can't do."
+      }
+    ],
+    "skimmed": [
+      "The YAML block. I read the line about the last two lines and trusted the rest. I'd just ask my agent to make it.",
+      "The paragraph on db:migrate, pooler strings, and supabase db push. Too many options and plan caveats in one place. I skimmed it hoping How I do it would just tell me what to do.",
+      "The standard. It says it's for teams with real users and money, so it's not for me yet.",
+      "The three flag options. I got the idea, but the PostHog and Flags SDK one is clearly for later."
+    ],
+    "jargon": [
+      "pooled / direct / session pooler connection string",
+      "lockfile (`npm ci` vs `npm install` isn't explained)",
+      "seed data",
+      "error tracking",
+      "percentage rollouts and targeting",
+      "deployment protection (named, not explained)",
+      "Branching (Supabase product name, assumed known)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Error tracking setup (which tool, e.g. Sentry, and that I need it). What goes in the `check` script if my package.json doesn't have one. Which Supabase connection string to use, said once and plainly, for the free-plan setup. How to undo a rollback in the Vercel dashboard so merges go live again. How to make seed data for previews.",
+    "cut": "The pooler paragraph in 'Run migrations in the Vercel build' ('`db:migrate` is a `package.json` script...' through 'plans that include Branching'). It's a stack of conditionals for different plans and connection strings that loses me, and How I do it repeats the parts I actually need.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Rolling back on Vercel only swaps the code back, so before I merge anything that writes data, sends emails, or charges cards, I ask 'if I undo this in ten minutes, what's still broken?'",
+    "intended": "Safe shipping means making every change small enough to check and easy to undo, while knowing a rollback can't undo emails, charges, or rows the bad version already wrote.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "over the direct connection string, not the pooled one",
+        "why": "I don't know what direct vs pooled means. The next sentence, 'use the session pooler string (Vercel can't reach the direct one)', adds a third kind and makes it worse. I'm on Supabase, so this is exactly the part I need, and I can't tell which string to copy."
+      },
+      {
+        "quote": "previews should start from seed data",
+        "why": "'Seed data' is never explained. That whole Database bullet also branches four ways (Neon, Supabase paid, Supabase free, before vs after real users), which is too much to hold on a phone."
+      },
+      {
+        "quote": "watch error tracking for ten minutes",
+        "why": "I don't have error tracking and the stop never says what it is or tells me to set it up. 'How I do it' doesn't mention it either, so this step is one I can't actually do."
+      }
+    ],
+    "skimmed": [
+      "The YAML block. I read the note about the last two lines and would paste the rest to my agent.",
+      "'The standard' section. It says teams do this later, so it's not for me yet.",
+      "The three flag options. I got 'deploy it switched off', but the list felt like a menu for later, and 'How I do it' confirms I don't need one yet."
+    ],
+    "jargon": [
+      "pooled / direct / session pooler connection string",
+      "seed data",
+      "error tracking",
+      "percentage rollouts and targeting",
+      "Playwright",
+      "Dependabot (glossed only at the very end)",
+      "Branching (Supabase feature, never said what it does differently from Neon's branches)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For a Supabase free-plan user like me, the migration setup is unclear. 'How I do it' says to add a db:migrate script and set buildCommand, then says that on Supabase I should run `supabase db push` in CI on merge. Is that instead of the buildCommand or as well? It also never shows the CI step for `supabase db push`, never says how my second Preview project gets migrated, and never says which connection string goes in which Vercel environment. Error tracking needs a setup bullet, or the ten-minute watch should be dropped.",
+    "cut": "The connection-string paragraph in 'Run migrations in the Vercel build' ('db:migrate is a package.json script you add...'). It's the densest part and it's written for someone who already knows Postgres pooling. Replace it with a one-line 'On Supabase, do this' and move the details into the How I do it bullet.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

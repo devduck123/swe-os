@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Clicking through once doesn't protect anything after the next agent session changes code, so I need tests (especially ones hitting a real database) that would actually fail if the thing broke, and I should make agents show me a failing test before they fix a bug.",
+    "intended": "A test is a re-checkable claim about your app's behavior, and you want tests that give confidence what people depend on still works after the next change, not coverage numbers.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "rejects.toThrow(/not allowed/)",
+        "why": "I can follow the story of the test, but `rejects.toThrow` with a slash-wrapped thing is new to me. I assume /not allowed/ matches the error message, but nobody says so, and I don't know where 'not allowed' comes from: does markPaid already throw that, or do I have to write it?"
+      },
+      {
+        "quote": "run integration test files one at a time",
+        "why": "I don't know what 'empty the tables' actually means in practice. Do I delete my data? Is this a separate test database from my real one? It's implied by 'local database' later, but at this point I got nervous I'd wipe my Supabase project."
+      },
+      {
+        "quote": "getByRole('status')",
+        "why": "'button' with a name makes sense, but 'status' as a role means nothing to me. Is that a thing I have to add to my toast? The accessible-name gloss helped, but role didn't get one."
+      }
+    ],
+    "skimmed": [
+      "The Standard: it's explicitly for later ('when people pay you'), and 'race tests' and 'generated data at production size' felt like a different person's problem. I'd skip it on my phone.",
+      "The second 'A real Postgres for tests, otherwise' bullet: I'm on Supabase, so I'd skip the Neon/Docker-elsewhere path."
+    ],
+    "jargon": [
+      "assertion / assertions (used in 'loosened assertions' without a gloss; I sort of get it from expect())",
+      "role (as in getByRole / ARIA role)",
+      "regex (the /not allowed/ syntax)",
+      "service container",
+      "seeded rows",
+      "race tests (only defined by example)",
+      "PR (I know it loosely, but 'required to merge' assumes I've set up branch protection)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Whether 'empty the tables' runs against the local Supabase only and can never touch my hosted project; how the tests connect to the local database (which URL/env var). Also, getInvoice and markPaid are used in the example but only createUser/createInvoice are explained, so I'm not sure if markPaid is my app's real function or another helper. The prompts to the agent are great, and I'd paste them, but I'd be anxious about the data-wiping part without that reassurance.",
+    "cut": "The 'Each kind of test' unit-test bullet's 'so write lots'. Actually, more precisely: the Standard section, because it's three future-you items each pointing to other pages, and on a phone it's where I'd stop reading. If it has to stay, it's the least useful for me right now.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Clicking through a feature once proves nothing after the next agent change, so I need tests that check the database itself for anything involving money or who-can-touch-what, and I can't let the agent edit tests just to turn them green.",
+    "intended": "A test is a claim about your app's behavior that a machine re-checks on every change, which gives you confidence that what people depend on still works. Coverage doesn't give you that.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "finding elements by role and visible name",
+        "why": "'Role' is never explained. I don't know what role a button has or where roles come from. I copied getByRole('status') without knowing what a 'status' element is or whether my app has one."
+      },
+      {
+        "quote": "Add a `postgres` service container",
+        "why": "Docker gets a gloss earlier, but 'service container' doesn't, and the Neon branch line right after it lost me too. I'd just paste the prompt and hope."
+      },
+      {
+        "quote": "Empty the tables before each test",
+        "why": "I get why, but not how. Does emptying them wipe my real Supabase data? The page never says the test database is separate from the live one. That scared me."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's framed as what teams do later, so I'd skip it.",
+      "The 'A real Postgres for tests, otherwise' bullet: I'm on Supabase, so it's not for me.",
+      "Most of the Playwright section after the code: the accessibility point went past me on a phone."
+    ],
+    "jargon": [
+      "role (as in getByRole)",
+      "assertions (in 'loosened assertions')",
+      "happy path",
+      "service container",
+      "Neon branch",
+      "smoke test",
+      "seeded rows",
+      "authorization check",
+      "race tests"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually run the tests and see one fail: the command, and where the output shows up. Whether 'empty the tables' only touches the local test database and never my real Supabase project. How the tests know to connect to the local database instead of production, like which env var. Setting up CI to block merging is pushed to two other pages, so I can't finish that from here.",
+    "cut": "The standard. It's explicitly for later and for teams, and the race-test bullet throws in a concept I can't do anything with yet.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

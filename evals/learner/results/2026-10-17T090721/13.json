@@ -1,0 +1,77 @@
+[
+  {
+    "takeaway": "Anything that runs later, like a job or a Stripe webhook, can run twice or die halfway, so save it as a row in a table first and write it so a second run does nothing.",
+    "intended": "Move slow or flaky work out of the request, and design jobs and webhooks for 'at least once': assume they run twice, make repeats harmless, and give failures somewhere to land.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "`sql` is your Postgres client's query tag",
+        "why": "I don't know what a 'query tag' is or which client this is. I use the Supabase JS client, so I wouldn't know how to turn this into my code without asking my agent."
+      },
+      {
+        "quote": "save the event, then answer `200`",
+        "why": "The event gets saved as 'pending', but nothing says what processes it after that. Is it the cron sweep? The sweep query only reads `jobs`, not `webhook_events`, so I'd stop here unsure whether my payment ever gets handled."
+      },
+      {
+        "quote": "UPDATE ... RETURNING name;",
+        "why": "Too dense for me. I follow 'one row says the sweep is taken', but I can't tell how my route code checks for 'no row back'. I'd paste it and hope it works."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's framed as what teams do 'when' something happens, and I'm not there yet, so I'd skip it on my phone.",
+      "The CREATE TABLE jobs block: the column comments help, but `GENERATED ALWAYS AS IDENTITY`, `jsonb`, and `timestamptz` are noise to me. I'd let my agent write it."
+    ],
+    "jargon": [
+      "query tag",
+      "request ID",
+      "idempotency key (different from 'idempotent', and not explained)",
+      "reconcile your records",
+      "outbound charge",
+      "jsonb / timestamptz",
+      "RETURNING"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it covers creating the jobs table, the webhook handler, and the cron sweep, but never says how the stored webhook events get processed. Do they become jobs, or does the sweep also read webhook_events? There's also no CREATE TABLE for webhook_events, even though the handler depends on it. And it doesn't say what the sweep does with each row it picks up. I'd guess 'run the same code by kind', but I'd want that said in one line.",
+    "cut": "The standard. It's five 'teams do this later' bullets with terms I don't know (request ID, idempotency key, reconcile). The link to the reliability concern already covers it, so a single line pointing there would be enough.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Anything that runs later, whether my own job or a Stripe webhook, can run twice or die halfway, so I save it to a table first, make the repeat do nothing, and have a cron sweep pick up whatever got stuck.",
+    "intended": "Background jobs and webhooks can arrive late, twice, or never, so design for 'at least once': make repeats harmless and give every failure somewhere to land.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "`sql` is your Postgres client's query tag",
+        "why": "I use the Supabase client (`supabase.from(...)`), not a `sql` tag. I don't know what a 'query tag' is or how to write this INSERT ... ON CONFLICT with what I actually have. Same with `$1` and `$2` in the UPDATE: I'm guessing they're placeholders."
+      },
+      {
+        "quote": "save the event, then answer `200`",
+        "why": "The handler stores the event as 'pending' and returns. Then what actually processes it? The jobs table and sweep come later, but it never says whether the sweep also reads `webhook_events` or whether I should insert a `jobs` row instead. I'd ship this and nothing would happen to the payment."
+      },
+      {
+        "quote": "RETURNING name; -- No row back means",
+        "why": "I get the idea of the lease. But I don't know how 'no row back' looks in my route code, or where the 'set locked_until = now()' at the end goes if the run throws."
+      }
+    ],
+    "skimmed": [
+      "The standard: it says 'teams go further' and is about support tickets and second engineers, so it's not me yet.",
+      "The Vercel Cron bullet list: I'd skim it until the Hobby 'once a day' line, which is the one that matters."
+    ],
+    "jargon": [
+      "idempotency key (in The standard, separate from 'idempotent', which is glossed)",
+      "inline",
+      "no-op",
+      "jsonb / timestamptz / GENERATED ALWAYS AS IDENTITY",
+      "re-serialize",
+      "reconcile",
+      "request ID",
+      "steps that outlast one function"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to run the CREATE TABLE statements (Supabase SQL editor? a migration?). What processes the pending `webhook_events` rows after the 200. How the sweep route goes from the SELECT to actually running each job and updating attempts and status. The agent prompts cover jobs and cron but not that webhook-to-processing step.",
+    "cut": "The standard. It's five 'when this happens' rules for teams I'm not on, and the idempotency key line uses a term I can't place. A link would be enough.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

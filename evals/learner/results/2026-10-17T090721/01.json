@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Before I call something done, I ask my agent 'what happens when this fails or someone abuses it,' and I never trust a user ID that comes from the form.",
+    "intended": "The difference between a vibe coder and an engineer is asking what happens when it doesn't work, and some things (secrets, auth, money, personal data, deletes) always need that treatment.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "your route runs twice. First, `onBeforeGenerateToken`",
+        "why": "A leap. Why does one route run twice? Who calls it the second time? 'Blob calls onUploadCompleted' sounds like a webhook, but that's never said. I followed the comments, not the flow. I also don't see the browser-side code, so I couldn't build this myself."
+      },
+      {
+        "quote": "`tokenPayload` carries the user ID along",
+        "why": "Carries it from where to where, and why can't the user tamper with it like they could with the form field? That's the security point of the whole example, and it's one clause."
+      },
+      {
+        "quote": "the \"When stakes rise\" checks of every concern",
+        "why": "I don't know what a 'concern' is here or what 'When stakes rise' refers to. It assumes I've read another page. 'Stops 14, 16, and 18' has the same problem."
+      }
+    ],
+    "skimmed": [
+      "The standard: it reads like rules for a team with 'real users' and 'a second engineer.' I'm solo, so it felt like it was for someone else, and the 'Do it when...' sentences are confusing to parse.",
+      "The Karpathy/Willison history paragraph, except the harm test question, which was useful.",
+      "Most of the engineered code block. I read the comments in the prose instead."
+    ],
+    "jargon": [
+      "session (I sort of know it means 'logged in,' but not where `auth()` comes from)",
+      "413 / 500 (413 is glossed, 500 isn't)",
+      "webhook",
+      "incident",
+      "dropping columns",
+      "upload token / tokenPayload",
+      "concerns (as a named thing)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The page never says the client upload is what fixes the 4.5 MB limit, so I'd miss that. It shows no browser-side code for calling the upload. The double-click/runs-twice problem is listed but the engineered version doesn't visibly fix it. The prompts and the paste-in checklist are actionable, though. I'd use those today.",
+    "cut": "The standard. It's aimed at teams and 'real users' milestones, it points to stops I haven't read, and it says what 'How I do it' and the checklist already say, but more abstractly.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I call something done, I ask my agent 'what happens when this doesn't work?', and I never let the server trust a user ID that comes from the form instead of the session.",
+    "intended": "The difference between a vibe coder and an engineer isn't the tools; it's asking what can go wrong before calling a feature done.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "your route runs twice. First, onBeforeGenerateToken",
+        "why": "A leap. I followed the bad version line by line, but here the browser, Blob, and my route all talk to each other and I can't picture the order. Who calls onUploadCompleted, and when? Why is tokenPayload a JSON string? A three-step 'browser asks → you say yes → Blob tells you it's done' list would fix it. I also never see the browser-side code, so I couldn't wire this up myself."
+      },
+      {
+        "quote": "const session = await auth();",
+        "why": "Where does auth() come from? It's not imported. I use Supabase, so I don't know if this is NextAuth, Clerk, or something I'm supposed to have. 'session' is the whole point of the fix, and it appears out of nowhere."
+      },
+      {
+        "quote": "the \"When stakes rise\" checks of every concern",
+        "why": "Unexplained. I don't know what a 'concern' is here or what 'When stakes rise' refers to. It sounds like a section in another doc I haven't read."
+      }
+    ],
+    "skimmed": [
+      "The engineered code block: I read the comment, the auth() line, and the allowedContentTypes part, then skipped the rest because I couldn't follow the callback flow.",
+      "The Karpathy/Willison paragraph: I skimmed the history but kept the harm test, which is useful.",
+      "'The standard': this reads like it's for a team with a second engineer and alerts. I'm solo, so I skipped it."
+    ],
+    "jargon": [
+      "500 (I've seen it but the stop doesn't say it means 'server crashed')",
+      "session",
+      "token / tokenPayload",
+      "throws",
+      "concerns / 'When stakes rise' checks",
+      "diff",
+      "deploy can be undone (how? rollback isn't explained)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'How I do it' prompts are great and I'd paste them tomorrow. What's missing for the photo example: the client-side half of the upload, where auth() comes from (or the Supabase equivalent), and what 'cleanup for the old photo' looks like. 'Before you ship' also overlaps with 'How I do it', and I'm not sure which list is the one to actually use.",
+    "cut": "'The standard'. It's four rules for situations I'm not in yet (a second engineer, alerts), it uses terms I don't know, and it muddies the clear 'How I do it' list right above it. Fold the one useful line ('engineer everything once real users or money show up') into 'How I do it'.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

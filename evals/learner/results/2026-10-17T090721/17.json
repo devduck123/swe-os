@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Never rename or drop a column in one shot: old and new code hit the same database during a deploy, so add the new column, copy the data over, switch reads, and drop the old one only after several separate releases.",
+    "intended": "During every deploy old and new code share one database, so each schema change must work for both, and big changes get split into small safe releases.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "use the safer version in \"Going deeper\"",
+        "why": "Going deeper isn't there. Three places send me to it (NOT NULL, CONCURRENTLY 'needs to run on its own', 'the psql command'), so I don't know what to actually do for those cases."
+      },
+      {
+        "quote": "is one giant transaction",
+        "why": "Never told what a transaction is. I get from context that it's 'all at once,' but 'Each batch saves on its own' is doing the explaining and I had to piece it together."
+      },
+      {
+        "quote": "Migrations that touch a big table",
+        "why": "Big and busy are never defined. Is 10k rows big? 1M? I have no idea if my app's tables count, so I can't tell when these rules apply."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's for teams with CI and multiple people writing migrations. Not me yet.",
+      "The lock-cost bullet list: I read the first two and skimmed the rest because the NOT NULL and index ones point at a section I can't see."
+    ],
+    "jargon": [
+      "transaction",
+      "backfill (used as a step name before it's explained by example)",
+      "fixed default",
+      "scans the whole table",
+      "query plan",
+      "psql",
+      "cron job"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "A rough threshold for 'big' or 'busy' table. The actual steps for NOT NULL and CONCURRENTLY, since the Going deeper they point to is gone. Where to run the backfill script on Supabase or Vercel (a one-off Node script? the SQL editor?).",
+    "cut": "The standard. It's about team practices with 'when' triggers I won't hit for a while, and it breaks the flow between How I do it and the checklist I'd actually paste.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Old and new versions of my app hit the same database at once during a deploy, so I can't just rename a column. I add the new one, copy the data over, switch the code, and only drop the old one releases later.",
+    "intended": "During every deploy, old and new code share one database, so each schema change must work for both, and big changes get split into small, safe releases.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "It needs to run on its own",
+        "why": "On its own from what? Another migration? A transaction? It then points to 'Going deeper', which I don't have. So I know I need CONCURRENTLY but not how to actually run it."
+      },
+      {
+        "quote": "use the safer version in \"Going deeper\" below",
+        "why": "There's no 'below' for me. It tells me the normal way is dangerous on a big table and then gives me nothing to do instead. 'How I do it' also says 'the psql command in Going deeper', and I don't have that either."
+      },
+      {
+        "quote": "One `UPDATE`... is one giant transaction",
+        "why": "'Transaction' is never explained. I can guess it means 'it all happens at once' from the next sentence, but 'Each batch saves on its own' only half-lands because I don't know what a transaction is."
+      }
+    ],
+    "skimmed": [
+      "The standard: it says 'Teams go further', and I'm not a team. The bullets ('query plan', 'lint migrations in CI') read like they're for someone else.",
+      "One of the Drizzle/Supabase paragraphs: I'm on Supabase, so I skipped the Drizzle one.",
+      "Most of the Neon part of 'Rehearse on a branch first': I don't use Neon. I only read the Supabase free-plan line."
+    ],
+    "jargon": [
+      "transaction",
+      "schema (used in 'every schema change' without a gloss)",
+      "backfill (guessable from context but never defined)",
+      "cron job",
+      "NOT NULL (I sort of know it, but not why it scans the table)",
+      "query plan",
+      "lint migrations in CI",
+      "psql",
+      "parent's data (Neon branches)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Two steps send me to 'Going deeper', which I can't see: the safe way to add NOT NULL on a big table, and the psql command for CONCURRENTLY. The backfill script also leaves me asking where it runs. Against production? From my laptop? As a Vercel function? I also don't know how big a table has to be to count as 'big', or how I'd know I'm 'sure you won't roll back' before the contract step.",
+    "cut": "The standard. It's explicitly for teams, the triggers ('more than one person writes migrations') don't apply to me, and it ends a page I was already tired by.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

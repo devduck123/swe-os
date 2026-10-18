@@ -1,0 +1,88 @@
+[
+  {
+    "takeaway": "Start with one Next.js app and one database, and when the agent wants to add Redis or a second API or a state store, ask it what problem that solves today and what proves it.",
+    "intended": "Build the simplest thing that fully solves today's problem, and make every added service, layer, store, or package name its problem and evidence.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every mutation has to update both",
+        "why": "Unexplained term. I don't know what a 'mutation' is here. I guessed it means saving a change, but I wasn't sure."
+      },
+      {
+        "quote": "it refetches from the server instead",
+        "why": "This is a leap. I use Supabase queries in components and I can't tell whether that counts as a 'fetch cache' or a 'copy of server data'. The Zustand vs TanStack Query difference shows up twice and I still couldn't explain it."
+      },
+      {
+        "quote": "Dependencies get an audit in CI",
+        "why": "Unexplained term. I don't know what CI is precisely or what 'audit' means as a step I'd set up."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about second engineers, ADRs, and exit plans. I'm solo, so it read like it was for a team I'm not on.",
+      "The Dan McKinley and Martin Fowler references: I don't know who they are, so the names didn't add weight for me. I skipped to the next sentence."
+    ],
+    "jargon": [
+      "mutation",
+      "source of truth",
+      "network hop",
+      "drifts",
+      "route handlers",
+      "runtime (\"a different runtime\")",
+      "CI",
+      "fetch cache / refetches",
+      "'use cache'",
+      "Drizzle",
+      "Better Auth",
+      "Neon (I know Supabase, not Neon)",
+      "timeouts, retries"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The page tells me what to ask when the agent proposes a piece, but not what to say before it builds anything. I want a prompt to paste at the start, like 'one Next.js app, Supabase, no extra services unless I ask.' It also doesn't say what to do if the agent has already given me the overbuilt version. Do I rip it out, and how? The 'Network tab' step also assumes I know how to read the timings there.",
+    "cut": "The standard. It's three team-scale practices with 'do it when' conditions that don't apply to me yet. Deleting it would make the page shorter without losing anything I'd act on.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Start with one Next.js app and one database, and before my agent adds anything else, make it tell me what problem that piece solves today and show a number that proves it.",
+    "intended": "Build the simplest thing that fully solves today's problem, and only add a service, layer, store, or package when you can name the problem and the evidence that it's real.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every mutation has to update both",
+        "why": "Unexplained term. I'm guessing 'mutation' means any change to a booking, but the sentence leans on it and it's never glossed."
+      },
+      {
+        "quote": "'use cache' on the slow function, then a managed Redis",
+        "why": "Code I couldn't follow. I don't know where 'use cache' goes or what it does. Redis is never explained, and neither is 'managed' versus whatever the other kind is. Upstash Redis earlier only got a gloss for rate limiting, not for Redis."
+      },
+      {
+        "quote": "Dependencies get an audit in CI",
+        "why": "Unexplained terms. I don't know what CI is, or what auditing a dependency actually means or which tool does it."
+      }
+    ],
+    "skimmed": [
+      "The standard: it opens with 'another engineer reviews' and 'when a second engineer joins'. That's a team thing, and I'm solo, so I'd scroll past.",
+      "The second half of 'Every piece adds a way to fail': the McKinley and Fowler quotes read like citations for someone else. The point already landed in the yoga example.",
+      "Parts of 'What earns each piece': 'Separate API' and 'Repository layers' won't apply to me for a long time, so I'd only read the cache and client store bullets."
+    ],
+    "jargon": [
+      "mutation",
+      "Redis / managed Redis",
+      "network hop",
+      "route handlers",
+      "'use cache'",
+      "runtime (as in 'a different runtime')",
+      "CI",
+      "dependency audit",
+      "Drizzle",
+      "Better Auth",
+      "server actions (I've heard it but couldn't explain it)",
+      "timeouts, retries (I get the vibe, not what I'd actually build)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "What to do if my agent already built the overbuilt version. My real app probably has a Zustand store copying Supabase data right now, and this only tells me how to avoid it, not how to back it out safely. Also, for timing the page in the Network tab, I'd want to know which number to look at.",
+    "cut": "The standard. It's for teams with a second engineer and real users, it piles on jargon (ADR, CI, audit, exit plan), and nothing in it changes what I'd do this week.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
