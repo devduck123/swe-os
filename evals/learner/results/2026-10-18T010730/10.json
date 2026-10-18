@@ -1,0 +1,84 @@
+[
+  {
+    "takeaway": "Use a real <button> instead of a clickable div, because the div looks the same but keyboard and screen reader users literally can't use it.",
+    "intended": "Accessibility is correctness, not polish, and most bugs come from swapping a working native element for a div without rebuilding what it did.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "aria-describedby pointing at the error's id",
+        "why": "I get that the ids match, but I don't get why the screen reader needs a pointer at all when the error text is right there under the field. One sentence like 'screen readers only read what's attached to the field you're on' would fix it."
+      },
+      {
+        "quote": "with a Controller, pass field.ref to it",
+        "why": "I don't know what a Controller is or when I'd have one. My agent writes the form; I can't tell which case I'm in."
+      },
+      {
+        "quote": "role=\"status\" waits until it finishes speaking",
+        "why": "'It' is ambiguous. Waits until the screen reader finishes whatever it was already saying? Took me two reads."
+      }
+    ],
+    "skimmed": [
+      "The standard: VPAT, NVDA, microenterprise thresholds, audits. That's for a company selling to governments, not me shipping side projects.",
+      "Contrast, zoom, motion, and color: short and fine, but it says 'strong contrast' without a number or a tool, so I nodded and moved on.",
+      "The GDS 2017 stat paragraph: convinced me in one sentence, didn't need the details."
+    ],
+    "jargon": [
+      "WCAG A and AA (explained later in The standard, but used in How I do it first)",
+      "Radix / Base UI (glossed, okay)",
+      "Controller (react-hook-form)",
+      "DOM order / source",
+      "live region (glossed, okay)",
+      "VPAT (glossed, but I'd never need it)",
+      "withTags",
+      "route announcer / client-side navigation"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The keyboard check and 'paste this to your agent' list I'd actually do. The axe Playwright prompt assumes I already have Playwright tests for my main flows; I don't. Tell me what to do if I have no tests yet (e.g. just run the axe extension, or ask the agent to set up one Playwright test first). Also, the VoiceOver step is Mac only and doesn't say what I'm listening for.",
+    "cut": "The standard section. It's three adoption thresholds for business stages I'm not at, and the legal stuff was already said in the second section. A one-line link to the concerns page would do.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Agents love making clickable divs that keyboard and screen reader users can't use, so use a real <button> and try my signup flow with only the Tab key before I ship.",
+    "intended": "Accessibility is correctness, not polish, and most bugs come from swapping a native element for a div without rebuilding what it did.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "with a `Controller`, pass `field.ref` to it",
+        "why": "I use react-hook-form because the agent set it up, but I don't know what a Controller is or when I'd have one. I can't tell whether this applies to my forms, so I'd just paste it to the agent and hope."
+      },
+      {
+        "quote": "checking only WCAG A and AA rules with `withTags`",
+        "why": "This is the first time A and AA appear, and they aren't explained until 'The standard' further down. It also assumes I already have Playwright tests for my main flows. I don't."
+      },
+      {
+        "quote": "`role=\"status\"` waits until it finishes speaking",
+        "why": "I had to reread to work out that 'it' means the screen reader. 'An element that appears along with its message often isn't announced' was also hard to follow until I saw the code comment."
+      }
+    ],
+    "skimmed": [
+      "The legal paragraph in the opening section (ADA, European Accessibility Act). It reads like it's for a business owner, not me right now.",
+      "The 2017 Government Digital Service stat. I got the point from 'A tool can tell that an image has alt text. It can't tell whether the alt text is right.'",
+      "Most of 'The standard'. NVDA, VPAT, audits, and the microenterprise thresholds are for later, and the euro and headcount details made me tune out.",
+      "The Route changes bullet. I don't know what a route announcer is, but 'give every page a unique title' was enough."
+    ],
+    "jargon": [
+      "ARIA (glossed, but only briefly)",
+      "DOM order",
+      "route announcer / client-side navigation",
+      "live region (glossed, but the role=status vs role=alert timing was fuzzy)",
+      "Controller / field.ref",
+      "withTags",
+      "WCAG A and AA (used before it's explained)",
+      "contrast (no number or tool to check it)",
+      "prefers-reduced-motion / motion-safe:",
+      "VPAT (glossed)",
+      "NVDA"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to check contrast: what counts as 'strong' and which tool tells me. What to do if I have no Playwright tests yet, maybe a prompt that sets them up first. The VoiceOver steps only work on a Mac, and Command-F5 on my MacBook might need the Fn key.",
+    "cut": "'The standard' section. The tiers, the EU microenterprise thresholds, VPATs, and audits are for someone running a company with paying enterprise customers. A short 'aim for WCAG 2.2 AA' line in How I do it would cover what I need.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -27,5 +27,7 @@ Rounds 1 and 2 were run by hand before this harness existed (four agents, one re
 | 1     | (baseline)                                                           | 15 of 22 stops   | 3.7     | 4.6        |
 | 2     | glosses, Going deeper blocks, Supabase lines, actionable What I'd do | 20 of 22 stops   | 3.7     | 4.7        |
 | 3     | plain SQL first, "Before you ship, check"                            | 40 of 44 readers | 3.9     | 4.4        |
+| 4     | "How I do it" and "The standard" endings                             | 40 of 44 readers | 3.9     | 4.3        |
+| 5     | fixes from a four-agent review of those endings                      | 39 of 44 readers | 3.9     | 4.2        |
 
-After round 3, a targeted pass on the two lowest stops moved the recipe from 3.0 to 3.5; stop 8 stayed at 3.5. What readers liked most, every round: the opening failure stories, a "Notice…" sentence before each code block, and copyable "Ask your agent" prompts. Summaries are in [results/](results/).
+After round 3, a targeted pass on the two lowest stops moved the recipe from 3.0 to 3.5; stop 8 stayed at 3.5. Rounds 4 and 5 checked that splitting each ending into two layers didn't cost clarity; it didn't. The lowest stop is now 16 (shipping changes you can undo) at 3.0, lost at connection strings and migration commands. What readers liked most, every round: the opening failure stories, a "Notice…" sentence before each code block, and copyable "Ask your agent" prompts. Summaries are in [results/](results/).

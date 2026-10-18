@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Getting the agent to write code doesn't teach me anything, and I can't tell that from how it feels, so I should make the agent leave me a quiz in each PR and answer it before I merge.",
+    "intended": "Agents make you faster at shipping but not better at engineering unless you deliberately add a learning step, because finishing work feels like learning.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "learning a new async library",
+        "why": "I use async/await, but 'async library' isn't something I could define. It didn't block me, though, since the point is the 50% vs 67% scores."
+      },
+      {
+        "quote": "Leave me the core as one `TODO(human)`, with a failing test.",
+        "why": "This is the step that's hardest for me. What counts as 'the core'? Why does it need a failing test? I don't write tests, so I don't know what I'd do with one. I'd copy the prompt and hope it works."
+      },
+      {
+        "quote": "cycle time and how often their PRs need rework",
+        "why": "'Cycle time' is team-manager talk. I'm solo, so I'm lost here and don't care."
+      }
+    ],
+    "skimmed": [
+      "The Standard: two of its three bullets start with 'Once real users…' or 'Once a team decides…'. That's not me yet, so I'd skip it.",
+      "The METR paragraph after the first sentence: I already believed the 'you can't feel it' point from the opening, so the numbers felt like extra proof I didn't need.",
+      "The Simon Willison and Geoffrey Litt name-drops in step 2: I don't know who they are, so they don't persuade me."
+    ],
+    "jargon": [
+      "async library",
+      "TODO(human)",
+      "failing test",
+      "cycle time",
+      "rework",
+      "non-trivial (what's my threshold?)",
+      "collapsed <details> block (I can guess it from the prompt, but not what it looks like in a PR)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Step 1 I'd do right away, since I can paste the prompt. Step 2 needs a rule of thumb for 'non-trivial' (e.g. touches auth/data/money, or more than one file), or I'll call everything trivial. For step 3 I don't know where the notes collect or how I'd group them; does the learn skill do it? Is it something I install? Step 4 needs a sentence on what a failing test is and what I do with it (run it, make it pass). Most of my projects have no tests at all.",
+    "cut": "The Standard. It's written for teams with reviewers and metrics, and its auth/data/money point already appears in 'Spend learning time' and the checklist. Cutting it would get me to the checklist faster.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I merge what the agent built, I should answer a few questions about it from memory, because just shipping it teaches me almost nothing and I can't feel the difference.",
+    "intended": "Agents make you faster but not better unless you add a deliberate comprehension step, because finishing work feels like learning when it isn't.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Leave me the core as one `TODO(human)`, with a failing test.",
+        "why": "I don't write tests. I don't know what a 'failing test' is for or how I'd use it. I also don't know what counts as 'the core' of a feature. This is the step I'd actually want to try, and it's one sentence."
+      },
+      {
+        "quote": "Once anyone else reviews or runs your code.",
+        "why": "Each bullet in The standard ends in a sentence fragment like this. I couldn't tell if it means 'this applies once...' or something else. I reread it twice and gave up."
+      },
+      {
+        "quote": "like cycle time and how often their PRs need rework",
+        "why": "I don't know what 'cycle time' is or how I'd measure it. 'Rework' is vague too. It reads like it's for a team lead, not me."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's about teams, reviewers, and measuring things. I work alone, so it felt like it was for someone else.",
+      "The three learning-science bullets: I got the gist from the bold lines and skipped the 61% vs 40% detail.",
+      "'Before you ship, check': it repeats steps 1 and 2, so I'd glance and move on."
+    ],
+    "jargon": [
+      "async library",
+      "non-trivial (no line for what counts)",
+      "failing test",
+      "TODO(human)",
+      "cycle time",
+      "rework",
+      "<details> block",
+      "skill (the gloss 'a saved workflow you ask your agent for' doesn't tell me how to get or start it)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd paste the prompt today, so step 1 is easy. Missing: what to do when I get quiz answers wrong (don't merge? ask the agent to explain?). For the weekly catch-up: where do the notes live and how do I collect them, and should I go through old PRs by hand? For step 4: what a failing test is and how I'd run it. Also how to install or invoke the learn skill.",
+    "cut": "The standard. It's about reviewers, teams, and metrics, the bullets end in confusing fragments, and nothing in it changes what I'd do tomorrow as a solo dev.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

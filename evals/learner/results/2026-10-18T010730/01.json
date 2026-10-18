@@ -1,0 +1,83 @@
+[
+  {
+    "takeaway": "Before I call a feature done, I ask the agent what it decided that I didn't specify, especially who's allowed to do the thing and what happens when it fails, and I never let it trust a user ID that comes from the form.",
+    "intended": "The difference between a vibe coder and an engineer is asking 'what happens when it doesn't work?' before calling a feature done, because AI handles only the cases you name.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "your route runs twice. First, `onBeforeGenerateToken`",
+        "why": "A leap. I don't get how one POST route runs twice, or who calls it the second time. 'Blob calls onUploadCompleted' sounds like a webhook, but the stop never says so. I'd copy this code without understanding the flow."
+      },
+      {
+        "quote": "`put` throws when the path already exists",
+        "why": "I half-know 'throws', but the jump from 'throws' to 'gets a 500' isn't explained. I don't know that an uncaught error becomes a 500, or what a 500 means beyond 'broken'."
+      },
+      {
+        "quote": "a `check` script required to merge",
+        "why": "Unexplained. Required by what? I've never set up branch protection or CI, so I don't know what this is or how to do it."
+      }
+    ],
+    "skimmed": [
+      "The standard: every bullet says 'do it when a second engineer joins' or 'once people pay you'. That's not me yet, so it felt like it was for someone else.",
+      "The engineered code block: I read the comments around it and skipped the code. The sentence after it ('Size and type limits are baked into the token') told me what I needed.",
+      "The Karpathy history in the floors section: I skipped it, but I kept Willison's harm test, which was useful."
+    ],
+    "jargon": [
+      "413 / 500 (the 413 gets a gloss, the 500 doesn't)",
+      "throws",
+      "tokenPayload",
+      "preview deploy",
+      "Sentry",
+      "end-to-end tests",
+      "rollback condition",
+      "required to merge (branch protection / CI)",
+      "webhook (used in the questions list without a gloss)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The two agent prompts are great, and I'd paste them tomorrow. But 'Set up every repo with the start-project skill' and 'Sentry goes in before the first real user' assume I know what a skill is and how to run one. I don't. One line on how to invoke a skill, or what Sentry is (it catches errors in production and emails you), would let me act on those bullets.",
+    "cut": "The standard section. It's three bullets about a future with teammates and paying users, and it uses the densest jargon on the page (end-to-end tests, rollback condition). The 'Before you ship, check' list right after it is what I'd actually use.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Never trust anything coming from the browser, especially who the user is (take their ID from the session), and before calling something done, ask what happens when it fails, runs twice, or gets abused.",
+    "intended": "The difference between a vibe coder and an engineer is asking 'what happens when it doesn't work?' before shipping, and some things (the floors: secrets, auth, money, personal data, deletes) always get that treatment.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "and your route runs twice",
+        "why": "A leap. I get that the browser uploads straight to storage, but I couldn't picture the flow: who calls my route the second time, and why `tokenPayload` has to 'carry' the user ID instead of me just calling auth() again in onUploadCompleted. I followed the shape of the code, not why it works."
+      },
+      {
+        "quote": "cleanup for the old photo and for any upload the database never recorded",
+        "why": "This is where the vibe version's last bullet gets 'fixed', but there's no code or even a sentence on how. 'Same agent, same afternoon' made it sound easy, but I wouldn't know what to ask for. Do I delete the old blob in onUploadCompleted? Run a job?"
+      },
+      {
+        "quote": "nothing is left half-done or doubled",
+        "why": "I believe it matters, but I don't know how you make something not double. The double-click problem is named and never solved in the engineered code. I'd paste this checklist line and have no way to judge the agent's answer."
+      }
+    ],
+    "skimmed": [
+      "The standard: every item starts with 'do it once real users / a second engineer / people pay you', so it reads as for-later. It also repeats stops 14, 16, 18 from How I do it.",
+      "The Karpathy/February 2025 sentence: history I don't need. Willison's harm test is the useful part.",
+      "I skimmed the engineered code block itself and trusted the prose summary underneath it."
+    ],
+    "jargon": [
+      "session (central to the whole lesson, never glossed; I sort of know it from Supabase auth, but 'from the session, not the request' needs one plain line)",
+      "500 (413 got a gloss, 500 didn't)",
+      "webhook",
+      "incident",
+      "preview deploy",
+      "Sentry",
+      "rollback / rollback condition",
+      "end-to-end tests",
+      "`check` script required to merge",
+      "the `!` in `tokenPayload!`"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The two prompts are great and I'd use them tomorrow. Missing: what a good answer looks like for 'runs twice', so I can tell if the agent's reply is real; what auth() is in a Supabase app, since that's my stack and the example assumes some other auth library; and one line on how to do the old-photo cleanup.",
+    "cut": "The standard. It's advice for a future me with paying users and a teammate, it repeats the stop links from How I do it, and it dilutes the strong ending of 'Before you ship, check'.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

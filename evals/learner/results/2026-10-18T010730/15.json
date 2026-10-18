@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Green CI and a clean-looking diff don't mean it's safe. I have to check what's missing, especially whether the route checks that the logged-in user is actually allowed to see that team's data.",
+    "intended": "Reading code tells you what's actually true about a system, and reviewing means deciding whether a change deserves to exist, which with agents is most of the job.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "filters by the owner from the session",
+        "why": "I get that the CSV route forgot to check the team, but I don't know what 'the session' actually is in my Supabase app or what the fixed code would look like. The example shows the bug and never shows the fix, so I can't recognize the right version."
+      },
+      {
+        "quote": "Ask Git why. Code tells you",
+        "why": "I've never used git history for anything except undoing mistakes. The prompt is handy, but I don't know what I'd be looking for in the answer or why it matters for reviewing."
+      },
+      {
+        "quote": "in the ruleset on `main`",
+        "why": "Don't know what a ruleset is or where it lives in GitHub. The section says it's for teams anyway, so I mostly gave up here."
+      }
+    ],
+    "skimmed": [
+      "Read an unfamiliar codebase from the outside in: it's a five-step list and feels like it's about joining an existing project, not reviewing my agent's PR, which is what the opening hooked me on",
+      "The standard: it's for teams with a second engineer, CODEOWNERS, and dependency vetting. Not me yet.",
+      "Small PRs get real reviews: the Google line counts are fine, but I got the point from the heading"
+    ],
+    "jargon": [
+      "session (as in 'checks the session')",
+      "server action",
+      "ruleset",
+      "lockfiles and generated files",
+      "edge cases",
+      "dependency (somewhat; I know npm packages but 'vet' it how?)",
+      "migrations (in The standard)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The fixed version of the CSV route: two or three lines showing the session check and the team-membership filter, so I know what 'right' looks like in Next.js plus Supabase. Also, what to do when the agent's risky-files list comes back. Reading 'line by line' is vague when I don't know what I'm checking for beyond the one auth example.",
+    "cut": "The codebase-reading section ('Read an unfamiliar codebase from the outside in'). It's a different skill from reviewing an agent's PR, it's the longest list on the page, and it sits between the great CSV example and the 'match the depth to the damage' advice, which is what I actually needed next.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Green CI and a clean-looking diff mean nothing if the route never checks that the logged-in user is allowed to see that team's data, so I need to look for what's missing, not just what's there.",
+    "intended": "Reading code tells you what's actually true about a system, and reviewing means deciding whether a change deserves to exist, which with agents is most of the job.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Review this PR with the review-change skill",
+        "why": "I don't know what a 'skill' is here or whether Codex or a fresh Claude session has it. Do I install something? Paste a file? The link goes to a SKILL.md, but the stop never says how I'd use it."
+      },
+      {
+        "quote": "in the ruleset on `main`",
+        "why": "Unexplained term. I don't know what a ruleset is or where it lives in GitHub. CODEOWNERS got a gloss but this didn't."
+      },
+      {
+        "quote": "What happens if the export has 100,000 rows?",
+        "why": "This is supposed to be a self-check, but I don't know the right answer or why it matters (timeout? memory? Vercel limits?). It made me feel I'd fail the check without telling me what I'm missing."
+      }
+    ],
+    "skimmed": [
+      "The standard: it's for teams with a second engineer and real users. I'm solo, so I skipped it.",
+      "Read an unfamiliar codebase from the outside in: useful, but it felt like a different topic from reviewing a PR. I skimmed steps 3–5.",
+      "The Google 100/1,000 lines stat: fine, but I'd remember 'small PRs' without it."
+    ],
+    "jargon": [
+      "ruleset",
+      "edge cases",
+      "server action (I sort of know it from Next.js, but not well enough to know which of mine count)",
+      "lockfiles and generated files",
+      "skill (as in review-change skill)",
+      "build-feature report format",
+      "dependency 'what it can reach'",
+      "the signal shows up"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The fixed version of the CSV route. I can see the bug, but I couldn't write the fix: where does the session come from, and what does the ownership check look like in Next.js + Supabase? Is RLS enough, or do I still need this in code? Also, how do I actually run the review-change skill from Codex or a fresh session?",
+    "cut": "The standard. It's explicitly for teams and later stages, it uses the most jargon (ruleset, Code Owners, vetting dependencies), and it's the section I skipped first. A one-line link to the security concern would do.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
