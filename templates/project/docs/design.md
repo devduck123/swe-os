@@ -14,11 +14,11 @@
 
 ## What it costs
 
-<The usage you're assuming, shown as math: users × actions per user per day × 30 = actions per month. Then the same at 10× and 100×, and one bad month (a bot, a retry loop).>
+<The usage you're assuming, shown as math: users × actions per user per day × 30 = actions per month. Then the same at 10 times that, and one bad month (a bot, a retry loop). Size it to the project: a few lines for a friends-only app.>
 
-| Part       | Free limit              | Where the bill jumps                      | 100 users   | 1,000 users | 10,000 users |
-| ---------- | ----------------------- | ----------------------------------------- | ----------- | ----------- | ------------ |
-| <Database> | <From its pricing page> | <The usage that moves you to a paid plan> | <$ a month> | <$ a month> | <$ a month>  |
+| Part       | Free limit              | Where the bill jumps                      | Expected    | 10×         | Bad month   |
+| ---------- | ----------------------- | ----------------------------------------- | ----------- | ----------- | ----------- |
+| <Database> | <From its pricing page> | <The usage that moves you to a paid plan> | <$ a month> | <$ a month> | <$ a month> |
 
 Prices checked <YYYY-MM-DD> from <links to the pricing pages>.
 

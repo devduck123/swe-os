@@ -14,7 +14,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 
 1. **Check the idea is shaped.** If there's no clear goal and first slice yet, run [shape-project](../shape-project/SKILL.md) first. Setup decisions follow from what's being built.
 2. **Pick the stack.** Start from Tommy's [defaults](../../profile/defaults.md) unless the project calls for something else, and say in one line why for each piece. Scaffold with the framework's official CLI. Don't hand-roll what the CLI generates.
-3. **Write the project context.** Create `AGENTS.md`, `PROJECT.md`, `CLAUDE.md`, and `docs/design.md` from the [templates](../../templates/project/AGENTS.md). Fill in the goal, the first slice, maturity, and exposure, and copy the design and costs the user agreed to while shaping. Pin the SWE OS version: the latest tag at https://github.com/devduck123/swe-os/releases.
+3. **Write the project context.** Create `AGENTS.md`, `PROJECT.md`, and `CLAUDE.md` from the [templates](../../templates/project/AGENTS.md), and fill in the goal, the first slice, maturity, and exposure. If shaping produced a design and costs, copy them into `docs/design.md`. Don't invent one here. Pin the SWE OS version: the latest tag at https://github.com/devduck123/swe-os/releases.
 4. **Protect secrets from the first commit.**
    - Make sure `.gitignore` covers `.env*` except `.env.example` before any secret exists.
    - Create `.env.example` listing every variable with no values, with server and client variables clearly separated.
