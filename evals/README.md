@@ -22,6 +22,8 @@ Six rounds in October 2026, on Claude Code with Opus 5.5, under a Max plan. Each
 - **It costs about 2x** tokens and time.
 - **It meets the bar** (below) in round 6. The older +0.5 average target was dropped: on tasks Opus already does well, there's little room to gain.
 
+**Branches, priced designs, and project docs** (October 18): with rule 14, every SWE OS run on a Git repo worked on a branch, and none without it did. Across [two](results/2026-10-18T013419/summary.md) [rounds](results/2026-10-18T020348/summary.md), shaping is +0.51 and setup +0.59 (4 reps each), the feature +0.29, and the two-line fix −0.10. Graders docked a 10,000-user cost table for eight friends, so the math is now sized to the project.
+
 Rounds 1–3 found and fixed four harness bugs (B could read reviewer notes, a leading "Go ahead", unparseable grades, hidden checks). Rounds 2–5 drove the guidance changes in CHANGELOG: build first and ask at the end, shorter reports, and only open concerns.
 
 ## Run a round
