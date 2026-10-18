@@ -40,6 +40,7 @@ If none fit, work normally and still follow the rules below. If a request spans 
 11. **Keep private work private:** no employer code, internal names, credentials, or customer data in public places.
 12. **Leave a lesson.** End implementation reports with **Worth learning**: one non-obvious decision, concept, or trap you avoided (two at most), linking a guide if one exists, or "nothing new". Never repeat what the reply already said. Put the report in the PR description if you open one. This is how Tommy keeps learning while agents type; see [learn](learn/SKILL.md).
 13. **Leave the OS better.** Only when SWE OS guidance actually caused a problem in this task (missing, wrong, too strict, or it pushed you to overbuild), end with one line, written for the user: what went wrong and which file should change. Most tasks have nothing to report, so leave it out. Outside this repo, don't edit a copy. Suggest the user file it with the [agent feedback form](https://github.com/devduck123/swe-os/issues/new?template=agent-feedback.yml).
+14. **Work on a branch.** In a Git repo, build or fix on a short-lived branch off `main`, commit as you go, and finish with a PR when there's a remote, unless the project says otherwise. Never push to `main` directly. That's Tommy's [light trunk-based](../profile/defaults.md#working-with-agents) habit.
 
 ## What's here
 
