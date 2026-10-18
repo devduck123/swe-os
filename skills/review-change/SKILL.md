@@ -19,6 +19,7 @@ Find the problems that matter, and prove them. Follow the [rules for every task]
 5. **Prove each finding.** Name the trigger (what input or situation), the consequence (what breaks, for whom), and the evidence (a failing test, a reproduction, or a clear path through the code). If it depends on an assumption you couldn't check, say so. Describe the [mechanism](../../profile/writing.md#name-the-mechanism), not a slogan.
 6. **Check for too much, too.** Flag machinery the change doesn't need: an abstraction with one use, a dependency for ten lines of code, config for a value that never changes.
 7. **Look at it running when UI changed.** If you can't, say so in the report.
+8. **If the user asked you to fix things too, fix every blocking finding** before you report. When a fix needs a product decision (who can sign up, what gets logged), pick the safer default, apply it, and say so. Report what you fixed, then what's left.
 
 ## Severity
 

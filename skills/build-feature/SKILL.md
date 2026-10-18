@@ -19,9 +19,11 @@ Deliver the smallest complete version of the feature, with proof that it works. 
 5. **Cover the states.** Handle the ones your concerns call for: empty, loading, error, no permission, double submit, slow network.
 6. **Verify it.** Run checks that prove the outcome from step 2, including at least one important failure path. For UI, open the rendered page at phone and desktop widths and use it with only a keyboard. Read the actual output. Don't infer it.
 7. **Cut it down.** Reread your diff once. Delete anything speculative: unused options, a layer with one caller, config nobody asked for, comments that repeat the code.
-8. **Update the plan.** Add each deferred gap to the project's `PROJECT.md` with its risk and what would make you revisit it. If there's no `PROJECT.md`, list the gaps in your report instead. If this work finishes, changes, or creates a planned item, update `PROJECT.md` in the same change.
+8. **Update the plan.** Add each deferred gap to the project's `PROJECT.md` with its risk and what would make you revisit it. If there's no `PROJECT.md`, list the gaps in your report instead. If this work finishes, changes, or creates a planned item, update `PROJECT.md` in the same change. Leave PROJECT.md complete enough that a fresh session could start the next feature from it alone.
 
 ## Stop rules
+
+- If you'd design it differently from what the user asked, say so in one line and build what they asked. Don't stop to re-ask a question they've already answered. If an answer doesn't settle it, go with the option you recommended and say so.
 
 - Three failed attempts at the same problem: stop, write down what you learned, and ask.
 - The change needs something the request doesn't already imply, like a paid service, a running cost, or a schema change to existing data: build everything that doesn't depend on it, state your assumption, and ask at the end. A server route for a feature the user asked for, or a well-known substitute for a package that doesn't exist, is implied.

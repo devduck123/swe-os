@@ -1,0 +1,207 @@
+#!/usr/bin/env node
+// A stand-in for the `claude` CLI, so tests can run the project eval end to end for free.
+// It prints stream-json like `claude -p --output-format stream-json`, builds a tiny app on the
+// setup turn, plays the simulated user, and answers reviews with JSON. Every call is logged to
+// $FAKE_CLAUDE_LOG with its session, so tests can tell a new session from a resumed one.
+//
+//   FAKE_CLAUDE_FAIL=limit        every call hits a usage limit
+//   FAKE_CLAUDE_ASK=always        every agent reply ends with a design question
+//   FAKE_CLAUDE_ASK=keep-going    every agent reply ends with "Want me to keep going?"
+//   FAKE_CLAUDE_REVIEW=partial    the first review gives a reason for one dimension only
+import { execFileSync } from 'node:child_process';
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
+import { join } from 'node:path';
+
+const args = process.argv.slice(2);
+const prompt = args[args.indexOf('--') + 1] ?? '';
+const resume = args.includes('--resume')
+  ? args[args.indexOf('--resume') + 1]
+  : null;
+const session = resume ?? `session-${process.pid}`;
+const cwd = process.cwd();
+const say = (event) => console.log(JSON.stringify(event));
+const log = (entry) =>
+  process.env.FAKE_CLAUDE_LOG &&
+  appendFileSync(
+    process.env.FAKE_CLAUDE_LOG,
+    JSON.stringify({ args, cwd, session, resumed: !!resume, ...entry }) + '\n',
+  );
+
+say({
+  type: 'system',
+  subtype: 'init',
+  session_id: session,
+  model: 'fake-model',
+  slash_commands: [],
+});
+
+if (process.env.FAKE_CLAUDE_FAIL === 'limit') {
+  log({ role: 'agent' });
+  say({
+    type: 'result',
+    is_error: true,
+    result: 'Claude usage limit reached.',
+    session_id: session,
+    total_cost_usd: 0,
+  });
+  process.exit(1);
+}
+
+const result = (text, cost) =>
+  say({
+    type: 'result',
+    result: text,
+    session_id: session,
+    total_cost_usd: cost,
+    duration_ms: 1000,
+    num_turns: 1,
+  });
+
+// The simulated user: answers a design question, declines a "keep going?".
+if (prompt.startsWith("You're playing the owner")) {
+  log({ role: 'user', prompt });
+  const reply = prompt.match(/<reply>\n([\s\S]*)\n<\/reply>/)?.[1] ?? '';
+  const question = reply.match(/^.*\?\s*$/gm)?.at(-1) ?? '';
+  result(
+    /keep going/.test(question)
+      ? 'NO_REPLY'
+      : `Fake owner: one person organizes, and I'll take your pick on "${question.trim()}"`,
+    0.05,
+  );
+  process.exit(0);
+}
+
+const partial =
+  process.env.FAKE_CLAUDE_REVIEW === 'partial' &&
+  prompt.startsWith('You are reviewing');
+if (prompt.startsWith('Your JSON is missing')) {
+  log({ role: 'reviewer-followup', prompt });
+} else if (prompt.startsWith('You are reviewing')) {
+  const readme = existsSync('README.md')
+    ? readFileSync('README.md', 'utf8')
+    : '';
+  log({
+    role: 'reviewer',
+    readmeSaysSweos: /SWE ?OS/i.test(readme),
+    installed: existsSync('node_modules'),
+    promptSaysSweos: /SWE ?OS/i.test(prompt),
+  });
+}
+if (/^(You are reviewing|Your JSON is missing)/.test(prompt)) {
+  const scores = {
+    works: 2,
+    authorization: 1,
+    data_correctness: 2,
+    secrets_setup: 3,
+    tests: 1,
+    simplicity: 3,
+    communication: 2,
+    learning_value: 1,
+  };
+  const reasons = Object.fromEntries(
+    Object.keys(scores)
+      .slice(0, partial ? 1 : undefined)
+      .map((k) => [k, `Fake reason for ${k}.`]),
+  );
+  const review = {
+    scores,
+    reasons,
+    problems: [
+      {
+        where: 'app/meetings/actions.ts:12',
+        problem: 'Any member can create a meeting.',
+        serious: true,
+      },
+      {
+        where: 'README.md:3',
+        problem: 'Setup skips the database step.',
+        serious: false,
+      },
+    ],
+  };
+  say({
+    type: 'result',
+    result: 'Here it is:\n```json\n' + JSON.stringify(review) + '\n```',
+    session_id: session,
+    total_cost_usd: 0.1,
+    duration_ms: 1000,
+    num_turns: 4,
+  });
+  process.exit(0);
+}
+
+log({ role: 'agent', prompt });
+const sweos = prompt.match(/SWE OS at (\S+) for this task/)?.[1];
+let reply = 'Done. `npm test` passes.';
+if (prompt.includes('Set up the project')) {
+  writeFileSync(
+    'package.json',
+    JSON.stringify(
+      {
+        name: 'book-club',
+        private: true,
+        scripts: {
+          test: 'node -e "console.log(\'tests pass\')"',
+          build: 'node -e "console.log(\'built\')"',
+        },
+      },
+      null,
+      2,
+    ),
+  );
+  writeFileSync(
+    'README.md',
+    `# Book club\n\nSet up with Tommy's SWE OS.\n\nRun \`npm test\`.\n`,
+  );
+  writeFileSync('.env.example', 'SESSION_SECRET=\n');
+  writeFileSync('.env', 'SESSION_SECRET=local-only\n');
+  writeFileSync('.gitignore', '.env\nnode_modules\n.next\n');
+  mkdirSync('node_modules/left-pad', { recursive: true });
+  writeFileSync('node_modules/left-pad/index.js', '');
+  mkdirSync('.next', { recursive: true });
+  const git = (...a) => execFileSync('git', a, { stdio: 'ignore' });
+  git('init', '-q', '-b', 'main');
+  git('add', '-A');
+  git(
+    '-c',
+    'user.name=dev',
+    '-c',
+    'user.email=dev@example.com',
+    'commit',
+    '-qm',
+    'Set up',
+  );
+}
+if (prompt.includes('I want to build'))
+  reply =
+    'A first version: meetings, RSVPs, and the vote.\n\nWho organizes the club?';
+if (process.env.FAKE_CLAUDE_ASK === 'always')
+  reply += '\n\nOne vote each or several?';
+if (process.env.FAKE_CLAUDE_ASK === 'keep-going')
+  reply += '\n\nWant me to keep going?';
+if (sweos)
+  reply += `\n\n**Worth learning.** A unique constraint stops double votes.\n\nI followed SWE OS at ${sweos}.`;
+const content = [
+  { type: 'tool_use', name: 'Bash', input: { command: 'npm test' } },
+];
+if (sweos)
+  content.push({
+    type: 'tool_use',
+    name: 'Read',
+    input: { file_path: join(sweos, 'skills/README.md') },
+  });
+say({ type: 'assistant', message: { content } });
+say({
+  type: 'result',
+  result: reply,
+  session_id: session,
+  total_cost_usd: 0.25,
+  duration_ms: 2000,
+  num_turns: 3,
+});

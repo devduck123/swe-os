@@ -9,7 +9,7 @@
 //   node evals/harness/run.mjs --grade <results dir> grade what's ungraded in a past round, re-summarize
 //   node evals/harness/run.mjs --round <results dir> --only receipt-gallery
 //                                                   rerun scenarios into a past round, at its SWE OS commit
-import { spawn, execFileSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import {
   cpSync,
   existsSync,
@@ -27,8 +27,20 @@ import { parseArgs } from 'node:util';
 import { scenarios } from './scenarios.mjs';
 import { hideSweos, neutralize } from './neutralize.mjs';
 import { combineGrades, parseGrade } from './parse-grade.mjs';
+import {
+  ALLOWED,
+  DENIED,
+  ISOLATION,
+  asksQuestion,
+  claude,
+  pointer,
+  refuseNested,
+  repo,
+  section,
+  snapshotSweos,
+  stopReasonFor,
+} from './common.mjs';
 
-const repo = resolve(import.meta.dirname, '../..');
 const { values: opts } = parseArgs({
   options: {
     only: { type: 'string' },
@@ -48,117 +60,8 @@ let spent = 0;
 // Set when a run fails in a way every later run would too, so the round stops early.
 let stopReason = null;
 
-// Tools both arms get. Pushing, GitHub, deploys, and Docker are off so a run can't touch
-// anything outside its temp folder. Both arms lose them equally.
-const ALLOWED = [
-  'Read',
-  'Glob',
-  'Grep',
-  'Edit',
-  'Write',
-  'WebFetch',
-  'WebSearch',
-  'Bash(npm:*)',
-  'Bash(npx:*)',
-  'Bash(node:*)',
-  'Bash(git:*)',
-  'Bash(ls:*)',
-  'Bash(cat:*)',
-  'Bash(curl:*)',
-  'Bash(mkdir:*)',
-  'Bash(grep:*)',
-  'Bash(find:*)',
-];
-const DENIED = [
-  'Bash(git push:*)',
-  'Bash(git remote:*)',
-  'Bash(gh:*)',
-  'Bash(vercel:*)',
-  'Bash(docker:*)',
-  'Bash(supabase:*)',
-  'Bash(eas:*)',
-];
-
-const section = (markdown, heading) => {
-  const start = markdown.indexOf(`## ${heading}`);
-  if (start === -1) return '';
-  const rest = markdown.slice(start + heading.length + 3);
-  const end = rest.search(/^## /m);
-  return (end === -1 ? rest : rest.slice(0, end)).trim();
-};
 const scenarioText = (s) =>
   readFileSync(join(repo, 'evals/scenarios', `${s.file ?? s.id}.md`), 'utf8');
-
-function claude(args, cwd, transcript) {
-  return new Promise((done) => {
-    const child = spawn('claude', args, { cwd, env: process.env });
-    let out = '';
-    child.stdout.on('data', (chunk) => (out += chunk));
-    child.stderr.on('data', (chunk) => (out += chunk));
-    const timer = setTimeout(() => child.kill('SIGTERM'), 20 * 60_000);
-    child.on('close', (code) => {
-      clearTimeout(timer);
-      writeFileSync(transcript, out);
-      const events = out
-        .split('\n')
-        .filter((line) => line.startsWith('{'))
-        .map((line) => {
-          try {
-            return JSON.parse(line);
-          } catch {
-            return null;
-          }
-        })
-        .filter(Boolean);
-      const result = events.findLast((e) => e.type === 'result') ?? {};
-      const init = events.find(
-        (e) => e.type === 'system' && e.subtype === 'init',
-      );
-      const commands = events
-        .filter((e) => e.type === 'assistant')
-        .flatMap((e) => e.message.content)
-        .filter((c) => c.type === 'tool_use')
-        .map((c) =>
-          `${c.name} ${c.input.command ?? c.input.file_path ?? c.input.url ?? c.input.pattern ?? ''}`.trim(),
-        );
-      done({
-        code,
-        sessionId: result.session_id ?? init?.session_id,
-        reply: result.result ?? '',
-        error: result.is_error
-          ? result.result
-          : code !== 0
-            ? out.slice(-500)
-            : null,
-        cost: result.total_cost_usd ?? 0,
-        ms: result.duration_ms ?? 0,
-        turns: result.num_turns ?? 0,
-        model: init?.model,
-        skills: init?.slash_commands ?? [],
-        commands,
-      });
-    });
-  });
-}
-
-// A copy of SWE OS at the current commit, so B reads exactly what's committed.
-// Only the folders agents are meant to read. Never evals/: a B run once found its own
-// scenario's reviewer notes by searching the snapshot.
-const AGENT_FOLDERS = ['core', 'profile', 'skills', 'templates'];
-
-function snapshotSweos(dir, ref = 'HEAD') {
-  mkdirSync(dir, { recursive: true });
-  // Through a file, not a buffer: the archive is bigger than execFileSync's 1 MB default.
-  const archive = join(dir, '..', 'swe-os.tar');
-  execFileSync('git', ['archive', '--output', archive, ref, ...AGENT_FOLDERS], {
-    cwd: repo,
-  });
-  execFileSync('tar', ['-xf', archive, '-C', dir]);
-  return execFileSync('git', ['rev-parse', '--short', ref], {
-    cwd: repo,
-    encoding: 'utf8',
-  }).trim();
-}
 
 function setUp(s, dir) {
   const work = join(dir, 'work');
@@ -199,10 +102,7 @@ async function runOne(s, arm, rep, root, sweos) {
     '--output-format',
     'stream-json',
     '--verbose',
-    '--setting-sources',
-    'project,local',
-    '--disable-slash-commands',
-    '--strict-mcp-config',
+    ...ISOLATION,
     '--permission-mode',
     'acceptEdits',
     '--max-budget-usd',
@@ -213,11 +113,10 @@ async function runOne(s, arm, rep, root, sweos) {
     ...DENIED,
     ...(arm === 'B' ? ['--add-dir', sweos] : []),
   ];
-  const pointer = `Use Tommy's SWE OS at ${sweos} for this task. Start at skills/README.md and follow the skill that fits.\n\n`;
   const turns = [];
   let session;
   const send = async (text, i) => {
-    const prompt = i === 0 && arm === 'B' ? pointer + text : text;
+    const prompt = i === 0 && arm === 'B' ? pointer(sweos) + text : text;
     const args = [
       ...base,
       ...(session ? ['--resume', session] : []),
@@ -234,7 +133,7 @@ async function runOne(s, arm, rep, root, sweos) {
     const r = await send(text, i);
     if (r.error) break;
     // Answer a clarifying question once, with the scenario's facts, the same way for both arms.
-    if (i === 0 && s.ifAsked && /\?\s*$/m.test(r.reply.slice(-800)))
+    if (i === 0 && s.ifAsked && asksQuestion(r.reply))
       await send(`Answers to your questions: ${s.ifAsked}`, turns.length);
   }
   let diff = '';
@@ -276,10 +175,7 @@ async function runOne(s, arm, rep, root, sweos) {
     })),
   };
   writeFileSync(join(dir, 'meta.json'), JSON.stringify(meta, null, 2));
-  if (/authenticat|OAuth|logged out|login/i.test(meta.error ?? ''))
-    stopReason = 'A run failed to log in. Run `claude auth login`';
-  else if (/rate.?limit|usage limit|429|overloaded/i.test(meta.error ?? ''))
-    stopReason = 'A run hit a usage or rate limit. Wait for it to reset';
+  stopReason = stopReasonFor(meta.error) ?? stopReason;
   console.log(
     `${s.id} ${arm}${rep}: $${meta.cost.toFixed(2)}, ${meta.seconds}s${meta.error ? `, ERROR ${meta.error.slice(0, 120)}` : ''}  (spent $${spent.toFixed(2)})`,
   );
@@ -340,10 +236,7 @@ Reply with only this JSON:
         '--verbose',
         '--tools',
         '',
-        '--setting-sources',
-        'project,local',
-        '--disable-slash-commands',
-        '--strict-mcp-config',
+        ...ISOLATION,
         '--',
         prompt,
       ],
@@ -459,13 +352,6 @@ function summarize(root) {
 }
 
 // ---- main
-const refuseNested = () => {
-  if (process.env.CLAUDECODE)
-    throw new Error(
-      'Run this from a normal terminal. Claude Code refuses to start inside another Claude Code session.',
-    );
-};
-
 // Regrade: grade every run in a past round that has no grade yet, or whose grade failed.
 if (opts.grade) {
   refuseNested();

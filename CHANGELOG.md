@@ -4,6 +4,9 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **The project eval.** `node evals/project/run.mjs` builds a book club app over one seven-turn session, with and without SWE OS, then runs `npm install`, `npm test`, and `npm run build` on each final repo and reviews both blind. It's tested end to end with a stand-in `claude`. The scenario harness now shares its Claude helpers through `evals/harness/common.mjs`.
+- **A simulated user in the project eval.** When the agent ends a message with a question, a separate Claude playing the owner answers it from the facts, at most twice per turn, and never says "go ahead". `--fixed-answers` keeps the old fixed reply. The defaults are now a $120 budget and $12 per message, enough for all seven turns, and a review missing reasons gets one follow-up.
+
 ## v0.3.0 (2026-10-17)
 
 - **The track, tuned with a learner test.** Agents read every stop as the target reader. 91% now take away the intended lesson (from 68%), and clarity is 3.9/5 (from 3.7).

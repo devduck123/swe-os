@@ -18,13 +18,13 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 4. **Protect secrets from the first commit.**
    - Make sure `.gitignore` covers `.env*` except `.env.example` before any secret exists.
    - Create `.env.example` listing every variable with no values, with server and client variables clearly separated.
-   - Add a secret scan as a pre-commit hook and in CI. On a private repo, that's the real guard. GitHub's push protection is on by default only for your pushes to public repos, and turning it on for a private repo needs paid GitHub Secret Protection.
+   - Add a secret scan in CI. A local pre-commit hook is optional: offer it, don't require it, and never make the README depend on it. On a private repo, that's the real guard. GitHub's push protection is on by default only for your pushes to public repos, and turning it on for a private repo needs paid GitHub Secret Protection.
    - Never write a real key into a file, a commit, or the chat. Read [secrets and safety](../../core/guides/secrets-and-agent-safety.md).
 5. **Make it reproducible.** Pin the runtime (`.nvmrc` or equivalent) and commit the lockfile. Write the run steps into the README.
 6. **Add the quality gates.** Formatter, linter, typecheck, and a test runner with one smoke test, all behind a single `check` script.
 7. **Add CI.** Run `check` on every PR. Recommend connecting the repo to Vercel for preview deploys.
 8. **Keep it local first.** `npm run dev`, or the equivalent, works with seed data and no paid service. Add external services later, one at a time, as features need them. See [local first, then managed services](../../core/guides/local-first-then-managed.md).
-9. **Verify from scratch.** Clone into a fresh directory, follow only the README, and confirm `check` passes. Then try committing a fake secret and confirm the scan blocks it.
+9. **Verify from scratch.** Clone into a temporary directory outside the project (`mktemp -d`), follow only the README, and confirm `check` passes. Delete the clone afterwards. Then try committing a fake secret and confirm the scan blocks it.
 
 ## Stop rules
 
@@ -37,7 +37,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 ```
 **Set up.** The stack, with one line on why for each piece.
 
-**Evidence.** The fresh-clone run and its `check` output. The secret scan blocking a fake key.
+**Evidence.** The fresh-clone run and its `check` output. The CI secret scan catching a fake key.
 
 **For Tommy to do.** Accounts to create, env vars to fill, and settings to turn on (push protection for a public repo, the Vercel link), with links.
 

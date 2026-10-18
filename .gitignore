@@ -8,3 +8,4 @@ test-results/
 !.env.example
 # Eval transcripts and work folders stay local. Each round's summary.md is committed.
 evals/results/*/runs/
+evals/project/results/*/runs/

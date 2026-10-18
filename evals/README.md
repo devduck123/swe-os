@@ -2,7 +2,7 @@
 
 Does SWE OS make an agent's work better? Each scenario runs twice: once without SWE OS (A), once with it (B).
 
-There's a second test for the writing itself: the [learner test](learner/README.md) checks whether each track stop teaches its reader what it means to.
+There's a second test for the writing itself: the [learner test](learner/README.md) checks whether each track stop teaches its reader what it means to. And the [project eval](project/README.md) builds a whole app over one long session, with and without SWE OS, then installs, tests, and reviews both repos blind.
 
 ## Results so far
 
