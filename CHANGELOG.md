@@ -4,6 +4,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Talk to Tommy, not about him.** Graders caught replies saying "Tommy's default" to Tommy. Voice now says "your defaults".
 - **A branch and a PR for every change.** New rule 14. start-project commits the setup as the first PR and lists a ruleset on `main` for Tommy to turn on.
 - **System design with real costs.** shape-project now prices each part at the expected audience, 10 times it, and a bad month, with the math shown and dated sources, and the user agrees to the design before setup. It lands in a new `docs/design.md` template.
 - **Docs that stay current.** The project template says where docs live (PROJECT.md, `docs/design.md`, `docs/decisions/`) and to update AGENTS.md when work adds a command or convention. It can name an area Tommy is learning, and build-feature leaves a `TODO(human)` there.
