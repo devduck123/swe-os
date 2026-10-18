@@ -2,12 +2,13 @@
 
 ## Now
 
-**v0.3.0 released on 2026-10-17.** The site is live at https://tommy-swe-os.vercel.app, and the repo is public under MIT (code and templates) and CC BY 4.0 (writing). Maturity: prototype.
+**v0.4.0 released on 2026-10-17.** The site is live at https://tommy-swe-os.vercel.app, and the repo is public under MIT (code and templates) and CC BY 4.0 (writing). Maturity: prototype.
 
 What's in it:
 
 - The 22-stop track, tuned against a learner test: 91% of in-character readers take away the intended lesson. It goes past solo side projects into professional engineering. Tommy will revisit the level after a real-use baseline.
 - Seven skills and 17 concerns, used from the site, a local clone, or the Claude Code plugin. Projects pin a version.
+- A project template that keeps the tracker, the design and its costs, brand art, and big decisions in the repo, and Tommy's design taste for every UI.
 - Evals that meet the bar: SWE OS ties or wins every scenario, with no serious flaws of its own, and is much stronger at verifying its work. It costs about 2× the tokens. See [evals](evals/README.md#results-so-far).
 - Guards on the public repo: secret scanning on every commit and PR, GitHub push protection, and a protected `main`.
 
