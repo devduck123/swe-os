@@ -20,8 +20,8 @@ Turn an idea into a small, testable first version, and only then pick tools. Fol
 2. **Challenge the idea.** Weigh it against what [Tommy](../../profile/tommy.md#what-i-care-about) cares about. Name the weakest assumption plainly. Propose the cheapest way to test it before building: a spreadsheet, a fake door, five conversations, a manual version. It's fine to conclude that the idea needs no software, or that the AI part isn't the valuable part.
 3. **Design the smallest valuable journey.** How the user arrives, the one core action, and how they know it worked. Include the empty state and the main error state. Assume a phone and a keyboard user. List the tempting extras you're leaving out.
 4. **Derive the requirements from that journey.** Decide what data it stores, who it trusts, what it integrates with, its cost ceiling, and how much upkeep it can afford. If the product leans on a model, read [AI features](../../core/concerns/ai-features.md) now: whether a model is even the right tool, how you'll judge output quality, and the cost per use all shape the first version. Use the [concerns table](../../core/concerns/README.md#pick-the-concerns) to catch what's missing, like auth, personal data, or payments.
-5. **Now pick the stack.** Start from [Defaults](../../profile/defaults.md) and anything the user already has. For each component, say why it's there. Say what you left out and what would make you add it. Check current pricing and limits from primary sources. Never invent free-tier numbers.
-6. **Name the next step.** Usually it's the experiment from step 2 or the first build slice. If the user decides to build, set the repo up with [start-project](../start-project/SKILL.md) and record the decisions in its `PROJECT.md`.
+5. **Now pick the stack, and price it.** Start from [Defaults](../../profile/defaults.md) and anything the user already has. Prefer the fewest, simplest parts that carry the first version. For each part, say why it's there, what you left out, and what would make you add it. Then do the napkin math: users × actions per user per day × 30, at 100, 1,000, and 10,000 users, plus one bad month (a bot, a retry loop). Price each part at each scale from its current pricing page, with the date, and name where its bill jumps. Never invent free-tier numbers. [Performance and cost](../../core/guides/performance-and-cost.md) shows the method.
+6. **Name the next step.** Usually it's the experiment from step 2 or the first build slice. The user agrees to the design before setup. If they decide to build, set the repo up with [start-project](../start-project/SKILL.md): the design and costs go in its `docs/design.md`, and the decisions in its `PROJECT.md`.
 
 ## Stop rules
 
@@ -31,7 +31,7 @@ Turn an idea into a small, testable first version, and only then pick tools. Fol
 
 ## Report
 
-Keep it to about a page. Use these headings, and drop any that don't apply:
+Keep it to about a page, plus the cost table. Use these headings, and drop any that don't apply:
 
 ```
 ## The problem
@@ -48,8 +48,8 @@ The journey, step by step. What's out of scope.
 ## Requirements
 Only the ones that change the build.
 
-## Stack
-Each component and why. What's left out, and what would make you add it.
+## Design and cost
+The parts and how a request flows through them. Each part and why, what's left out, and what would add it. The cost table: each part at 100, 1,000, and 10,000 users, with the math and dated sources.
 
 ## Next step
 ```

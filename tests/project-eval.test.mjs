@@ -23,6 +23,10 @@ import {
   userPrompt,
 } from '../evals/project/project.mjs';
 
+// End-to-end tests use tests/fake-claude/claude, a shell script Windows can't run.
+// The evals run only on macOS and Linux.
+const e2e = process.platform === 'win32' ? test.skip : test;
+
 const projectFile = readFileSync('evals/project/book-club.md', 'utf8');
 const project = loadProject(projectFile);
 // What arm A sends on scripted turn i (from 0) with fresh sessions, the default.
@@ -277,7 +281,7 @@ function runEval(args, env = {}) {
 const isB = (call) => call.args.includes('--add-dir');
 const prompt = (call) => call.args[call.args.indexOf('--') + 1];
 
-test('a full run: both arms, every turn, checks, blind reviews, summary', () => {
+e2e('a full run: both arms, every turn, checks, blind reviews, summary', () => {
   const run = runEval([]);
   assert.equal(run.status, 0, run.stderr);
   const agents = run.calls.filter((c) => c.role === 'agent');
@@ -400,7 +404,7 @@ test('a full run: both arms, every turn, checks, blind reviews, summary', () => 
   rmSync(run.dir, { recursive: true });
 });
 
-test('--sessions one keeps every turn in one long session', () => {
+e2e('--sessions one keeps every turn in one long session', () => {
   const run = runEval(['--sessions', 'one']);
   assert.equal(run.status, 0, run.stderr);
   for (const b of [false, true]) {
@@ -424,7 +428,7 @@ test('--sessions one keeps every turn in one long session', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('--sessions takes only fresh or one', () => {
+e2e('--sessions takes only fresh or one', () => {
   const run = runEval(['--sessions', 'many']);
   assert.notEqual(run.status, 0);
   assert.match(run.stderr, /--sessions is fresh or one/);
@@ -432,7 +436,7 @@ test('--sessions takes only fresh or one', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('the simulated user answers at most twice per turn', () => {
+e2e('the simulated user answers at most twice per turn', () => {
   const run = runEval([], { FAKE_CLAUDE_ASK: 'always' });
   assert.equal(run.status, 0, run.stderr);
   const sent = run.calls
@@ -449,7 +453,7 @@ test('the simulated user answers at most twice per turn', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('the simulated user never answers "keep going?"', () => {
+e2e('the simulated user never answers "keep going?"', () => {
   const run = runEval([], { FAKE_CLAUDE_ASK: 'keep-going' });
   assert.equal(run.status, 0, run.stderr);
   const sent = run.calls
@@ -464,7 +468,7 @@ test('the simulated user never answers "keep going?"', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('--fixed-answers sends the facts once per turn, never a nudge', () => {
+e2e('--fixed-answers sends the facts once per turn, never a nudge', () => {
   const run = runEval(['--fixed-answers'], { FAKE_CLAUDE_ASK: 'always' });
   assert.equal(run.status, 0, run.stderr);
   const sent = run.calls
@@ -482,7 +486,7 @@ test('--fixed-answers sends the facts once per turn, never a nudge', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('a review missing reasons gets one request to finish it', () => {
+e2e('a review missing reasons gets one request to finish it', () => {
   const run = runEval([], { FAKE_CLAUDE_REVIEW: 'partial' });
   assert.equal(run.status, 0, run.stderr);
   const followups = run.calls.filter((c) => c.role === 'reviewer-followup');
@@ -502,7 +506,7 @@ test('a review missing reasons gets one request to finish it', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('a usage limit stops the run before grading', () => {
+e2e('a usage limit stops the run before grading', () => {
   const run = runEval([], { FAKE_CLAUDE_FAIL: 'limit' });
   assert.notEqual(run.status, 0);
   assert.match(run.stderr, /usage or rate limit/);
@@ -512,7 +516,7 @@ test('a usage limit stops the run before grading', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('the budget stops both arms at the same turn', () => {
+e2e('the budget stops both arms at the same turn', () => {
   // $1.10 a turn for both arms (two agent messages and one simulated answer each) plus $6
   // held for reviews doesn't fit a second turn in $7.
   const run = runEval(['--budget', '7']);
@@ -528,7 +532,7 @@ test('the budget stops both arms at the same turn', () => {
   rmSync(run.dir, { recursive: true });
 });
 
-test('--dry-run prints every turn and spends nothing', () => {
+e2e('--dry-run prints every turn and spends nothing', () => {
   const run = runEval(['--dry-run']);
   assert.equal(run.status, 0, run.stderr);
   assert.equal(run.calls.length, 0);

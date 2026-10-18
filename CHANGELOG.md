@@ -4,6 +4,9 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **A branch and a PR for every change.** New rule 14. start-project commits the setup as the first PR and lists a ruleset on `main` for Tommy to turn on.
+- **System design with real costs.** shape-project now prices each part at 100, 1,000, and 10,000 users with the math shown and dated sources, and the user agrees to the design before setup. It lands in a new `docs/design.md` template.
+- **Docs that stay current.** The project template says where docs live (PROJECT.md, `docs/design.md`, `docs/decisions/`) and to update AGENTS.md when work adds a command or convention. It can name an area Tommy is learning, and build-feature leaves a `TODO(human)` there.
 - **My habits, apart from the standard.** Every track stop now ends with "How I do it" (what I do on my own side projects, labeled as mine), "The standard" (what teams add beyond that, each with the signal that it's time), and "Before you ship, check" (the floor, every time). "What I'd do" is gone. The sections are agent-drafted for now, and I'll rewrite them in my own words.
 - **A sidebar split the same way.** Learn (the track, stages collapsed), How I build (my defaults and the recipes), Standards (the principles and one page per risk), Skills, and About me. The landing page's Concerns card is now Standards, and the How I build card links my defaults.
 - **Guidance fills gaps, not defaults.** skills/README.md and AGENTS.md now say SWE OS covers only what agents skip by default, plus my preferences. Where an agent's own defaults already do the job, it keeps them. "The standard" applies only when PROJECT.md says the project's maturity or exposure calls for it, and a rule stays only while evals show it helps.
