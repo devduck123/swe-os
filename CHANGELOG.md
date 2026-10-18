@@ -4,7 +4,9 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **The skills keep their steps.** An ablation rewrote debug, review-change, and explain as outcomes only. All three scored lower than the current versions run the same day, so nothing was cut.
 - **Talk to Tommy, not about him.** Graders caught replies saying "Tommy's default" to Tommy. Voice now says "your defaults".
+- **A learn eval, and a fix it found.** A new scenario walks through a PR and quizzes a simulated user who gets two things wrong. The first round tied, and one SWE OS run never corrected the user because it was busy writing LEARNING.md. The walkthrough is now one outcome, corrections first, and SWE OS scores 2.92 vs 2.53. LEARNING.md is gitignored in public repos unless you say otherwise.
 - **A branch and a PR for every change.** New rule 14. start-project commits the setup as the first PR and lists a ruleset on `main` for Tommy to turn on.
 - **System design with real costs.** shape-project now prices each part at the expected audience, 10 times it, and a bad month, with the math shown and dated sources, and the user agrees to the design before setup. It lands in a new `docs/design.md` template.
 - **Docs that stay current.** The project template says where docs live (PROJECT.md, `docs/design.md`, `docs/decisions/`) and to update AGENTS.md when work adds a command or convention. It can name an area Tommy is learning, and build-feature leaves a `TODO(human)` there.

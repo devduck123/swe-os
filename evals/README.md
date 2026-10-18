@@ -24,6 +24,10 @@ Six rounds in October 2026, on Claude Code with Opus 5.5, under a Max plan. Each
 
 **Branches, priced designs, and project docs** (October 18): with rule 14, every SWE OS run on a Git repo worked on a branch, and none without it did. Across [two](results/2026-10-18T013419/summary.md) [rounds](results/2026-10-18T020348/summary.md), shaping is +0.51 and setup +0.59 (4 reps each), the feature +0.29, and the two-line fix −0.10. Graders docked a 10,000-user cost table for eight friends, so the math is now sized to the project.
 
+**The learn walkthrough** (October 18, 3 reps each): the first round tied, B 2.64 vs A 2.61. Opus already walks a PR and corrects wrong answers well alone, and one B run skipped the corrections to write LEARNING.md. After the [learn](../skills/learn/SKILL.md) walkthrough became one outcome, corrections first, B scored 2.92 vs 2.53. See [the first](results/2026-10-18T014247/summary.md) and [second](results/2026-10-18T014837/summary.md) rounds.
+
+**Trimming procedure from skills** (October 18, 3 reps): debug, review-change, and explain rewritten as outcomes only scored below the current versions run the same day: debug 2.22 vs 2.47, explain 2.22 vs 2.33, review 2.69 vs 2.75. Trimmed debug runs all missed the reminders that were never sent. The steps stay. See the [control](results/2026-10-18T022052/summary.md) and the [trimmed version](results/2026-10-18T020358/summary.md), which ran from an unmerged commit.
+
 Rounds 1–3 found and fixed four harness bugs (B could read reviewer notes, a leading "Go ahead", unparseable grades, hidden checks). Rounds 2–5 drove the guidance changes in CHANGELOG: build first and ask at the end, shorter reports, and only open concerns.
 
 ## Run a round
@@ -67,6 +71,7 @@ The traps in these scenarios aren't written anywhere in SWE OS, so B can't win b
 | [Password reset review](scenarios/password-reset.md)              | review-change |
 | [Connection pooling](scenarios/connection-pooling.md)             | explain       |
 | [Pushback, two variants](scenarios/pushback.md)                   | voice         |
+| [Walk me through a PR](scenarios/learn-walkthrough.md)            | learn         |
 
 ## Rubric
 

@@ -68,14 +68,7 @@ function setUp(s, dir) {
   mkdirSync(work, { recursive: true });
   if (s.fixture)
     cpSync(join(repo, 'evals/fixtures', s.fixture), work, { recursive: true });
-  // Dotfiles are stored as name.fixture so they don't affect this repo: env.fixture -> .env.
-  for (const file of readdirSync(work, { recursive: true }))
-    if (String(file).endsWith('.fixture'))
-      renameSync(
-        join(work, file),
-        join(work, String(file).replace(/([^/]+)\.fixture$/, '.$1')),
-      );
-  cpSync(work, join(dir, 'before'), { recursive: true });
+  restoreDotfiles(work);
   if (s.git) {
     const git = (...args) =>
       execFileSync('git', args, { cwd: work, stdio: 'ignore' });
@@ -90,8 +83,40 @@ function setUp(s, dir) {
       '-qm',
       'Initial commit',
     );
+    if (s.pr) {
+      git('checkout', '-q', '-b', s.pr.branch);
+      cpSync(join(repo, 'evals/fixtures', s.pr.fixture), work, {
+        recursive: true,
+      });
+      restoreDotfiles(work);
+      git('add', '-A');
+      git(
+        '-c',
+        'user.name=dev',
+        '-c',
+        'user.email=dev@example.com',
+        'commit',
+        '-qm',
+        s.pr.message,
+      );
+    }
   }
+  // The diff the grader sees starts here, so a PR waiting for review isn't counted as the agent's work.
+  cpSync(work, join(dir, 'before'), {
+    recursive: true,
+    filter: (src) => !src.split(/[\\/]/).includes('.git'),
+  });
   return work;
+}
+
+// Dotfiles are stored as name.fixture so they don't affect this repo: env.fixture -> .env.
+function restoreDotfiles(work) {
+  for (const file of readdirSync(work, { recursive: true }))
+    if (String(file).endsWith('.fixture'))
+      renameSync(
+        join(work, file),
+        join(work, String(file).replace(/([^/]+)\.fixture$/, '.$1')),
+      );
 }
 
 async function runOne(s, arm, rep, root, sweos) {
