@@ -28,7 +28,7 @@ Run the check command before you say a change is done.
 ## How we work
 
 - **Git:** trunk-based. Each feature or fix gets a short-lived branch off `main` and one PR, squash-merged once `check` passes. Nobody pushes to `main` directly.
-- **Docs live in the repo.** PROJECT.md is the tracker. [docs/design.md](docs/design.md) holds the system design and what it costs. A decision that needs more than a row in PROJECT.md gets its own `docs/decisions/YYYY-MM-DD-title.md`, linked from that row.
+- **Docs live in the repo.** PROJECT.md is the tracker. [docs/design.md](docs/design.md) holds the system design and what it costs. [docs/brand.md](docs/brand.md) holds the look of the product's art and lists every piece. A decision that needs more than a row in PROJECT.md gets its own `docs/decisions/YYYY-MM-DD-title.md`, linked from that row.
 - **Keep this file current.** When work adds a command, a convention, or a rule an agent couldn't infer from the code, update this file in the same PR.
 - <Optional: "Tommy is learning <area>. In that area, leave one `TODO(human)` per feature for him to write.">
 
