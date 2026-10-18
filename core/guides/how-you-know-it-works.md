@@ -103,30 +103,30 @@ A flaky test (one that fails at random) does more damage than its own failure. P
 
 On my own side projects:
 
-- **A real Postgres for tests.** On Supabase, `supabase start` runs one locally. Install Docker Desktop first, which runs the database in a container (an isolated box on your machine). In CI, add the `supabase/setup-cli` action (a ready-made step) and run `supabase db start`. Otherwise, use the Docker setup from [local first, then managed](local-first-then-managed.md), and a [Neon branch](https://neon.com/docs/introduction/branching) per CI run.
-- **Tests for the rules.** Ask your agent: "Add Vitest integration tests against the local database proving a user can't read or change another user's invoices. Empty the tables before each test."
-- **One `check` script, required to merge.** [start-project](../../skills/start-project/SKILL.md) sets it up with one real smoke test.
+- **A real Postgres for tests, on Supabase.** `supabase start` runs one locally. Install Docker Desktop first, which runs the database in a container (an isolated box on your machine). In CI, add the `supabase/setup-cli` action (a ready-made step) and run `supabase db start`.
+- **A real Postgres for tests, otherwise.** Locally, use the Docker setup from [local first, then managed](local-first-then-managed.md). In CI, ask your agent: "Add a `postgres` service container to the check workflow and point the integration tests at it." I'd use a [Neon branch](https://neon.com/docs/introduction/branching) per run only if the tests needed something Neon-specific.
+- **Tests for the rules.** Ask your agent: "Add Vitest integration tests against the local database proving a user can't read or change another user's invoices. Empty the tables before each test, and set `fileParallelism: false` for the integration tests."
+- **One `check` script, required to merge.** [start-project](../../skills/start-project/SKILL.md) sets it up with one real smoke test, and [shipping changes you can undo](shipping-changes-you-can-undo.md) makes it required.
 
-I add Playwright once the app has a flow I'd be embarrassed to see broken, usually sign-up and the core action. I ignore coverage percentages.
+I add Playwright once the app has a flow I'd be embarrassed to see broken, usually sign-up and the core action, and it runs in CI from then on. I ignore coverage percentages.
 
 ## The standard
 
 Teams go further once the signal shows up. More in the [testing concern](../concerns/testing.md#when-stakes-rise).
 
-- **Run end-to-end tests of critical flows in CI, at phone and desktop widths.** When people pay you or rely on it daily.
-- **Test with empty and production-sized data.** When real users bring real data.
-- **Test recovery, races, and abuse.** When money, shared data, or a public endpoint is involved.
-- **Treat a flaky test as a bug with an owner and a date.** When a second engineer starts re-running red builds.
+- **Run every end-to-end test at both phone and desktop widths**, as two Playwright projects. When people pay you or rely on it daily.
+- **Test against generated data at production size**, not just the few thousand seeded rows from [performance and cost](performance-and-cost.md). When real users bring real data.
+- **Race tests on money and shared data,** as in [data that stays correct](data-that-stays-correct.md#the-standard): send the same request twice at once and check the database ends up with one row.
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Every rule about who can see or change what has an integration test against a real Postgres.
-- Tests cover the failure paths: the wrong user, invalid input, an expired session.
-- Every bug fix comes with a test that failed before the fix.
-- No test was deleted, skipped, or given a new expected value to get green.
-- Tests empty their tables first, so they pass alone and together.
+- Every rule about who can see or change what has an integration test against a real Postgres (local or a branch), not a mocked database.
+- Each new route or action has tests for its failure paths: the wrong user, invalid input, an expired session.
+- Every bug fix in this change comes with a test that failed before the fix.
+- No test was deleted, skipped, or loosened, and no expected value changed, unless the behavior was meant to change.
+- Integration tests empty their tables before each test, and their files run one at a time (`fileParallelism: false`).
 
 ## Sources
 

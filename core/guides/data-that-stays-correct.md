@@ -178,18 +178,17 @@ On my own side projects:
 
 - Ask your agent: "List the rules this data must always follow, and enforce each one as a constraint."
 - In every `create table`: integer cents for money, `timestamptz` for instants, `date` for calendar days.
-- Run any action that writes related rows in a transaction: Drizzle's `db.transaction`, or on Supabase, a Postgres function called with `rpc()`.
-- To add a rule to an existing table, write a migration. On Supabase, `supabase migration new`, then `supabase db push`. With Drizzle, edit the schema, then `npx drizzle-kit generate` and `npx drizzle-kit migrate`. If existing rows break the rule, the migration fails, so fix them first.
-- Seed a few thousand rows (on Supabase, in `supabase/seed.sql`, which runs on `supabase db reset`), then `explain analyze` each main page's query.
+- Run any action that writes related rows in a transaction: Drizzle's `db.transaction` with the recipe's `pg` driver (Neon's HTTP driver can't), or on Supabase, a Postgres function called with `rpc()`.
+- To add a rule to an existing table, write a migration. On Supabase, `supabase migration new`, then `supabase db push`. With Drizzle, edit the schema, then `npx drizzle-kit generate` and `npx drizzle-kit migrate`. If existing rows break the rule, the migration fails, so fix them first. If the table is big, or the change renames or drops a column, follow [database changes without downtime](database-changes-without-downtime.md).
+- Seed a few thousand rows, then `explain analyze` each main page's query. With Drizzle, use `drizzle-seed` or a short script. On Supabase, put them in `supabase/seed.sql`, which runs on `supabase db reset`.
 
 I'd add caching only when `explain` says a query is as good as it gets and it's still too slow. Constraints are cheapest on day one.
 
 ## The standard
 
-- **Backups get a practiced restore,** because a backup you haven't restored is a hope. Do it once real users' data lives there ([data and storage](../concerns/data.md)).
-- **Money paths get a test that races two requests, and an [idempotency key](timeouts-retries-idempotency.md) on every charge, email, and webhook.** Do it once real money moves ([concurrency](../concerns/concurrency.md)).
-- **Orders get reconciled against Stripe's records on a schedule.** Do it once real money moves.
-- **Schema changes on big tables follow the [no-downtime steps](database-changes-without-downtime.md).** Do it at scale.
+- **Restores get practiced on a schedule, with real-shaped data,** beyond the one drill in [when production breaks](when-production-breaks.md). Do it once paying customers depend on the data ([data and storage](../concerns/data.md)).
+- **Money paths get a test that races two requests.** Do it once real money moves ([concurrency](../concerns/concurrency.md)).
+- **Every order gets matched against Stripe's records on a schedule,** beyond the daily counts in [knowing it broke](knowing-it-broke.md). Do it once real money moves.
 
 ## Before you ship, check
 
@@ -197,10 +196,10 @@ Paste this to your agent before you merge:
 
 - Every rule the data must follow is a constraint in the schema, not only a check in code.
 - Anything a double-tap could create twice has a `unique` constraint, and the app handles the conflict.
-- Writes that belong together run in one transaction, with the stock check in the `update`'s `where`.
+- Writes that belong together run in one transaction, with any "is there enough" check inside the write's `where`, not in a separate read.
 - No transaction waits on Stripe, email, or any other network call.
 - Money is integer cents, instants are `timestamptz`, and calendar days are `date`.
-- Each main page's query shows no `Seq Scan` in `explain analyze` on a few thousand seeded rows.
+- With a few thousand seeded rows, no main page's query shows a `Seq Scan` on a large table in `explain analyze`.
 
 ## Sources
 
@@ -215,6 +214,7 @@ Paste this to your agent before you merge:
 - [Drizzle: Indexes and constraints](https://orm.drizzle.team/docs/indexes-constraints)
 - [Drizzle: Connect to Neon (HTTP vs. WebSocket drivers)](https://orm.drizzle.team/docs/connect-neon)
 - [Drizzle: Migrations (`drizzle-kit generate` and `migrate`)](https://orm.drizzle.team/docs/migrations)
+- [Drizzle: `drizzle-seed`](https://orm.drizzle.team/docs/seed-overview)
 - [PostgREST: Transactions](https://docs.postgrest.org/en/stable/references/transactions.html), the layer under Supabase's API, for one transaction per call; [Supabase: Database functions](https://supabase.com/docs/guides/database/functions) for `rpc()`
 - [Supabase JS: `upsert` with `ignoreDuplicates`](https://supabase.com/docs/reference/javascript/upsert)
 - [Supabase: Database migrations](https://supabase.com/docs/guides/deployment/database-migrations) and [seeding](https://supabase.com/docs/guides/local-development/seeding-your-database)

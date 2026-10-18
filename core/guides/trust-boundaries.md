@@ -133,29 +133,29 @@ Update policies also need `with check`, which tests the row after the change, so
 On my own side projects:
 
 - Ask your agent for a data access layer: query functions that take the user from the session, filter by owner, return only what the UI shows, and answer `404` when the row isn't theirs.
-- Count your own email and AI routes in a Postgres table, and keep your auth library's limits on.
+- Rate-limit my own email and AI routes with a counter in Postgres, by IP and by account. On Better Auth, store its counts in Postgres too, with the one setting in the [recipe](../recipes/side-project-stack.md#rate-limit-auth-in-the-database).
 - Ask your agent: "For each resource, write a test where user B requests user A's record by ID and gets a `404`." It's the cheapest test against the most common bug.
 
 On Supabase, the dashboard's Security Advisor flags tables in `public` without RLS. Turn it on for each, add policies like the one above, and run the user-B test.
 
 ## The standard
 
-- **Postgres RLS backs up the app's checks as a second wall.** Do it once a forgotten `where` would leak a real customer's data to another.
-- **Permissions live in a real model, not scattered `if`s.** Do it once roles stop fitting in one `if`.
+- **Postgres RLS backs up the server's checks as a second wall.** Do it once a forgotten `where` would leak a real customer's data to another. Connect as a role that doesn't own the tables, since owners skip RLS unless it's forced.
+- **Permissions live in one place,** like a `can(user, action, resource)` function and a roles table, not `if`s scattered across handlers. Do it once roles stop fitting in one `if`.
 - **Someone walks the abuse cases:** sends what an attacker would, and checks the result. Do it once real users or real money show up ([security](../concerns/security.md)).
-- **Every copy of personal data is traced, and deletion reaches each one.** Do it once you hold real users' data, or GDPR applies ([privacy](../concerns/privacy.md)).
-- **The API has a written contract that changes only by adding fields.** Do it when another team's app calls it ([API contracts](../concerns/api-contracts.md)).
+- **Every copy of personal data is traced, and deletion reaches each one.** Do it once you hold real users' data. If any live in the EU, GDPR already gives them that right ([privacy](../concerns/privacy.md)).
+- **The API has a written contract that changes only by adding fields.** Do it when a mobile app or outside developers call it ([API contracts](../concerns/api-contracts.md)).
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
 - Every action and route handler parses its input with a Zod schema first.
-- Every query on user data filters by the user from the session, never an ID from the request.
-- Each server action checks auth itself, not only `proxy.ts`.
+- Every query on user data filters by the owner from the session, not only by an ID from the request.
+- Each server action checks auth itself or through the data access layer, never only in `proxy.ts`.
 - Client components get only the fields the UI shows.
-- Login, signup, password reset, email, and AI routes are rate-limited.
-- On Supabase, every table in `public` has RLS on, with a policy per operation.
+- Login, signup, password reset, email, and AI routes are rate-limited, with counts every function instance shares, not kept in memory.
+- On Supabase, every table in `public` has RLS on, with a policy for each operation the app needs. No policy means denied.
 
 ## Sources
 

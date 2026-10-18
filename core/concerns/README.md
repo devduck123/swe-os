@@ -6,7 +6,7 @@ freshness: durable
 
 A concern is something a feature can get wrong that the happy path won't show you: security, accessibility, data loss, cost. Use the table below to pick the few that matter for a task and skip the rest. It's a routing table, not a checklist.
 
-If you're reading to learn, each concern page is a standard for one kind of risk, the reference to come back to. Its **minimum bar** is what you do every time. **When stakes rise** is what teams add once there are real users, real money, or a second engineer. The [track](../guides/README.md) teaches why. These pages are the short version you check against.
+Reading to learn? Each concern page is a standard for one kind of risk, the reference to come back to. Its **minimum bar** is what you do every time. **When stakes rise** is what you add for real users, changes you can't undo, or production. Floors, like auth and payments, get it always. [Decide how deep to go](#decide-how-deep-to-go) has the rule, and the [track](../guides/README.md) teaches why.
 
 ## Pick the concerns
 

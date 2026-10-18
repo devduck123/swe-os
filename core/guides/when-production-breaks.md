@@ -100,6 +100,16 @@ A drill takes twenty minutes:
 
 Now you know the backups cover the window you think. Repeat it after changing plans.
 
+## Make deletes recoverable before you need a restore
+
+A restore is the slow way back. In the example, the data went in deletes that ran wider than they should have, and you can make those cheap to undo:
+
+- **Soft-delete what users create.** Set a `deleted_at` timestamp instead of removing the row, and hide those rows everywhere. Undoing a bad delete becomes one `UPDATE` that clears `deleted_at`.
+- **Purge on a schedule.** A daily job hard-deletes rows deleted more than 30 days ago. Without it, "delete my account" never really deletes anything ([privacy](../concerns/privacy.md)).
+- **Cap bulk deletes.** Refuse any delete, archive, or purge over 100 rows unless an admin flag is set. A filter bug then hits a wall instead of the whole table.
+
+In the example, the cap alone would have stopped the cleanup job at 100 rows, with an error in Sentry instead of every workspace emptied.
+
 ## Write a blameless postmortem
 
 Blameless doesn't mean nobody made a mistake. It means asking why the system made it easy, because "be more careful" changes nothing. "The cleanup job can't hard-delete more than 100 rows without a manual flag" does.
@@ -133,8 +143,8 @@ Each change with a link to its PR or issue.
 On my own side projects, before launch:
 
 - Know my three stop buttons: Instant Rollback, a flag on each risky feature, and **Disable Cron Jobs**. Ask your agent: "Put bulk archive and delete behind a flag in a settings table, so I can turn them off without a deploy."
-- Soft-delete what users create: mark it deleted instead of removing the row. Ask your agent: "Add a `deleted_at` column to projects, hide deleted rows everywhere, and refuse any delete or archive over 100 rows."
-- Do one restore drill.
+- Soft-delete what users create. Ask your agent: "Add a `deleted_at` column to projects and hide deleted rows everywhere. Add a daily job that hard-deletes rows deleted over 30 days ago. Refuse any delete, archive, or purge over 100 rows unless an admin flag is set."
+- Do one restore drill, following [practice the restore on a copy](#practice-the-restore-on-a-copy).
 
 Once real users' data is in the database, I move to Neon Launch or Supabase Pro for a multi-day window. Until then on Supabase Free, I copy Supabase's nightly `db dump` workflow, a GitHub Actions file (a script GitHub runs on a schedule), into a private repo. It's the only backup there is.
 
@@ -144,9 +154,10 @@ After anything that hits users, I write the postmortem and ship at least one of 
 
 The [data](../concerns/data.md) and [reliability](../concerns/reliability.md) concerns have more.
 
-- **Point-in-time recovery with a window of days.** Once losing a day of writes would cost users money or work.
-- **Restore drills on a schedule, with real-shaped data.** Once paying customers depend on the data.
-- **Reconciliation against systems that hold a copy, like Stripe.** Once you take real money.
+- **A backup window longer than it takes to notice, and a copy stored outside the provider's account.** Once losing a day of writes would cost users money or work. On Supabase, the window means the PITR add-on.
+- **Restore drills on a schedule, say quarterly, timed and written down.** Once paying customers depend on the data.
+- **Reconciliation that matches each payment in Stripe to a record in your database,** beyond the daily counts in [knowing it broke](knowing-it-broke.md). Once you take real money.
+- **A status page users can check during an outage.** Once users pay.
 - **One person leads the incident, another talks to users, and the team reviews the postmortem.** Once there's a second engineer.
 
 ## Before you ship, check
@@ -154,7 +165,7 @@ The [data](../concerns/data.md) and [reliability](../concerns/reliability.md) co
 Paste this to your agent before you merge:
 
 - Bulk deletes and cleanup jobs can be turned off without a deploy.
-- Deletes set `deleted_at`, and a bulk delete over 100 rows is refused.
+- Deletes set `deleted_at`, a daily job purges rows deleted over 30 days ago, and any delete, archive, or purge over 100 rows is refused without an admin flag.
 - The backup window is longer than it would take someone to notice lost data.
 - I've done one restore drill.
 - On Supabase Free, a nightly `db dump` runs.

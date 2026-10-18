@@ -42,12 +42,12 @@ Every trigger below is a measurement or a fact about today. "We might get big" i
 - **Cache.** Earned by a page you timed as slow even with the right [indexes](data-that-stays-correct.md#index-the-queries-you-actually-run) (lookups that skip reading every row), that's read often, and where slightly old data is fine.
 - **Queue or job system.** Earned by work that's slow or flaky, doesn't need to finish before the response, and must not be lost.
 - **Separate API.** Earned by a native mobile app or outside developers calling it, once route handlers in the same app no longer fit.
-- **Client state store.** Earned by browser-only state shared across distant components, like an editor or canvas. Never a copy of server data.
+- **Client state store.** Earned by browser-only state shared across distant components, like an editor or canvas. Never a copy of server data. A fetch cache like TanStack Query is different: it refetches from the server instead of holding its own version of the truth.
 - **Repository layers.** Earned by the same query copied in three places, or a second data source you actually have.
 
 ## How I do it
 
-On my own side projects, my default is the [side-project stack](../recipes/side-project-stack.md): the architecture above, with Drizzle and managed auth. On Supabase, the shape is the same: one Next.js app and one Supabase project.
+On my own side projects, my default is the [side-project stack](../recipes/side-project-stack.md): the architecture above, with Drizzle and Better Auth or Clerk. On Supabase, the shape is the same: one Next.js app and one Supabase project.
 
 Before I add anything else, I write in `PROJECT.md` the problem it solves and the number that proves it, like "the bookings page takes 3 seconds, and 2.5 of that is one query." To get it, time the page in the Network tab, then ask your agent: "Log how long each database query takes on this page."
 
@@ -55,15 +55,14 @@ When an agent proposes a new piece, ask it: "What problem does this solve today,
 
 When a trigger above fires, here's what I'd reach for:
 
-- **A cache:** Next.js caching first, Redis after.
+- **A cache:** Next.js's own caching first, like `'use cache'` on the slow function, then a managed Redis.
 - **A job system:** [background jobs and webhooks](background-jobs-and-webhooks.md) covers which one.
 - **A second service,** once one part needs a different runtime, like a Python worker for a model.
 
 ## The standard
 
-- **Every new piece gets a short written decision that another engineer reviews.** Do it when a second engineer joins.
-- **Each service has a billing alert, and a cost estimate for a bad month.** Do it once real money is on the line ([cost](../concerns/cost.md)).
-- **Dependencies get updated on purpose,** with Dependabot or Renovate and an audit in CI. Do it once real users depend on it ([dependencies](../concerns/dependencies.md)).
+- **Every new piece gets a short written decision that another engineer reviews,** often called an ADR (architecture decision record). Do it when a second engineer joins.
+- **Dependencies get an audit in CI, and someone reads the changelog before a major upgrade.** Do it once real users depend on it ([dependencies](../concerns/dependencies.md)).
 - **Each service has an exit plan:** how you'd export the data, and what a swap would touch. Do it once real users' data lives there.
 
 ## Before you ship, check
@@ -71,7 +70,7 @@ When a trigger above fires, here's what I'd reach for:
 Paste this to your agent before you merge:
 
 - Every new service, layer, store, or package names today's problem and its evidence.
-- Server data lives in the database only, not copied into a client store.
+- Server data lives in the database only, not copied into a client state store like Zustand. A fetch cache like TanStack Query is fine.
 - No separate API serves only this one web app.
 - Any cache was added after a timed page stayed slow with the right indexes.
 - No package does what the platform already does, like a native date input.

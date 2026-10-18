@@ -5,7 +5,7 @@ description: A path from "it works on my machine" to software you'd put your nam
 
 AI can write the code now. What it can't do for you is know what the happy path is hiding. This track is the difference between a vibe coder and an engineer, one stop at a time. Read it in order, or jump to what you need. Agents load the same pages when a concern points to them, so a lesson only has to be written once.
 
-Every stop ends with **Before you ship, check**: what the vibe-coded version misses, as a list you can hand your agent. Every recommendation starts from the simplest thing that works.
+Every stop ends with **How I do it** (my own habits), **The standard** (what teams add, and when), and **Before you ship, check**: what the vibe-coded version misses, as a list you can hand your agent. Every recommendation starts from the simplest thing that works.
 
 ## Follow the work from problem to production
 
@@ -74,10 +74,10 @@ Every guide is written as Tommy (see [Voice](../../profile/voice.md#know-which-v
 
 Code is plain SQL first wherever the lesson is about the database. It runs anywhere: Supabase's SQL editor, a Drizzle or Prisma migration, or `psql`. App code stays short and light on framework. Where a step differs by vendor, a short "On Neon" or "On Supabase" line covers it.
 
-Every guide ends with three sections, in this order. They separate how I work from what you should know, so you can tell my habits from the standard:
+Every guide ends with three sections, in this order. They separate my habits from the professional standard, and both from the floor:
 
-- **How I do it.** What I do on my own side projects: the simplest option that works, labeled as mine. Every item says how: a command, a file, or a prompt to give the agent.
-- **The standard.** What professional teams do beyond that, and the signal that it's time for you to do it too: real users, real money, a second engineer, or scale. This is the part to come back to.
+- **How I do it.** What I do on my own side projects: the simplest option that works, labeled as mine. Every item says how (a command, a file, or a prompt to give the agent), or names the trigger for an upgrade.
+- **The standard.** What professional teams do beyond that, and the signal that it's time for you to do it too, like real users, real money, a second engineer, compliance, or scale. This is the part to come back to.
 - **Before you ship, check.** The floor, every time: 3 to 6 yes/no checks the reader can paste to their agent before merging. Each one is something the stop taught.
 
 Each guide's frontmatter records:

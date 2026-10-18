@@ -81,7 +81,7 @@ Size and type limits are baked into the token, and the random suffix means paths
 
 </details>
 
-Add a loading state, a useful error, and cleanup for the old photo. Same agent, same afternoon. Someone just asked the questions.
+Add a loading state, a useful error, and cleanup for the old photo and for any upload the database never recorded. Same agent, same afternoon. Someone just asked the questions.
 
 ## The questions an engineer asks
 
@@ -117,17 +117,17 @@ You can't take any of these back. A leaked key is leaked the moment it's pushed.
 
 On my own side projects:
 
-- Vibe code a prototype whenever Willison's harm test says nobody gets hurt.
+- Vibe code throwaway prototypes, on a branch I won't merge, whenever Willison's harm test says nobody gets hurt.
 - Engineer the floors from the first commit. Ask your agent: "Before you build this, tell me where the secrets live, where the server checks who's signed in, and what touches money or personal data."
+- Set up every repo with the [start-project](../../skills/start-project/SKILL.md) skill: a `check` script required to merge, and a preview deploy for every PR. Sentry goes in before the first real user. Stops [14](how-you-know-it-works.md), [16](shipping-changes-you-can-undo.md), and [18](knowing-it-broke.md) cover each.
 - Before calling a feature done, run the [build-feature](../../skills/build-feature/SKILL.md) skill, or ask: "List every decision you made that I didn't specify, like limits, defaults, and what happens on failure." Read that list before the diff.
 - Don't merge code I couldn't explain to someone else. If I can't, I ask the agent to walk me through it, or run the [learn](../../skills/learn/SKILL.md) skill.
 
 ## The standard
 
-- **Every change gets the engineered treatment, not just the floors.** Do it once real users or real money show up. Engineered still means [simple](simple-first.md).
-- **Each change goes through the "When stakes rise" checks of every concern it touches.** Do it for real users. The [concerns table](../concerns/README.md#pick-the-concerns) says which.
+- **Every change gets the engineered treatment, not just the floors.** Each concern page ends with a "When stakes rise" list of what to add, and the [concerns table](../concerns/README.md#pick-the-concerns) says which pages a change touches. Do it once real users or real money show up. Engineered still means [simple](simple-first.md).
 - **Someone besides the author reads every diff before it merges.** Do it when a second engineer joins. Until then, [review your own](reading-and-reviewing-code.md).
-- **Tests and alerts catch breakage before users do, and every deploy can be undone.** Do it once anyone else relies on the app. Stops [14](how-you-know-it-works.md), [16](shipping-changes-you-can-undo.md), and [18](knowing-it-broke.md) cover each.
+- **End-to-end tests of the critical flows, alerts with someone who answers them, and a written rollback condition for risky releases.** Do it once people pay you or rely on the app daily. Stops 14, 16, and 18 cover each.
 
 ## Before you ship, check
 
@@ -136,7 +136,7 @@ Paste this to your agent before you merge:
 - The server checks who's signed in, and takes their ID from the session, never from the request.
 - Every upload has a size limit and a list of allowed file types.
 - If this fails halfway or runs twice, nothing is left half-done or doubled.
-- Anything touching a floor (secrets, auth, money, personal data, deletes) got the engineered version.
+- Anything touching a floor (secrets, auth, money, personal data, deletes) has a server check, limits, and failure handling.
 - You've listed every decision you made that I didn't specify, and I've read it.
 
 ## Sources

@@ -65,7 +65,7 @@ NOTIFY pgrst, 'reload config';
 
 If a user is watching a spinner, a retry just makes them wait longer for the error. They can click again, and with idempotency, that's safe. So my default is one attempt, a tight timeout, and an error that says what to do.
 
-Retry at one layer only, and know your SDKs' built-in retries. The AI SDK retries twice by default, so one failing model call means three waits. For chat, lower `maxRetries`; [AI features in production](ai-features-in-production.md) covers the rest. If the browser, your route, and your client library each make 3 attempts, one click becomes 27 calls during an outage.
+Retry at one layer only, and know your SDKs' built-in retries. The AI SDK retries twice by default, so one failing model call means three waits. For a model call a user is watching, set `maxRetries: 0` and let the abort signal cap the wait; [AI features in production](ai-features-in-production.md) covers the rest. If the browser, your route, and your client library each make 3 attempts, one click becomes 27 calls during an outage.
 
 ## Retry in the background, and only what's temporary
 
@@ -117,29 +117,29 @@ Incoming webhooks are the same problem from the other side. [Background jobs and
 On my own side projects:
 
 - Ask your agent: "Add `AbortSignal.timeout` to every `fetch` in this repo, sized from how long the user waits."
-- Ask your agent: "Remove any retries in code a user waits on, and set `maxRetries: 1` on AI chat calls."
+- Ask your agent: "Remove any retries in code a user waits on, and set `maxRetries: 0` on model calls a user is watching."
 - Pass an `idempotencyKey` like `checkout-${order.id}` on every Stripe create call.
 - Run the `ALTER ROLE` line above once for the app's database user. Supabase already sets one.
 - Copy the retry helper into `lib/` for background code only.
 
 ## The standard
 
-- **One deadline for the whole operation, split between attempts.** Three retries of a 10-second timeout is a 40-second request. Adopt it once background retries feed anything with a deadline.
+- **One deadline for the whole operation, split between attempts.** Three retries (four attempts) of a 10-second timeout is a 40-second request. Adopt it once a retried call runs inside something with its own time limit, like a Vercel function's max duration.
 - **Honor `Retry-After`, the header that says when to try again.** Adopt it when you call a rate-limited API at volume.
 - **Your own write endpoints accept an idempotency key.** Adopt it when other services call your API and retry.
 - **Tests for slow, failing, and recovering dependencies.** Adopt them when money moves through the code or a second engineer changes it.
-- **Queues, circuit breakers, or fallbacks, each for a failure you can name.** Adopt one when an outage has hurt users. More in [reliability](../concerns/reliability.md).
+- **Queues, circuit breakers (which stop calling a dependency for a while after repeated failures), or fallbacks, each for a failure you can name.** Adopt one when an outage has hurt users. More in [reliability](../concerns/reliability.md).
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Every `fetch` and SDK call has a timeout.
-- Code a user waits on doesn't retry, and no call retries at more than one layer.
-- Every Stripe create call sends an idempotency key built from our record's ID.
-- Background retries cover only network errors, timeouts, `429`, and `502`–`504`.
-- The app's database role has a `statement_timeout`.
-- Every write that might run twice has a key, a unique constraint, or a check in its `WHERE`.
+- Every `fetch` passes `AbortSignal.timeout`, and every model call has an abort signal with a timeout.
+- Code a user waits on makes one attempt (model calls set `maxRetries: 0`), and no call retries at more than one layer.
+- Every Stripe create call sends an idempotency key built from our record's ID, never a fresh random ID per call.
+- Background retries stop after a few attempts and retry only network errors, timeouts, `429`, and `502`–`504`.
+- The database role in `DATABASE_URL` has a `statement_timeout`. On Supabase, its defaults count.
+- Every write that might run twice has an idempotency key, a unique constraint, or a `WHERE` that makes a repeat update zero rows.
 
 ## Sources
 

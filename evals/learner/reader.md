@@ -26,7 +26,7 @@ Stay in character. If a term isn't explained and this person wouldn't know it, s
     "terms this reader wouldn't know that the stop uses without a plain gloss"
   ],
   "would_act": "yes | partly | no",
-  "missing_to_act": "what's missing from What I'd do, or empty",
+  "missing_to_act": "what's missing from How I do it, or empty",
   "cut": "the paragraph or section you'd delete first, and why",
   "clarity": 1,
   "usefulness": 1

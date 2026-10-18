@@ -112,7 +112,7 @@ for (const file of [
   if (data.freshness === 'fast-moving')
     assert(data.reviewed, `${file} is fast-moving and needs a reviewed date`);
   if (data.track) {
-    // Every stop ends the same way: what to do, then checks to paste to the agent, then sources.
+    // Every stop ends the same way: How I do it (Tommy's habits), The standard (what teams add, and when), Before you ship (checks to paste to the agent), then Sources.
     const text = read(file).replace(/^```[^\n]*\n[\s\S]*?^```/gm, '');
     const heads = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
     const end = heads.filter((h) => h !== 'Sources').slice(-3);

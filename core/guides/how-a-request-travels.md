@@ -70,7 +70,7 @@ Module scope is only for things that are the same for everyone, like the databas
 `Cache-Control` is a response header (a note sent with the response) that says who may keep a copy, and for how long:
 
 - **The browser** keeps a response for `max-age` seconds.
-- **The CDN** keeps a response for `s-maxage` seconds, and hands it to everyone. The user's session cookie on the request doesn't stop that. Next.js adds `s-maxage` to pages it caches, like ones with `export const revalidate`, and agents add it by hand to route handlers.
+- **The CDN** keeps a response for `s-maxage` seconds, and hands it to everyone. The user's session cookie on the request doesn't stop that. Next.js adds `s-maxage` to pages it caches, like ones with `export const revalidate`, and agents add it by hand to route handlers, sometimes in a separate `CDN-Cache-Control` header that only CDNs read.
 
 In the browser's Network tab, click the request and check its `x-vercel-cache` header: `HIT` means the CDN answered and your code never ran. Then work inward.
 
@@ -81,20 +81,20 @@ On my own side projects:
 - Set the Vercel function region to match the database's, in **Settings → Functions**.
 - Read data in server components, and add `'use client'` only where something is interactive.
 - Create the database client once at module scope, copied from the [recipe](../recipes/side-project-stack.md). Nothing per-user goes there.
-- Ask your agent: "Find every response that sets `s-maxage` or `public`, and tell me whether any of them depends on who's signed in."
+- Ask your agent: "Find every response that sets `s-maxage`, `public`, or a `CDN-Cache-Control` header, and every page that uses `revalidate`. Tell me whether any of them depends on who's signed in."
+- Give every database and outside call a timeout, so a slow hop fails fast instead of hanging ([timeouts, retries, and idempotency](timeouts-retries-idempotency.md)).
 - When something breaks, read the failing request's status, timing, and `x-vercel-cache` header in the Network tab before guessing.
 
 ## The standard
 
-- **Each main page has a latency budget, checked with realistic data and a load test,** like "dashboard under 300 ms for 95% of requests." Do it once real users depend on it, or before a launch. See [performance](../concerns/performance.md).
-- **Every database and API call has a timeout, inside one deadline per request.** Do it once real users wait on it ([how](timeouts-retries-idempotency.md)).
-- **Each secret has the least access it needs, and a rotation plan.** Do it when a second engineer gets access ([security](../concerns/security.md)).
+- **A latency budget per main page, and a load test before a launch,** as in [performance and cost](performance-and-cost.md#the-standard). Once real users wait on these pages.
+- **Tracing shows how long one request spent at each hop.** Do it once you can't tell which call makes a page slow ([knowing it broke](knowing-it-broke.md)).
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Nothing that depends on who's signed in is cached with `s-maxage` or `public`.
+- Nothing that depends on who's signed in is cached with `s-maxage`, `public`, `CDN-Cache-Control`, or `revalidate`.
 - No per-user data lives in a variable at module scope.
 - The function region matches the database's.
 - The database client is created once at module scope, not per request.

@@ -101,6 +101,10 @@ export const auth = betterAuth({
 
 On Supabase Auth, rate limits are built in. Adjust them under **Authentication > Rate Limits**.
 
+## Turn on MFA for every account that runs the app
+
+The app is only as safe as the accounts behind it. Whoever gets into your GitHub, Vercel, database, Stripe, email, or domain registrar account can read users' data, push code, or move the domain, and no check in your code applies. Turn on MFA (a second step after the password, like an authenticator app or a passkey) on each one before the first real user. GitHub already requires it for anyone who contributes code.
+
 ## What it costs
 
 At 0 users, the stack is $0. Around 1,000 monthly users, it's $0 to about $40 a month (about $45 with Supabase Pro), depending on Vercel's terms and how long the database stays awake. Around 10,000, expect $20 a month plus database usage, plus any email, Clerk, or Sentry upgrades. Trust your own dashboards over these guesses.
@@ -157,7 +161,7 @@ No separate API, queue, Redis, microservices, Kubernetes, or staging environment
 
 ## How I do it
 
-On my own side projects: this stack, with nothing added until something real asks for it. Upgrades come one at a time, each for a reason I can name:
+On my own side projects: this stack, with MFA on every vendor account from day one. Nothing else gets added until something real asks for it. Upgrades come one at a time, each for a reason I can name:
 
 - Vercel Pro the day it makes money, needs cron more than once a day, or gets anywhere near 2,000 uploads a month.
 - Neon Launch or Supabase Pro the day real users' data matters, or the database has to stay awake.
@@ -169,11 +173,10 @@ Before each upgrade, I know how I'd leave: `pg_dump` exports Postgres, Blob file
 
 ## The standard
 
-- **Paid plans everywhere, with a seat per engineer.** Once it makes money or there's a second engineer.
-- **Point-in-time recovery and restore drills** ([data concern](../concerns/data.md)). Once losing today's writes would cost you customers.
-- **Personal logins with only the access each person needs, and MFA on every vendor account** ([security concern](../concerns/security.md)). Once a second person needs access.
-- **A record of what user data you hold, where it lives, and which vendors process it.** Once a customer's security review asks, or you hold health or financial data.
-- **An on-call rotation.** Once customers pay for uptime.
+- **Vendor accounts owned by a team or organization, not your personal login.** Once there's a second engineer, or the business has to outlive you.
+- **Personal logins with only the access each person needs** ([security concern](../concerns/security.md)). Once a second person needs access.
+- **Backups beyond the free window, and on-call.** [When production breaks](../guides/when-production-breaks.md#the-standard) and [knowing it broke](../guides/knowing-it-broke.md#the-standard) say when each one earns its place.
+- **A record of what user data you hold, where it lives, and which vendors process it** ([privacy concern](../concerns/privacy.md)). Once a customer's security review asks, you hold health or financial data, or you have users in the EU, where GDPR expects one.
 - **A second region, or a tested failover plan.** Once an hour of one region being down costs more than running two.
 
 ## Before you ship, check
@@ -181,11 +184,11 @@ Before each upgrade, I know how I'd leave: `pg_dump` exports Postgres, Blob file
 Paste this to your agent before you merge:
 
 - The database client is created once, in `lib/db.ts`, not per request.
-- Auth rate limits are counted in the database, not in memory.
-- Pages read file URLs from Postgres, never from Blob's `list()`.
-- Nothing queries a Neon Free database every few minutes.
+- On Better Auth, rate limits are counted in the database, not in memory.
+- Pages read file URLs from Postgres, never from Blob's `list()`, and nothing queries a Neon Free database every few minutes.
 - On Supabase, custom SMTP is set up.
 - Form input, params, webhooks, env vars, and AI output are parsed with Zod.
+- Every vendor account the app depends on (GitHub, Vercel, the database, Stripe, email, the domain) has MFA turned on.
 
 ## Sources
 

@@ -107,6 +107,7 @@ export async function POST(req: Request) {
     model: SUMMARY_MODEL,
     prompt: `Summarize this email:\n\n${text}`,
     maxOutputTokens: 500,
+    maxRetries: 0, // A person is watching. One attempt, then an error.
     // req.signal fires when the tab closes. Stop then, or after 30 seconds.
     abortSignal: AbortSignal.any([req.signal, AbortSignal.timeout(30_000)]),
   });
@@ -114,7 +115,7 @@ export async function POST(req: Request) {
 }
 ```
 
-The input cap fixes the 40-page contract: reject it, or summarize the first part and say so. Streaming shows text right away. The AI SDK also retries twice by default, and the abort signal caps the total wait ([timeouts, retries, and idempotency](timeouts-retries-idempotency.md)). If a call regularly outlasts a request, move it to a [background job](background-jobs-and-webhooks.md).
+The input cap fixes the 40-page contract: reject it, or summarize the first part and say so. Streaming shows text right away. The AI SDK retries twice by default, but a user is watching, so `maxRetries: 0` makes one attempt and the abort signal caps the wait. Retries belong in background work ([timeouts, retries, and idempotency](timeouts-retries-idempotency.md)). If a call regularly outlasts a request, move it to a [background job](background-jobs-and-webhooks.md).
 
 ## Evals tell you whether a change helped
 
@@ -145,28 +146,28 @@ Run them before every prompt or model change. Use a model as grader only for fuz
 
 On my own side projects:
 
-- Ask your agent: "Give every model route auth, a per-user daily limit, an input length cap, `maxOutputTokens`, and an abort signal with a timeout."
-- Set a spend cap in the provider's dashboard.
+- Ask your agent: "Give every model route auth, a per-user daily limit counted in Postgres, an input length cap, `maxOutputTokens`, an abort signal with a timeout, and `maxRetries: 0` where a user is watching." In-memory limits don't hold on serverless.
+- Set a spend cap in the provider's dashboard ([which ones actually stop spending](performance-and-cost.md#know-what-youre-billed-for)).
 - Write 20 eval cases like the ones above before the second prompt change.
 - Give every tool that sends, pays, or deletes a confirm step that shows exactly what's about to happen, even in a prototype.
 
 ## The standard
 
 - **Human review, or a clear way to appeal, for output that affects money, health, access, or someone's reputation.** Adopt it the day the feature makes one of those calls.
-- **Long inputs chunked or retrieved, so the model reads only what the task needs.** Adopt it once users need the whole 40-page contract, not the first part.
-- **A second provider to fail over to.** Adopt it once outages hurt users.
+- **Long inputs chunked or retrieved (search the document and send only the parts that matter), so the model reads only what the task needs.** Adopt it once users need the whole 40-page contract, not the first part.
+- **A second provider to fail over to, checked against the same evals.** Adopt it once outages hurt users.
 - **A cheaper model for the easy cases, checked against the same evals.** Adopt it once the bill says so. More in [AI features](../concerns/ai-features.md).
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Every model route checks auth and a per-user limit first.
-- Every call has an input length cap, `maxOutputTokens`, and an abort signal with a timeout.
-- Structured output has a schema, and plain text checks `finishReason` before it's shown or saved.
-- Model output renders as text, never as HTML or remote images.
-- Any tool that sends, pays, or deletes waits for the user's click.
-- Logs record model, tokens, and cost, but not the user's content.
+- Every model route checks auth and a per-user limit before it calls the model.
+- Every call has an input length cap, `maxOutputTokens`, and an abort signal with a timeout, and calls a user is watching set `maxRetries: 0`.
+- Structured output has a Zod schema, and plain text checks `finishReason` for `'length'` and `'content-filter'` before it's shown or saved.
+- Model output renders as text: never through `dangerouslySetInnerHTML`, and markdown from the model never loads remote images.
+- Any tool that sends, pays, or deletes waits for the user's click on a screen showing exactly what will happen.
+- Each call logs the model ID, tokens, cost, and finish reason, but not the prompt, the output, or the user's content.
 
 ## Sources
 

@@ -48,7 +48,7 @@ jobs:
       - run: npm run check
 ```
 
-CI on its own only reports. **Branch protection** makes it binding: main only accepts PRs that pass `check`. The solo-dev trap: by default these rules skip repository admins, and on your own repo that's you. Turn on the option that includes admins, or you'll skip the rules the first time you're in a hurry.
+CI on its own only reports. A **ruleset** on `main` (GitHub's newer form of branch protection) makes it binding: main only accepts PRs that pass `check`. The solo-dev trap is the bypass list. Anyone on it, like repository admins, can skip the rules, and on your own repo that's you. Keep it empty, or you'll skip the rules the first time you're in a hurry. On a private repo, rulesets need GitHub Pro. GitHub Free has them only on public repos.
 
 ## Previews let you see it before users do
 
@@ -56,7 +56,7 @@ Connect the repo to Vercel and every PR gets its own preview deployment at its o
 
 The trap is what the preview talks to. If the Preview environment holds your production `DATABASE_URL` and live Stripe keys, clicking "delete account" on a half-finished branch deletes a real account. Give previews their own world:
 
-- **Database:** a separate database branch (a copy just for this PR) per preview. Neon's Vercel integration creates one and gives only that deployment its connection string. On Supabase, Branching does this on paid plans. On the free plan, point Preview at a second project.
+- **Database:** a separate database branch (a copy just for this PR) per preview, never the production database. Neon's Vercel integration creates one and gives only that deployment its connection string. Its branches copy production's data, which is fine until real users' data is in production. After that, previews should start from seed data. On Supabase, Branching does this on paid plans. On the free plan, point Preview at a second project.
 - **Keys:** test-mode Stripe keys and a sandbox email sender, scoped to Preview in Vercel, never "all environments".
 - **Access:** keep previews behind Vercel's deployment protection, so only your team sees them.
 
@@ -78,7 +78,7 @@ A migration is a SQL file that changes your database's shape, and something has 
 
 Only Vercel reads `vercel.json`, so local builds and CI never touch a database. In production, the migration runs before the new deployment takes traffic, and if it fails, nothing ships. Each preview build migrates its own branch, a free rehearsal.
 
-`db:migrate` is a `package.json` script you add that runs your migration tool, like `drizzle-kit migrate`, over the direct connection string, not the pooled one. On Supabase, use the session pooler string (Vercel can't reach the direct one), or skip the script and let Supabase's GitHub integration run `supabase/migrations` on merge.
+`db:migrate` is a `package.json` script you add that runs your migration tool, like `drizzle-kit migrate`, over the direct connection string, not the pooled one. On Supabase, use the session pooler string (Vercel can't reach the direct one), or skip the script and run `supabase db push` in CI on merge. Supabase's GitHub integration can do it too, on plans that include Branching.
 
 Dashboard table edits skip all this: nobody reviews them, and no other database gets them. Make them locally, then capture them as a migration with `supabase db diff -f <name>`.
 
@@ -109,9 +109,9 @@ After each production deploy, load the real URL, run one critical flow, and watc
 On my own side projects, every change gets a branch under a day old and a PR, and I click through its preview before merging. To set it up:
 
 - **CI.** Add the `check.yml` above.
-- **Branch protection.** In the repo's GitHub settings, add a rule for main: require a PR, require `check` to pass, and include administrators.
-- **Previews.** Install Neon's Vercel integration (or Supabase's, with Branching), and add test Stripe keys scoped to Preview.
-- **Migrations.** Add a `db:migrate` script and set the `buildCommand` above. On Supabase, turn on the GitHub integration instead.
+- **Branch protection.** In the repo's GitHub settings, under **Rules → Rulesets**, add a ruleset for `main` that requires a PR and a passing `check`, with an empty bypass list. On a private repo, this needs GitHub Pro.
+- **Previews.** Install Neon's Vercel integration (or Supabase's, with Branching). On Supabase's free plan, point Preview at a second project instead. Then add test Stripe keys and a sandbox email key, scoped to Preview.
+- **Migrations.** Add a `db:migrate` script and set the `buildCommand` above. On Supabase, run `supabase db push` in CI on merge (works on any plan), or use its GitHub integration if your plan includes Branching.
 - **Dependency updates.** Ask your agent: "Add a Dependabot config for npm and GitHub Actions." It's GitHub's bot that opens update PRs.
 
 I add a database-row flag once I want to try a feature on just my account in production.
@@ -121,19 +121,18 @@ I add a database-row flag once I want to try a feature on just my account in pro
 Teams go further once the signal shows up. More in the [deployment concern](../concerns/deployment.md#when-stakes-rise).
 
 - **Write down the stop condition before a risky rollout**, like "if checkout errors pass 1%, roll back." When real users or money are on the line.
-- **Release risky features to a percentage of users first.** When one bad release would hit everyone at once.
-- **Script the post-deploy check.** When you deploy daily, or someone else deploys too.
-- **Rehearse data changes on a copy with real-sized data.** When a migration or backfill touches a table users depend on.
+- **Release risky features to a percentage of users first**, with a flag service like PostHog. When 5% of your users is enough people to notice a problem, or a bad release would cost money.
+- **Script the post-deploy check**: run one critical flow with Playwright against the production URL after each deploy. When you deploy daily, or someone else deploys too.
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Main requires `check` to pass, for administrators too.
-- Previews use their own database, test-mode Stripe keys, and sandbox email.
-- Every migration here works with the code in production now.
+- `main` has a ruleset that requires a PR and a passing `check`, with an empty bypass list.
+- The Preview environment has its own `DATABASE_URL`, test-mode Stripe keys, and a sandbox email key, none shared with Production.
+- Every migration here works with the code in production now: no column or table that code reads or writes is renamed or dropped.
 - Every schema change is a migration file, not a dashboard edit.
-- Anything this writes, sends, or charges is behind a flag or shipped separately, so a rollback leaves nothing wrong.
+- If this change were rolled back ten minutes after deploy, nothing it wrote, sent, or charged would stay wrong.
 
 ## Sources
 
@@ -144,4 +143,4 @@ Paste this to your agent before you merge:
 - [Neon: Neon-managed Vercel integration](https://neon.com/docs/guides/neon-managed-vercel-integration) and [connection pooling (direct connections for migrations)](https://neon.com/docs/connect/connection-pooling)
 - [Supabase: Branching](https://supabase.com/docs/guides/deployment/branching), [Vercel integration](https://supabase.com/docs/guides/deployment/branching/integrations), [pricing (branching on paid plans, 2 free projects)](https://supabase.com/pricing), [database migrations (capture dashboard edits with `db diff`)](https://supabase.com/docs/guides/deployment/database-migrations), [connecting to Postgres (direct connections for migrations)](https://supabase.com/docs/guides/database/connecting-to-postgres), and [IPv4 and IPv6 compatibility (Vercel is IPv4-only)](https://supabase.com/docs/guides/troubleshooting/supabase--your-network-ipv4-and-ipv6-compatibility-cHe3BP)
 - [GitHub: Secure use of Actions (pinning to a commit SHA)](https://docs.github.com/en/actions/reference/security/secure-use), and the [checkout](https://github.com/actions/checkout/releases) and [setup-node](https://github.com/actions/setup-node/releases) releases
-- [GitHub: About protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
+- [GitHub: About rulesets (plan availability, bypass list)](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets) and [About protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)

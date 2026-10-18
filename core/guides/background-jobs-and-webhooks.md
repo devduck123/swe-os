@@ -30,7 +30,7 @@ Work leaves the request when it's **slow** like this, needs **retries** (the enr
 
 Protect the route with `CRON_SECRET`, since it's a public URL. On Supabase, Supabase Cron can call the same route more often, from inside your database.
 
-**A hosted job service** like Inngest, Trigger.dev, or Vercel Workflows stores the job, retries it with backoff (a longer wait before each try), runs steps that outlast one function, and shows you what failed. Use it for imports, emails, and multi-step work.
+**A hosted job service** like Inngest, Trigger.dev, or Vercel Workflows stores the job, retries it with backoff (a longer wait before each try), runs steps that outlast one function, and shows you what failed. A `jobs` table and a sweep (below) handle imports and emails at first. Switch to a hosted service once retries can't wait for the next sweep, or a job outlasts one function.
 
 <details>
 <summary>Going deeper: per-minute cron and database cost</summary>
@@ -149,31 +149,31 @@ Postgres session advisory locks are the textbook tool here, but they don't survi
 On my own side projects (Next.js on Vercel, with Neon or Supabase):
 
 - For slow work, ask your agent: "Move the slow part of this route into a `jobs` table with status, attempts, and last_error. Insert the row in the request and process it in `after()`."
-- For webhooks, copy the handler above. `stripe listen --forward-to localhost:3000/api/webhooks/stripe` sends test events to your machine.
-- Ask your agent: "Add a Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap." On Hobby a stuck job can wait a day, and five attempts take five days. Too slow? Sweep every few minutes with Vercel Pro or Supabase Cron.
+- For webhooks, copy the handler above. `stripe listen --forward-to localhost:3000/api/webhooks/stripe` sends test events to your machine. It prints its own `whsec_…` signing secret: put that in your local `STRIPE_WEBHOOK_SECRET`, or every signature check fails.
+- Ask your agent: "Add a Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap." On Hobby a stuck job can wait a day, and its retries take most of a week. Too slow? Sweep every few minutes with Vercel Pro or Supabase Cron.
+- Jobs that charge cards send a Stripe idempotency key, and failed jobs go to Sentry and my daily numbers email. Those habits come from [timeouts and retries](timeouts-retries-idempotency.md) and [knowing it broke](knowing-it-broke.md).
 
-I switch to a hosted job service once I need backoff or steps that outlast one function. Past that, I'd be rebuilding one badly in a table.
+I start with a `jobs` table and a sweep. I switch to a hosted job service (Inngest, Trigger.dev) once retries can't wait for the next sweep, or a job outlasts one function. Past that, I'd be rebuilding one badly in a table.
 
 ## The standard
 
 Teams go further once the signal shows up. More in the [reliability concern](../concerns/reliability.md#when-stakes-rise).
 
-- **Alert on failed jobs and an aging backlog, and name who responds.** When real users wait on a job's result, like a receipt email.
-- **Tie every job and webhook to a request ID.** When support tickets or a second engineer show up.
-- **Send an idempotency key with every outbound charge or email.** When it's real money or real customers.
-- **Reconcile your records against Stripe's on a schedule.** When you take real money.
-- **Test the crash and race cases on purpose.** When a duplicate would cost money or trust.
+- **Alert when the oldest pending job passes an age you pick, and name who responds.** When real users wait on a job's result, like a receipt email.
+- **Carry the request ID (the ID that ties one request's log lines together) into each job's payload**, so one search finds the request, the job, and every retry. When support tickets or a second engineer show up.
+- **Reconciliation against Stripe,** as in [when production breaks](when-production-breaks.md#the-standard). When you take real money.
+- **Test a job killed mid-run, and two runs at once, on purpose.** When a duplicate would cost money or trust.
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Slow or flaky work runs outside the request, as a row in a `jobs` table.
-- Every job leaves the same result if it runs twice.
-- The webhook route verifies the signature on the raw body first.
-- Each webhook event is saved by event ID before the route returns `200`.
-- Handlers fetch the object's current state instead of trusting event order.
-- The cron route checks `CRON_SECRET`, and a lease row stops sweeps from overlapping.
+- Work that can outlast the function's time limit, or calls a flaky API, runs as a row in a `jobs` table or in a hosted job service, not inside the request.
+- Every job is safe to run twice: each write checks the row's status in its `WHERE`, or hits a unique key.
+- The webhook route verifies the signature on the raw body (`req.text()`) before it does anything else.
+- Each webhook event is inserted by its event ID with `ON CONFLICT DO NOTHING` before the route returns `200`.
+- Webhook handlers fetch the object's current state from Stripe instead of trusting the event's order.
+- The cron route rejects any request without `Authorization: Bearer $CRON_SECRET`, and a lease row stops sweeps from overlapping.
 
 ## Sources
 

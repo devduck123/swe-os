@@ -117,26 +117,26 @@ Use a skeleton that holds the shape of what's loading. A full-page spinner hides
 On my own side projects:
 
 - **The stack:** shadcn/ui on Tailwind, react-hook-form plus Zod. Put the schema in its own file, like `lib/schemas/invite.ts`, and import it in the form and the server action.
-- **Before every PR,** ask your agent: "Use Playwright to screenshot this feature's loading, empty, error, and no-permission states at 375px and desktop width." Then look at them yourself, and try the flow with only a keyboard.
+- **Before every PR,** ask your agent: "Use Playwright to screenshot this feature's loading, empty, error, and no-permission states at 375px and desktop width." Then look at them yourself, and run the [five-minute check](accessibility-in-practice.md#the-five-minute-check).
 - **For a throwaway prototype,** skip most of this but add a `loading.tsx` and `error.tsx` to each route. Without them you can't tell slow from broken.
+- **For the flow that would hurt to break,** a Playwright test, as in [how you know it works](how-you-know-it-works.md).
 
 ## The standard
 
-- **Playwright tests for the error and permission paths, not just screenshots.** Adopt them once a flow matters to revenue or trust.
-- **A speed budget, like "search answers in under 300ms for 95% of requests", measured with realistic data.** Adopt it once real users wait on the screen.
-- **Every caller checked before a shared component changes.** Adopt it once a second engineer works in the same components.
-- **In-between widths and landscape checked, with the main action reachable on a phone.** Adopt it once real users arrive on phones. More in [UI quality](../concerns/ui-quality.md).
+- **Playwright tests for every state of each important flow:** loading, empty, error, and no permission, not just the happy path. Adopt them once people pay for the product or rely on it for work.
+- **Visual regression tests on shared components:** a screenshot of each one in Storybook, with any change flagged for review. Adopt them once a second engineer works in the same components.
+- **Real devices checked, iOS Safari and Android Chrome, plus in-between widths and landscape.** Adopt it once real users arrive on phones. More in [UI quality](../concerns/ui-quality.md).
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- Every screen in this change has a loading, empty, error, and no-permission state.
-- Submit is disabled only while the request runs, and the server stops a double submit.
-- After an error, the form keeps its input and shows the message on the field it's about.
-- Filters, tabs, search, and the page number live in the URL.
-- At 375px wide, every control works without hover, and each input brings up the right keyboard.
-- Times show in the user's time zone, not the server's.
+- Every screen in this change has a loading, empty, and error state, plus a no-permission state wherever some users can't act.
+- Submit is disabled only while the request runs (not until the form is valid), and the server stops a double submit.
+- After an error, the dialog or form stays open, keeps its input, and shows the message on the field it's about.
+- Filters, tabs, search, and the page number live in the query string, not in `useState`.
+- At 375px wide, every control works without hover, and each input has the right `type`, `inputMode`, and `autocomplete`.
+- Times are stored as `timestamptz` and formatted in the user's time zone, never with `toLocaleString()` on the server.
 
 ## Sources
 

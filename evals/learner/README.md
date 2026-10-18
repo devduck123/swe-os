@@ -1,6 +1,6 @@
 # Learner test
 
-Does each stop on the track teach its reader what it means to? Claude reads every stop in character as the reader the track is for, then reports what it would remember, where it got lost, which words it didn't know, and whether it could act on "What I'd do".
+Does each stop on the track teach its reader what it means to? Claude reads every stop in character as the reader the track is for, then reports what it would remember, where it got lost, which words it didn't know, and whether it could act on "How I do it".
 
 The reader is in [reader.md](reader.md): self-taught, ships Next.js and Supabase apps with AI agents, reads on a phone, and can't define index, transaction, race, or idempotency. Collapsed "Going deeper" blocks and Sources are removed before reading, because this reader skips them.
 

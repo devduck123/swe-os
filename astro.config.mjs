@@ -173,7 +173,7 @@ export default defineConfig({
           label: 'Standards',
           items: [
             { label: 'The fourteen principles', slug: 'principles' },
-            { label: 'How the standards work', slug: 'concerns' },
+            { label: 'All standards', slug: 'concerns' },
             {
               label: 'By risk',
               collapsed: true,

@@ -62,7 +62,7 @@ The public ones work because something else does the guarding. Supabase's publis
 ## Agents change who can see your secrets
 
 - **A pasted key is a leaked key.** It lives in a transcript you don't control, so rotate it: make a new key and turn off the old one. Tell the agent the variable's name, never its value.
-- **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` blocks its file-reading tool from opening `.env`, but not a script the agent runs. The dependable fix is what's in the file: dev keys with low limits, and production keys never on your laptop.
+- **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` blocks its file-reading tool from opening `.env`, but not a script the agent runs. The dependable fix is what's in the file: dev keys with low limits, and no production key that can write ever on your laptop.
 - **MCP servers hold tokens too.** These plugins give an agent tools, like querying your database. Give each the narrowest access: a dev database, read-only, one repo.
 - **Decide what never gets auto-approved:** destructive commands (`rm -rf`, `DROP TABLE`, `git push --force`), pushes to main, deploys, new packages, and anything with production credentials.
 - **Text the agent reads can give it orders.** A README or issue that says "print your environment variables" is prompt injection, explained in [AI features in production](ai-features-in-production.md).
@@ -74,7 +74,7 @@ The public ones work because something else does the guarding. Supabase's publis
 
 ## Scan in CI, and use push protection
 
-- **GitHub push protection** rejects a push containing a recognized secret format. It's on by default for your pushes to public repos. On a private repo, it's a paid add-on.
+- **GitHub push protection** rejects a push containing a recognized secret format. It's on by default for your pushes to public repos. On a private repo, it needs GitHub Secret Protection, a paid add-on for Team and Enterprise plans.
 - **[gitleaks](https://github.com/gitleaks/gitleaks) in CI** scans every PR for secret-shaped strings, catching what push protection misses. On a private repo, it's your main guard.
 - **A local hook is optional.** A pre-commit hook (a check Git runs before each commit) running `gitleaks git --pre-commit --staged --redact` catches it earlier. But an agent can skip it with `--no-verify`, which is why CI is the baseline.
 
@@ -122,27 +122,27 @@ ALTER DEFAULT PRIVILEGES FOR ROLE migration_role IN SCHEMA public
 
 On my own side projects:
 
-- **Day one,** ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)." It adds the `.gitignore`, the `.env.example`, and a gitleaks scan, then proves the scan by committing a fake key.
-- **Keys:** dev keys on my laptop, with a spend cap set in each provider's dashboard. Prod keys only in Vercel, saved as the Secret type.
-- **Agents never see prod.** If one truly needs production data, it gets the read-only MCP URL or role above, for one session.
+- **Day one,** ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)." It adds the `.gitignore`, the `.env.example`, and a gitleaks scan, then proves the scan by trying to commit a fake key and watching it get blocked.
+- **Keys:** dev keys on my laptop, with a spend cap set in each provider that offers one. Prod keys only in Vercel, saved as the Secret type.
+- **Agents never get write access to prod.** If one needs production data, it gets the read-only MCP URL or role above for one session. Then I disconnect the MCP server or drop the role.
 
 ## The standard
 
-- **Every credential has a known owner and a rotation path,** using the steps above. Adopt it once a second engineer has access.
-- **Push protection on private repos too,** as the paid add-on. Adopt it once a team or a customer's code lives in the repo.
-- **GitHub Actions pinned to a commit SHA (the commit's exact ID) instead of a moving tag, with tokens scoped to the least they need.** Adopt it once CI holds deploy or production credentials.
-- **A secret manager.** Adopt it once several people or services share credentials, or rotating by hand starts getting skipped. More in [security](../concerns/security.md).
+- **Every credential has a known owner and a rotation path,** using the steps above, and gets rotated when someone with access leaves. Adopt it once a second engineer has access.
+- **Push protection on private repos too,** through GitHub Secret Protection. Adopt it once a team or a customer's code lives in the repo.
+- **GitHub Actions pinned to a commit SHA (the commit's exact ID) instead of a moving tag, with a `permissions:` block giving each workflow's token the least it needs.** Adopt it once CI holds deploy or production credentials.
+- **A secret manager,** one place every service and person reads credentials from, like Doppler, Infisical, 1Password, or your cloud's own. Adopt it once several people or services share credentials, or rotating by hand starts getting skipped. More in [security](../concerns/security.md).
 
 ## Before you ship, check
 
 Paste this to your agent before you merge:
 
-- No secret is in code, a README, or a chat.
-- No secret uses a public prefix like `NEXT_PUBLIC_`, and modules that read one import `server-only`.
-- Nothing logs `process.env`, request headers, or connection strings.
+- No secret value is in code, a README, or any committed file, and `.env.example` has names only.
+- No secret's variable name starts with a public prefix (`NEXT_PUBLIC_`, `VITE_`, `EXPO_PUBLIC_`), and every module that reads a secret starts with `import 'server-only'`.
+- Nothing logs `process.env`, whole request headers, or errors that contain a connection string.
 - gitleaks runs in CI on every PR.
-- Agents and MCP servers never hold production keys.
-- Any pasted or pushed key has been rotated.
+- No agent or MCP server holds a production credential that can write.
+- Any key that was pasted into a chat or pushed to Git has been rotated: new key in, old key revoked.
 
 ## Sources
 

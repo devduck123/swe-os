@@ -77,13 +77,13 @@ On my own side projects:
 - Run the [shape-project](../../skills/shape-project/SKILL.md) skill (a saved workflow your agent follows) on any new idea before I let an agent pick a stack. It asks the same questions and pushes back on the weakest assumption.
 - Write the shaped slice into `PROJECT.md` when I set up the repo with [start-project](../../skills/start-project/SKILL.md), so every later session starts from it.
 - Paste the acceptance criteria and non-goals into the prompt for the first build. Then ask the agent: "Write one test for each Done-when line, and show me each one passing." The same list is my review checklist.
-- Ship the slice to a real URL, use it for a week, and only then shape the next slice.
+- Ship the slice to a real URL, and use it for a week before shaping the next slice. The keep-going or stop call still waits for the date in the shape.
 
 ## The standard
 
-- **The riskiest assumption gets tested with people who have the problem, not just you and your friends,** like the manual coach above. Do it before building for strangers, or anything costing real money or over a week.
+- **The riskiest assumption gets tested with people who have the problem, beyond you and your friends.** Run the manual-coach kind of test on strangers. Do it before you build for strangers, or before anything that takes more than a week or costs real money.
 - **The keep-going and stop signals get a review date, and the review happens.** Do it once someone else's time or money goes in. See [product and UX](../concerns/product-ux.md).
-- **Someone owns the spec, and you add its missing acceptance criteria and non-goals instead of redoing it.** Do it when a second person decides what gets built, at work or for a client.
+- **Every piece of work has a spec with one owner, and acceptance criteria before anyone builds.** Do it when a second person decides what gets built, at work or for a client. Handed one? Add its missing acceptance criteria and non-goals instead of redoing it.
 
 ## Before you ship, check
 
