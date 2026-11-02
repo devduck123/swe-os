@@ -1,10 +1,10 @@
 # Tommy's SWE OS
 
-AI made code cheap. Judgment is still the expensive part.
+AI keeps getting better at code. Shipping it well is still the hard part.
 
 **Read it at [tommy-swe-os.vercel.app](https://tommy-swe-os.vercel.app).**
 
-SWE OS is how I build software, written once for two readers. People read it as a site to learn what separates a vibe coder from a software engineer. Coding agents read the same files as instructions, so they shape ideas before picking a stack, build complete features, and show evidence instead of confidence.
+SWE OS is a slightly opinionated guide to building and designing software, written for two readers. People read it as a site to learn what a vibe coder forgets to ask for. Coding agents read the same files as instructions, so they shape ideas before picking a stack, build complete features, and show evidence instead of confidence.
 
 ## Learn
 

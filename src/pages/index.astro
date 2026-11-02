@@ -16,7 +16,7 @@ const repo = 'https://github.com/devduck123/swe-os';
 const title =
   "Tommy's SWE OS: engineering judgment for people and their agents";
 const description =
-  'How Tommy engineers software, written once for two readers: people who want to learn real engineering, and the coding agents that work with them.';
+  'A slightly opinionated guide to building and designing software, written for two readers: people learning what a vibe coder forgets to ask for, and the coding agents that build with them.';
 const ogImage = new URL('/og.png', Astro.site ?? Astro.url).href;
 
 // A few of the things people miss, pulled from the stops themselves so they never drift.
@@ -123,13 +123,13 @@ const misses = await Promise.all(
         <PondScene />
         <div class="hero__copy">
           <p class="eyebrow">
-            <span class="dot" aria-hidden="true"></span>v{version} · how I build
-            software, written down
+            <span class="dot" aria-hidden="true"></span>For people and their
+            coding agents
           </p>
           <h1 id="hero-title">
-            AI made code cheap. Judgment is still the{' '}
+            AI keeps getting better at code. Shipping it well is still the{' '}
             <span class="mark">
-              expensive
+              hard part.
               <svg
                 class="mark__line"
                 viewBox="0 0 200 16"
@@ -142,13 +142,14 @@ const misses = await Promise.all(
                   d="M4 10c40-6 92-8 140-5 18 1 34 3 52 1M30 13c40-3 84-4 120-2"
                 ></path>
               </svg>
-            </span>{' '}
-            part.
+            </span>
           </h1>
           <p class="lede">
-            SWE OS is how I build software, written once for two readers. You
-            read it to learn what separates a vibe coder from an engineer. Your
-            coding agent reads the same pages as its instructions.
+            SWE OS is a slightly opinionated guide to building and designing
+            software, written for two readers. <strong>People</strong> read it
+            to learn what a vibe coder forgets to ask for.{' '}
+            <strong>Coding agents</strong> read the same pages as their
+            reference while they build.
           </p>
           <div class="actions">
             <a class="btn btn--primary" href="/guides/">
@@ -393,8 +394,7 @@ const misses = await Promise.all(
     <footer class="footer">
       <Duck size={22} />
       <p>
-        Made by <a href="/profile/tommy/">Tommy</a>, with a lot of help from
-        agents. Opinions are labeled as mine. Writing under{' '}
+        v{version}. Writing under{' '}
         <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>,
         code under MIT. <a href={repo}>Source on GitHub</a>.
       </p>

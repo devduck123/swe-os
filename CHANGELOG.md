@@ -4,6 +4,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Two readers, drawn.** The duck now reads a book on the dock, and its agent, a little robot duck, reads the same page over its shoulder. The landing copy says what SWE OS is plainly: a slightly opinionated guide for people and the coding agents that build with them.
 - **The duck gets a world.** The landing page is a small pond at morning or night, with a dock, books, a mug, fireflies, and a lantern. The duck waves for real (the hand comes up beside its face), its eyes follow your pointer, it hops when you copy a prompt, and it tips its cap when you switch themes. Nothing loops: the ambient bits play for a few seconds and rest.
 - **Stop pages with some personality.** "How I do it" is my note card, "Ask your agent" is a speech bubble from the duck with a Copy button, the draft notice is a small label, and each stop says where it sits in the track.
 - **The track is a trail.** The track index is drawn as one path through the seven stages, with a duck pose for each and ticks on the stops you've read. Progress stays in your browser.

@@ -1,6 +1,6 @@
 ---
-// The landing page's world (see docs/brand.md): a small pond with a dock, where the duck
-// stands with its books and a mug. Morning in the light theme, night in the dark one, with
+// The landing page's world (see docs/brand.md): a small pond with a dock, where the duck reads
+// a book and its agent, a little robot duck, reads the same page over its shoulder. Morning in the light theme, night in the dark one, with
 // the colors easing between them when the theme changes. The ambient bits (fireflies,
 // steam, mist, ripples) play for a few seconds and rest; hovering the scene, or scrolling
 // back to it, plays them again. Decorative, so it's hidden from screen readers.
@@ -181,22 +181,20 @@ const stars = [
       ></rect>
     </g>
 
-    <!-- A stack of books and a mug, next to the duck. -->
-    <g class="books" transform="translate(500 360)">
-      <path class="book book--a" d="M2 30h52v14H2Z"></path>
-      <path class="book book--b" d="M8 18h44v12H8Z"></path>
-      <path class="book book--c" d="M4 6h46v12H4Z"></path>
-      <path class="pages" d="M46 32v10M44 20v8M42 8v8"></path>
-    </g>
-    <g class="mug" transform="translate(562 378)">
+    <!-- A mug, for the long read. -->
+    <g class="mug" transform="translate(566 378)">
       <path class="mug-body" d="M0 4h18v16c0 4-3 6-6 6H6c-3 0-6-2-6-6Z"></path>
       <path class="mug-handle" d="M18 8c6 0 7 9 0 9"></path>
       <path class="steam" d="M5-2c-3-5 3-8 0-14M12-4c-3-5 3-8 0-14"></path>
     </g>
 
-    <!-- The duck, on the dock. -->
-    <g transform="translate(366 244)">
-      <Duck size={130} alive />
+    <!-- The two readers on the dock: the duck with the book, and its agent, a little robot
+         duck, reading the same page over its shoulder. -->
+    <g transform="translate(436 292) rotate(-9 48 118)">
+      <Duck size={96} bot pose="peek" />
+    </g>
+    <g transform="translate(352 244)">
+      <Duck size={130} alive pose="read" />
     </g>
 
     <!-- Night: fireflies. Morning: mist drifting over the water. -->
@@ -216,7 +214,7 @@ const stars = [
       <path d="M150 368c70-6 160-6 250 0"></path>
     </g>
 
-    <!-- A note in Tommy's hand, pointing at the duck. -->
+    <!-- A note in Tommy's hand, with an arrow that forks to both readers. -->
     <g class="note">
       <text x="476" y="150">
         same pages,
@@ -226,7 +224,7 @@ const stars = [
       </text>
       <path
         class="note-arrow"
-        d="M482 172c-22 2-36 14-42 32m0 0-1-11m1 11 8-7"
+        d="M500 186c-4 10-10 18-18 24M482 210c-14 8-28 18-42 28m0 0 2-10m-2 10 10-1M482 210c4 14 5 34 3 54m0 0-6-8m6 8 5-8"
       ></path>
     </g>
   </svg>
@@ -576,7 +574,7 @@ const stars = [
       animation: birds 5s ease-in-out both;
     }
     .scene--play .note-arrow {
-      stroke-dasharray: 120;
+      stroke-dasharray: 220;
       animation: draw 0.9s ease-out 1.6s both;
     }
   }
@@ -664,7 +662,7 @@ const stars = [
   }
   @keyframes draw {
     from {
-      stroke-dashoffset: 120;
+      stroke-dashoffset: 220;
     }
     to {
       stroke-dashoffset: 0;
