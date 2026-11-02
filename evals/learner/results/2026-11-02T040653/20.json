@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "When something's slow, time it and fix the actual slow query before letting the agent slap a cache on it.",
+    "intended": "Performance and cost work starts by measuring to find the one slow or expensive thing, then fixing that thing instead of guessing.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Ask the database to explain the slow query",
+        "why": "I don't know this is a real command (EXPLAIN) or how I'd do it in Supabase. Sounds like 'ask it nicely'. Also 'index' is used like I know what it is; the sentence implies it but never says what adding one looks like."
+      },
+      {
+        "quote": "page through anything that grows",
+        "why": "Leap. Does 'page through' mean pagination, like showing 50 at a time? I guessed, but wasn't sure if it meant something database-specific."
+      },
+      {
+        "quote": "which writes clear it",
+        "why": "Too dense. I get 'stale', but 'writes clear it' assumes I know cache invalidation. Took a reread to get 'when data changes, the cache should reset'."
+      }
+    ],
+    "skimmed": [
+      "Go deeper links: 'Use The Index, Luke' sounds like a textbook, and I'm on my phone",
+      "The p95 bullet partly. I got 'some visits are way slower' but didn't care about the label, and I don't know where I'd even see p95 on Vercel"
+    ],
+    "jargon": [
+      "index",
+      "explain (EXPLAIN) the query",
+      "page through / pagination",
+      "p95 (glossed, but no idea where to find it)",
+      "usage-billed",
+      "spend limit vs cap (are these the same thing?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I 'measure' as someone who's never done it? Name one concrete tool: Supabase's query performance page, console.time, the Vercel logs, the Network tab. Same for 'set the provider's spend limit': which providers even have a hard cap (Vercel, Supabase, OpenAI)? Also, what does the 10x estimate in a PR look like? One example line would make me actually do it.",
+    "cut": "Nothing big. If forced, the last sentence of the opening ('Optimize the wrong thing...') repeats what the first two already said.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before letting the agent add a cache, time the slow page, because it's probably one query per row inside a loop, and set a hard spending cap, because a billing email won't stop anything.",
+    "intended": "Find the one slow or expensive thing with a real number before optimizing, instead of guessing.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Without an index, the database reads",
+        "why": "Unexplained term. The bullet tells me what happens without an index, but never what an index is or how I'd add one in Supabase. I'd guess it's like a book index, but I wouldn't know what to type."
+      },
+      {
+        "quote": "Ask the database to explain the slow query",
+        "why": "I can't tell if 'explain' is a real command or a figure of speech. I'd literally paste my query into Cursor and ask it to explain it. Nothing says it's EXPLAIN / EXPLAIN ANALYZE or where I'd run it in Supabase."
+      },
+      {
+        "quote": "which writes clear it",
+        "why": "A leap. 'Writes' clearing a cache assumes I know about cache invalidation. In Next.js I don't know if this means revalidatePath, or something I set up myself."
+      }
+    ],
+    "skimmed": [
+      "'Estimate the bad month': the bot math is a nice gut-punch, but 'users times actions times cost' is too compressed to use. Cost of what, per what? I'd read the 864,000 and move on.",
+      "'Averages hide the slow visits': I got the point fast, but I don't know where I'd ever see a p95 for my app (Vercel? Supabase?), so I'd skim it as trivia."
+    ],
+    "jargon": [
+      "index",
+      "query (fine-ish, but 'one query for the list plus one more for every row' is the N+1 problem, and I'd only half follow it without a tiny example)",
+      "explain (as a database command)",
+      "page through (pagination is fine, but 'anything that grows with your users' is vague)",
+      "writes (as a noun)",
+      "usage-billed",
+      "spend limit vs. budget alert (the difference is clear here, actually)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Concrete tools for my stack. 'Measure' how: Vercel's logs, Supabase's query performance page, console.time? 'Fix the query' how: one Supabase select that joins the related table instead of fetching inside a .map()? Where do I find the spend limit on Vercel, Supabase, or OpenAI? One line naming where each lives would turn this from 'good advice' into something I'd do tonight.",
+    "cut": "I'd cut the 'Estimate the bad month' formula line ('Users times actions times cost, at 10x'). It's the least concrete thing on the page, and 'An alert doesn't stop a bill' already makes the cost point. Keep the bot example, but fold it into the alert bullet as the reason you need a cap.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

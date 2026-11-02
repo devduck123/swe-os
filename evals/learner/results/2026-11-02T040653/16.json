@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Ship small PRs so when something breaks you know which one did it and can undo it fast, but undoing the code doesn't un-send emails or un-charge cards.",
+    "intended": "Keep each change small and reversible so breaks are small and quick to take back.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every guess about what broke costs a deploy",
+        "why": "A leap. I don't get why guessing costs a deploy. Do I redeploy each time I try a fix? One more sentence would land it."
+      },
+      {
+        "quote": "every migration has to work with",
+        "why": "Unexplained term. I've never written a migration by hand, so I don't know if my Supabase table edits count. The 'old queries fail' part is also a leap: why is old code still running at all during a deploy? I thought Vercel just swapped it."
+      },
+      {
+        "quote": "CI installs from the lockfile",
+        "why": "Unexplained terms. CI and lockfile are both unexplained. I've seen package-lock.json but never knew it mattered, and I don't know if I even have CI. 'A global tool' also lost me."
+      }
+    ],
+    "skimmed": [
+      "The 'fresh machine' bullet. It's for people who already have CI, and I couldn't tell if it applied to me.",
+      "Go deeper. martinfowler.com and GitHub rulesets look like reading for senior engineers, not phone reading."
+    ],
+    "jargon": [
+      "migration",
+      "rollback",
+      "CI",
+      "lockfile",
+      "global tool",
+      "schema",
+      "diff",
+      "preview (I'm guessing it's a Vercel preview deploy, but not sure)",
+      "live payment keys"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I give a preview its own database on Supabase? Branching, a second project, something else? What does a `check` contain, and where does it run so it 'has to pass before merge'? It reads like a script plus a GitHub setting, but I don't know how to wire it up. And how do I actually roll back on Vercel: is it a button?",
+    "cut": "The 'fresh machine' bullet. It's the most jargon-dense, it hits me least, and the How I do it line already covers it with 'a `check` that has to pass'.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Ship lots of small PRs so when something breaks it's one small thing you can find and undo fast, and remember undoing the code doesn't un-send emails or un-charge cards.",
+    "intended": "That you can't stop breaks, but you can keep each one small and quick to take back by shipping small changes.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every guess about what broke costs a deploy",
+        "why": "A leap. I think it means each time I try a fix I have to redeploy, but I had to reread it. Is it 'guess, redeploy, check, repeat'? Say that."
+      },
+      {
+        "quote": "every migration has to work with the code in production now",
+        "why": "Unexplained term. I've never written a migration by hand. Supabase does something when I change tables, but I don't know if that counts. 'Add first, remove later' sounds like a rule, but I can't picture it without clicking the link."
+      },
+      {
+        "quote": "CI installs from the lockfile on a clean machine",
+        "why": "CI and lockfile aren't explained. I've seen package-lock.json but didn't know it mattered, and I don't know if I even have CI. Vercel builds my app. Is that CI?"
+      }
+    ],
+    "skimmed": [
+      "The schema-edit-in-the-dashboard bullet. It's too short to land. I edit tables in the Supabase dashboard all the time, so this is aimed right at me, but 'skips everything' and 'no other database gets it' don't tell me what goes wrong or what to do instead.",
+      "Go deeper links. martinfowler.com and GitHub rulesets docs look like they're for real engineers, so I wouldn't open them on my phone."
+    ],
+    "jargon": [
+      "rollback / roll back (I can guess, but how? Is it Vercel's 'promote previous deployment'?)",
+      "migration",
+      "CI",
+      "lockfile",
+      "schema",
+      "diff (I sort of know it from PR views)",
+      "preview with its own database (how? Supabase branching? a second project?)",
+      "live payment keys (vs test keys, which I can guess at)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it names things I don't know how to set up. 'A check that has to pass before merge': what's in it, and where do I turn on 'has to pass'? 'A preview with its own database': with Vercel + Supabase, what do I actually click? And how do I roll back on Vercel when the bad PR goes out? I'd do the small PRs and the phone click-through tomorrow. The rest I'd need a pointer for.",
+    "cut": "The fresh-machine bullet. It's real, but it needs CI and lockfile explained first, and for me Vercel already builds on a clean machine, so I'm not sure what it adds. I'd rather spend that space telling me what to do instead of editing tables in the Supabase dashboard.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

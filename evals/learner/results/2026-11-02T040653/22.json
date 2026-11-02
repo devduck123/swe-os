@@ -1,0 +1,87 @@
+[
+  {
+    "takeaway": "Free tiers don't fail gracefully, so the things I set up without thinking (a health check pinging my database, listing files on every page, keeping a login limit in memory) can quietly eat my free quota or turn a feature off mid-month.",
+    "intended": "A managed, free-to-start stack for building a real web app alone, and mostly where its free tiers end abruptly.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Rules in the database catch what code forgets",
+        "why": "What rules? I don't know what a database 'rule' is. Constraints? RLS? This is the whole reason given for picking Postgres and I can't tell what it means."
+      },
+      {
+        "quote": "A signed webhook says it was paid",
+        "why": "I've heard 'webhook' but 'signed' is new, and I don't know why it matters or what I'd do differently. Feels like a warning I can't act on."
+      },
+      {
+        "quote": "a login limit kept in memory",
+        "why": "I don't have a 'login limit'. Is this rate limiting? I didn't know I was supposed to have one. I got the 'many copies' idea, but not what I'd actually store in Postgres or how."
+      }
+    ],
+    "skimmed": [
+      "The table's Why column. Each cell is half a sentence, so I read the picks and skipped the reasons.",
+      "Go deeper links. I'm on my phone and won't open pricing pages."
+    ],
+    "jargon": [
+      "Drizzle",
+      "Neon",
+      "Better Auth",
+      "transactional email API",
+      "signed webhook",
+      "Zod / 'parse'",
+      "cron",
+      "serverless",
+      "pg_dump",
+      "registrar",
+      "perimeter",
+      "compute hours"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to set a spend cap on Vercel or Supabase (the page says 'not just an alert' but doesn't say where the setting is). What 'one upgrade at a time for a reason I can name' looks like in practice: which upgrade first? Backups, per the bullet, but How I do it doesn't say so. I'd turn on MFA today, that part is clear.",
+    "cut": "The Zod row in the table. 'Parse everything from outside, AI output included' is the only row with no matching trap below, and I don't know what parsing means here, so it's noise next to the concrete stuff.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Free tiers don't fail gently: they shut stuff off at weird limits (like Vercel banning payments on free, or a cron keeping Neon awake until the hours run out), so I need to know those limits and put MFA on every account before real users show up.",
+    "intended": "Which managed, free-to-start stack to use for a solo web app, and where the free tiers end unexpectedly.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Rules in the database catch what code forgets",
+        "why": "What rules? I don't know what this means. Is it Supabase RLS? Constraints? It's the whole reason given for picking Postgres, and I can't tell what I'm getting."
+      },
+      {
+        "quote": "A signed webhook says it was paid",
+        "why": "I've heard 'webhook' but don't know what 'signed' adds or what I'd have to do about it. It sounds like something I need to get right, and it's one line in a table."
+      },
+      {
+        "quote": "a login limit kept in memory",
+        "why": "I've never built a login limit, so I don't know what's 'in memory' here. I get that serverless runs copies, but I don't get why I'd keep counts in Postgres or what counts I'd even have."
+      }
+    ],
+    "skimmed": [
+      "The 'Why' column of the table. The cells are clipped fragments, and on my phone the table probably scrolls sideways, so I'd just read the picks.",
+      "Go deeper links. I'm not opening Neon's pricing docs between other things."
+    ],
+    "jargon": [
+      "Drizzle (it never says it's an ORM or what it does for me)",
+      "transactional email API",
+      "signed webhook",
+      "test mode",
+      "cron",
+      "compute hours / free compute",
+      "list calls",
+      "serverless",
+      "registrar",
+      "perimeter",
+      "pg_dump",
+      "staging environment",
+      "queue, Redis"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "'How I do it' is one long sentence. I'd turn on MFA, but I don't know how to set a spend cap on each service or which ones even have one. 'Knowing how I'd leave' isn't something I can do; I'd need to know what that looks like in practice. I'd also want a plain 'if you take payments, upgrade Vercel to Pro first', because that's the one that could actually get me in trouble.",
+    "cut": "The 'Listing files is metered' bullet. I've never listed a blob store, and the advice only makes sense if you already know what a list call is. The vendor-accounts bullet and the Vercel non-commercial bullet matter far more to me.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

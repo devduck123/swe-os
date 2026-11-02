@@ -1,0 +1,83 @@
+[
+  {
+    "takeaway": "Put my Vercel function in the same region as my Supabase database, because every query crossing the country adds up fast.",
+    "intended": "Knowing the hops a request takes (browser, CDN, function, database) and what each one remembers lets you turn 'it's broken' into a specific question.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Know where each hop is and what it remembers",
+        "why": "'What it remembers' is the promised payoff, but the stop never goes hop by hop saying what each remembers. I got pieces (the CDN keeps copies, server memory resets) but no map I could picture."
+      },
+      {
+        "quote": "A function or database that scales to zero",
+        "why": "Unexplained term. I'm guessing it means it shuts off when nobody's using it, but I'm not sure, and 'cold start' rests on it."
+      },
+      {
+        "quote": "read the failing request's status, timing, and cache header",
+        "why": "I've opened the Network tab, but I don't know which header is 'the cache header' or what value would tell me something. That's the step I'd actually need help with."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two doc links I'd save and never open on my phone",
+      "The 'shared cache' bullet I half-skimmed: 'CDN hands its copy to everyone' was scary, but I didn't know how a page ends up cached by accident, so I couldn't tell if this applies to me"
+    ],
+    "jargon": [
+      "CDN",
+      "region (I've seen the dropdown but never knew it mattered)",
+      "client component (I use 'use client' because the agent adds it, but 'everything it imports ships' was news)",
+      "public-prefixed environment variable (NEXT_PUBLIC_? say it)",
+      "server actions / public endpoints",
+      "instance",
+      "scales to zero",
+      "cold start",
+      "cache header",
+      "round trip"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to set the function region in Vercel and where to find my Supabase region. Which header name to look at in the Network tab and what a HIT vs MISS means. How to tell if a per-user page is being cached by the CDN and how to stop it. 'Mark code for the browser only where something's interactive' needs a concrete example: which of my 'use client' files should lose it?",
+    "cut": "'Slow only after a quiet period is a cold start.' It's the one bullet with no action, it depends on 'scales to zero' which I don't know, and I can't do anything with it.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When my deployed app breaks, I should check for a missing environment variable first, then open the Network tab, before I start changing code.",
+    "intended": "That a request goes browser → CDN → function → database and back, and knowing what each hop does and remembers turns \"it's broken\" into something you can answer.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "A function or database that scales to zero",
+        "why": "Leap. I don't know what 'scales to zero' means. I'm guessing it shuts off when nobody uses it, but the sentence assumes I already know, and I've never thought about my Supabase or Vercel stuff 'waking up.'"
+      },
+      {
+        "quote": "One instance serves many users at once",
+        "why": "Unexplained term. What's an 'instance'? Is it the same thing as the 'function' from the opening? The opening said 'a function in one region,' and now there are instances that 'come and go.' I can't picture how these connect."
+      },
+      {
+        "quote": "status, timing, and cache header",
+        "why": "I've opened the Network tab, but I don't know which header is 'the cache header' or what value would tell me something is wrong. It reads like a checklist for someone who already knows how to read it."
+      }
+    ],
+    "skimmed": [
+      "The 'Go deeper' links. They're official docs, and on my phone I won't open them mid-read.",
+      "'Anything that ships to the browser is public.' I kind of already know NEXT_PUBLIC_ is public, and the 'it runs the other way too' link to server actions felt like a different lesson, so I skipped past it."
+    ],
+    "jargon": [
+      "CDN (never glossed; I know Vercel has one, but not that it's a separate hop holding copies of my pages)",
+      "region",
+      "round trips",
+      "instance",
+      "scales to zero",
+      "cold start (sort of defined by the symptom, but not what it is)",
+      "shared cache",
+      "client component (I've seen 'use client' but don't know the rule for when)",
+      "public-prefixed environment variable (I had to guess this means NEXT_PUBLIC_)",
+      "cache header",
+      "server actions / public endpoints"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to set the function's region. Is it a Vercel setting, a config file, or per route? And how do I find my Supabase region? 'I match the function's region to the database's' doesn't tell me where either one lives. Same for 'mark code for the browser only where something's interactive': say it's the 'use client' line, or I won't connect it to anything. For the Network tab, tell me which header to look at and what a bad value looks like, like a per-user page showing as cached.",
+    "cut": "The cold start bullet. It's the one I can do the least about, it uses 'scales to zero' without explaining it, and 'slow after a quiet period' isn't the scary bug here. The shared-cache and shared-memory bullets are the ones that would actually burn me, and they deserve the room.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

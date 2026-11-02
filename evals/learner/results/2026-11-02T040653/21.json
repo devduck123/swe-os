@@ -1,0 +1,70 @@
+[
+  {
+    "takeaway": "Shipping with an agent feels like learning but isn't, so before I merge I should quiz myself on what the agent did, especially in auth and data code.",
+    "intended": "Agents make you faster but not better unless you add a deliberate step after their work where you check you understood it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "models that take actions",
+        "why": "Like AI models? Database models? I couldn't tell what 'models that take actions' means or why it's in a list with auth and money."
+      },
+      {
+        "quote": "every agent PR carries a \"Worth learning\" note",
+        "why": "Who writes the note, me or the agent? And where does the quiz come from? I'd need to know that before I could start doing it."
+      },
+      {
+        "quote": "once per feature in an area I want to own, I write the core myself",
+        "why": "What counts as 'the core' of a feature? I don't know how big a piece that is or how to pick it."
+      }
+    ],
+    "skimmed": [
+      "The 'Answering beats rereading' bullet. The 'from classrooms, not agent workflows, so using it here is a bet' part felt like a caveat for researchers, so I skimmed it.",
+      "Go deeper links. I wouldn't open an arxiv paper on my phone."
+    ],
+    "jargon": [
+      "PR (I sort of know it, but I mostly push straight to main with Vercel)",
+      "randomized study",
+      "METR",
+      "own (an area)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "A concrete example of a 'Worth learning' note and 3 quiz questions for a real PR, like a Supabase auth change. Also who generates the quiz. If the agent writes it, how do I keep it from being too easy? The learn skill link probably answers this, but from this page alone I couldn't start today.",
+    "cut": "The 'Answering beats rereading' bullet. It's the only one that isn't about AI, and it hedges itself ('a bet. A cheap one.'). The How I do it line already says to answer from memory, so the bullet adds little.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I merge what the agent wrote, I should quiz myself on it from memory, especially auth and database stuff, because shipping it doesn't mean I learned it.",
+    "intended": "Agents make you ship faster but not get better, and you can't tell the difference, so you need a deliberate step after the agent's work to check you understood it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a short quiz I answer from memory",
+        "why": "Who writes the quiz? The agent? Me? If the agent writes it, does that count? I don't know what one looks like or how long 'short' is."
+      },
+      {
+        "quote": "models that take actions",
+        "why": "Lost me. Auth, data, and money I get. This sounds like AI agents inside my app, but it's dropped in a list with no explanation."
+      },
+      {
+        "quote": "I write the core myself",
+        "why": "The core of what? The main function? The hardest file? I'd have no idea where to draw the line on a real feature."
+      }
+    ],
+    "skimmed": [
+      "The stats in the first three bullets. On my phone the 50% vs 67% vs 19% vs 20% numbers blurred together. I kept the bolded headlines and skipped the details.",
+      "Go deeper. I'm not reading an arxiv paper between things."
+    ],
+    "jargon": [
+      "METR (no idea who that is or why I should trust them)",
+      "randomized study (I sort of get it, but not why it matters)",
+      "learn skill (is a skill a Claude Code thing? a plugin? I'd have to click to find out)",
+      "conceptual questions (vs. what? an example would help)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "One example of a 'Worth learning' note and two or three quiz questions for a real PR, like an auth change. Who generates the quiz and how I avoid just reading the answer. What to do if I'm not using the learn skill. What to do when I get a question wrong: block the merge, or just note it?",
+    "cut": "The caveat 'This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.' It's honest, but it made me trust the advice less without changing what I'd do.",
+    "clarity": 4,
+    "usefulness": 3
+  }
+]

@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Before real people use my app, set up Sentry so I see errors myself, and get a daily email of signups, payments, and failed jobs so I notice when something quietly stops instead of waiting for someone to complain.",
+    "intended": "Set up a small amount of monitoring so you can tell from data whether the app is broken, for whom, and why, before users tell you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Sentry with source maps and releases",
+        "why": "I've heard of Sentry. 'Releases' sounds like a Sentry feature, but nothing says what it is or that it's the same thing as 'tag every error with the commit' from the bullet above. I wouldn't know what to turn on."
+      },
+      {
+        "quote": "Have the important job check in",
+        "why": "Check in to what? I don't know what tool receives the check-in or what 'alert when it doesn't come' looks like in practice. It's a good idea, but I couldn't build it from this."
+      },
+      {
+        "quote": "Make one per request, put it",
+        "why": "I get the idea of a request ID. I have no clue where in a Next.js app you 'make one per request' or how it gets onto every log line. Middleware? Something in Vercel? It's a leap from idea to code."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: the Google SRE book sounds like it's for big-company infra people, not me.",
+      "The 'Up isn't the same as working' invoice example. 'Payments received against invoices marked paid' took two reads, and I don't have invoices, so I glossed over it."
+    ],
+    "jargon": [
+      "source maps (I've seen the word in build output but couldn't explain it)",
+      "releases (in the Sentry sense)",
+      "minified",
+      "health check",
+      "uptime check (I can guess, but what tool?)",
+      "logs rolled over",
+      "request ID (the idea is clear, the 'request' part is fuzzy)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Names of the tools for the uptime check and the job check-in, plus one line on where a request ID goes in a Next.js/Vercel app. And how I'd build the daily email: a Supabase query plus a cron job? Sentry I could do, because the doc link walks me through it. The rest I'd have to ask Claude to figure out.",
+    "cut": "The Google SRE book link. Nothing on this page needs it, and it signals the topic is for a different kind of engineer than me.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "My app can look 'up' while signups or payments are quietly broken, so I should count the things that matter and get alerted when a job stops checking in instead of waiting for users to complain.",
+    "intended": "Observability means being able to tell from data you already collected whether the app is broken, for whom, and why, and a solo dev needs a small setup for it before strangers use the app.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Without source maps it points at",
+        "why": "I've seen 'source maps' in Vercel build output but don't know what they are or whether I have them. The page says I need them but never says in plain words that they map the squished production code back to my real files."
+      },
+      {
+        "quote": "Tag every error with the commit",
+        "why": "I get the idea, but I don't know how. Is that automatic in Sentry? Do I pass the git hash somewhere? 'Releases' in How I do it seems related but isn't connected to this."
+      },
+      {
+        "quote": "Have the important job check in",
+        "why": "Check in to what? I'd need to know there's a kind of service that expects a ping and yells when it doesn't get one. The bullet assumes I know that exists."
+      }
+    ],
+    "skimmed": [
+      "The opening's list ('error tracking, logs you can search, a check that the app is up...'). It reads like a checklist I'd scroll past. The bullets below are what actually hooked me.",
+      "'Logs leak.' I'd skim it because it feels like a security lecture, though 'Log IDs, not contents' is a good rule I'd remember."
+    ],
+    "jargon": [
+      "observability",
+      "source maps",
+      "minified",
+      "stack trace (I sort of know it, but not precisely)",
+      "releases (in Sentry's sense)",
+      "health check",
+      "uptime check",
+      "webhooks (I use them but couldn't explain them)",
+      "logs rolled over",
+      "request ID (I get it from context, but don't know how to generate one in Next.js)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it names tools and outcomes but not the first step for each. Which service does uptime checks and job check-ins (e.g. a cron-monitor or heartbeat service)? How do I add a request ID in Next.js middleware and get it into my logs and error page? How do I build that daily email: a scheduled function that queries Supabase? Even one link or name per item would get me moving. Also, Sentry 'releases' is never explained, so I don't know whether it's the same as tagging with the commit.",
+    "cut": "I'd cut the opening sentence's 'three questions' framing, or merge it into the 'You need it the moment...' line. 'Is it broken, for whom, and why' is fine, but the bullets teach it better. The opening's tool list also repeats How I do it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

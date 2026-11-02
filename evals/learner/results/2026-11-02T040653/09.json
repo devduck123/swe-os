@@ -1,0 +1,73 @@
+[
+  {
+    "takeaway": "Before I ship a feature, I check what it looks like empty, loading, broken, and on my phone, not just the happy screenshot from the mockup.",
+    "intended": "A frontend feature isn't done until it handles the states real users actually hit (slow network, empty account, error, no permission, phone), not just the one perfect mockup state.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "have the server reject the duplicate too",
+        "why": "How? I don't know how a server tells a duplicate from a real second submit. This is a leap; it says what to do and gives me nothing to do it with, so I'd just skip it."
+      },
+      {
+        "quote": "An optimistic update has to fail out loud",
+        "why": "'Optimistic update' is a term I've seen in Supabase/React Query docs but never understood. The next sentence half-explains it, but the heading lost me first, and 'silent revert' is a second term on top."
+      },
+      {
+        "quote": "Store the moment, and format it",
+        "why": "'Store the moment' sounds poetic, not technical. Do I store a timestamp? In UTC? A timestamptz column? I'd guess, and probably guess wrong."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links, on my phone I'm not opening a long blog post or MDN reference page",
+      "The second half of the Phones bullet (input type and autocomplete), which feels like a different tip jammed onto the hover one, so I'd skim past it"
+    ],
+    "jargon": [
+      "optimistic update",
+      "silent revert",
+      "pagination",
+      "autocomplete (the attribute, as opposed to the general idea)",
+      "view state",
+      "no-permission state (what triggers it in my app?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it assumes I can get an agent to screenshot those states. How do I force the 'loading' or 'error' state to appear so it can be captured? Throttle the network? Mock a failed fetch? A one-line prompt I could paste to Claude Code would make this something I'd actually do. Also, I don't have a no-permission state in most of my apps, so tell me when that one applies.",
+    "cut": "The time zone bullet. It's real, but it's a backend/data thing, it's the vaguest one ('store the moment'), and it breaks the rhythm of 'things you'd see on screen'. If something has to go, it's this, or it needs one concrete line like 'save it as UTC, format with the browser'.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I ship a feature, I check it with no data, while loading, when it errors, without permission, and on a phone, not just the happy screen I built it on.",
+    "intended": "A frontend feature isn't done until it handles the real states users hit (slow, empty, error, no permission, phone), not just the mockup's one perfect state.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "have the server reject the duplicate too",
+        "why": "A leap. How does the server know it's a duplicate? I'd have no idea what to tell my agent to build here. One line on how it works, or the word to search for, would help."
+      },
+      {
+        "quote": "Store the moment, and format it",
+        "why": "Too vague. What's 'the moment'? A timestamp? In what format? Supabase gives me timestamptz vs timestamp and I don't know which this means. And where is 'where the user is', in the browser?"
+      },
+      {
+        "quote": "An optimistic update has to fail",
+        "why": "I've never heard 'optimistic update'. The next sentence half-explains it, but I had to reread to see that's the definition. 'Fail out loud' also doesn't say what to actually show: a toast? Undo the change and say so?"
+      }
+    ],
+    "skimmed": [
+      "The phones bullet's second half. The jump from hover to `autocomplete` felt like a different point crammed in, so I skimmed past the input-type part.",
+      "Go deeper. A 'UI stack' blog post and an MDN reference page aren't something I'd open on my phone."
+    ],
+    "jargon": [
+      "optimistic update",
+      "autocomplete (as an HTML attribute; I know it only as a browser feature)",
+      "view state",
+      "pagination (I sort of know it, but not when it's needed vs. infinite scroll)",
+      "no-permission state (what decides permission in my app? Supabase RLS? a role column?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I get the agent to actually reach those states? An empty account needs a fresh test user, loading needs a throttled network, error needs a failing request, no-permission needs a user without access. I don't know how to set any of that up, so 'an agent screenshots' them is the step I'd get stuck on. A sample prompt to paste into Claude Code would make this something I'd do today.",
+    "cut": "The time zone bullet. It's real but less common than the others for a typical CRUD feature, and it's the one I understood least. Or move it to Go deeper.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

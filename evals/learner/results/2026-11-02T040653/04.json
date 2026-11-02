@@ -1,0 +1,77 @@
+[
+  {
+    "takeaway": "Don't let the agent add Redis, Docker, a separate API, or a state store just because tutorials do; stick with one Next.js app and one database until I can point to a real problem that needs more.",
+    "intended": "Build the simplest thing that fully solves today's problem, because every extra piece costs you to run and debug, and agents won't weigh that cost unless you ask.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "timed as slow with the right indexes",
+        "why": "Unexplained term. I don't know what an index is or how I'd know I have the 'right' ones, so I can't tell whether my slow page has earned a cache or whether I just did something wrong."
+      },
+      {
+        "quote": "A queue means work that can run twice or sit stuck",
+        "why": "I don't know what a queue is in this sense, so the warning doesn't land. The cache and two-servers lines made sense. This one I just took on faith."
+      },
+      {
+        "quote": "A separate API, by a second client",
+        "why": "Is 'client' a customer or a mobile app? I guessed it means a second app, like iOS, hitting the same backend, but I'm not sure."
+      }
+    ],
+    "skimmed": [
+      "'A free tier isn't a plan.' It's true but feels like a different lesson about vendors and billing, not about complexity. I skimmed it.",
+      "'Layers cost reading time.' I got it from the title and skipped the rest."
+    ],
+    "jargon": [
+      "indexes",
+      "queue",
+      "cache (half-known; 'two copies of the truth' helped)",
+      "browser state store (I guessed Zustand/Redux from context)",
+      "second client",
+      "source of truth"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What do I actually say to the agent? Something like 'Before adding any service or package, tell me what problem it solves for this app.' I'd paste that into Cursor rules today. Also, what does 'the number that proves it' look like in PROJECT.md? One example line would help, like 'Class list page takes 3s with 2k rows.' And how do I check a package is real? Should I look at npm weekly downloads or the last publish date?",
+    "cut": "'A free tier isn't a plan.' It's a good point, but it's about choosing vendors, not about adding complexity, and it's the bullet I'd miss least.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't let the agent add extra services or layers just because it's 'proper'. Stick to one Next.js app and one database until I can point to a real problem and a number that proves it.",
+    "intended": "Build the simplest thing that fully solves today's problem, because every extra service, layer, or package has a cost that agents don't weigh unless you ask.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a page you timed as slow with the right indexes",
+        "why": "Unexplained term. I don't know what an index is or how to check I have the 'right' ones, so I can't tell whether my slow page has earned a cache. 'Timed as slow' is also vague: slow how, measured with what?"
+      },
+      {
+        "quote": "A queue means work that can run twice",
+        "why": "A leap. I don't really know what a queue is or when I'd have one. 'Run twice or sit stuck' sounds bad, but I can't picture it in my app."
+      },
+      {
+        "quote": "A separate API, by a second client",
+        "why": "Unclear term. 'Client' could mean a customer. I think it means a mobile app or another program calling my backend, but I had to guess."
+      }
+    ],
+    "skimmed": [
+      "'Layers cost reading time': it's obvious once you say it and adds nothing beyond the first bullet",
+      "The Go deeper links: I won't open long essays on my phone"
+    ],
+    "jargon": [
+      "Redis",
+      "Docker",
+      "browser state store",
+      "cache",
+      "queue",
+      "indexes",
+      "source of truth",
+      "layers per feature",
+      "second client"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What to actually say to the agent, like a line to paste: 'Before adding any service, layer, or package, tell me what problem it solves for this app.' Also what a PROJECT.md entry looks like, with an example of 'the problem plus the number', and how I'd time a page in the first place.",
+    "cut": "'A free tier isn't a plan.' It's good advice, but it's about cost and lock-in, not complexity. It also comes last, when I'm already done reading.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

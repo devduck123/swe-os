@@ -1,0 +1,73 @@
+[
+  {
+    "takeaway": "Before I merge something important I should be able to say what it does, why it's built that way, and how it breaks, and I should read every line when it touches login, money, deletes, or the database.",
+    "intended": "Reading code tells you what's actually true, and reviewing means you can explain what a change does, why it's built this way, and how it fails before you merge it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "export route that takes the team ID from the URL",
+        "why": "It's the first example and I had to stop and work it out. Why is taking the ID from the URL bad? I guess anyone could change the number in the URL, but it never says that. It also never says where the ID should come from instead (the session?). The tests passing because they use 'the test user's own team' only clicked after I read the reproduction bullet at the bottom."
+      },
+      {
+        "quote": "Bugs sit where the diff meets",
+        "why": "'Diff' is fine. But 'open its callers' is a leap. I don't know how to find the callers of a function. Is that a VS Code thing? Do I ask the agent? It's one line and I nodded at it without knowing how to actually do it."
+      },
+      {
+        "quote": "the database change, the server logic, and the UI as separate PRs",
+        "why": "With Supabase I don't really think of a 'database change' as its own thing, because I click around in the dashboard or the agent writes some SQL. It assumes I know what a migration is and that it's a separate step. I also don't get how three PRs work when the UI depends on the server change. Merge them in order? Stack them?"
+      }
+    ],
+    "skimmed": [
+      "The 'Go deeper' links. They're Google eng practices and that reads like it's for people at big companies with real reviewers. I'm not opening those on my phone.",
+      "'Style comments can make a review worse.' I'm the only reviewer and I don't leave style comments on my own code, so this felt like it was for a team lead."
+    ],
+    "jargon": [
+      "CI (I know it's the GitHub checks thing, but 'green CI' assumes I have tests at all, and mostly I don't)",
+      "ownership check (I figured it out from context, but a plain 'does this user own this record' would help)",
+      "callers",
+      "migrations",
+      "reproduction (I got it from the example, but the word is engineer-speak)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I actually read line by line when the agent wrote 400 lines? What am I looking for in an auth route, concretely: the three checks as a checklist I could paste? And 'a second opinion from a fresh session' needs a prompt, or at least what to ask it. Do I just say 'review this PR'? I'd do the fresh-session thing tomorrow if I knew what to type. I also don't know how to make the agent split work into small PRs. Do I tell it up front?",
+    "cut": "'Style comments can make a review worse.' For someone reviewing alone, it's the bullet least likely to change what I do. The 'spend attention where a mistake costs most' bullet already makes the point that attention should go to risky stuff.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I merge an agent's PR, I should be able to say what it does, why it's built that way, and how it breaks, and I should check that every route verifies the logged-in user is allowed to touch that specific record, because that's the bug the tests and the diff won't show me.",
+    "intended": "Reading code tells you what's actually true, and reviewing means deciding whether a change should exist: you can explain what it does, why, and how it fails.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "takes the team ID from the URL",
+        "why": "A leap. I get that it's bad, but it doesn't say where the team ID should come from instead (the session? the database?). I'd nod along and still not know what the fixed version looks like in my Next.js route."
+      },
+      {
+        "quote": "Bugs sit where the diff meets",
+        "why": "Took two reads. 'Open its callers' assumes I know how to find every caller. I'd probably just ask the agent, which kind of defeats the point of the stop."
+      },
+      {
+        "quote": "migrations, and paid API calls",
+        "why": "I've never written a migration by hand, so I don't know what reading one 'line by line' means or what I'm looking for in it. Same for the Supabase SQL files the agent generates."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: Google links feel like they're for people at big companies with real reviewers, and I'm not opening those on my phone",
+      "'Big PRs get skimmed': I agree but I'm the only person on my project, so 'ask for separate PRs' felt like it was for a team until the How I do it line said to do it solo too"
+    ],
+    "jargon": [
+      "CI (I know it as 'the checks on GitHub' but 'Green CI' isn't glossed)",
+      "ownership check",
+      "callers",
+      "migrations",
+      "diff (I mostly know it, but borderline)",
+      "reproduction"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually do the ownership check in my stack: what does 'check they may touch this record' look like in a Next.js API route with Supabase (is RLS doing it for me or not?). Also how to get the 'second opinion': what do I paste into the fresh session, just the diff, or the diff plus 'look for missing auth checks'? And how do I find callers if I'm not in an IDE that does it for me.",
+    "cut": "'Style comments can make a review worse.' I'm the only reviewer and I don't leave ten naming comments on my own code. It's for team reviewers, and the point is already covered by 'Spend attention where a mistake costs most.'",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
