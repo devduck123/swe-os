@@ -11,6 +11,8 @@
   --swe-coral: #e8833a;
   --swe-coral-text: #a8461a;
   --swe-butter: #f7e3a1;
+  /* A highlighter swipe behind text. */
+  --swe-highlight: #f7e3a1;
   --swe-on-pastel: #1c1f2b;
   --swe-shadow:
     0 1px 0 rgb(28 31 43 / 0.04), 0 16px 36px -20px rgb(28 31 43 / 0.25);
@@ -26,12 +28,13 @@
   :root:not([data-theme='light']) {
     --swe-paper: #12151f;
     --swe-paper-2: #1a1e2b;
-    --swe-card: #1a1e2b;
+    --swe-card: #1f2434;
     --swe-ink: #f3efe6;
     --swe-ink-soft: #a3a8bb;
     --swe-line: #2c3142;
     --swe-coral: #f4a261;
     --swe-coral-text: #f4a261;
+    --swe-highlight: rgb(247 227 161 / 0.2);
     --swe-shadow: 0 1px 0 rgb(0 0 0 / 0.2), 0 18px 40px -18px rgb(0 0 0 / 0.7);
   }
 }
@@ -39,12 +42,13 @@
 :root[data-theme='dark'] {
   --swe-paper: #12151f;
   --swe-paper-2: #1a1e2b;
-  --swe-card: #1a1e2b;
+  --swe-card: #1f2434;
   --swe-ink: #f3efe6;
   --swe-ink-soft: #a3a8bb;
   --swe-line: #2c3142;
   --swe-coral: #f4a261;
   --swe-coral-text: #f4a261;
+  --swe-highlight: rgb(247 227 161 / 0.2);
   --swe-shadow: 0 1px 0 rgb(0 0 0 / 0.2), 0 18px 40px -18px rgb(0 0 0 / 0.7);
 }
 

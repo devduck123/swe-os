@@ -1,0 +1,673 @@
+---
+// The landing page's world (see docs/brand.md): a small pond with a dock, where the duck
+// stands with its books and a mug. Morning in the light theme, night in the dark one, with
+// the colors easing between them when the theme changes. The ambient bits (fireflies,
+// steam, mist, ripples) play for a few seconds and rest; hovering the scene, or scrolling
+// back to it, plays them again. Decorative, so it's hidden from screen readers.
+import Duck from './Duck.astro';
+
+const fireflies = [
+  { x: 92, y: 360, dx: 14, dy: -18, delay: 0 },
+  { x: 150, y: 318, dx: -10, dy: -12, delay: 0.5 },
+  { x: 236, y: 392, dx: 18, dy: -8, delay: 0.2 },
+  { x: 318, y: 350, dx: -12, dy: -16, delay: 0.9 },
+  { x: 560, y: 248, dx: 10, dy: 12, delay: 0.4 },
+  { x: 610, y: 340, dx: -16, dy: -10, delay: 1.1 },
+  { x: 48, y: 300, dx: 12, dy: 10, delay: 0.7 },
+];
+const stars = [
+  [70, 70, 1.4],
+  [160, 40, 1],
+  [250, 96, 1.6],
+  [330, 34, 1],
+  [400, 82, 1.2],
+  [560, 52, 1.4],
+  [610, 120, 1],
+  [214, 150, 0.9],
+];
+---
+
+<div class="scene scene--play" data-scene aria-hidden="true">
+  <svg
+    class="scene__art"
+    viewBox="0 0 640 520"
+    preserveAspectRatio="xMaxYMax slice"
+    focusable="false"
+  >
+    <defs>
+      <linearGradient id="scene-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" class="sky-top"></stop>
+        <stop offset="0.55" class="sky-mid"></stop>
+        <stop offset="1" class="sky-low"></stop>
+      </linearGradient>
+      <linearGradient id="scene-water" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" class="water-top"></stop>
+        <stop offset="1" class="water-low"></stop>
+      </linearGradient>
+      <radialGradient id="scene-glow">
+        <stop offset="0" class="glow-in"></stop>
+        <stop offset="1" class="glow-out"></stop>
+      </radialGradient>
+      <radialGradient id="scene-lamp">
+        <stop offset="0" stop-color="#f4a261" stop-opacity="0.55"></stop>
+        <stop offset="1" stop-color="#f4a261" stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+
+    <rect class="sky" width="640" height="340" fill="url(#scene-sky)"></rect>
+
+    <!-- Night: stars. Morning: two birds. -->
+    <g class="night">
+      {stars.map(([x, y, r]) => (
+        <path
+          class="star"
+          d={`M${x} ${y - r * 3}q${r * 0.4} ${r * 2.6} ${r * 3} ${r * 3}q-${r * 2.6} ${r * 0.4}-${r * 3} ${r * 3}q-${r * 0.4}-${r * 2.6}-${r * 3}-${r * 3}q${r * 2.6}-${r * 0.4} ${r * 3}-${r * 3}Z`}
+        />
+      ))}
+    </g>
+    <g class="day birds">
+      <path d="M402 96q7-6 12 1q5-7 12-1"></path>
+      <path d="M440 120q5-4 9 1q4-5 9-1"></path>
+    </g>
+
+    <!-- The moon or the sun, rising behind the hills, right behind the duck's head. -->
+    <circle
+      class="halo"
+      cx="452"
+      cy="262"
+      r="150"
+      fill="url(#scene-glow)"
+    ></circle>
+    <circle class="orb" cx="452" cy="262" r="64"></circle>
+
+    <!-- Far hills, with a little schoolhouse whose window is lit at night. -->
+    <path
+      class="hill-far"
+      d="M0 302c46-22 94-30 150-20 40 7 70 18 112 14 46-4 70-28 124-30 50-2 76 20 128 24 52 4 90-10 126-16v76H0Z"
+    ></path>
+    <g class="house" transform="translate(300 262)">
+      <path class="house-wall" d="M2 34V14l15-13 15 13v20Z"></path>
+      <path class="house-roof" d="M-3 16 17-2l20 18"></path>
+      <rect
+        class="house-window"
+        x="12"
+        y="18"
+        width="10"
+        height="9"
+        rx="1.5"
+      ></rect>
+      <path class="house-flag" d="M17-2v-12l9 3-9 3"></path>
+    </g>
+    <path
+      class="hill-near"
+      d="M0 336c30-12 58-20 92-16 30 4 44 14 76 12 34-2 52-16 90-14 34 2 46 14 80 14 38 0 60-18 104-18 40 0 64 14 98 16 40 2 68-8 100-10v38H0Z"
+    ></path>
+
+    <!-- The pond. -->
+    <rect
+      class="water"
+      y="352"
+      width="640"
+      height="168"
+      fill="url(#scene-water)"
+    ></rect>
+    <g class="shimmer">
+      <path d="M418 372h66M430 386h44M424 402h54M440 418h24M436 434h30"></path>
+    </g>
+    <g class="ripples">
+      <path d="M40 470q20-4 40 0M150 400q16-3 30 0M260 448q18-4 34 0"></path>
+    </g>
+
+    <!-- Lily pads, one with a flower in the morning. -->
+    <g class="pads">
+      <path d="M96 438c-22 0-34 6-34 12s14 12 34 12 34-6 34-12c0-4-6-8-16-10l-14 8Z"></path>
+      <path d="M196 476c-16 0-26 5-26 10s11 9 26 9 26-4 26-9c0-3-4-6-12-8l-10 6Z"></path>
+      <path d="M34 498c-14 0-22 4-22 8s9 8 22 8 22-4 22-8c0-3-4-5-10-7l-9 5Z"></path>
+    </g>
+    <g class="day flower" transform="translate(88 440)">
+      <path d="M0 4c-6-2-9-8-6-12 3 2 5 5 6 8 1-5 3-9 6-11 3 4 2 10-2 13 5-2 9-1 11 2-4 3-10 3-15 0Z"></path>
+    </g>
+
+    <!-- Reeds and cattails on both banks. -->
+    <g class="reeds">
+      <path d="M22 520c2-50 6-92 14-128M40 520c-2-40 0-76 4-100M58 520c4-34 10-60 20-82M612 520c-2-36-4-64-12-90M628 520c2-30 4-52 2-74"></path>
+      <path class="cattail" d="M33 404c-4-8-2-22 4-26 5 4 6 18 2 26Z"></path>
+      <path class="cattail" d="M41 432c-3-8-2-20 3-24 5 4 5 16 2 24Z"></path>
+      <path class="cattail" d="M599 444c-4-7-3-19 2-23 5 4 5 16 2 23Z"></path>
+    </g>
+
+    <!-- The dock, its posts, and the rings where they meet the water. -->
+    <g class="dock">
+      <path
+        class="post"
+        d="M394 416v58M470 416v66M556 416v62M630 416v58"
+      ></path>
+      <path
+        class="deck"
+        d="M344 404c96-3 196-3 300-1v14c-104-2-204-2-300 1Z"
+      ></path>
+      <path
+        class="plank"
+        d="M376 404v14M410 404v13M446 404v13M482 404v13M518 404v13M556 404v13M594 404v13"
+      ></path>
+    </g>
+    <g class="rings">
+      <ellipse cx="394" cy="474" rx="12" ry="3"></ellipse>
+      <ellipse cx="470" cy="482" rx="14" ry="3.4"></ellipse>
+      <ellipse cx="556" cy="478" rx="12" ry="3"></ellipse>
+    </g>
+
+    <!-- The lantern on its post, lit at night. -->
+    <g class="lantern">
+      <g class="night">
+        <circle
+          class="lamp-glow"
+          cx="602"
+          cy="318"
+          r="70"
+          fill="url(#scene-lamp)"
+        ></circle>
+      </g>
+      <path class="lantern-post" d="M622 404V286h-20v10"></path>
+      <path class="lantern-body" d="M593 302h18l-2 26h-14Z"></path>
+      <path class="lantern-cap" d="M590 302h24l-4-6h-16Z"></path>
+      <rect
+        class="lantern-flame"
+        x="598"
+        y="308"
+        width="8"
+        height="14"
+        rx="4"
+      ></rect>
+    </g>
+
+    <!-- A stack of books and a mug, next to the duck. -->
+    <g class="books" transform="translate(500 360)">
+      <path class="book book--a" d="M2 30h52v14H2Z"></path>
+      <path class="book book--b" d="M8 18h44v12H8Z"></path>
+      <path class="book book--c" d="M4 6h46v12H4Z"></path>
+      <path class="pages" d="M46 32v10M44 20v8M42 8v8"></path>
+    </g>
+    <g class="mug" transform="translate(562 378)">
+      <path class="mug-body" d="M0 4h18v16c0 4-3 6-6 6H6c-3 0-6-2-6-6Z"></path>
+      <path class="mug-handle" d="M18 8c6 0 7 9 0 9"></path>
+      <path class="steam" d="M5-2c-3-5 3-8 0-14M12-4c-3-5 3-8 0-14"></path>
+    </g>
+
+    <!-- The duck, on the dock. -->
+    <g transform="translate(366 244)">
+      <Duck size={130} alive />
+    </g>
+
+    <!-- Night: fireflies. Morning: mist drifting over the water. -->
+    <g class="night fireflies">
+      {fireflies.map((f, i) => (
+        <circle
+          class="firefly"
+          cx={f.x}
+          cy={f.y}
+          r="2.6"
+          style={`--dx:${f.dx}px;--dy:${f.dy}px;--delay:${f.delay}s;--i:${i}`}
+        />
+      ))}
+    </g>
+    <g class="day mist">
+      <path d="M-20 350c60-8 150-8 230 0"></path>
+      <path d="M150 368c70-6 160-6 250 0"></path>
+    </g>
+
+    <!-- A note in Tommy's hand, pointing at the duck. -->
+    <g class="note">
+      <text x="476" y="150">
+        same pages,
+      </text>
+      <text x="490" y="176">
+        two readers
+      </text>
+      <path
+        class="note-arrow"
+        d="M482 172c-22 2-36 14-42 32m0 0-1-11m1 11 8-7"
+      ></path>
+    </g>
+  </svg>
+</div>
+
+<script>
+  // Hovering the scene, or scrolling back to it, plays the ambient bits again.
+  for (const scene of document.querySelectorAll<HTMLElement>('[data-scene]')) {
+    const play = () => {
+      scene.classList.remove('scene--play');
+      void scene.offsetWidth;
+      scene.classList.add('scene--play');
+    };
+    scene.addEventListener('pointerenter', (event) => {
+      if (event.pointerType === 'mouse') play();
+    });
+    let left = false;
+    new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) left = true;
+      else if (left) {
+        left = false;
+        play();
+      }
+    }).observe(scene);
+  }
+</script>
+
+<style>
+  /* Morning */
+  .scene {
+    --sky-top: var(--swe-paper);
+    --sky-mid: #fcefe3;
+    --sky-low: #f8d6c0;
+    --orb: #f6b48a;
+    --glow: rgb(248 190 150 / 0.55);
+    --hill-far: #eddcd6;
+    --hill-near: #d3d6b6;
+    --water-top: #e9e3da;
+    --water-low: var(--swe-paper);
+    --line: oklch(0.3 0.04 55 / 0.55);
+    --soft: oklch(0.3 0.04 55 / 0.28);
+    --wood: #d9b68d;
+    --wood-dark: #b98d62;
+    --pad: #b9c79a;
+    --window: #f3eee5;
+    --star: transparent;
+    --shine: #fffdf8;
+    --hand: var(--swe-ink-soft);
+    position: relative;
+  }
+  /* Night */
+  :global(:root[data-theme='dark']) .scene {
+    --sky-mid: #1b1f33;
+    --sky-low: #3a2d4a;
+    --orb: #f7e3a1;
+    --glow: rgb(247 227 161 / 0.3);
+    --hill-far: #2a2a45;
+    --hill-near: #1d2233;
+    --water-top: #1c2034;
+    --line: rgb(243 239 230 / 0.2);
+    --soft: rgb(243 239 230 / 0.12);
+    --wood: #574a55;
+    --wood-dark: #3c333d;
+    --pad: #2c3b38;
+    --window: #f7e3a1;
+    --star: #f7e3a1;
+    --shine: #f7e3a1;
+  }
+
+  .scene__art {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .scene :is(path, rect, circle, ellipse, stop, text) {
+    transition:
+      fill 0.6s ease,
+      stroke 0.6s ease,
+      stop-color 0.6s ease,
+      opacity 0.6s ease;
+  }
+  .sky-top {
+    stop-color: var(--sky-top);
+  }
+  .sky-mid {
+    stop-color: var(--sky-mid);
+  }
+  .sky-low {
+    stop-color: var(--sky-low);
+  }
+  .water-top {
+    stop-color: var(--water-top);
+  }
+  .water-low {
+    stop-color: var(--water-low);
+  }
+  .glow-in {
+    stop-color: var(--glow);
+  }
+  .glow-out {
+    stop-color: var(--glow);
+    stop-opacity: 0;
+  }
+
+  /* Only one time of day shows at once. */
+  .night {
+    opacity: 0;
+  }
+  :global(:root[data-theme='dark']) .scene .night {
+    opacity: 1;
+  }
+  :global(:root[data-theme='dark']) .scene .day {
+    opacity: 0;
+  }
+
+  .star {
+    fill: var(--star);
+  }
+  .birds path,
+  .note-arrow,
+  .reeds path:not(.cattail),
+  .steam,
+  .mug-handle,
+  .pages,
+  .lantern-post,
+  .mist path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .birds path {
+    stroke: var(--line);
+    stroke-width: 1.8;
+  }
+  .orb {
+    fill: var(--orb);
+    stroke: var(--soft);
+    stroke-width: 1.5;
+  }
+  .hill-far {
+    fill: var(--hill-far);
+    stroke: var(--soft);
+    stroke-width: 1.5;
+  }
+  .hill-near {
+    fill: var(--hill-near);
+    stroke: var(--soft);
+    stroke-width: 1.5;
+  }
+  .house-wall {
+    fill: var(--hill-far);
+    stroke: var(--line);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+  .house-roof,
+  .house-flag {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .house-flag {
+    fill: var(--swe-coral);
+  }
+  .house-window {
+    fill: var(--window);
+    stroke: var(--line);
+    stroke-width: 1.2;
+  }
+  .shimmer path {
+    stroke: var(--shine);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    opacity: 0.5;
+  }
+  .ripples path,
+  .rings ellipse {
+    fill: none;
+    stroke: var(--soft);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .rings ellipse {
+    stroke: var(--line);
+  }
+  .pads path {
+    fill: var(--pad);
+    stroke: var(--line);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+  .flower path {
+    fill: #f2a7a0;
+    stroke: var(--line);
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+  }
+  .reeds path {
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+  .cattail {
+    fill: var(--wood-dark);
+    stroke: var(--line);
+    stroke-width: 1.4;
+  }
+  .post {
+    stroke: var(--wood-dark);
+    stroke-width: 7;
+    stroke-linecap: round;
+  }
+  .deck {
+    fill: var(--wood);
+    stroke: var(--line);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+  }
+  .plank {
+    stroke: var(--wood-dark);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+  .lantern-post {
+    stroke: var(--wood-dark);
+    stroke-width: 4;
+  }
+  .lantern-body {
+    fill: var(--window);
+    stroke: var(--line);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+  .lantern-cap {
+    fill: var(--wood-dark);
+    stroke: var(--line);
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+  .lantern-flame {
+    fill: transparent;
+  }
+  :global(:root[data-theme='dark']) .scene .lantern-flame {
+    fill: #f4a261;
+  }
+  .book {
+    stroke: oklch(0.3 0.04 55);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+  }
+  .book--a {
+    fill: #e8833a;
+  }
+  .book--b {
+    fill: #8fb3a8;
+  }
+  .book--c {
+    fill: oklch(0.27 0.035 268);
+  }
+  .pages {
+    stroke: #fffdf6;
+    stroke-width: 1.6;
+  }
+  .mug-body {
+    fill: #fffdf6;
+    stroke: oklch(0.3 0.04 55);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+  }
+  .mug-handle {
+    stroke: oklch(0.3 0.04 55);
+    stroke-width: 1.8;
+  }
+  .steam {
+    stroke: var(--line);
+    stroke-width: 1.8;
+    opacity: 0.8;
+  }
+  .firefly {
+    fill: #f7e3a1;
+    filter: drop-shadow(0 0 4px #f7e3a1);
+  }
+  .mist path {
+    stroke: #fffdf8;
+    stroke-width: 9;
+    opacity: 0.7;
+  }
+  .note text {
+    font-family: var(--swe-font-hand);
+    font-weight: 700;
+    font-size: 24px;
+    fill: var(--hand);
+  }
+  .note-arrow {
+    stroke: var(--hand);
+    stroke-width: 2;
+  }
+  /* The note needs the room of a wide screen; anywhere smaller it would sit under the
+     headline or the nav. */
+  @media (max-width: 1179px) {
+    .note {
+      display: none;
+    }
+  }
+
+  /* The ambient bits, once per play. */
+  @media (prefers-reduced-motion: no-preference) {
+    .scene--play .firefly {
+      animation:
+        firefly-drift 4.6s ease-in-out var(--delay) both,
+        firefly-glow 1.5s ease-in-out var(--delay) 3 alternate both;
+    }
+    .scene--play .steam {
+      animation: steam 3.6s ease-out both;
+    }
+    .scene--play .mist path {
+      animation: mist 5s ease-in-out both;
+    }
+    .scene--play .mist path + path {
+      animation-direction: reverse;
+    }
+    .scene--play .rings ellipse {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: ring 2.8s ease-out both;
+    }
+    .scene--play .rings ellipse:nth-child(2) {
+      animation-delay: 0.6s;
+    }
+    .scene--play .rings ellipse:nth-child(3) {
+      animation-delay: 1.2s;
+    }
+    .scene--play .shimmer path {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: shimmer 2.2s ease-in-out 2 alternate both;
+    }
+    .scene--play .shimmer path:nth-child(even) {
+      animation-delay: 0.4s;
+    }
+    .scene--play .lamp-glow {
+      animation: lamp 1.4s steps(6) both;
+    }
+    .scene--play .birds {
+      animation: birds 5s ease-in-out both;
+    }
+    .scene--play .note-arrow {
+      stroke-dasharray: 120;
+      animation: draw 0.9s ease-out 1.6s both;
+    }
+  }
+  @keyframes firefly-drift {
+    from {
+      transform: translate(calc(var(--dx) * -1), calc(var(--dy) * -1));
+    }
+    50% {
+      transform: translate(calc(var(--dx) * 0.6), calc(var(--dy) * -0.4));
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes firefly-glow {
+    from {
+      opacity: 0.25;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes steam {
+    from {
+      transform: translateY(6px);
+      opacity: 0;
+    }
+    40% {
+      opacity: 0.9;
+    }
+    to {
+      transform: none;
+      opacity: 0.8;
+    }
+  }
+  @keyframes mist {
+    from {
+      transform: translateX(-40px);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes ring {
+    from {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      transform: scaleX(0.6);
+    }
+    to {
+      transform: scaleX(1.1);
+    }
+  }
+  @keyframes lamp {
+    from {
+      opacity: 0;
+    }
+    30% {
+      opacity: 0.8;
+    }
+    45% {
+      opacity: 0.3;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes birds {
+    from {
+      transform: translate(-60px, 14px);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 120;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

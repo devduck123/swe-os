@@ -2,6 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import { version } from '../../package.json';
 import Duck from '../components/brand/Duck.astro';
+import PondScene from '../components/brand/PondScene.astro';
 import Fonts from '../components/Fonts.astro';
 import '../styles/tokens.css';
 import '../styles/landing.css';
@@ -119,13 +120,30 @@ const misses = await Promise.all(
 
     <main id="main" tabindex="-1">
       <section class="hero" aria-labelledby="hero-title">
+        <PondScene />
         <div class="hero__copy">
           <p class="eyebrow">
             <span class="dot" aria-hidden="true"></span>v{version} · how I build
             software, written down
           </p>
           <h1 id="hero-title">
-            AI made code cheap. Judgment is still the expensive part.
+            AI made code cheap. Judgment is still the{' '}
+            <span class="mark">
+              expensive
+              <svg
+                class="mark__line"
+                viewBox="0 0 200 16"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  pathLength="1"
+                  d="M4 10c40-6 92-8 140-5 18 1 34 3 52 1M30 13c40-3 84-4 120-2"
+                ></path>
+              </svg>
+            </span>{' '}
+            part.
           </h1>
           <p class="lede">
             SWE OS is how I build software, written once for two readers. You
@@ -140,15 +158,6 @@ const misses = await Promise.all(
               Point your agent here
             </a>
           </div>
-        </div>
-        <div class="hero__art" aria-hidden="true">
-          <div class="moon"></div>
-          <Duck size={210} alive class="hero__duck" />
-          <p class="note">
-            same pages,
-            <br />
-            two readers
-          </p>
         </div>
       </section>
 
@@ -185,101 +194,200 @@ const misses = await Promise.all(
         </p>
       </section>
 
-      <section class="section agent" id="agent" aria-labelledby="agent-title">
-        <div class="section__head">
-          <p class="eyebrow">For your agent</p>
-          <h2 id="agent-title">Point your agent here.</h2>
-          <p class="section__lede">
-            Nothing to install. Your agent reads the same pages you do.
-          </p>
-        </div>
-        <div class="agent__grid">
-          <ol class="steps">
-            <li>
-              <strong>You ask, like normal.</strong>
-              <span>
-                "Add avatar uploads." No special syntax. It picks the skill that
-                fits.
-              </span>
-            </li>
-            <li>
-              <strong>It checks what could go wrong.</strong>
-              <span>
-                Against {concerns.length} risks, from auth to cost, and keeps
-                the few that apply.
-              </span>
-            </li>
-            <li>
-              <strong>It shows its work.</strong>
-              <span>
-                What it ran and what it saw, plus only what's still open. Then
-                one thing worth learning.
-              </span>
-            </li>
-          </ol>
-          <div class="card">
-            <h3>Quick: read it from this site</h3>
-            <div class="prompt">
-              <code data-prompt>
-                Use Tommy's SWE OS for this task. Download{' '}
-                <span data-origin>/skills/README.md</span> as raw text with
-                curl, follow the skill that fits, and fetch each file it links
-                the same way.
-              </code>
-              <button
-                type="button"
-                class="btn btn--small"
-                data-copy
-                aria-label="Copy the quick prompt"
-              >
-                Copy
-              </button>
-            </div>
-            <h3>Best: keep a copy on your machine</h3>
-            <p class="hint">
-              Exact text, works offline and in sandboxes without network access.
-              Clone it once, and <code>git pull</code> now and then.
-            </p>
-            <div class="prompt">
-              <code data-prompt>git clone {repo} ~/swe-os</code>
-              <button
-                type="button"
-                class="btn btn--small"
-                data-copy
-                aria-label="Copy the clone command"
-              >
-                Copy
-              </button>
-            </div>
-            <div class="prompt">
-              <code data-prompt>
-                Use Tommy's SWE OS at ~/swe-os for this task. Start at
-                skills/README.md and follow the skill that fits.
-              </code>
-              <button
-                type="button"
-                class="btn btn--small"
-                data-copy
-                aria-label="Copy the local prompt"
-              >
-                Copy
-              </button>
-            </div>
-            <p class="status" role="status" data-copy-status></p>
-            <p class="hint">
-              Using Claude Code? Install the plugin and the skills trigger on
-              their own: <code>/plugin marketplace add devduck123/swe-os</code>,
-              then
-              <code>/plugin install swe-os@swe-os</code>. Agents can also read
-              the whole index at{' '}
-              <a href="/llms.txt">
-                <code>/llms.txt</code>
-              </a>
-              .
+      <div class="band">
+        <svg
+          class="band__shore"
+          viewBox="0 0 1200 24"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M0 24V12c90-8 170 6 260 2s160-12 250-6 170 10 260 4 170-10 250-4 120 6 180 2v14Z"></path>
+        </svg>
+        <section class="section agent" id="agent" aria-labelledby="agent-title">
+          <div class="section__head">
+            <p class="eyebrow">For your agent</p>
+            <h2 id="agent-title">Point your agent here.</h2>
+            <p class="section__lede">
+              Nothing to install. Your agent reads the same pages you do.
             </p>
           </div>
-        </div>
-      </section>
+          <div class="agent__grid">
+            <ol class="steps">
+              <li>
+                <strong>You ask, like normal.</strong>
+                <span>
+                  "Add avatar uploads." No special syntax. It picks the skill
+                  that fits.
+                </span>
+              </li>
+              <li>
+                <strong>It checks what could go wrong.</strong>
+                <span>
+                  Against {concerns.length} risks, from auth to cost, and keeps
+                  the few that apply.
+                </span>
+              </li>
+              <li>
+                <strong>It shows its work.</strong>
+                <span>
+                  What it ran and what it saw, plus only what's still open. Then
+                  one thing worth learning.
+                </span>
+              </li>
+            </ol>
+            <div class="card">
+              <Duck size={64} alive class="card__duck" />
+              <div
+                class="tabs"
+                role="tablist"
+                aria-label="Ways to point your agent here"
+              >
+                <button
+                  class="tab"
+                  type="button"
+                  role="tab"
+                  id="tab-quick"
+                  aria-controls="panel-quick"
+                  aria-selected="true"
+                >
+                  Quick
+                </button>
+                <button
+                  class="tab"
+                  type="button"
+                  role="tab"
+                  id="tab-local"
+                  aria-controls="panel-local"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  Local copy
+                </button>
+                <button
+                  class="tab"
+                  type="button"
+                  role="tab"
+                  id="tab-plugin"
+                  aria-controls="panel-plugin"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  Claude Code
+                </button>
+              </div>
+              <div
+                class="panel"
+                role="tabpanel"
+                id="panel-quick"
+                aria-labelledby="tab-quick"
+              >
+                <p class="hint">
+                  Paste this into your agent. It reads from this site.
+                </p>
+                <div class="prompt">
+                  <code data-prompt>
+                    Use Tommy's SWE OS for this task. Download{' '}
+                    <span data-origin>/skills/README.md</span> as raw text with
+                    curl, follow the skill that fits, and fetch each file it
+                    links the same way.
+                  </code>
+                  <button
+                    type="button"
+                    class="btn btn--small"
+                    data-copy
+                    aria-label="Copy the quick prompt"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <div
+                class="panel"
+                role="tabpanel"
+                id="panel-local"
+                aria-labelledby="tab-local"
+                hidden
+              >
+                <p class="hint">
+                  The best way. Exact text, works offline and in sandboxes
+                  without network access. Clone it once, and{' '}
+                  <code>git pull</code> now and then.
+                </p>
+                <div class="prompt">
+                  <code data-prompt>git clone {repo} ~/swe-os</code>
+                  <button
+                    type="button"
+                    class="btn btn--small"
+                    data-copy
+                    aria-label="Copy the clone command"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <div class="prompt">
+                  <code data-prompt>
+                    Use Tommy's SWE OS at ~/swe-os for this task. Start at
+                    skills/README.md and follow the skill that fits.
+                  </code>
+                  <button
+                    type="button"
+                    class="btn btn--small"
+                    data-copy
+                    aria-label="Copy the local prompt"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <div
+                class="panel"
+                role="tabpanel"
+                id="panel-plugin"
+                aria-labelledby="tab-plugin"
+                hidden
+              >
+                <p class="hint">
+                  Install the plugin and the skills trigger on their own. Run
+                  these in Claude Code, one at a time.
+                </p>
+                <div class="prompt">
+                  <code data-prompt>
+                    /plugin marketplace add devduck123/swe-os
+                  </code>
+                  <button
+                    type="button"
+                    class="btn btn--small"
+                    data-copy
+                    aria-label="Copy the marketplace command"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <div class="prompt">
+                  <code data-prompt>/plugin install swe-os@swe-os</code>
+                  <button
+                    type="button"
+                    class="btn btn--small"
+                    data-copy
+                    aria-label="Copy the install command"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <p class="status" role="status" data-copy-status></p>
+              <p class="hint hint--last">
+                Agents can also read the whole index at{' '}
+                <a href="/llms.txt">
+                  <code>/llms.txt</code>
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer class="footer">

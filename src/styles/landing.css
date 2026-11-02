@@ -1,5 +1,6 @@
 /* The landing page. Calm like ducktommy.com: warm paper or deep slate, an editorial serif,
-   quiet list rows, and generous space. The duck and the moon carry the personality. */
+   quiet list rows, and generous space. The pond scene, the duck, and a few hand-drawn marks
+   carry the personality (see docs/brand.md). */
 
 *,
 *::before,
@@ -8,6 +9,8 @@
 }
 
 html {
+  /* The scene bleeds to the window's edge; clip keeps that from adding a sideways scroll. */
+  overflow-x: clip;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
@@ -65,6 +68,8 @@ code {
 
 /* Nav */
 .nav {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -201,17 +206,19 @@ h3 {
   font-size: 0.85rem;
 }
 
-/* Hero */
+/* Hero: the copy on the paper, the pond scene behind it bleeding off the right edge and up
+   behind the nav. On small screens the scene sits above the copy, so the duck is in the
+   first screen. */
 .hero {
+  --nav-h: 5rem;
+  position: relative;
   display: grid;
-  gap: 2rem;
   align-items: center;
   padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(3rem, 8vw, 6rem);
 }
-@media (min-width: 860px) {
-  .hero {
-    grid-template-columns: 1.25fr 0.75fr;
-  }
+.hero__copy {
+  position: relative;
+  z-index: 1;
 }
 .hero h1 {
   font-size: clamp(2.6rem, 6.4vw, 4.7rem);
@@ -228,46 +235,85 @@ h3 {
   flex-wrap: wrap;
   gap: 0.75rem;
 }
-.hero__art {
+.hero .scene {
+  margin: calc(-1 * var(--nav-h) - clamp(2.5rem, 7vw, 5.5rem)) calc(50% - 50vw)
+    0.5rem;
+  height: clamp(320px, 100vw, 460px);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent);
+}
+@media (min-width: 860px) {
+  .hero {
+    min-height: clamp(540px, 74vh, 700px);
+  }
+  .hero .scene {
+    position: absolute;
+    top: calc(-1 * var(--nav-h));
+    bottom: 0;
+    right: calc(50% - 50vw);
+    width: min(66vw, 980px);
+    height: auto;
+    margin: 0;
+    mask-image:
+      linear-gradient(to right, transparent, #000 34%),
+      linear-gradient(to bottom, #000 82%, transparent);
+    mask-composite: intersect;
+  }
+  .hero__copy {
+    max-width: 38rem;
+  }
+}
+
+/* A scribble under one word, drawn once. */
+.mark {
   position: relative;
-  display: grid;
-  place-items: center;
-  min-height: 320px;
+  white-space: nowrap;
 }
-.moon {
+.mark__line {
   position: absolute;
-  width: min(300px, 80vw);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--swe-butter) 55%, transparent) 0%,
-    color-mix(in srgb, var(--swe-butter) 18%, transparent) 55%,
-    transparent 72%
-  );
+  left: -3%;
+  bottom: -0.16em;
+  width: 106%;
+  height: 0.34em;
+  overflow: visible;
 }
-.hero__duck {
-  position: relative;
-  width: min(210px, 52vw);
-  height: auto;
+.mark__line path {
+  fill: none;
+  stroke: var(--swe-coral);
+  stroke-width: 2.4;
+  stroke-linecap: round;
 }
-.note {
-  position: absolute;
-  right: 4%;
-  bottom: 6%;
-  margin: 0;
-  font-family: var(--swe-font-hand);
-  font-weight: 700;
-  font-size: 1.35rem;
-  line-height: 1.05;
-  color: var(--swe-ink-soft);
-  transform: rotate(-6deg);
+@media (prefers-reduced-motion: no-preference) {
+  .mark__line path {
+    stroke-dasharray: 1;
+    animation: mark-draw 0.9s cubic-bezier(0.6, 0, 0.3, 1) 0.6s both;
+  }
+}
+@keyframes mark-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* Sections */
 .section {
+  position: relative;
   padding-block: clamp(3rem, 7vw, 5rem);
-  border-top: 1px solid var(--swe-line);
+}
+/* A divider drawn by hand rather than ruled. */
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 10px;
+  background: var(--swe-line);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 10' preserveAspectRatio='none'%3E%3Cpath d='M2 5c120-3 260 2 400 0s300-4 420 0 260 3 376-1' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+}
+.band .section::before {
+  display: none;
 }
 .section__head {
   max-width: 40rem;
@@ -309,13 +355,20 @@ h3 {
   gap: 0.2rem;
 }
 .row__lead {
+  justify-self: start;
+  padding-inline: 0.1em;
+  margin-inline: -0.1em;
+  background: linear-gradient(var(--swe-highlight), var(--swe-highlight)) 0
+    88% / 0% 42% no-repeat;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition: background-size 0.35s cubic-bezier(0.6, 0, 0.3, 1);
   font-family: var(--swe-font-display);
   font-variation-settings: 'SOFT' 100;
   font-weight: 500;
   font-size: clamp(1.2rem, 2.6vw, 1.55rem);
   line-height: 1.2;
   letter-spacing: -0.01em;
-  transition: color 0.2s ease;
 }
 .row__from {
   font-size: 0.9rem;
@@ -325,8 +378,9 @@ h3 {
   color: var(--swe-ink-soft);
   transition: transform 0.2s ease;
 }
-.row:hover .row__lead {
-  color: var(--swe-coral-text);
+.row:hover .row__lead,
+.row:focus-visible .row__lead {
+  background-size: 100% 42%;
 }
 .row:hover .row__go {
   transform: translateX(4px);
@@ -343,12 +397,14 @@ h3 {
 /* For your agent */
 .agent__grid {
   display: grid;
-  gap: 2.5rem;
+  /* Room for the duck sitting on the card. */
+  gap: 5.5rem;
 }
 @media (min-width: 900px) {
   .agent__grid {
     grid-template-columns: 0.8fr 1.2fr;
     align-items: start;
+    gap: 2.5rem;
   }
 }
 .steps {
@@ -424,6 +480,77 @@ h3 {
   color: var(--swe-ink-soft);
 }
 
+/* The agent section sits on a warmer band, with a shoreline for an edge. */
+.band {
+  position: relative;
+  margin-top: 2rem;
+  background: var(--swe-paper-2);
+}
+.band__shore {
+  position: absolute;
+  bottom: calc(100% - 1px);
+  left: 0;
+  width: 100%;
+  height: 24px;
+  fill: var(--swe-paper-2);
+}
+.card {
+  position: relative;
+}
+.card__duck {
+  position: absolute;
+  top: -78px;
+  right: 1.5rem;
+  transform: rotate(6deg);
+}
+.tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0 0 1rem;
+  padding: 0.3rem;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 999px;
+  background: var(--swe-paper-2);
+}
+.tab {
+  flex: 1 1 auto;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.9rem;
+  white-space: nowrap;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--swe-ink-soft);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+@media (max-width: 420px) {
+  .tabs {
+    flex-wrap: wrap;
+    border-radius: 1.4rem;
+  }
+  .tab {
+    padding-inline: 0.65rem;
+    font-size: 0.88rem;
+  }
+}
+.tab:hover {
+  color: var(--swe-ink);
+}
+.tab[aria-selected='true'] {
+  background: var(--swe-ink);
+  color: var(--swe-paper);
+}
+.hint--last {
+  margin: 0;
+}
+
 /* Footer */
 .footer {
   display: flex;
@@ -443,8 +570,9 @@ h3 {
 
 @media (prefers-reduced-motion: reduce) {
   .btn,
-  .row__go,
+  .tab,
   .row__lead,
+  .row__go,
   .brand .duck {
     transition: none;
   }
