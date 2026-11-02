@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Use real <button> and <a> tags instead of clickable divs, and before merging, try the page with only the keyboard, zoomed to 200%, and with VoiceOver.",
+    "intended": "Accessibility means people can use your app without a mouse, without seeing the screen, or with big text, so treat it as correctness and build it in from day one.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "ARIA changes what's announced, not what works",
+        "why": "Unexplained term. I've seen aria-label in code Cursor wrote but don't know what ARIA is. 'A role attribute' means nothing to me. I got that it's bad to lean on, not what it is."
+      },
+      {
+        "quote": "keeps it there, closes on Escape",
+        "why": "Too dense. 'Moves focus in, keeps it there' assumes I picture focus as a thing that moves. I never thought about where focus goes. Then it says shadcn handles it anyway, so I wasn't sure if I needed to understand it."
+      },
+      {
+        "quote": "visible text linked to its input",
+        "why": "A leap. Linked how? With an id? aria-something? It says what to do but not how, and this is the one I'd actually have to code myself."
+      }
+    ],
+    "skimmed": [
+      "The checkers bullet: GOV.UK 2017 and 40% felt like stats for someone already convinced. I got 'tools miss stuff' from the first line.",
+      "The live region bullet: I read it but my eyes glazed at 'render it from page load, and change only its text'. I don't have a 'Saved' toast I'm worried about yet."
+    ],
+    "jargon": [
+      "ARIA",
+      "role attribute",
+      "screen reader (sort of know it, never used one)",
+      "axe",
+      "VoiceOver (know it exists, no idea how to drive it for two minutes)",
+      "focus outline",
+      "live region (glossed, but the gloss is still abstract)",
+      "a11y-style 'barriers'"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually run the five-minute check. What is axe and how do I run it (browser extension? npm?). How do I turn on VoiceOver and what do I listen for. What does 'keyboard only' look like: just Tab through and press Enter? Also one line on how to link an error to an input in React/shadcn, since the bullet says do it but not how.",
+    "cut": "The checkers bullet. It's the only one that doesn't tell me something to do or avoid, and the How I do it line already says use axe plus manual checks.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Use real <button> and <a> tags instead of clickable divs, and before merging, try the page with only the keyboard, at 200% zoom, with axe, and briefly with VoiceOver.",
+    "intended": "That accessibility counts as correctness, not polish, so you build it in from day one: native elements, labels, focus, announced errors, and a quick manual check.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "visible text linked to its input",
+        "why": "Linked how? I don't know the attribute or pattern, so I couldn't build this from the sentence. One code snippet would fix it."
+      },
+      {
+        "quote": "render it from page load, and change only its text",
+        "why": "The live region gets a gloss, but I still don't know what it looks like in JSX. Is it a div with some attribute? I can't write one from this."
+      },
+      {
+        "quote": "keeps it there, closes on Escape",
+        "why": "'Keeps it there' is a leap. Then it says the library handles it, so I wasn't sure whether I need to care. Dense for one bullet."
+      }
+    ],
+    "skimmed": [
+      "The 'Checkers miss most of it' bullet: the GOV.UK 2017 stat felt like trivia. The useful part is 'a tool can't tell if the alt text is right', and that's buried after the number.",
+      "Go deeper: a WCAG quick reference sounds like a giant spec, so I wouldn't open it on my phone."
+    ],
+    "jargon": [
+      "ARIA",
+      "role attribute",
+      "screen reader (I roughly know it, but never used one)",
+      "axe",
+      "VoiceOver (I know it's an Apple thing, not how to turn it on or use it)",
+      "focus / focus outline",
+      "shadcn/ui (I've heard of it, but not why it helps here)",
+      "alt text"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually run the check. What is axe: a browser extension, an npm package? How do I turn VoiceOver on, and what do I listen for in two minutes? What am I checking for at 200% zoom? Also, how do I add the 'Delete invite' label to an icon button? One line of JSX per item would make this something I could do today.",
+    "cut": "The ARIA bullet. Without knowing what ARIA is, 'changes what's announced, not what works' means nothing to me, and the takeaway (use native elements) is already in the first bullet.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

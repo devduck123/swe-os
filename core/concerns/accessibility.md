@@ -28,8 +28,8 @@ description: Can people use it with a keyboard, a screen reader, zoom, or less-t
 - Color as the only signal for an error or status.
 - A modal that doesn't trap focus or return it when it closes.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Accessibility is correctness](../principles.md#accessibility-is-correctness)
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
 - [Accessibility in practice](../guides/accessibility-in-practice.md)
+- [Accessibility is correctness](../principles.md#accessibility-is-correctness)

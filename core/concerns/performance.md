@@ -24,11 +24,11 @@ description: Is it fast enough for the people using it, with real data, and do y
 - A cache added before anyone measured, now a source of stale-data bugs.
 - A 4MB hero image on a mobile landing page.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Scale from evidence](../principles.md#scale-from-evidence)
 - [How a request travels through your app](../guides/how-a-request-travels.md)
 - [Simple first: when complexity earns its place](../guides/simple-first.md)
 - [Data that stays correct](../guides/data-that-stays-correct.md)
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
 - [Performance and cost: scale from evidence](../guides/performance-and-cost.md)
+- [Scale from evidence](../principles.md#scale-from-evidence)

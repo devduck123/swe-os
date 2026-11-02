@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Don't trust my app code to keep data correct; make the database enforce the rules, like no double bookings and no selling more than I have.",
+    "intended": "Write what must always be true about your data into the database schema as constraints, because code changes and bad data fails silently.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Put the check inside the write itself",
+        "why": "A leap. I get the race now, but I don't know what a 'check inside the write' looks like. Is it a special SQL thing? A Supabase setting? There's no example, so I can't picture it or ask the agent for it by name."
+      },
+      {
+        "quote": "Postgres doesn't index foreign keys for you",
+        "why": "Unexplained term. 'Index' is never glossed, though foreign key was. I don't know what an index is, so I don't know what's missing or why it makes things slow."
+      },
+      {
+        "quote": "Seed a few thousand rows and read the query plan",
+        "why": "Two unexplained terms. I've never seeded data on purpose and have no idea what a query plan is or how to read one. This is the step 'How I do it' asks me to repeat, and I couldn't do it."
+      }
+    ],
+    "skimmed": [
+      "Keep the network out of transactions: I only half-understood transactions from the bullet before, and 'makes other writes wait' assumes I know how locking works. Sounded like advice for someone further along.",
+      "Fine with 20 rows, unusable with 500,000: my apps don't have 500k rows, and the terms lost me, so I'd scroll past.",
+      "Go deeper: Postgres docs on my phone aren't happening."
+    ],
+    "jargon": [
+      "schema",
+      "constraints (glossed, but only as 'rules the database checks', with no example of one)",
+      "transaction (described by effect, never defined)",
+      "rolled back",
+      "index",
+      "query plan",
+      "seed / seeded data",
+      "dependents"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The words to say to the agent. 'List the rules the data must always follow' is something I can paste. 'Check each main page's query plan against seeded data' isn't: I don't know how to check it, what bad looks like, or what to ask the agent to fix. One example rule written as a constraint (like 'stock can't go below 0') and one sentence on what a bad query plan looks like would let me do it.",
+    "cut": "Keep the network out of transactions. It's a second-order rule about a concept the page just introduced, and the reasoning ('makes other writes wait') needs locking knowledge I don't have. The email half is the clearest part; if it stays, keep only that.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't trust my app code or the agent to keep data right; make the database itself refuse bad writes, like duplicate bookings or selling stock I don't have.",
+    "intended": "Write what must always be true into the schema as constraints, so the database checks every write instead of the code.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Put the check inside the write itself",
+        "why": "A leap. I get the race now, and the 51-of-50 example landed, but I don't know what this looks like. Is it a constraint? A special query? I couldn't tell my agent what to do here."
+      },
+      {
+        "quote": "Postgres doesn't index foreign keys for you",
+        "why": "Unexplained term. 'Index' is never glossed, even though every other term in the list gets one. I'm also still processing what a foreign key is from the bullet right above."
+      },
+      {
+        "quote": "Seed a few thousand rows and read the query plan",
+        "why": "I've never seen a query plan. I don't know how to get one, and if the agent shows me one, I don't know what bad looks like."
+      }
+    ],
+    "skimmed": [
+      "The foreign key bullet. 'A foreign key, a rule that a column points at a row that exists, makes the database refuse...' The gloss is crammed mid-sentence, so I had to reread it on my phone and gave up halfway.",
+      "'Keep the network out of transactions.' I just learned what a transaction is one line earlier. This feels like advice for someone already using them."
+    ],
+    "jargon": [
+      "index",
+      "query plan",
+      "rolled back",
+      "schema",
+      "seed / seeded data"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The first half I can do: paste 'list the rules the data must always follow and enforce each as a constraint' into Claude Code. The second half I can't. 'Check each main page's query plan' needs one line on how to ask for it and what a bad result looks like. Even 'if you see it scanning every row, you're missing an index' would be enough. Also how to seed a few thousand rows in Supabase.",
+    "cut": "'Keep the network out of transactions.' It's advice for a step past where I am. I don't write transactions yet, and when I do, the agent will. The 'email can't be rolled back' part also assumes I know what rollback means.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

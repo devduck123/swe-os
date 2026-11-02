@@ -1,0 +1,70 @@
+[
+  {
+    "takeaway": "Don't trust my app code to keep data right; make the database itself refuse bad writes, like stock going below zero or someone booking twice.",
+    "intended": "Write what must always be true about your data into the schema as constraints the database checks on every write, because code changes and bad data fails silently.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Keep the network out of transactions.",
+        "why": "A leap. I just learned what a transaction is one bullet earlier. 'Makes other writes wait' assumes I know transactions lock things. And I don't know how I'd 'keep it out'. Do I call Stripe before or after? Which one?"
+      },
+      {
+        "quote": "Postgres doesn't add one for foreign keys",
+        "why": "Too dense. This sentence packs index, foreign key, and Postgres internals together. I half-got 'foreign key' from the previous bullet, but I don't know what 'add one for' it means or whether Supabase does it for me."
+      },
+      {
+        "quote": "Put the check inside the write",
+        "why": "I get the idea, but I can't picture it. In Supabase I do `.update({ stock: stock - 1 })`. Is that 'inside the write'? One line of what it looks like would land it."
+      }
+    ],
+    "skimmed": [
+      "The calendar day bullet. It's a real bug, but it feels like a different topic from 'constraints'. I'd skim it on my phone.",
+      "The money bullet. I've seen the 0.1 + 0.2 meme, so I'd nod and move on. Fine, but not new."
+    ],
+    "jargon": [
+      "schema (glossed, but quickly)",
+      "Postgres (I know Supabase uses it, but someone newer might not)",
+      "query plan (glossed, but I don't know how to get one)",
+      "rows / seed (seed is unexplained)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How I check a query plan myself in Supabase (is it a button? a command?). And what a 'constraint' looks like when the agent hands it back, so I can tell it actually did it and didn't just add an if-statement in my API route.",
+    "cut": "The calendar day bullet. It's the only item not about the database enforcing rules, and the 11:50 p.m. example needs more context than one line gives it.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Put the rules my data has to follow into the database itself, like 'stock can't go below zero' or 'no double bookings', instead of checking in my code first, because two requests at once can both pass my check.",
+    "intended": "Write what must always be true about your data into the schema as constraints, so bad data can't get in even when code gets rewritten.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Postgres doesn't add one for foreign keys",
+        "why": "I just learned what an index and a foreign key are two bullets apart, and now they're combined. I don't know why a foreign key would need an index or what I'd be looking up. I'd nod and move on."
+      },
+      {
+        "quote": "Keep the network out of transactions",
+        "why": "A leap. I don't know what 'the network' means here. My Supabase calls also go over the network, right? 'makes other writes wait' isn't explained either. Why would they wait? I'd need one more sentence."
+      },
+      {
+        "quote": "read the query plan",
+        "why": "It's glossed, but I have no idea where I'd see one in Supabase or what 'reads every row' looks like in it. I'd have to hand this to the agent entirely."
+      }
+    ],
+    "skimmed": [
+      "The 'Keep the network out of transactions' bullet. It felt like it was for someone already writing transactions by hand, which I don't.",
+      "The 'Go deeper' Postgres docs. On my phone, I'm not opening official docs."
+    ],
+    "jargon": [
+      "schema (half-glossed as 'your tables and columns', which was enough)",
+      "Postgres (I know Supabase uses it, but the stop never says so)",
+      "the network (in the transactions bullet)",
+      "seed / seeded data (I've seen it but couldn't say exactly what it means)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How do I know the agent actually did it? Tell me what to look for afterward, like 'you should see a new migration file with CHECK or UNIQUE in it.' Also, in Supabase, does this go in a migration or the dashboard? I don't want the agent clicking around my production database.",
+    "cut": "The 'Keep the network out of transactions' bullet. It's the only one I couldn't picture, and the email example is about a mistake I wouldn't know how to make yet. The other seven are concrete and land.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

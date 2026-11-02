@@ -52,7 +52,7 @@ Postgres is the default for anything relational. I've used DynamoDB, Firestore, 
 
 ## Cliffs worth knowing
 
-Free tiers are fine until they aren't. Before picking a service, find its pricing cliff: the usage level where the bill or the limits jump. The current cliffs for this stack live in [the side-project stack](../core/recipes/side-project-stack.md#what-it-costs).
+Free tiers are fine until they aren't. Before picking a service, find its pricing cliff: the usage level where the bill or the limits jump. The current cliffs for this stack live in [the side-project stack](../core/recipes/side-project-stack.md#easy-to-miss).
 
 ## UI taste
 

@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "When prod breaks, undo first (roll back or turn the thing off) and figure out why later, and don't trust a backup until you've actually restored one.",
+    "intended": "When production breaks, stop the damage before understanding it, and have backups you've actually tested so lost data can come back.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "flip the feature's flag off",
+        "why": "Unexplained term. I don't use feature flags. Is that a Vercel thing? A Supabase setting? I don't have one, so this stop button doesn't exist for me and nothing says how to get one."
+      },
+      {
+        "quote": "A scheduled job or a worker",
+        "why": "I sort of know cron, but 'worker' is vague. In my Next.js + Supabase app, where would that even be? Edge functions? pg_cron? I wouldn't know where to look to stop it."
+      },
+      {
+        "quote": "refuse bulk deletes over a cap",
+        "why": "A leap. Refuse it how, and where? In my code, in Supabase, in a database rule? I get the idea but couldn't build it."
+      }
+    ],
+    "skimmed": [
+      "The postmortem bullet. 'Blameless postmortem' sounds like a big-company ritual, and I'm usually the only one who broke it, so I'd skim it."
+    ],
+    "jargon": [
+      "feature flag",
+      "worker",
+      "point-in-time recovery (it's glossed as 'restoring to any minute', which helped, but I don't know if I have it)",
+      "purge",
+      "blameless postmortem",
+      "guard (as a fix type)",
+      "soft-delete (only explained earlier as 'mark rows deleted', and the How I do it line uses the term without linking the two)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Show where the stop buttons actually are for my stack: Vercel's 'Instant Rollback' or promote a previous deployment, how to pause a Supabase cron or edge function, and how to turn off one route. Explain how to run a restore drill on Supabase in a couple of steps, like 'restore to a new project, check that a table has yesterday's rows', and which plan gives point-in-time recovery. Show soft-delete as one concrete change: a deleted_at column, and filter it out in queries.",
+    "cut": "The postmortem bullet. It's the only one about process instead of something I'd do in the moment, and the How I do it line already says 'ship at least one change'. It could just say 'fix the system, not yourself' inside that line.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When prod breaks, roll back first and figure it out later, and don't trust a backup until you've actually tried restoring it.",
+    "intended": "The order for handling a production break (stop the damage, understand, fix, prevent) and making sure backups can actually bring lost data back.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "flip the feature's flag off",
+        "why": "Unexplained term. I don't use feature flags, so I don't know if I have one to flip. It reads like a stop button I'm supposed to already have."
+      },
+      {
+        "quote": "A scheduled job or a worker",
+        "why": "I sort of know cron, but 'worker' is vague. In my Next.js + Supabase app I don't know what would count. Edge functions? Supabase triggers? I wouldn't know where to look to answer 'what is still writing right now?'"
+      },
+      {
+        "quote": "Restore a copy and move back only what was lost",
+        "why": "A leap. How do I restore 'next to' production in Supabase, and how do I move back only some rows? That's the part I'd actually be scared of mid-incident, and it gets one sentence."
+      }
+    ],
+    "skimmed": [
+      "The postmortem bullet. It's short and sounds like team process, and I'm solo, so I'd skim it.",
+      "Go deeper links. I'd maybe tap the Supabase one, but not the SRE book on my phone."
+    ],
+    "jargon": [
+      "feature flag",
+      "worker",
+      "point-in-time recovery (glossed, but 'plan keeps history' is fuzzy)",
+      "restore drill",
+      "blameless postmortem (half-glossed)",
+      "purge",
+      "soft-delete (explained in the bullet, but the How I do it line uses the term before linking it back)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What 'know my stop buttons' means for my stack: e.g. Vercel's instant rollback (Promote a previous deployment), pausing Supabase cron/edge functions, and a way to take a route offline. Also one concrete step for a restore drill on Supabase: where the button is and what plan you need for PITR. Right now I'd agree with it and do nothing.",
+    "cut": "The 'Silence is worse than bad news' bullet. It's true but obvious, and it's the only one that isn't something I'd miss. The space would be better spent on how to actually roll back.",
+    "clarity": 4,
+    "usefulness": 3
+  }
+]

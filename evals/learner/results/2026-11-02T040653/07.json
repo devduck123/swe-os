@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "Put a timeout on every call to another service, and don't blindly retry things like payments, because a request that timed out might have actually gone through and you'll charge someone twice.",
+    "intended": "Every outside call needs a timeout, a retry decision, and a plan for running twice, decided together, because retrying without protection against duplicates causes double charges.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "An idempotency key made fresh on each attempt",
+        "why": "Never told what an idempotency key is or where it goes. Header? Database column? Something I generate or Stripe gives me? The title says 'idempotency' and it's never defined in plain words."
+      },
+      {
+        "quote": "The server has to be the referee.",
+        "why": "Sounds right but I don't know what that looks like. Check the database for an existing order first? A unique constraint? I'd ask Cursor and hope."
+      },
+      {
+        "quote": "a thousand clients retrying in sync",
+        "why": "'Clients' as in my users' browsers or my server's fetch calls? And 'an outage you caused' is a leap. Why would they retry at the same moment?"
+      }
+    ],
+    "skimmed": [
+      "Go deeper: an AWS Builders' Library article reads like it's for people running AWS, and I wouldn't open it on my phone.",
+      "'Retries multiply' bullet: I got the 40-second math but skimmed the thundering-herd half because it felt like a big-company problem."
+    ],
+    "jargon": [
+      "idempotency / idempotency key",
+      "503 vs 400 (I roughly know 400 is bad request, not what 503 is)",
+      "clients (ambiguous)",
+      "background work (like a cron job? a queue? I don't have one)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to set a timeout in what I actually use (fetch with AbortSignal.timeout? the Supabase client? Stripe's SDK?). What an idempotency key concretely is, with one tiny example like passing the order ID to Stripe. What 'the server as referee' means in a Next.js route plus Supabase, e.g. a unique constraint on the order ID.",
+    "cut": "The 'Retries multiply' bullet's second half about a thousand clients in sync. It's the least relevant to someone with a small app, and it's the most confusing line on the page.",
+    "clarity": 3,
+    "usefulness": 3
+  },
+  {
+    "takeaway": "If a call to something like Stripe times out it might have actually gone through, so retrying blindly is how you charge someone twice.",
+    "intended": "Every outside call needs a timeout, a retry decision, and protection against running twice, and they only work together.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "An idempotency key made fresh on each attempt",
+        "why": "Never says what an idempotency key is or where it goes. A header? A database column? I don't know what to make or who checks it."
+      },
+      {
+        "quote": "The server has to be the referee.",
+        "why": "OK, but how? I use Supabase. Is this a unique constraint, a check in an API route, something Stripe does for me? It sounds right and I can't act on it."
+      },
+      {
+        "quote": "A timeout or a 503 might work",
+        "why": "I know 404 and 500. I'd have to look up 503 and 400 to understand why one is temporary and the other isn't."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: an Amazon Builders' Library article on a phone between things is not happening, and the title already has 'jitter' in it",
+      "'Retries multiply' second half: 'a thousand clients retrying in sync' is a problem for apps way bigger than mine, so I'd glaze over"
+    ],
+    "jargon": [
+      "idempotency (the title word, never actually defined; I only half-get it from 'runs twice')",
+      "idempotency key",
+      "503",
+      "400",
+      "background work (does this mean a cron job? a Supabase edge function? a queue?)",
+      "retry loop"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually set a timeout on fetch or the Supabase/Stripe client (one line of code would do it). What an idempotency key looks like in practice: e.g. pass the order ID as Stripe's Idempotency-Key, or make a column unique so a second insert fails. Without that I'd just paste 'add idempotency keys' into Cursor and hope.",
+    "cut": "The 'thousand clients retrying in sync is an outage you caused' clause. It's a different, scale-level problem from everything else on the page and it's the one thing I'd never hit.",
+    "clarity": 3,
+    "usefulness": 3
+  }
+]

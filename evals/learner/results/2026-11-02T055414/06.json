@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Being logged in doesn't mean you're allowed. Every server action and every database read has to check, on the server, that this exact row belongs to the user from the session, or anyone can just change the ID in the URL.",
+    "intended": "At every trust boundary, check two things: that incoming data has the shape you expect (validation) and that this caller is allowed to touch this exact thing (authorization).",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Put the owner in the query itself",
+        "why": "A leap. I get the idea, but I don't know what that looks like in my Supabase call. One line like `.eq('user_id', user.id)` would have landed it."
+      },
+      {
+        "quote": "Keep the counts in the database, since each",
+        "why": "Too dense. I clicked the serverless link in my head and still didn't get why memory matters for counting tries. Also, how do I actually add a rate limit? It reads like 'go build a thing' with no pointer."
+      },
+      {
+        "quote": "a data access layer, one file every",
+        "why": "This conflicts with the Supabase bullet. If my browser talks to Supabase directly, which is how I build, then my calls don't go through one server file. So is the fix this layer or RLS? The stop says RLS is my only guard, then How I do it doesn't mention RLS at all."
+      }
+    ],
+    "skimmed": [
+      "The opening's validation half. It says 'check types and sizes' but no bullet shows how, so I'd skim past it and forget it.",
+      "Go deeper. OWASP sounds like it's for security people, so I wouldn't tap it on my phone."
+    ],
+    "jargon": [
+      "anon key (I've seen NEXT_PUBLIC_SUPABASE_ANON_KEY in my .env but never knew it was meant to be public)",
+      "query (in the sense of adding a filter to it)",
+      "data access layer (glossed, but I don't know what goes in the file)",
+      "POST",
+      "trust boundary (defined, but abstract until the bullets)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to tell whether RLS is on for my Supabase tables and what a basic 'owner only' policy looks like, since that's my real setup. What the user B / user A test actually is: a script? Two browser windows? Also, the 'Ask your agent' prompt covers reads and writes, but How I do it says 'every database read', so I'm not sure writes are included.",
+    "cut": "The rate-limits bullet. It's about bots and abuse, not about whether data is valid or a user is allowed, so it feels like a different stop. It's also the one I understood least.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Being logged in doesn't mean you're allowed to see a specific record, so every query has to check that the row belongs to the user from the session, or anyone can read other people's stuff by changing the URL.",
+    "intended": "At every point where outside data enters your app, check that it's shaped right (validation) and that this caller is allowed to touch this exact thing (authorization).",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Put the owner in the query itself",
+        "why": "I get the idea but not what it looks like. Is it `.eq('user_id', user.id)` in Supabase? One line of code would make it click. And why 404 instead of 403? It says do it but not why."
+      },
+      {
+        "quote": "Keep the counts in the database, since",
+        "why": "A leap. I've never built a rate limit. 'Each serverless instance has its own memory' links elsewhere, and I don't know what a count table looks like or whether I should just use a service."
+      },
+      {
+        "quote": "the database is the guard",
+        "why": "This seems to conflict with How I do it. If my browser calls Supabase directly, nothing goes through a 'data access layer' file. Which one am I supposed to do? I use the Supabase client in the browser all the time and now I'm unsure."
+      }
+    ],
+    "skimmed": [
+      "The rate limits bullet. It reads like a different topic (bots, abuse) than 'is this user allowed to see this row', and it's the densest bullet.",
+      "Go deeper. An OWASP page with '2023 API1' in the title looks like it's for security people, not me."
+    ],
+    "jargon": [
+      "validation (the intro defines it, but nothing after says how to do it; no zod or anything)",
+      "session (I roughly know, but 'the sign-in your auth library verifies' is vague. Is that `supabase.auth.getUser()`?)",
+      "anon key (I've pasted it, but I didn't know it was public until now)",
+      "rate limits by IP and by account"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Validation disappears after the intro: no bullet or How I do it line says how to check request shape. For Supabase users, it doesn't say how row-level security and the data access layer fit together, or which one to do if the browser queries the database directly. It also doesn't say how to write the user-B-reads-user-A test: two test accounts? which tool?",
+    "cut": "The rate limits bullet. It's important but off-topic for validation and authorization, it's the only bullet that left me with a whole new thing to build, and it pushed out room the stop needed for showing what validation looks like.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

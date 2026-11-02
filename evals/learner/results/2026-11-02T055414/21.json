@@ -1,0 +1,68 @@
+[
+  {
+    "takeaway": "Before I merge an agent's PR, I should have it quiz me with three questions on the auth and data parts and answer them from memory, because shipping fast doesn't mean I actually learned anything.",
+    "intended": "Agents make you faster but not better unless you add a deliberate step after the agent's work to check you understood it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Coming back after a gap beats",
+        "why": "A leap. I get the quiz part, but I don't know what 'coming back' means for me. Come back to what? The PR? The notes? It only clicks later when 'catch up on the week's notes once a week' shows up, and I didn't connect the two on first read."
+      },
+      {
+        "quote": "AI features in your app that act on their own",
+        "why": "The email example helps, but this is a list of four areas and the fourth is fuzzy. Is a chatbot one? A cron job? I'm not sure which parts of my app count."
+      },
+      {
+        "quote": "once per feature in an area I want to own",
+        "why": "Too dense. 'Area I want to own' is vague, and 'the central piece' is hard to spot in my own code. The example ('the check that decides who can see what') helps, but in Supabase is that an RLS policy? Middleware? I wouldn't know which file to write myself."
+      }
+    ],
+    "skimmed": [
+      "The METR bullet. The study details ('experienced developers', 'their own repos') are for people who weigh research. I got the point from the bold line 'You can't feel it' and moved on.",
+      "Go deeper. An arXiv paper isn't something I'm opening on my phone."
+    ],
+    "jargon": [
+      "randomized study (I roughly get it but it doesn't matter to me)",
+      "boilerplate (I've heard it, I think it means the setup code nobody reads)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "The 'Ask your agent' prompt is copy-pasteable and I'd use it today. What's missing is where the 'Worth learning' notes go so I can do the weekly catch-up. Are they in the PR description? Do I have to save them somewhere? Without that, the once-a-week part won't happen for me.",
+    "cut": "The 'Answering beats rereading' bullet's last two sentences ('This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.'). They're honest, but they make me trust the advice less without changing what I'd do. If space is tight, cut the METR numbers down to just 'people felt faster and were actually slower.'",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Before I merge what the agent wrote, I should have it quiz me on how the code works, especially auth and data, and answer from memory instead of just rereading it.",
+    "intended": "Shipping with agents feels like learning but isn't, so add a step after the agent's work where you check you actually understood it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "every agent PR carries a \"Worth learning\" note",
+        "why": "A leap. Who makes the agent add this note to every PR? Is it a setting, a prompt I paste each time, or a file in my repo? I also mostly push straight to main, so I'm not sure where this goes if I don't do PRs."
+      },
+      {
+        "quote": "The learn skill runs all three",
+        "why": "Unexplained term. I don't know what a 'skill' is here, or whether it works in Cursor or only Claude Code. The link takes me to a SKILL.md file, but nothing tells me how to install it."
+      },
+      {
+        "quote": "I catch up on the week's notes",
+        "why": "Where do the notes live? If they're buried in PR descriptions, I'd never go back and find them."
+      }
+    ],
+    "skimmed": [
+      "The 'You can't feel it' bullet. By the third study stat I'd already bought the point and started skimming numbers.",
+      "The second half of 'Answering beats rereading' ('This comes from classrooms... a bet. A cheap one.'). The hedge is honest, but on my phone it reads like a footnote I can skip."
+    ],
+    "jargon": [
+      "PR / merge (I know them loosely, but I don't always use PRs)",
+      "skill (as in 'learn skill')",
+      "randomized study",
+      "boilerplate"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to make this automatic: where the 'Worth learning' note comes from, how to install or use the learn skill in Cursor vs. Claude Code, and what to do if I don't open PRs. The 'Ask your agent' prompt is the one thing I could use today, so it should sit closer to the top or be called the way to start.",
+    "cut": "The classroom caveat in 'Answering beats rereading' ('This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.'). It's the first thing I'd delete because it weakens the advice without changing what I'd do.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

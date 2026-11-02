@@ -1,0 +1,30 @@
+# Learner test 2026-11-02T055414
+
+2 reader(s) per stop, graded by Claude in character as the reader in `reader.md`. Spent $1.80 API-equivalent.
+
+**Clarity 3.9, usefulness 4.2** (1–5). Every reader's takeaway matched the intended lesson on 16 of 22 stops.
+
+| #   | Stop                                           | Clarity | Usefulness | Match          | Lost at                                                                                                                                        |
+| --- | ---------------------------------------------- | ------- | ---------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Vibe coder vs. engineer                        | 4.0     | 4.0        | yes, yes       | "the server has to notice the repeat"; "a delete can be undone"; "Decide what cleans up the first step"                                        |
+| 2   | How a request travels through your app         | 4.0     | 4.0        | partly, partly | "Each hop remembers something different"; "server actions are public endpoints"; "read the failing request's status, timing, and cache header" |
+| 3   | Shape before you build                         | 4.0     | 4.5        | yes, yes       | "Put an edge case and an empty state"; "tapping twice records one check-in"; "I run shape-project on any new idea"                             |
+| 4   | Simple first: when complexity earns its place  | 4.0     | 5.0        | yes, yes       | "three layers of files per feature"; "work that can run twice or sit stuck"; "Folding a separate API back into the app"                        |
+| 5   | Data that stays correct                        | 4.0     | 4.5        | yes, yes       | "Keep the network out of transactions."; "Postgres doesn't add one for foreign keys"; "Put the check inside the write"                         |
+| 6   | Trust boundaries: validation and authorization | 4.0     | 4.0        | partly, partly | "Put the owner in the query itself"; "Keep the counts in the database, since each"; "a data access layer, one file every"                      |
+| 7   | Timeouts, retries, and idempotency             | 4.0     | 4.0        | yes, yes       | "Most clients wait forever by default"; "Retries belong in background work"; "Three retries of a ten-second call is a forty-second request"    |
+| 8   | Local first, then managed services             | 4.0     | 4.0        | partly, partly | "so branch from seed data instead"; "its CLI runs it locally"; "must never point at the production database"                                   |
+| 9   | What a complete frontend feature includes      | 4.0     | 5.0        | yes, yes       | "with an idempotency key or a database"; "Store a UTC timestamp and format"; "right type and autocomplete attributes"                          |
+| 10  | Accessibility in practice                      | 4.0     | 4.0        | yes, yes       | "tied to its input with `aria-describedby`"; "keep Tab from leaving"; "Render it on page load and change only its text"                        |
+| 11  | AI features in production                      | 3.5     | 4.0        | partly, yes    | "can arrive as a 200"; "an image whose URL ends with the user's data"; "turn off the library's built-in retries"                               |
+| 12  | Secrets and safety when agents write your code | 4.0     | 4.0        | yes, yes       | "something else guards"; "Move the call into code that only runs on the server"; "a production key that can write"                             |
+| 13  | Background jobs and webhooks                   | 3.5     | 4.0        | yes, yes       | "mark a job as taken in the same statement"; "check it on the raw body before parsing"; "Make each write check the row's status"               |
+| 14  | How you know it works                          | 4.0     | 4.0        | yes, yes       | "the duplicate your real database's rules would reject"; "Break the line it guards and run it"; "has to pass before anything merges"           |
+| 15  | Reading and reviewing code you didn't write    | 4.0     | 4.0        | partly, partly | "merged in that order"; "Request team 7's export as a user on team 3"; "a second opinion from a fresh session"                                 |
+| 16  | Shipping changes you can undo                  | 4.0     | 4.0        | yes, yes       | "the migration often runs first"; "your other databases never get it"; "a `check` that has to pass"                                            |
+| 17  | Database changes without downtime              | 4.0     | 4.0        | yes, yes       | "A lock timeout, one line at the top"; "picking only rows that still need it"; "restore a backup into a scratch database"                      |
+| 18  | Knowing it broke before your users do          | 4.0     | 4.5        | yes, yes       | "payments Stripe received against orders your app marked paid"; "Put it on every log line"; "Break each alerted thing once on purpose"         |
+| 19  | When production breaks anyway                  | 3.5     | 4.0        | partly, yes    | "or a database trigger can keep"; "Point-in-time recovery, restoring to any minute"; "copy back only the rows that were lost"                  |
+| 20  | Performance and cost: scale from evidence      | 4.0     | 4.0        | yes, yes       | "Time each step first"; "Postgres's `EXPLAIN` shows whether a query"; "which changes to the data throw"                                        |
+| 21  | Learning while agents write the code           | 4.0     | 4.5        | yes, yes       | "Coming back after a gap beats"; "AI features in your app that act on their own"; "once per feature in an area I want to own"                  |
+| 22  | The side-project stack                         | 4.0     | 4.0        | yes, yes       | "Each copy has its own memory"; "signed so I can check it's really Stripe"; "Postgres on Neon through Drizzle, or Supabase"                    |

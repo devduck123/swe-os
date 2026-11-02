@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Webhooks and background jobs can show up twice, late, or never, so save them to a table first and make running them twice harmless.",
+    "intended": "Background work and incoming webhooks can arrive late, twice, or never, so build them to survive that, and keep fast work in the request.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Check it against the request exactly as it arrived, before you parse it",
+        "why": "A leap. I don't know what 'exactly as it arrived' means in code. Raw body vs. req.json()? In Next.js I just call req.json(). Nothing tells me what to do differently or why parsing breaks the signature."
+      },
+      {
+        "quote": "Make sure two runs can't grab the same work",
+        "why": "This is the bit I'd actually need help with, and it stops there. How? A lock? A status column? I couldn't do this from the sentence."
+      },
+      {
+        "quote": "until retries can't wait for the next sweep and a hosted job service earns its place",
+        "why": "Too dense. I had to read it three times. 'Sweep' isn't really explained, and I don't know what a 'hosted job service' is or name one."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two doc links with no hint of which part to read, and on my phone I'm not opening Stripe docs",
+      "'A failure needs somewhere to land' second half: 'growing age on the oldest pending job' felt like on-call stuff for someone else"
+    ],
+    "jargon": [
+      "queue",
+      "cron",
+      "sweep",
+      "parse (in this context, raw body vs parsed JSON)",
+      "fetch its current state (from where, the provider's API?)",
+      "hosted job service",
+      "fire-and-forget"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What columns go in the jobs table (a tiny schema would do it), how the sweep claims a job so two runs don't both take it, and what triggers the sweep on Vercel. Right now I'd ask my AI agent 'make a jobs table with status and attempts' and hope it does the claiming part right, but I wouldn't know if it did.",
+    "cut": "'Cron is weaker than it looks.' It overlaps with 'Every job runs twice' and 'A cron route is a public URL', and its key instruction ('two runs can't grab the same work') isn't actionable. Merge the useful part into the job-runs-twice bullet.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Webhooks and background jobs can show up twice, late, or not at all, so save them to a table first and make running them twice harmless.",
+    "intended": "Background jobs and webhooks can arrive late, twice, or never, so keep fast work in the request and make deferred work recorded and safe to repeat.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Check it against the request exactly as it arrived, before you parse it",
+        "why": "I don't know what 'parse' means here or why parsing would break a signature check. In Next.js I just do `await req.json()`. Is that parsing? What do I call instead? This sounds important and I can't act on it."
+      },
+      {
+        "quote": "Make sure two runs can't grab the same work",
+        "why": "This is the outcome but not the how. I'd have no idea how to stop two cron runs from picking the same row. This is the race-condition thing I can't define, and the stop doesn't name it or show the trick."
+      },
+      {
+        "quote": "until retries can't wait for the next sweep",
+        "why": "Too compressed. Took me two reads. I think it means 'once a once-an-hour retry is too slow, pay for a service.' But which services? Inngest? Trigger.dev? QStash? It doesn't say."
+      }
+    ],
+    "skimmed": [
+      "The opening's 'a queue is a second place to fail, and a quieter one'. Sounds wise, but I've never set up a queue, so I'd skip past it.",
+      "The 'Go deeper' links. On my phone I'm not opening Stripe docs."
+    ],
+    "jargon": [
+      "parse (in the signature bullet)",
+      "fire-and-forget",
+      "200 (I sort of know it's 'OK' but the stop assumes it)",
+      "event ID",
+      "sweep",
+      "cron (I've seen vercel.json crons but never knew the word)",
+      "hosted job service"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What columns the jobs table has beyond status/attempts/last_error, and what the status values are. How the sweep claims a row so two runs don't both take it, even just naming the idea. For the Stripe webhook in Next.js: read the raw body with `req.text()`, not `req.json()`. One or two example hosted services to know the name when I outgrow the sweep.",
+    "cut": "'Cron is weaker than it looks' could merge into 'Every job runs twice eventually' and 'A cron route is a public URL'. Its 'can arrive twice' repeats the twice point, and the overlap part is the only new thing. Honestly, though, every bullet felt like something I'd actually get bitten by. Nothing's fluff.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

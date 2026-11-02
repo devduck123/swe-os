@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Treat the AI call like a sketchy outside service: put a login and a daily limit on the route, cap how much goes in and out, and never let it send, pay, or delete without me clicking a button.",
+    "intended": "A model call is a slow, expensive, unpredictable, possibly manipulated third-party API, so treat it as flaky and untrusted, and only use one where plain code can't do the job.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "a blocked one can arrive as a 200",
+        "why": "I know 200 means OK, but 'blocked' by what? The provider's safety filter? And 'check why the model stopped' — where do I look? There's no mention of the field name (like finish_reason) so I wouldn't know what to check."
+      },
+      {
+        "quote": "an agent with private data, untrusted content",
+        "why": "This bullet jumps from 'the email's' instructions to a three-part danger list without saying what the email is. I had to reread to get that the example is an AI reading someone's inbox. 'Split reading from acting' sounds smart but I couldn't picture what that looks like in my Next.js app."
+      },
+      {
+        "quote": "Injected text can ask for an image",
+        "why": "Big leap. Why would loading an image send data? I only got it after thinking that the URL could be like example.com/img.png?secret=..., and the page doesn't spell that out. 'Injected' is also never defined. I'm guessing it means prompt injection, which only shows up in the OWASP link title."
+      }
+    ],
+    "skimmed": [
+      "Go deeper links: I'm on my phone, I'm not opening OWASP.",
+      "The 'Trying two examples' bullet, partly: 'check what must always hold, not exact wording' felt abstract. I'd skim it unless I was about to change prompts."
+    ],
+    "jargon": [
+      "schema (I sort of know it from Zod, but it isn't glossed)",
+      "injected / prompt injection",
+      "agent (in the specific sense of an AI that can take actions)",
+      "SDK's default retries",
+      "pin the model ID",
+      "per-user limit in Postgres (I'd want to know what table or how)",
+      "spend cap with the provider"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it lists what to have but not how to build the parts I've never done. What does a 'per-user daily limit in Postgres' look like? A table with user_id, date, count? Something checked before the call? The timeout and output cap are probably SDK options, but give me the option names. Also, what does 'check why it stopped' look like in code? One small route example or a link to one would get me to act.",
+    "cut": "I'd shorten the opening line's 'if you could write the rule down, write the code.' It's a good point but feels like a different lesson from the rest, which is all about safety. Nothing else I'd fully delete. The bullets are short and each one surprised me a bit.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Treat the AI call like a sketchy, expensive outside API: lock the route behind login and a per-user limit so strangers can't run up my bill, and don't trust or render whatever it sends back.",
+    "intended": "Model calls are slow, costly, unpredictable, and can be steered by their input, so treat them as a flaky, expensive, untrusted service, and use them only where plain code can't do the job.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "a blocked one can arrive as a 200",
+        "why": "I sort of know 200 means 'OK', but 'blocked' by what? And 'check why the model stopped' doesn't tell me where to look. Is there a field for that? What's it called?"
+      },
+      {
+        "quote": "Injected text can ask for an image",
+        "why": "This is a big leap. I don't get how text inside an email makes my app load an image, or how a URL 'carries' data. I believe it's bad, but I couldn't explain it or spot it in my own code."
+      },
+      {
+        "quote": "check what must always hold, not exact wording",
+        "why": "I don't know what this means in practice. Do I write tests? Eyeball 20 outputs? What does 'must always hold' look like for a summarizer? I'd nod and do nothing."
+      }
+    ],
+    "skimmed": [
+      "The prompt injection bullet ('private data, untrusted content, and a way to send things out'). It reads like it's for people building agents with tools. My app just summarizes stuff, so I'd assume it's not me, even though it might be.",
+      "The 'Trying two examples' bullet. Pinning the model ID made sense, but the rest felt like a testing process for a team, not a solo dev."
+    ],
+    "jargon": [
+      "schema (I've seen Zod in generated code but wouldn't say 'schema')",
+      "200 (status code)",
+      "SDK's default retries",
+      "spend cap with the provider",
+      "split reading from acting",
+      "pin the model ID",
+      "injected / injection"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually build the per-user daily limit in Postgres/Supabase: a table, a row per call, then count today's rows? Which field tells me why the model stopped (the name for OpenAI or Anthropic). Which library to use for checking the output (Zod?). Where the spend cap setting lives on the provider dashboards. I'd do the auth part and set the spend cap today. I'd ask my agent for the rest and couldn't check its work.",
+    "cut": "The markdown image bullet. I didn't understand it well enough to act on it. Folding 'don't render images from model output' into the first bullet ('render it as text') would cover it in one line.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

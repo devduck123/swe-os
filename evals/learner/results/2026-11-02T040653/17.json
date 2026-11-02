@@ -1,0 +1,80 @@
+[
+  {
+    "takeaway": "Don't rename or drop a database column in one go: add the new one, copy the data over, switch the code, and only drop the old one at the end, because the old version of the app is still running and still needs it.",
+    "intended": "Database changes like renames, drops, and type changes have to go out across several releases (add, copy, switch, drop) because data can't be undone the way code can.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Set a lock timeout so the migration",
+        "why": "I didn't know what a lock was, and 'exclusive access' only half-explains it. I get the idea that everything waits in line, but I have no idea how to set a lock timeout. Is it a Supabase setting? A line of SQL? The stop tells me to do it twice and never shows it."
+      },
+      {
+        "quote": "an index build that blocks writes",
+        "why": "I couldn't define an index. Nothing here says what one is or why building one would block anything, so this bullet only lands for the type-change half."
+      },
+      {
+        "quote": "The ORM's shortcut skips the review",
+        "why": "'ORM' is unexplained, and so is the 'shortcut'. I use Supabase. Is that an ORM? Is `supabase db push` the shortcut? Prisma's `db push`? I can't tell whether this warning is about me."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: strong_migrations is for Rails, which I don't use, and the PostgreSQL ALTER TABLE docs look like a reference manual, not something I'd read on my phone."
+    ],
+    "jargon": [
+      "lock timeout",
+      "exclusive access (as a database concept)",
+      "index / index build",
+      "ORM",
+      "schema",
+      "rewrites the table",
+      "worker",
+      "cron job (I roughly know, but it's not glossed)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The exact line for a lock timeout in Postgres/Supabase (e.g. `SET lock_timeout = '5s';` at the top of the migration file). Where the SQL migration file lives in a Supabase or Prisma project, so I know what to look for in the PR. A one-line example prompt I could give the agent for the add/copy/switch/drop plan.",
+    "cut": "The 'Your dev database is too small to warn you' bullet. It's the densest one, it leans on the index term I don't know, and 'rehearse on a copy with production's shape' is advice I wouldn't know how to follow solo. The rename and rollback bullets already sold me on the main point.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't rename or delete a database column in one go: add the new one, copy the data over, switch the code, and only then delete the old one, each as its own PR.",
+    "intended": "Database structure changes have to go out over several releases (add, copy, switch, drop) because data can't be undone like code and old code is still running against it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Set a lock timeout so the migration",
+        "why": "I don't know what a lock is beyond 'exclusive access', and I have no idea how or where to set a timeout. Is it a Supabase setting? A line of SQL? Nothing shows me."
+      },
+      {
+        "quote": "or an index build that blocks writes",
+        "why": "I couldn't define an index, so 'index build' means nothing to me. I also don't know what 'rewrites the table' means or why a type change would do it."
+      },
+      {
+        "quote": "Rehearse on a copy with production's shape",
+        "why": "A leap. How do I get a copy of production in Supabase? Is that a branch, a backup, a dump? 'Shape' is vague. Same size? Same weird data?"
+      }
+    ],
+    "skimmed": [
+      "The ORM bullet. I half-get it, but I'm not sure if Supabase or Prisma 'pushing' is what they mean, so I skimmed it.",
+      "Go deeper. strong_migrations looks like a Ruby thing and the Postgres docs look like a wall, so I wouldn't tap either on my phone."
+    ],
+    "jargon": [
+      "migration (glossed, but only barely)",
+      "lock / exclusive access",
+      "lock timeout",
+      "index / index build",
+      "rewrites the table",
+      "cron job",
+      "worker",
+      "ORM",
+      "drop-and-add",
+      "UPDATE (as a SQL command)",
+      "restore a backup into a copy"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The actual line that sets a lock timeout, even one example like `SET lock_timeout = '5s';` at the top of the migration file. Where a SQL migration file comes from in a Supabase or Prisma setup if I've only ever used the dashboard or `db push`. A sentence of what to tell the agent, e.g. 'plan this rename as add, copy, switch, drop.'",
+    "cut": "The 'Your dev database is too small to warn you' bullet. It packs three ideas (table rewrites, index builds, nulls and duplicates) into one, and I didn't follow the first two. I'd keep only the nulls-and-duplicates part, which I actually understood.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

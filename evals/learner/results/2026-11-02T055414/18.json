@@ -1,0 +1,68 @@
+[
+  {
+    "takeaway": "Before real people use my app, set up Sentry and a daily email of signups, payments, and failed jobs, because users won't tell me when it breaks. They just leave.",
+    "intended": "How to find out the app is broken, for whom, and why, from data you already collected, before users have to tell you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "payments Stripe received against orders your app marked paid",
+        "why": "Too dense. I get that I should compare two numbers, but I had to reread it. Am I counting both and checking they match? What does it mean if they don't?"
+      },
+      {
+        "quote": "Put it on every log line",
+        "why": "A leap. I don't know where my logs live on Vercel or how I'd attach an ID to every line. Is this a library, middleware, or something I add to each console.log by hand?"
+      },
+      {
+        "quote": "Break each alerted thing once on purpose",
+        "why": "I like the idea, but I don't know how to break a webhook or a cron job safely without breaking prod. One example would help."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: a Google SRE book is for someone else, and I'd only open the Sentry link when actually setting it up."
+    ],
+    "jargon": [
+      "Sentry (never says it's an error-tracking service I sign up for)",
+      "stack trace",
+      "minified",
+      "scheduled jobs / cron (what counts as one in a Next.js + Vercel app?)",
+      "log line (where are my logs, even?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Which uptime and heartbeat services to use (any free ones?), and where logs show up on Vercel and how long they're kept. Also, how is the daily email itself sent? It sounds like a scheduled job too, so does it need its own heartbeat? I'd paste the agent prompt, but I wouldn't know how to check it did it right.",
+    "cut": "The 'Logs leak' bullet. It matters, but it's the one idea not reinforced by How I do it or the agent prompt, so it feels like a side warning. I'd fold 'log IDs, not contents' into the agent prompt instead.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "My users won't tell me when something breaks, so I need Sentry, a request ID on the error screen, and a daily email of signups and payments so I notice first.",
+    "intended": "Set things up so you can tell from data you already collected whether the app is broken, for whom, and why.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "payments Stripe received against orders your app marked paid",
+        "why": "A leap. I get 'count signups', but comparing Stripe's count to my own table is a new idea packed into half a sentence. Do I compare two numbers by hand? Does something alert me if they differ?"
+      },
+      {
+        "quote": "Log IDs, not contents.",
+        "why": "IDs of what? The request ID from the bullet above, the user ID, the order ID? I can't tell what I'm allowed to log instead."
+      },
+      {
+        "quote": "Break each alerted thing once on purpose",
+        "why": "How do I break a webhook or a payment on purpose without breaking production? This tells me to do it but not how."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: the Google SRE book sounds like it's for people running data centers. I'd open the Sentry link only when my agent got stuck."
+    ],
+    "jargon": [
+      "stack trace (I've seen them, but no one ever told me what one is)",
+      "Sentry (the stop assumes I know it's an error-tracking service)",
+      "alert (alert me where? email, phone, Slack?)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How I do it and Ask your agent don't match. How I do it has an uptime check but no heartbeats, and the prompt has heartbeats but no uptime check. Also, neither says where alerts should go so I'd actually see them on my phone, or what I should do in the first five minutes after one fires.",
+    "cut": "The 'Logs leak' bullet. It's a real issue, but it's about privacy, not about knowing it broke. It's the one I'd skim, and its one-line fix is the vaguest on the page.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

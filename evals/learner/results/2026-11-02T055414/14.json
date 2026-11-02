@@ -1,0 +1,70 @@
+[
+  {
+    "takeaway": "Clicking through my app once proves nothing lasting, so I should write tests that try the wrong user and bad input against a real local database, then break the code to make sure each test actually fails.",
+    "intended": "Clicking it once isn't proof; tests are how a requirement survives agents changing your code, and coverage numbers don't tell you anything got checked.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the duplicate your real database's rules would reject",
+        "why": "What rules? I don't know my database has rules beyond the RLS policies Supabase nagged me about. Is this unique constraints? One example of a 'rule' would land it."
+      },
+      {
+        "quote": "Break the line it guards and run it",
+        "why": "A leap. Do I delete the line, comment it out, flip a condition? And which line does a test 'guard'? I get the idea but wouldn't know how to do it myself."
+      },
+      {
+        "quote": "has to pass before anything merges",
+        "why": "How do I make something block a merge? I merge my own PRs on GitHub or just push to main. This sounds like CI or branch protection, and I've never set either up."
+      }
+    ],
+    "skimmed": [
+      "Go deeper links: on my phone I'm not opening a long blog post.",
+      "The opening's coverage sentence: I've never had a coverage number, so 'don't trust it' is a warning about something I don't use. Fine, but I skipped past it."
+    ],
+    "jargon": [
+      "Postgres (I know Supabase uses it, but 'a real Postgres running on your machine' doesn't tell me that's something I can start with one command)",
+      "the database's 'rules' (constraints)",
+      "merge gate / 'before anything merges' (CI, branch protection)",
+      "session (used for an agent chat in the opening and a login in the first bullet, which threw me for a second)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd paste the Ask your agent prompt, but I couldn't check what it gives back. Missing: that `supabase start` gives me a local database, what one of these tests roughly looks like (a few lines would do), and how 'one command before merge' actually blocks a merge (GitHub Actions? branch protection?). Without that last part I'd end up with a command I forget to run.",
+    "cut": "The 'The mock was called isn't it worked' bullet. It's the same lesson as the fake-database bullet right above it (don't trust mocks, check the real outcome), and `sendEmail` mocking isn't something I've hit yet.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Clicking through once doesn't prove anything sticks, so I should test the failure cases (wrong user, bad input) against a real local database and make sure each test can actually fail.",
+    "intended": "A test is how a requirement survives after the agent session that wrote the code is gone, and 'it worked when I clicked it' or coverage numbers don't prove that.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the duplicate your real database's rules would reject",
+        "why": "What rules? I don't know my database has rules. Is this a unique constraint thing? I've never set one up on purpose, so this example didn't land."
+      },
+      {
+        "quote": "Checking that `sendEmail` ran",
+        "why": "A leap. I get the idea that it ran isn't the same as it worked, but I don't know how a test 'checks that a function ran' in the first place, so I can't picture the bad version I'm supposed to avoid."
+      },
+      {
+        "quote": "every rule about who can see or change what",
+        "why": "Where do those rules live in my app? In Supabase, is that RLS, my API routes, or both? I'd guess but I wouldn't know which to point the test at."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links on my phone, I'm not opening a long blog post right now",
+      "The 'agent can teach the test the bug' bullet I read twice. It's important, but 'expected value that changed in the same diff' is dense and I'm not sure I'd spot it in a real diff"
+    ],
+    "jargon": [
+      "Postgres (I know Supabase uses it, but 'a real Postgres running on your machine' assumes I know you can run it locally)",
+      "merge / before anything merges (I push to main on Vercel; I don't really do merges)",
+      "diff",
+      "integration (only in the link title, but it made me feel like I was missing a concept)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I actually start the local database and point tests at it, even just 'run `supabase start` and the agent handles the rest'? And what is a 'check command' and where does it run so it 'has to pass'? Is that GitHub Actions, a script, or a Vercel setting? I can paste the Ask your agent prompt, but I couldn't tell if the agent did it right.",
+    "cut": "The coverage sentence in the opening. 'Coverage, the percentage of your code the tests ran' is a concept I don't use yet, so warning me off it is for someone else. 'No coverage target' at the end already covers it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

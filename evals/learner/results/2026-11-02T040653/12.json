@@ -1,0 +1,80 @@
+[
+  {
+    "takeaway": "Never put a real key in front of the agent or in a NEXT_PUBLIC_ variable. If one leaks, rotate it right away, because deleting it doesn't help.",
+    "intended": "A secret lets anyone act as you, so once it leaves its place it's compromised, and agents give it more ways to leave.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "It stops the file tool, not a script",
+        "why": "I don't know what 'the file tool' is versus a script the agent runs. I didn't know agents had separate tools. I get roughly that the agent can still read .env some other way, but not how."
+      },
+      {
+        "quote": "Scrubbers catch a field named `password`",
+        "why": "What's a scrubber? I've never set up error reporting (Sentry?), so I don't know this applies to me or what I'd do about it."
+      },
+      {
+        "quote": "a secret scan in CI",
+        "why": "I've heard of CI but I don't have one. I just push to Vercel. Nothing says what tool to use or how to add it, so this line in How I do it is the one I can't act on."
+      }
+    ],
+    "skimmed": [
+      "Error reports bullet: I don't use error reporting that I know of, so it read like it was for someone else.",
+      "Go deeper links: I'm on my phone and not opening docs pages."
+    ],
+    "jargon": [
+      "prompt injection (the example helps, but the term itself isn't explained)",
+      "file tool",
+      "scrubbers",
+      "CI / secret scan",
+      "rotate (I can guess it means make a new key and kill the old one, but it's never said)",
+      "connection string",
+      "spend caps (I can guess, but don't know where you set them)",
+      "forks"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Which secret scanner to use and how to add it if I have no CI (just Vercel). What 'rotate' means in practice for Supabase or Stripe (where you click). Where to set spend caps. How I tell a dev key from a production key when Supabase hands me both.",
+    "cut": "The error reports bullet. It's the one I couldn't place in my own setup, and it's the least urgent next to the NEXT_PUBLIC_ and pasted-key points.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Never paste a real key into the agent chat or slap NEXT_PUBLIC_ on it to make an error go away. If a key leaks, deleting it doesn't help; you have to replace it with a new one.",
+    "intended": "A secret lets anyone who holds it act as you, and agents create extra ways for secrets to leak, so assume any secret that leaves its place is compromised.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "It stops the file tool, not a script",
+        "why": "A leap. I didn't know the agent has a separate 'file tool' versus running scripts, or how a script would read .env when I told it not to. I believed the conclusion but couldn't picture how it happens."
+      },
+      {
+        "quote": "Scrubbers catch a field named password",
+        "why": "I don't know what an error report service is (Sentry?) or what a scrubber is, and 'connection string' is unexplained. This bullet lost me completely."
+      },
+      {
+        "quote": "Rotate it, and give the agent",
+        "why": "'Rotate' appears three times and is never explained. I guessed it means making a new key and killing the old one, but I wouldn't know where to do that in Supabase or Vercel, or whether my app breaks when I do."
+      }
+    ],
+    "skimmed": [
+      "The error reports bullet, because it read like it was for someone running a monitoring tool I don't use.",
+      "Go deeper, because I'm on my phone and I'm not opening docs.",
+      "Half of the opening paragraph. 'A secret that leaves its place' was too abstract until the bullets gave examples."
+    ],
+    "jargon": [
+      "rotate",
+      "prompt injection (it's named after the example, but I'd still only half get it)",
+      "file tool",
+      "scrubbers",
+      "connection string",
+      "CI / secret scan in CI",
+      "spend caps",
+      "forks",
+      "publisher (of a package)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to rotate a key, even just 'in Supabase it's under Settings > API'. What 'move the call to the server' looks like in Next.js: a route handler or server action, in one line. Which tool does a secret scan in CI and how to turn it on (is it a GitHub setting?). Where to set spend caps. Right now I'd follow the 'no NEXT_PUBLIC_' and 'don't paste keys' parts and skip the rest because I don't know the first step.",
+    "cut": "The error reports bullet. It's the only one where I couldn't connect it to anything I do, and it uses three terms I don't know in two sentences.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

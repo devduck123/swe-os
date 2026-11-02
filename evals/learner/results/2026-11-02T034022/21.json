@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Shipping with an agent feels like learning but isn't, so before I merge I should make myself explain or answer questions about what it did, especially in auth and data code.",
+    "intended": "That agents make you faster but not better unless you add a deliberate step after their work to check you actually understood it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "models that take actions",
+        "why": "I read 'models' as database models or data models first and had to reread; I think it means AI agents that can do things, but it isn't said."
+      },
+      {
+        "quote": "In a METR study, experienced developers",
+        "why": "No idea who or what METR is. The 19% vs 20% point landed anyway, but the name made me feel like this was written for people already in that world."
+      },
+      {
+        "quote": "I write the core myself",
+        "why": "The core of what? The feature? The hardest file? I don't know what counts as 'the core' or how to pick it."
+      }
+    ],
+    "skimmed": [
+      "The 'Answering beats rereading' bullet after the first sentence. 'This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.' reads like the author arguing with a reviewer, not talking to me.",
+      "Go deeper links. On my phone I'm not opening an arXiv paper."
+    ],
+    "jargon": [
+      "METR",
+      "models that take actions (ambiguous with data models)",
+      "the core (as in 'write the core myself')",
+      "PR carries a note (I know what a PR is, but not how a PR 'carries' a note or who writes it)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it says every agent PR 'carries' a note and a quiz, but not who writes them or what one looks like. Does I tell Cursor to add it? Is it in the PR description? Three quiz questions? One? And 'write the core myself' needs a concrete example like 'the auth middleware, not the login form'. The skill link might answer all this, but I'd want one example sentence here before I click away.",
+    "cut": "The last two sentences of the 'Answering beats rereading' bullet ('This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.'). The caveat makes me doubt the advice right after I was convinced, and it's the one spot the page sounds like it's for someone else.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Shipping with an agent feels like learning but isn't, so after the agent finishes I should quiz myself on what it did before I merge.",
+    "intended": "Agents don't make you a better engineer unless you add a deliberate step after their work to check you understood it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "models that take actions",
+        "why": "I wasn't sure if this means database models, AI models, or something else, and it's in the list of places I'm supposed to spend my effort."
+      },
+      {
+        "quote": "I write the core myself",
+        "why": "A leap. The core of what? The main function? The schema? I don't know what piece I'd sit down and write by hand."
+      },
+      {
+        "quote": "The learn skill runs all three",
+        "why": "I don't know what a 'skill' is here or how I'd run one. It reads like a tool I'm supposed to already have."
+      }
+    ],
+    "skimmed": [
+      "The second half of the 'Answering beats rereading' bullet ('This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.') felt like the author arguing with a researcher, not talking to me, so I skipped to the next bullet.",
+      "'Go deeper' links. Two papers on my phone between other things is a no. The Litt title is tempting, the arxiv one isn't."
+    ],
+    "jargon": [
+      "PR (I've heard pull request, but 'agent PR' as a routine thing isn't how I work; I push to main and let Vercel deploy)",
+      "METR (no idea who that is; I got that it's a study, but the name told me nothing)",
+      "models that take actions",
+      "boilerplate (I half know this, but I'm not confident which of my code counts)",
+      "skill (in the sense of a thing you run)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I like the quiz-before-merge idea and I'd try it, but I don't know what a 'Worth learning' note actually contains, who writes the quiz (me or the agent?), how many questions, or what counts as 'the core' when I write something by hand. Also 'once a week' review of what, exactly? The notes? The quiz answers I got wrong? One concrete example of a note and a two-question quiz would get me doing this today.",
+    "cut": "The hedge at the end of 'Answering beats rereading' ('This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.'). It's honest, but it made the bullet feel like it was for someone who reads studies, and the point was already clear without it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

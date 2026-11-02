@@ -1,0 +1,73 @@
+[
+  {
+    "takeaway": "Put my server function in the same region as my Supabase database, because every query going back and forth across the country is what makes my app slow.",
+    "intended": "A request goes browser → CDN → function → database and back, and knowing what each hop remembers lets you figure out where something broke.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Each hop remembers something different",
+        "why": "This is the big idea in the opening, but the bullets never come back to it. I don't see how 'the function keeps almost nothing' helps me answer 'it's broken'. I got a list of gotchas, not a way to debug."
+      },
+      {
+        "quote": "server actions are public endpoints",
+        "why": "I use server actions because the agent writes them, but I don't know what an 'endpoint' is, so I can't tell why this is scary. It's also 'the other way' from what? It lost me, and the link is the only explanation."
+      },
+      {
+        "quote": "read the failing request's status, timing, and cache header",
+        "why": "I've opened the Network tab, but I don't know which column is the cache header or what value means a hit. 'Status' is fine, but which timing number matters? I can't do this from the text."
+      }
+    ],
+    "skimmed": [
+      "The cold start bullet. It's one sentence and doesn't say what to do about it, so it read like trivia.",
+      "Go deeper. Docs links on my phone, I'm not opening them."
+    ],
+    "jargon": [
+      "endpoint",
+      "server actions (I use them but couldn't define them)",
+      "cache header",
+      "session cookie",
+      "scales to zero (glossed, but the gloss is clunky)",
+      "rate limit"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to actually set the region in Vercel and where to see Supabase's region. What the cache header is called and what values like HIT/MISS mean. How to 'tell the CDN not to store' a page in Next.js, meaning which setting or line. The Ask your agent prompt covers some of this, so I'd probably just paste that.",
+    "cut": "The cold start bullet. It names a thing with no action, and I don't feel it in my apps. Either say what to do or drop it.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Put my Vercel function in the same region as my Supabase database, because each back-and-forth trip is what makes things slow, not my code.",
+    "intended": "A request goes browser → CDN → function → database and back, each hop remembers something different, and knowing that lets you figure out where 'it's broken' actually is.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "scales to zero, shutting down when",
+        "why": "I get that it shuts down, but I don't know if my Vercel functions or my Supabase database do this, or whether I can change it. It tells me the name for the problem but not what to do about it."
+      },
+      {
+        "quote": "Tell the CDN not to store",
+        "why": "How? I don't know what I'd write or where. A header? A Next.js setting? This is the scariest bullet (one user sees another's data) and it has no how."
+      },
+      {
+        "quote": "status, timing, and cache header",
+        "why": "I've opened the Network tab, but I don't know which header is the cache one or what value means 'the CDN answered.' What does a bad one look like?"
+      }
+    ],
+    "skimmed": [
+      "The 'Go deeper' links. Official docs on my phone are a skip.",
+      "The 'Works locally, broken when deployed' bullet. I half-read it because it's short and I already kind of know it."
+    ],
+    "jargon": [
+      "region (glossed as 'a data center you pick', but I don't know where I pick it in Vercel or Supabase)",
+      "session cookie",
+      "endpoints (in 'server actions are public endpoints')",
+      "server actions",
+      "cache header"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to see and set the region in Vercel and Supabase. What to actually write to stop the CDN caching a per-user page. Which header in the Network tab to look at and what a 'hit' vs 'miss' looks like. Without those I'd just paste the 'Ask your agent' line and hope.",
+    "cut": "The last sentence of the opening, 'Know that, and \"it's broken\" becomes a question you can answer.' The stop never comes back to debugging 'it's broken' hop by hop, so it promises something the bullets don't deliver. Either cut it or add one line on which hop to suspect for which symptom.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

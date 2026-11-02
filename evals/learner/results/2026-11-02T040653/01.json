@@ -1,0 +1,70 @@
+[
+  {
+    "takeaway": "Before I trust the agent's 'done', I ask it to list every decision I didn't tell it about and read that first, and I never let it wing secrets, logins, payments, personal data, or deletes.",
+    "intended": "The difference between a vibe coder and an engineer isn't speed but the questions you ask before calling something done, because the agent won't bring that judgment on its own.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "The server takes who's asking from the session",
+        "why": "I don't know what 'the session' means here or how to do that in Next.js/Supabase. Is it the Supabase auth user? A cookie? I get that the form is bad but not what the fix looks like."
+      },
+      {
+        "quote": "your storage becomes free hosting on your bill",
+        "why": "A leap. I think it means people could upload random files and I'd pay for them, but it's squeezed into the end of a sentence about file names and I had to reread it. Check them for what, exactly?"
+      },
+      {
+        "quote": "engineer the floors from the first commit",
+        "why": "'The floors' only got defined one bullet earlier and I'd already half-forgotten it. 'Engineer' as a verb is vague too. What do I actually do differently on day one?"
+      }
+    ],
+    "skimmed": [
+      "The Simon Willison bullet. I skimmed the name, but the 'could anyone lose money or reputation' test was actually useful, so it survived.",
+      "'Real data is meaner than demo data'. I read the examples but the file name/type part felt like it belonged in a different bullet."
+    ],
+    "jargon": [
+      "session",
+      "the floors (defined, but late and loosely)",
+      "diff (I sort of know it from Cursor, but not everyone would)",
+      "merge / branch I won't merge (fine for me, borderline for true beginners)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The exact prompt for 'list every decision you didn't specify'. I'd copy-paste it if it were there. Also one concrete thing per floor on day one, like 'secrets in .env and never committed' or 'user ID from supabase.auth.getUser(), not the request body'. Right now 'engineer the floors' is a vibe, not an action.",
+    "cut": "I'd cut 'Code you can't explain isn't yours yet' or merge it into the first bullet. It's true but I've heard it a hundred times, and 'have the agent walk you through it' is the only actionable part.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I look at the code, I should make the agent list every decision it made that I didn't tell it to, because 'done' just means it handled what I asked for.",
+    "intended": "The difference between a vibe coder and an engineer isn't speed, it's the questions you ask before calling something done, because the agent won't bring judgment unless you ask.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "takes who's asking from the session",
+        "why": "I kind of get it from Supabase auth, but 'session' isn't explained, and I don't know how to actually do this in my upload route. Like, is it supabase.auth.getUser() on the server? It doesn't say."
+      },
+      {
+        "quote": "engineer the floors from the first commit",
+        "why": "'Floors' was introduced one bullet earlier, but 'engineer' as a verb here is vague. What do I actually do for each floor? For secrets I can guess (.env, don't push it), but for 'deletes' or 'personal data' I have no idea what engineering it means."
+      },
+      {
+        "quote": "storage becomes free hosting on your bill",
+        "why": "Took me a second. I think it means people upload random files and I pay for them? The jump from 'check name and type' to 'free hosting' skipped a step."
+      }
+    ],
+    "skimmed": [
+      "The Simon Willison bullet: name-dropping someone I don't know. The test itself is good, but I almost skipped it because it opened with a name.",
+      "'Code you can't explain isn't yours yet': I've heard this a hundred times, so I skimmed it."
+    ],
+    "jargon": [
+      "session (server-side)",
+      "floors (defined only implicitly by the list)",
+      "the diff (I know it loosely from GitHub, but 'read the list before the diff' assumes I review diffs)",
+      "database write"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'list every decision you didn't specify' move is the one I'd actually do tomorrow. I'd want the exact prompt to paste. 'Failing halfway leaves leftovers' and 'double click does it twice' name a problem but give no fix: what do I tell the agent to do about it? Same for the floors: one line each on what 'engineered' looks like (secrets in env vars and never committed, auth checked on the server, deletes confirmed or reversible) would turn this from a warning into something I can do.",
+    "cut": "'Code you can't explain isn't yours yet.' It's the most familiar advice on the page and the least concrete. The 'list unspecified decisions' bullet already covers getting the agent to explain itself.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

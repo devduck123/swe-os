@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Never rename or drop a database column in one step; add the new column, copy the data over, switch the code, and only drop the old one in a later release.",
+    "intended": "A migration changes the one thing every running version of your app shares, so renames, drops, and type changes have to be spread across several releases: add, copy, switch, drop.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "wait for a lock that blocks every read and write",
+        "why": "I don't know what a lock is or why a schema change needs one. 'Lock timeout' then gets used as if I already know how to set one."
+      },
+      {
+        "quote": "Backfill in small batches that only pick rows",
+        "why": "'Backfill' is never defined. I think it means copying data into the new column, but I don't know how to write a batched version or where it runs."
+      },
+      {
+        "quote": "an index build that blocks writes",
+        "why": "I don't know what an index is, so I can't tell if I'm ever doing this or when it would bite me."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links into the PostgreSQL manual. I'd never open those on my phone; a plain-English post would get a tap.",
+      "Second half of the 'One big UPDATE' bullet ('Skip rows that can never be filled, or the loop never finishes'). I'd already lost the thread at 'backfill' so this read as a note for someone else."
+    ],
+    "jargon": [
+      "lock / lock timeout",
+      "backfill",
+      "index build",
+      "type change (I guessed this means changing a column from text to number, but it's not said)",
+      "worker (I know cron jobs, 'a worker that started earlier' I only half get)",
+      "your new rule (I think this means a NOT NULL or unique constraint, but it's never named)",
+      "drop-and-add (I got it from context, but 'the tool turned a rename into' took two reads)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd start asking my agent to split renames into add/copy/switch/drop PRs tomorrow. But 'give every change to an existing table a lock timeout' is a thing I can't do: there's no line showing what that looks like in SQL or in a Supabase/Prisma migration. 'Switch' is also vague; does the code read from both columns for a while, or flip in one deploy? And 'a copy with production's shape' doesn't tell me how to get one without exposing real user data.",
+    "cut": "Go deeper. For this reader the raw PostgreSQL docs on explicit locking and ALTER TABLE are a wall; they add nothing I'd use and make the stop feel like it's written for a DBA. Replace with one approachable article or drop the section.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Never rename or delete a column in one go: add the new one, copy the data over, point the code at it, and only then drop the old one, each as its own PR.",
+    "intended": "A migration changes the one thing every version of your app shares, so renames, drops, and type changes must be split across several releases as add, copy, switch, drop.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "wait for a lock that blocks every read and write",
+        "why": "I don't know what a lock is, who holds it, or why a tiny change would need one. The whole bullet rests on that word."
+      },
+      {
+        "quote": "Backfill in small batches that only pick rows",
+        "why": "'Backfill' isn't explained and I have no idea what the SQL for 'small batches that only pick rows still needing the change' looks like."
+      },
+      {
+        "quote": "give every change to an existing table a lock timeout",
+        "why": "This is the one concrete thing in How I do it and I couldn't do it. Is it a setting? A line in the migration? Where does it go in Supabase?"
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links into PostgreSQL docs. I'd never open those; they look like they're for a DBA.",
+      "The ORM's shortcut skips the review: I half-skimmed because I wasn't sure it was about me. I run `supabase db push` and look at the dashboard, and the bullet doesn't say whether that counts as 'pushing straight to the database'."
+    ],
+    "jargon": [
+      "lock",
+      "lock timeout",
+      "backfill",
+      "worker",
+      "ORM",
+      "type change that rewrites the table",
+      "index build that blocks writes",
+      "schema",
+      "rollback",
+      "cron job"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd tell the agent 'do this as add, copy, switch, drop, one PR each' tomorrow, and that alone is worth it. But I can't do the lock timeout without knowing what it is and the one line to set it, and 'switch the code' hides the hard part: does the app write to both columns for a while, or do I copy once and flip? Also 'rehearse on a copy with production's shape' assumes I know how to make that copy; I only have one Supabase project.",
+    "cut": "Go deeper. Both links are raw PostgreSQL reference pages. The reader who needs this stop won't read them, and the reader who would read them doesn't need this stop. If something stays there it should be a plain walkthrough of one expand-and-contract rename.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

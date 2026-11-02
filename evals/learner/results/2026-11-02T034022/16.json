@@ -1,0 +1,84 @@
+[
+  {
+    "takeaway": "Ship tiny PRs so when something breaks I know exactly which change did it, and rolling back the code won't un-send emails or un-charge cards.",
+    "intended": "Keep each change small and make it easy to undo, because every change breaks something eventually.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "The old code keeps serving while the new one deploys.",
+        "why": "A leap. I didn't know old and new code run at the same time during a Vercel deploy, and the bullet assumes I do. It then jumps to 'every migration has to work with the code in production now' and I don't know what a migration is beyond 'something Supabase does to tables.'"
+      },
+      {
+        "quote": "Every flag is an `if`, and both sides have to work.",
+        "why": "Unexplained term. Nobody said what a feature flag is before this bullet. I only guessed from the martinfowler link title at the bottom."
+      },
+      {
+        "quote": "a required `check` with an empty bypass list",
+        "why": "Too dense. 'Required check', 'bypass list', and a thing named `check` are stacked in one phrase. I've never set up a GitHub ruleset so I don't know where this lives or what 'bypass list' means in GitHub's UI."
+      }
+    ],
+    "skimmed": [
+      "The 'Roll back first, investigate second' bullet, because the heading says roll back but the body is about watching errors after deploy, and I didn't see how they connect, so I moved on.",
+      "The 'A fresh machine catches what yours hides' bullet, because 'lockfile' and 'CI installs' felt like it was for someone who already has CI.",
+      "The 'Go deeper' links, because a martinfowler.com article looks long and desktop-only."
+    ],
+    "jargon": [
+      "rollback / roll back",
+      "migration",
+      "schema",
+      "feature flag (only called 'flag')",
+      "CI",
+      "lockfile",
+      "required check",
+      "bypass list / ruleset",
+      "takes traffic",
+      "60-line diff"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd start making smaller PRs and giving the preview its own Supabase project, because I understand those. But 'a required `check` with an empty bypass list' and 'migrations that run in the build before the new deploy takes traffic' are the two things I'd most need and I don't know where to click or what file to edit for either. One sentence each naming the GitHub settings page and the Vercel build command would make it doable.",
+    "cut": "The 'Roll back first, investigate second' bullet. Its title repeats the page's point, its body is a different tip about watching for ten minutes, and the ten-minute idea is already in the first bullet. It reads like two half-bullets glued together.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Ship small changes one at a time so when something breaks you know which one did it and can undo it fast, but undoing the code won't undo emails sent or cards charged.",
+    "intended": "The opening says it teaches that every change breaks something eventually, so make changes small and easy to take back.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "every migration has to work with the code",
+        "why": "unexplained term: I change tables in the Supabase dashboard, I don't know what a migration is or why old code would still be running while new code deploys"
+      },
+      {
+        "quote": "The bypass list is you.",
+        "why": "a leap: bypass list of what, where? I don't know what a required check is or where this list lives, so I can't picture what 'keep it empty' means"
+      },
+      {
+        "quote": "migrations that run in the build before the new deploy takes traffic",
+        "why": "too dense: four ideas in one clause (migrations, build, deploy, traffic) and no hint how you'd make Vercel do this"
+      }
+    ],
+    "skimmed": [
+      "Go deeper: 'feature toggles' and 'rulesets' are words I don't know, so I wouldn't tap either link on my phone",
+      "'A fresh machine catches what yours hides': felt like a CI setup lecture for people who already have CI, and 'lockfile' lost me",
+      "'Every flag is an if': I don't have flags, so I skipped it"
+    ],
+    "jargon": [
+      "migration",
+      "schema",
+      "lockfile",
+      "required check",
+      "bypass list",
+      "flag (feature flag)",
+      "rulesets",
+      "takes traffic",
+      "critical flow",
+      "rollback (used as if I'd know how to do one on Vercel)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd start making smaller PRs tomorrow, and the 'preview with its own database' idea landed because of the delete-account example. But How I do it is a list of nouns, not steps: I don't know how to give a Vercel preview its own Supabase database, what a 'required check' is or where you set it and its bypass list, or what it means to run migrations 'in the build'. One line each on where in GitHub/Vercel/Supabase this lives would get me moving.",
+    "cut": "'The bypass list is you.' It's the most cryptic bullet, assumes I already set up branch rules, and the admin-of-your-own-repo point only matters once I know what a required check is. The 'fresh machine' bullet is a close second for the same reason.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

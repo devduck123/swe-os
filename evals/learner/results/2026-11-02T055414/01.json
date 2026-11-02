@@ -1,0 +1,65 @@
+[
+  {
+    "takeaway": "Before I accept 'done' from the agent, I make it list every decision it made that I didn't ask for, and check anything touching secrets, auth, money, personal data, or deletes.",
+    "intended": "The difference between a vibe coder and an engineer isn't speed but the questions you ask before calling something done, because the agent won't ask them for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the server has to notice the repeat",
+        "why": "I get that a double click runs it twice, but I have no idea how a server 'notices' a repeat. Is that a database thing? A flag? This is a leap with no hint of what to do."
+      },
+      {
+        "quote": "a delete can be undone",
+        "why": "How? When I delete a row in Supabase it's gone. Is this a setting, a backup, or some pattern? It's stated like a rule but I can't follow it."
+      },
+      {
+        "quote": "Decide what cleans up the first step",
+        "why": "I understand the leftover file problem, but 'decide what cleans up' doesn't tell me what the options even are. Delete the file in a catch block? A cron job? I'd be stuck."
+      }
+    ],
+    "skimmed": [
+      "The Simon Willison bullet. It's a nice quote, but 'speed wins if nobody gets hurt' is something I already believe, and it repeats the opening."
+    ],
+    "jargon": [
+      "client (in 'come from the client too'): I mostly get it, but a few words saying it means the browser or whoever sends the request would help",
+      "environment variables: I've set them in Vercel, but I don't know why that makes a key safe versus putting it in code"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'Ask your agent' prompt I'd copy and use today. But when the agent's answer says 'double submits aren't handled' or 'deletes are permanent', I don't know what fix to ask for. One line each on what 'done right' looks like for double clicks, undoable deletes, and cleanup after a half failure would let me actually act on what it tells me.",
+    "cut": "'Code you can't explain isn't yours yet.' I've heard it a hundred times and it doesn't tell me anything new. The 'Ask your agent' prompt already makes me read what it did.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I call anything done, I make the agent list every decision it made that I didn't ask for, and I never cut corners on secrets, auth, money, personal data, or deletes, even in a prototype.",
+    "intended": "The difference between a vibe coder and an engineer isn't speed; it's the questions you ask before calling a feature done, because the agent won't ask them for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the server has to notice the repeat",
+        "why": "A leap. I get that a double click runs things twice, but I have no idea how a server 'notices' a repeat. Is it a database check, a unique ID, something Supabase does? No hint of how, and this is exactly the kind of thing I'd never think to ask about."
+      },
+      {
+        "quote": "a delete can be undone",
+        "why": "Stated as a rule with no how. Does that mean backups? A 'deleted' column instead of really deleting? I'd nod and then not know what to tell my agent."
+      },
+      {
+        "quote": "Decide what cleans up the first step",
+        "why": "I understand the orphaned-file problem, which is a good example, but 'decide what cleans up' leaves me stuck. Delete the file in a catch? A scheduled job? I don't know what the options even are."
+      }
+    ],
+    "skimmed": [
+      "The Simon Willison bullet. It's a nice idea, but the floors bullet right after it is what actually tells me what to do, so this one felt like setup I could skip."
+    ],
+    "jargon": [
+      "session (glossed, but 'the sign-in your auth library checks on every request' still doesn't tell me what that looks like in Supabase code)",
+      "diff (the gloss 'the lines it changed' is tacked on awkwardly, so it reads like a typo at first)",
+      "environment variables (I've pasted them into Vercel, but I'm not sure why that keeps a key safe if it's still in my code somewhere)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'Ask your agent' prompt is great and I'd copy it today. But How I do it doesn't help me judge the agent's answers. If it says 'I take the user ID from the form,' I now know that's bad. If it says 'double submits create two rows' or 'deletes are permanent,' I don't know what the fix should be. One line each on the usual fix would get me there: how the server spots a repeat, how a delete gets undone, how leftovers get cleaned up.",
+    "cut": "The 'Vibe coding is fine when nobody can get hurt' bullet. The floors bullet already draws the line between where speed is OK and where it isn't, and it's more concrete.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

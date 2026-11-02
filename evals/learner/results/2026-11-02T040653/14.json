@@ -1,0 +1,78 @@
+[
+  {
+    "takeaway": "Clicking through once doesn't prove anything; write tests that check the wrong-user and bad-input cases, and make sure the test actually fails when the code is broken.",
+    "intended": "A test is how a requirement survives after the agent session that wrote it ends, and coverage alone doesn't show anything was checked.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "A mock passes the query that",
+        "why": "I don't really know what a mock is or when my tests would be using one instead of the real database. I didn't know I had a 'fake database' at all. This bullet assumes I already write tests with mocks."
+      },
+      {
+        "quote": "Coverage tells you which lines ran",
+        "why": "Coverage is never explained. I've seen a percentage in some tool output but don't know where it comes from. 'Which lines ran, not whether anything checked them' sounds clever, but I couldn't explain it to someone."
+      },
+      {
+        "quote": "tests against a local Postgres for",
+        "why": "I use Supabase. Do I have a local Postgres? How do I get one? This is the core advice and it gives me nothing to start from."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: I'm on my phone, so I'm not opening two long external articles.",
+      "'An agent can teach the test the bug': I read it twice. The examples helped, but 'teach the test the bug' is a riddle. I'd skim it on a busy day."
+    ],
+    "jargon": [
+      "mock",
+      "coverage",
+      "assertion / assert",
+      "Playwright",
+      "local Postgres",
+      "happy path",
+      "go red",
+      "merges (as a gate, not just something GitHub does)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to get a local Postgres running with Supabase (is it `supabase start`?), what one example test for 'wrong user can't see this' looks like, and what goes inside the `check` command and how to make it block a merge. I'd tell my agent to 'test the wrong user', but I couldn't check whether it did it right.",
+    "cut": "'The mock was called isn't it worked.' It only lands if you already write mock-based tests, and the 'assert what the user sees' half overlaps the Playwright advice. I'd merge it into the fake-database bullet.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Clicking through it once doesn't prove anything; the agent's code breaks on the wrong-user and bad-input paths, so test those, and make sure a test actually fails when you break the thing it checks.",
+    "intended": "A test is how a requirement survives after the agent session that wrote it is gone, and coverage numbers don't tell you anything got checked.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Coverage tells you which lines ran",
+        "why": "I don't know what coverage is. Lines ran when? Is it a tool or a number? It's in the opening, and the takeaway hinges on it, so I didn't get the point."
+      },
+      {
+        "quote": "A mock passes the query that",
+        "why": "I've heard of mocks but don't know what one is. And 'the duplicate a real one would reject': why would a real database reject a duplicate? That assumes I know about unique constraints."
+      },
+      {
+        "quote": "Assert what the user sees",
+        "why": "'Assert' is test-speak. I kind of get it from context, but I couldn't write one. And how do I check 'what the database holds' in a test?"
+      }
+    ],
+    "skimmed": [
+      "Go deeper links: on my phone I'm not opening a long blog post",
+      "'An agent can teach the test the bug': the title is catchy, but 'loosened assertion' lost me so I skimmed the rest"
+    ],
+    "jargon": [
+      "coverage",
+      "mock",
+      "assertion / assert",
+      "happy path",
+      "integration (in the Kent C. Dodds link title)",
+      "Playwright (never used it, no idea what it does)",
+      "local Postgres (I use Supabase; is that the same? how do I run one locally?)",
+      "a check command"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I get a local Postgres when I'm on Supabase? Is it `supabase start`? What does a test for 'the wrong user can't see this' actually look like, even five lines? What is Playwright, in one line: a robot that clicks through my app? What goes in the `check` command, and how do I make it block merges? Right now 'How I do it' is a list of nouns I'd have to google.",
+    "cut": "The 'mock was called' bullet. It only matters if I already write tests with mocks, and I don't. It overlaps the fake-database bullet anyway.",
+    "clarity": 3,
+    "usefulness": 3
+  }
+]

@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "Logged in doesn't mean allowed: every query has to check that the record belongs to the current user, because anyone can change the ID in the URL or the request.",
+    "intended": "At every point where outside data enters your app, check that it's the shape you expect (validation) and that this caller may touch this exact thing (authorization), remembering the browser counts as outside.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Spreading the body into an update",
+        "why": "I didn't get what 'spreading the body' meant at first. I've written `...data` a hundred times but never connected it to 'the request body'. An example line like `update({...req.body})` would have made it click."
+      },
+      {
+        "quote": "a data access layer that takes",
+        "why": "Unexplained term. Is it a folder? A library? A file of functions? I don't know what to build, so I can't do the How I do it step."
+      },
+      {
+        "quote": "the public key, which ships",
+        "why": "Which key? Supabase gives me an anon key and a service role key. I'm not sure which one is meant or whether I'm doing something wrong. A plain 'the anon key from your .env, the one starting NEXT_PUBLIC_' would fix it."
+      }
+    ],
+    "skimmed": [
+      "The opening paragraph. 'Trust boundary' sounds like theory, and the two questions only made sense once I'd read the bullets.",
+      "The rate limits bullet. It feels like a different topic from 'is this user allowed', and 'each serverless instance has its own memory' went over my head, so I skipped it."
+    ],
+    "jargon": [
+      "trust boundary (defined, but abstractly)",
+      "server action as 'public endpoint' (I know server actions, not why they're endpoints)",
+      "middleware",
+      "spreading the body",
+      "data access layer",
+      "serverless instance",
+      "rate limits (roughly know, not how to add one)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What a data access layer looks like in a Next.js + Supabase app: even a 5-line `getInvoice(id)` that reads the session user and filters by owner. Also how to write the 'user B asks for user A's record' test. I've never written a test with two logged-in users and don't know where to start. And for Supabase: tell me to go check RLS is on for every table, and where to look.",
+    "cut": "The rate limits bullet. It's useful but it's about abuse, not validation or authorization, and its last sentence is the densest line on the page. It deserves its own stop.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Being logged in doesn't mean you're allowed: anyone can change the invoice ID in the URL or POST to my server action, so every query has to filter by the user from the session, and Supabase tables need row-level security turned on.",
+    "intended": "At every trust boundary, check that incoming data is the shape you expect (validation) and that this caller may touch this exact thing (authorization), remembering the browser is outside your control.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Put the owner in the query itself",
+        "why": "A leap. I get the idea but not what it looks like. Is that `.eq('user_id', user.id)` in Supabase? One line of code would have nailed it."
+      },
+      {
+        "quote": "a data access layer that takes",
+        "why": "Unexplained term. Is that a folder? A file of functions? Something Next.js gives me? I don't know what to build."
+      },
+      {
+        "quote": "each serverless instance has its own memory",
+        "why": "Too dense. I deploy to Vercel but don't know what a serverless instance is or why memory matters. I'd just trust that 'keep counts in the database' is right."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: an OWASP link with '2023' and 'API1' in it looks like a spec for security people. I wouldn't open it on my phone.",
+      "The rate limits bullet: it's a different topic from the 'is this caller allowed' story, and it's the densest one, so I'd skim it."
+    ],
+    "jargon": [
+      "trust boundary (explained, but abstract until the bullets)",
+      "data access layer",
+      "middleware",
+      "serverless instance",
+      "rate limits (I roughly know, never set one up)",
+      "client component (I know it from Next.js, but not why it leaks the whole row)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What a data access layer actually is: one tiny example, like a `getInvoice(id)` function that reads the session and filters by owner. How to write the 'user B asks for user A's record' test when I've never written a test with two logged-in users. How to check whether RLS is on in Supabase. The validation half has no action at all: no 'use zod' or 'parse the body before you use it'.",
+    "cut": "The rate limits bullet. It's useful, but it's about bots and abuse, not about whether this caller can touch this thing, and it brings in serverless memory, which loses me. It deserves its own stop.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

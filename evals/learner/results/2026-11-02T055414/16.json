@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Ship small PRs so when something breaks you know which one did it, and remember rolling back the code doesn't un-send emails or un-charge cards.",
+    "intended": "Keep breaks small and quick to undo by shipping small changes and knowing what a rollback can't take back.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the migration often runs first",
+        "why": "A leap. I don't know when or how migrations run during a Vercel deploy, or who runs them. 'Rename a column and the old queries fail' clicked, but 'add first, remove later' is just a slogan unless I follow the link."
+      },
+      {
+        "quote": "your other databases never get it",
+        "why": "What other databases? I have one Supabase project. This only makes sense after the preview bullet says each preview should get its own database, and that bullet comes earlier but never says I'd have several to keep in sync."
+      },
+      {
+        "quote": "a `check` that has to pass",
+        "why": "Is `check` a command I'm supposed to already have? It's in code formatting like a real script name. I don't know what goes in it: tests, lint, typecheck?"
+      }
+    ],
+    "skimmed": [
+      "Go deeper: martinfowler.com sounds like it's for senior engineers, and 'rulesets' means nothing to me, so I wouldn't tap either on my phone."
+    ],
+    "jargon": [
+      "migration file (glossed as a structure change, but not what the file is or how it runs)",
+      "lockfile (glossed by example, mostly fine)",
+      "rulesets (Go deeper link)",
+      "untracked `.env` (I know .env, but 'untracked' means not in git, and that's not said)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I give a Supabase preview its own database? Is that a Supabase branching feature, a second project, or something else, and does it cost money? Also, what goes in `check`? The 'Ask your agent' prompt covers most of this, so I'd paste it, but I wouldn't know whether the agent did it right.",
+    "cut": "The feature flag bullet. I don't use flags and nothing earlier sets them up, so it feels bolted on. I'd keep it only if it said when I'd want one.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Ship lots of small PRs, because rolling back puts the old code back but doesn't unsend the emails or refund the cards.",
+    "intended": "Keep each change small and easy to take back, because something will break and what you control is how big the break is and how fast you undo it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the migration often runs first",
+        "why": "A leap. I see that a migration changes the database, but not why it runs before the new code is live, or why that makes renaming a column break things. 'Add first, remove later' is too short to act on without opening the other page."
+      },
+      {
+        "quote": "a `check` that has to pass",
+        "why": "Unexplained term. Is `check` a command, a script in package.json, a GitHub thing? It's in code formatting like I should already have one. I don't."
+      },
+      {
+        "quote": "a preview with its own database",
+        "why": "This is the step I'd most want to do and I have no idea how. I use Supabase and my Vercel previews just use my one database. Is this a Supabase feature, a second project, something else?"
+      }
+    ],
+    "skimmed": [
+      "The feature flag bullet. I don't use flags, so 'doubles the paths' felt like it was for someone further along.",
+      "Go deeper. Martin Fowler and GitHub docs read like homework, not something I'd open on my phone."
+    ],
+    "jargon": [
+      "`check` (as a thing you have)",
+      "untracked (`.env`)",
+      "schema",
+      "short-lived branch (why short?)",
+      "critical flow",
+      "rulesets"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Concretely, what `check` contains (lint, typecheck, tests, build?) and how to make it block merge. How to give each Vercel preview its own Supabase database and test Stripe keys. Where the one-click rollback lives on Vercel. How small 'small' is, since the 60-line number only appears in the intro.",
+    "cut": "The feature flag bullet. It's the only one about a tool I don't use yet, and it's a warning about a cost, not something I'd do this week.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

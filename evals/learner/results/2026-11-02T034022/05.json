@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Put the rules my data must follow into the database itself, because my code (and the agent rewriting it) will forget them and bad data won't crash anything until a customer complains.",
+    "intended": "Write what must always be true into the schema as constraints the database checks on every write, since code gets rewritten and bad data fails silently.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Put the check inside the write itself",
+        "why": "I get the 51-of-50 problem, but I have no idea what this looks like in practice. Is it a constraint? A special kind of update? I'd have to ask the agent what you even mean."
+      },
+      {
+        "quote": "read the query plan",
+        "why": "Never heard this phrase. I don't know what it is, where you get one, or what I'd be looking for in it."
+      },
+      {
+        "quote": "an email can't be rolled back",
+        "why": "'Rolled back' isn't explained, and the whole bullet assumes I'm already putting payment calls inside transactions, which I only learned existed one bullet earlier."
+      }
+    ],
+    "skimmed": [
+      "Keep the network out of transactions: feels like a warning for someone further along than me. I'd nod and move on.",
+      "Fine with 20 rows, unusable with 500,000: I believe it, but the fix (seed thousands of rows, read the query plan) felt like a chore for someone else so I skipped to the next bullet.",
+      "Go deeper: two links to Postgres docs. I'm not opening those on my phone."
+    ],
+    "jargon": [
+      "race (the bullet title uses it like I already know it; the example explains the problem but never names what a race is)",
+      "index (used in 'doesn't index foreign keys' with no gloss, and I couldn't tell you what an index does)",
+      "query plan",
+      "rolled back",
+      "seed (I half-know it from Supabase, but it's not explained)",
+      "schema (used in the opening, probably fine for me, but borderline)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The first half I can do tomorrow: ask Claude Code to list the rules and turn them into constraints. The second half assumes I know how to seed a few thousand rows and what a query plan is. One line like 'run EXPLAIN on the query and look for ___' or 'ask the agent to show you the query plan and say whether each table is scanned in full' would get me there.",
+    "cut": "Keep the network out of transactions. It leans on two things I just learned about and one I didn't ('rolled back'), and it reads like advice for people who already run transactions with payment APIs inside them. The rest of the page is about rules the database enforces; this one is about how to write code, and it breaks the rhythm.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't trust my code to keep the data right; put the rules (no duplicates, must point at a real row, all-or-nothing saves) into the database itself so it rejects bad writes.",
+    "intended": "Write what must always be true into the schema as constraints, because code gets rewritten and bad data shows up silently weeks later.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Put the check inside the write itself",
+        "why": "A leap. I get why two checks can both pass, but I have no idea what 'inside the write' looks like in Supabase. Is that a constraint? A special kind of update? I can't picture the fix."
+      },
+      {
+        "quote": "Postgres doesn't index foreign keys for you",
+        "why": "Unexplained term. Every other rule got a quick 'a rule that...' gloss and this one didn't. I know indexes are a speed thing and that's it."
+      },
+      {
+        "quote": "read the query plan",
+        "why": "Unexplained term. I don't know what a query plan is, where it comes from, or what I'd be looking for when I 'read' it. This is also the second half of How I do it, so it matters."
+      }
+    ],
+    "skimmed": [
+      "Keep the network out of transactions: I'd just learned what a transaction is one bullet earlier, so a rule about what not to put in one felt like it was for someone further along. 'can't be rolled back' also wasn't explained.",
+      "Fine with 20 rows, unusable with 500,000: felt like a different topic (speed, not correctness) and used two terms I don't know, so I skipped to the next bold line.",
+      "Go deeper links: I'm on my phone, I'm not opening Postgres docs."
+    ],
+    "jargon": [
+      "index",
+      "query plan",
+      "rolled back",
+      "seed (as in 'seed a few thousand rows')",
+      "schema (used in the opening before 'constraints' is defined)",
+      "timestamp vs local date (I sort of get it, but why the 11:50 p.m. check-in goes wrong isn't spelled out)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The first half I can do today: I'd literally paste 'list the rules this data must always follow and enforce each as a constraint' into Claude Code. The second half I can't. I don't know how to seed a few thousand rows, what 'each main page's query' means for a Next.js app with a bunch of Supabase calls, or what to do once I see a query plan. One sentence like 'ask the agent to generate fake rows, then run EXPLAIN on the page's main query and ask it whether a table scan shows up' would get me moving.",
+    "cut": "The 'Fine with 20 rows, unusable with 500,000' bullet. The stop is about data staying correct, and this bullet is about data staying fast. It's the densest one, leans on two undefined terms, and it drags the How I do it line into territory I can't act on. Either cut it or give it its own stop where 'index' gets a gloss.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

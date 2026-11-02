@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "An AI call is an outside service I can't trust, so wrap it in limits (login, caps, timeout) and never let it send, pay, or delete without a human clicking.",
+    "intended": "Treat a model call like a slow, expensive, untrusted third-party service, and only use one where plain code can't do the job.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "from the email's. No prompt reliably stops",
+        "why": "a leap: no email was mentioned before this, so I had to reread to figure out it means 'text inside a document the model reads' and that someone can hide orders in it"
+      },
+      {
+        "quote": "Check why the model stopped before",
+        "why": "I don't know how. Is there a field in the response? The bullet tells me a cut-off reply looks fine but not where to look to tell the difference"
+      },
+      {
+        "quote": "an image whose URL carries the user's data",
+        "why": "too dense: I couldn't picture how the model's text becomes an image that sends data somewhere until the third read"
+      }
+    ],
+    "skimmed": [
+      "The 'Trying two examples' bullet: it reads like advice for when I'm already tuning prompts seriously, so I'd come back to it later rather than read it now",
+      "'Go deeper' links: titles are fine but I'd only tap them if something broke"
+    ],
+    "jargon": [
+      "schema (I know 'JSON' but not what checking against a schema means in practice)",
+      "a 200 (I'd guess 'success status' but not everyone would)",
+      "idempotency (in the link title, no idea what it is)",
+      "per-user limit / per-user daily limit in Postgres (I know the idea but not how you store or check it)",
+      "pin the model ID (guessable, but 'pin' isn't explained)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it is a checklist of what, not how. I'd want one example route: where the auth check goes, what the Postgres limit table looks like, what a 'cap' means in the API call (max_tokens? input length check?), and what to check in the response to see why it stopped.",
+    "cut": "The markdown image bullet. It's the hardest to picture, it feels like a niche attack compared to the others, and the 'instructions vs email' bullet already covers the real lesson: don't let untrusted text drive actions. Fold the one line 'don't render remote images from model output' into that bullet.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "A model call is a slow, pricey, untrusted outside service, so validate what comes back, cap how much it can cost or run, and never let it send, pay, or delete without a human clicking.",
+    "intended": "Model calls are slow, charged by the token, unpredictable, and can be steered by whoever wrote the input, so treat them like any flaky, expensive, untrusted service and only use one where plain code can't do the job.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "your instructions from the email's",
+        "why": "A leap. What email? I'm not building anything that reads email, and the bullet never sets up that the model is reading a document a stranger wrote. I had to reread it twice to get that 'the email' means any untrusted text you feed the model."
+      },
+      {
+        "quote": "a blocked one can arrive as a 200",
+        "why": "Blocked by what? And 'check why the model stopped' tells me to look somewhere but not where. I don't know there's a field in the response that says why it stopped, so I'd have no idea how to do this."
+      },
+      {
+        "quote": "split reading from acting",
+        "why": "Too abstract. I get that I should remove one of the three things, but I can't picture what 'splitting reading from acting' looks like in a Next.js route. One line of what that means in code would have landed it."
+      }
+    ],
+    "skimmed": [
+      "'Trying two examples tells you nothing' — this reads like it's for people who already have a test pipeline. 'Check what must always hold, not exact wording' sounds like something I'd need a tool for, and I don't know what tool.",
+      "Go deeper links — on my phone I'm not opening an OWASP page. I'd maybe tap the Simon Willison one later."
+    ],
+    "jargon": [
+      "schema (as in 'check structured output against a schema' — I know Supabase has a schema, but I'm not sure this is the same thing or if it means something like Zod)",
+      "200 (I know it from fetch, but 'arrive as a 200' assumes I'd expect something else and I'm not sure what)",
+      "the SDK's default retries (I didn't know the SDK retried on its own, so 'turn off' doesn't tell me what setting)",
+      "what must always hold (I think this means assertions, but it's not said)",
+      "untrusted input (the heading uses it like a known category; I only half know why 'untrusted' leads straight to 'never render as HTML')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it is a list of nouns with no example. I'd want: what field tells me why the model stopped, what a per-user daily limit in Postgres actually looks like (a table? a count per day?), and which setting turns off retries and sets the timeout. Right now I'd add auth and a spend cap because those are obvious, and skip the rest because I'd be guessing.",
+    "cut": "'Trying two examples tells you nothing.' It's the densest bullet, it's about testing prompt changes rather than running in production, and it's the one I'd skip anyway. The page is stronger if it stays about keeping the thing safe and bounded.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

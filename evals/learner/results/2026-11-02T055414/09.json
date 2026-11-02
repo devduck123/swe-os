@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Before I ship a feature, have my agent screenshot it loading, empty, broken, and on a phone, because the mockup only shows the happy case.",
+    "intended": "A finished frontend feature covers the slow, empty, error, no-permission, and phone states, not just the one perfect state in the mockup.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "with an idempotency key or a database",
+        "why": "Unexplained term. It's a link, but on my phone I'm not leaving the page. I get 'the server should reject the duplicate' but have no idea what an idempotency key is or what 'a database rule that allows only one' looks like in Supabase."
+      },
+      {
+        "quote": "Store a UTC timestamp and format",
+        "why": "A leap. I kind of know UTC, but 'format it in the browser' doesn't tell me what to do in Next.js. Server components run on the server, so does this mean I need a client component for every date? I'd be stuck."
+      },
+      {
+        "quote": "right type and autocomplete attributes",
+        "why": "Too dense. The sentence crams two attributes and two benefits together. An example like type=\"email\" autocomplete=\"email\" would land in two seconds. As written, I'd skim it."
+      }
+    ],
+    "skimmed": [
+      "The 'Phones have no hover' bullet: it switches from hover to tooltips on disabled buttons to autocomplete partway through, and I lose the thread.",
+      "Go deeper: I won't open either link from my phone."
+    ],
+    "jargon": [
+      "idempotency key",
+      "UTC timestamp",
+      "React state (fine) vs. 'in the URL' (I don't know how: query params? useSearchParams?)",
+      "autocomplete attribute",
+      "no-permission state (what does that look like if I've never built roles?)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How I do it says 'an agent screenshots' but not how the agent fakes no-permission when my app has no roles yet, or where the screenshots go. The Ask-your-agent line mostly covers this. One line on 'if you don't have permissions, skip that one' would help.",
+    "cut": "The last sentence of the opening: 'A sloppy backend can hide for months. A sloppy frontend shows on the first click.' It's punchy, but I already bought the point from the first two sentences.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Before I call a feature done, I need to see it loading, empty, broken, and blocked on my phone, not just the happy screenshot from the mockup.",
+    "intended": "A complete frontend feature handles the slow network, empty account, error, missing permission, and phone, not just the one perfect state a mockup shows.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "with an idempotency key or a database",
+        "why": "I don't know what an idempotency key is. The link helps, but the sentence assumes I'll click away. 'A database rule that allows only one' is vague too: one what? One row per click? I'd need to ask my agent what that means for a Supabase table."
+      },
+      {
+        "quote": "Store a UTC timestamp and format",
+        "why": "I roughly know UTC, but 'format it in the browser' is a leap. With Next.js server components I'm not sure what runs on the server and what runs in the browser, so I wouldn't know where my date code actually lives or how to move it."
+      },
+      {
+        "quote": "a team of 300 needs search or pages",
+        "why": "'Pages' confused me for a second. In Next.js a page is a route. I think this means pagination, but that word would have been clearer."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links on my phone, probably not tapping them. The Scott Hurff title doesn't say why I'd want it over this page.",
+      "The time zone bullet: I skimmed it as 'dates are hard' and moved on, because I couldn't tell if my app even has this problem."
+    ],
+    "jargon": [
+      "idempotency key",
+      "UTC timestamp",
+      "React state (fine for me, but 'die on refresh' only clicked after rereading)",
+      "the `type` and `autocomplete` attributes (glossed, good, but I'd want one example like type=\"email\")"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How do I check the result? The prompt gets me screenshots, but I don't know what a good empty or error state looks like versus a bad one. One line like 'each screen should tell the user what happened and what to do next' would let me judge them. Also, 'no-permission' assumes my app has permissions. If I only have logged in vs. logged out, should I screenshot logged out?",
+    "cut": "The time zone bullet. It's true, but it's the one I can't act on without more explanation, and it's less about 'states' than the rest. The other bullets are all things I'd see by clicking around; this one needs backend knowledge.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

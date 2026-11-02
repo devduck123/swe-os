@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "Reading a PR means checking what the agent's summary claims against the actual code, and the scariest bugs are checks that aren't there at all.",
+    "intended": "That reviewing means being able to say what a change does, why it's built this way, and how it fails before merging it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "An export route that takes the team ID from the URL",
+        "why": "I had to read this twice to see the bug: that anyone can type a different team ID in the URL. The example assumes I already see why that's bad."
+      },
+      {
+        "quote": "A missing ownership check leaves nothing wrong in the diff",
+        "why": "'Ownership check' isn't a phrase I use. The next sentence explains it, but I'd already slowed down by then."
+      },
+      {
+        "quote": "Bugs sit where the diff meets code it didn't touch",
+        "why": "Took a second to get. 'Open its callers' is clear once I translate it to 'find everywhere that function is used', but I don't naturally say 'callers'."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two Google links with 'CLs' in the title, which I don't know. I'd not click on my phone.",
+      "The 'Style comments can make a review worse' bullet, because I've never left a naming comment on anything and it felt like it was for people on a team."
+    ],
+    "jargon": [
+      "CI",
+      "ownership check",
+      "callers",
+      "migrations",
+      "CLs",
+      "reproduction (as a noun for a repro step)",
+      "fresh session"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I don't know how to ask the agent for a small PR instead of one big one, and I don't know what 'line by line on the database' actually looks like when I can't write a migration myself. A one-line example of the ask would help.",
+    "cut": "The 'Style comments can make a review worse' bullet. It's for someone reviewing other humans' work, and for a solo dev with an agent it's the one bullet that didn't change anything I'd do.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't approve a PR because the tests are green and the agent's summary sounds confident; read the risky parts yourself and ask what the code is supposed to do that it doesn't.",
+    "intended": "That reading code is how you learn what's actually true, and that reviewing means being able to say what a change does, why, and how it fails before you merge it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Green CI only checks what the tests check",
+        "why": "I know the green checkmark on GitHub, but 'CI' was never said in plain words, so I paused to figure out if it meant the same thing."
+      },
+      {
+        "quote": "open its callers",
+        "why": "Guessed this means the other places that use the function, but it's said like I already know the word."
+      },
+      {
+        "quote": "export route that takes the team ID from the URL",
+        "why": "Had to read it twice to see the bug: someone can just change the number in the URL and get another team's data. The example is squeezed into one line."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: the second link says 'small CLs' and I don't know what a CL is, and both are long Google docs I'm not opening on my phone.",
+      "The intro's 'deciding whether a change deserves to exist' sentence felt philosophical, so I jumped to the bullets."
+    ],
+    "jargon": [
+      "CI",
+      "callers",
+      "migrations",
+      "ownership check",
+      "reproduction (as in a finding with a reproduction)",
+      "CLs"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd ask for smaller PRs and a second agent's review, but I don't know what counts as small, what I'd actually be looking for when I read a migration line by line, or how to ask a fresh session to review without it just agreeing with the first one.",
+    "cut": "The 'Go deeper' section. The titles use jargon I don't know and nobody reading between other things will open two Google engineering docs; the bullets already carry the lesson.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "Treat whatever the model sends back like text from a stranger: check its shape, show it as plain text, and never let it send, pay, or delete without a person clicking.",
+    "intended": "Model calls are slow, cost money per token, and return unpredictable text that someone else may be steering, so they need the same guardrails as any risky third-party input, and you should skip the model when plain code would do.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "can arrive as a 200",
+        "why": "I kind of know 200 means OK, but the point that a blocked reply looks like success didn't land. 'Every response says why it stopped' doesn't tell me which field to check or what values mean trouble."
+      },
+      {
+        "quote": "an image whose URL ends with the user's data",
+        "why": "A leap. I don't see how the model gets my user's data into a URL, or why showing an image sends it anywhere. One concrete example URL would have made it click."
+      },
+      {
+        "quote": "turn off the library's built-in retries",
+        "why": "I didn't know the SDK retries on its own, and I don't know why that's bad when someone is waiting. The link probably explains it, but on my phone I won't tap it."
+      }
+    ],
+    "skimmed": [
+      "The 'Trying two examples' bullet. It's for someone running prompt experiments. 'Pin the model version' is useful, but it's buried at the end, so I'd miss it."
+    ],
+    "jargon": [
+      "200 (HTTP status)",
+      "untrusted input",
+      "render ... as HTML",
+      "timeout",
+      "built-in retries",
+      "spend cap at the provider",
+      "pin the model version"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it says 'a per-user daily limit counted in Postgres', but I wouldn't know how to build that in Supabase: what table, and where the check goes. 'A timeout' doesn't say how long. I'd paste the Ask your agent line and trust whatever came back, with no way to check that it actually did the limit right.",
+    "cut": "The 'Trying two examples' bullet. It's the least urgent for someone shipping their first AI feature, and it competes with the security bullets, which actually scared me into acting.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Treat whatever the AI spits back like a stranger's form input: check its shape, show it as plain text, and never let it send, pay, or delete anything without the user clicking.",
+    "intended": "That a model call is a slow, costly, unpredictable third-party API call that can be steered by its input, so you guard it like one, and skip it if plain code would do.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Every response says why it stopped.",
+        "why": "Where? I've never seen this. Is it a field in the response object? What's it called, and what value means 'fine'? I can't check something I can't find."
+      },
+      {
+        "quote": "turn off the library's built-in retries",
+        "why": "I didn't know the SDK retries on its own. Which library, and what's the setting? Also 'when a person is waiting' vs. when not? I don't get why retries are bad here."
+      },
+      {
+        "quote": "a per-user daily limit counted in Postgres",
+        "why": "I get the idea, but I wouldn't know how to build it. A table with user_id and a count? Reset at midnight how? This is the core of How I do it and it's one clause."
+      }
+    ],
+    "skimmed": [
+      "The 'Trying two examples tells you nothing' bullet. I'd skim it on my phone because it reads like a workflow for later, not something that bites me today. 'Pin the model version' is the only part I'd keep.",
+      "Go deeper links. I won't open them between other things."
+    ],
+    "jargon": [
+      "200 (status code, I sort of know it but 'arrive as a 200' took a second)",
+      "Postgres (I use Supabase, didn't immediately connect it's Postgres underneath)",
+      "spend cap at the provider (where in the OpenAI/Anthropic dashboard?)",
+      "pin the model version"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The name of the 'why it stopped' field (and the bad values) for the common SDKs. A one-line sketch of the daily limit: a Supabase table or RPC that increments a count per user per day and rejects over N. Where the provider spend cap lives. How to turn off retries and set a timeout, even just the option names.",
+    "cut": "The 'Trying two examples tells you nothing' bullet. It's real advice but it's a different topic (testing prompts) and it's the densest one. Its slot would be better spent showing how to do the daily limit.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

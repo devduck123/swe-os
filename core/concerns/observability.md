@@ -26,9 +26,9 @@ You don't need a monitoring platform for a side project. Structured logs and a h
 - Logging whole request bodies, including passwords and tokens.
 - Alerts nobody reads, so the real one gets ignored too.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Make it operable](../principles.md#make-it-operable)
 - [Background jobs and webhooks](../guides/background-jobs-and-webhooks.md)
 - [Knowing it broke before your users do](../guides/knowing-it-broke.md)
 - [When production breaks anyway](../guides/when-production-breaks.md)
+- [Make it operable](../principles.md#make-it-operable)

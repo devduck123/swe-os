@@ -1,138 +1,29 @@
 ---
 title: How you know it works
-description: 'Testing for confidence instead of coverage: which tests pay for themselves, what to test first, and how to make agents prove their work.'
-domain: testing
+description: A test is a claim about your app that a machine re-checks on every change. Aim for confidence in what people depend on, not coverage.
 stage: verify
-freshness: durable
-status: reviewed
 track: 14
-reviewed: 2026-10-06
 concerns: [testing]
+freshness: durable
+status: draft
 ---
 
-A test is a claim about your app's behavior that you can check again for free, forever. "A user can't mark someone else's invoice paid" is a claim. A test turns it into something a machine re-proves on every change. You want confidence that what people depend on still works after the next change. Coverage, the share of your code that tests run, tells you which lines ran, not whether anything checked what they did.
+"It worked when I clicked it" proves the code worked once, on the path you tried. Agents change code faster than you can re-click, and each session forgets what the last one was protecting. A test is how a requirement outlives the session that wrote it. Coverage, the percentage of your code the tests ran, tells you which lines ran, not whether anything checked what they did.
 
-## "It worked when I clicked it" expires with the next change
+## Easy to miss
 
-You're building an invoicing app for freelancers. An agent adds "mark as paid", you click through it, it works, you ship. Two weeks later, a different agent session refactors how totals are calculated. Now partially paid invoices show as fully paid. Nobody clicks through that path again, so a client finds it first.
+- **The bugs live in the failure paths.** Agent-written code handles the happy path, where everything goes right. Test the wrong user, invalid input, and the expired session first.
+- **A fake database enforces none of your rules.** A mock, a stand-in that answers however the test tells it to, passes the query that forgets to filter by user, and the duplicate your real database's rules would reject. Test the important paths against a real Postgres running on your machine.
+- **"The mock was called" isn't "it worked".** Checking that `sendEmail` ran doesn't prove the right person got the right email. Have the test check what the user sees or what the database holds afterward.
+- **A test that can't fail looks like protection.** Break the line it guards and run it. If it still passes, it isn't testing that line.
+- **A bug fix needs a test that failed first.** Write a test that reproduces the bug, watch it fail, then fix the code.
+- **An agent can teach the test the bug.** Watch for a skipped test, a loosened check, or an expected value that changed in the same diff as the code it checks.
 
-Clicking proves the code worked once, on the path you tried. With agents, code changes faster than you can re-click, and each session forgets what the last one was protecting. A test is how a requirement outlives the session that wrote it. My name is on the app, so if people use it, it gets tests.
+**How I do it:** tests against a local Postgres (the Supabase CLI runs one) for every rule about who can see or change what. Playwright, a tool that clicks through the app in a real browser, for the flows I'd hate to see broken. One `check` command that runs it all and has to pass before anything merges. No coverage target.
 
-## Test what people depend on first
+**Ask your agent:** "Write tests against a local database for who can see and change each kind of record, starting with a signed-in user trying to read someone else's. Break the line each test guards to prove it can fail, then make one command that runs them all before merge."
 
-Start where a silent break would hurt most:
+## Go deeper
 
-1. **The behavior users depend on.** The core action, sign-in, and anything with money.
-2. **The failure paths.** The wrong user, invalid input, an expired session, a failed payment. AI-built code handles the happy path, and these are where it doesn't.
-3. **The bug you just fixed.** Write a test that reproduces it first. It fails, you fix the code, it passes, and that bug can't quietly come back.
-
-Skip tests for throwaway prototypes, trivial glue, and what your framework guarantees. Don't test that React renders a `div`.
-
-## Each kind of test buys a different kind of confidence
-
-- **Unit tests** (Vitest) prove a piece of logic, like invoice totals or date math, gives the right answer. They take milliseconds, so write lots.
-- **Integration tests** prove your code and the real database work together. Write one per important rule.
-- **End-to-end tests** (Playwright) prove a user can get through a flow in a real browser. They're slow, so keep a handful.
-
-Integration tests give me the most confidence, because that's where web app bugs live: the query that forgets to filter by user, the duplicate the database should reject. Run them against a real Postgres, not a mock (a fake stand-in that returns whatever the test tells it to). A mocked database enforces none of your rules, so it passes code the real one would reject.
-
-`createUser()` and `createInvoice()` are helpers you write once: each inserts a row and returns it. Notice the last two lines check the database, not just the error:
-
-```ts
-test("a user can't mark someone else's invoice paid", async () => {
-  const alice = await createUser();
-  const bob = await createUser();
-  const invoice = await createInvoice({ ownerId: alice.id, amountCents: 5000 });
-
-  await expect(
-    markPaid({ invoiceId: invoice.id, actorId: bob.id }),
-  ).rejects.toThrow(/not allowed/);
-
-  const saved = await getInvoice(invoice.id);
-  expect(saved.status).toBe('open');
-});
-```
-
-That one test covers the authorization check, the query, and that nothing was written.
-
-**Isolate tests from day one.** If tests share rows, they pass alone and fail together. Empty the tables before each test, and run integration test files one at a time (Vitest's `fileParallelism: false`) so they can't wipe each other's rows.
-
-## Test the page people actually see
-
-For UI, test what the user perceives. Playwright recommends finding elements by role and visible name, not CSS classes. Notice there's no `sleep`: `toHaveText` retries until it passes or times out.
-
-```ts
-await page.getByRole('button', { name: 'Mark as paid' }).click();
-await expect(page.getByRole('status')).toHaveText('Invoice marked paid');
-```
-
-That survives a redesign, and it fails if the button loses its accessible name (the label a screen reader announces), which is a real bug.
-
-<details>
-<summary>Going deeper: signing in once for every test</summary>
-
-Don't log in through the form in every test. It's slow, and bot protection may block it. Log in once in a setup step, save the signed-in state with Playwright's `storageState`, and start every test from it. On Supabase, create that test user in setup with `supabase.auth.admin.createUser()` against your local stack.
-
-With Clerk, `@clerk/testing` gets a Testing Token in global setup (`clerkSetup()`) so bot detection lets your tests through. Then `clerk.signIn({ page, emailAddress })` signs a test user in through Clerk's Backend API. With Better Auth, the `testUtils` plugin creates a user, and its `getCookies()` returns session cookies you pass to `context.addCookies()`. Keep that plugin out of your production config.
-
-</details>
-
-## Some tests pass no matter what
-
-A test that can't fail is worse than no test, because it looks like protection.
-
-- **Mocking everything.** If the database, the API, and the auth check are all mocks, the test checks that your mocks agree with each other.
-- **Asserting the mock was called.** `expect(sendEmail).toHaveBeenCalled()` proves you called a function, not that the right user got the right email.
-- **Snapshot spam.** A snapshot test saves the output and fails when it changes. A 400-line one gets re-saved on every change, unread.
-
-The quick check: break the line the test is supposed to protect, and run it. If it still passes, it isn't testing that line.
-
-## Make agents prove their work
-
-- **Ask for a failing test first.** For a bug: "Write a test that reproduces this bug, show me it failing, then fix it." A test that never failed hasn't proven anything.
-- **Never let an agent delete, skip, or weaken a test to get green.** Watch for `.skip`, loosened assertions, and changed expected values. If the expected total went from `4500` to `5000` in the diff that changed the totals code, the agent may have taught the test the bug.
-- **Read the tests it wrote.** Test names should read like the spec.
-
-## CI runs the same check every time, and flaky tests poison it
-
-Put formatting, lint (a scan for suspicious code), type checks, and tests behind one `check` script. CI (a service like GitHub Actions that runs your checks on a fresh machine) runs it on every PR, and a failing PR can't merge. Then "it passes" means the same thing for you, every agent, and every machine.
-
-A flaky test (one that fails at random) does more damage than its own failure. People learn to hit re-run, then to ignore red, and then a real failure ships looking like every other flake. Fix it, or skip it on purpose with an owner and a date.
-
-## How I do it
-
-On my own side projects:
-
-- **A real Postgres for tests, on Supabase.** `supabase start` runs one locally. Install Docker Desktop first, which runs the database in a container (an isolated box on your machine). In CI, add the `supabase/setup-cli` action (a ready-made step) and run `supabase db start`.
-- **A real Postgres for tests, otherwise.** Locally, use the Docker setup from [local first, then managed](local-first-then-managed.md). In CI, ask your agent: "Add a `postgres` service container to the check workflow and point the integration tests at it." I'd use a [Neon branch](https://neon.com/docs/introduction/branching) per run only if the tests needed something Neon-specific.
-- **Tests for the rules.** Ask your agent: "Add Vitest integration tests against the local database proving a user can't read or change another user's invoices. Empty the tables before each test, and set `fileParallelism: false` for the integration tests."
-- **One `check` script, required to merge.** [start-project](../../skills/start-project/SKILL.md) sets it up with one real smoke test, and [shipping changes you can undo](shipping-changes-you-can-undo.md) makes it required.
-
-I add Playwright once the app has a flow I'd be embarrassed to see broken, usually sign-up and the core action, and it runs in CI from then on. I ignore coverage percentages.
-
-## The standard
-
-Teams go further once the signal shows up. More in the [testing concern](../concerns/testing.md#when-stakes-rise).
-
-- **Run every end-to-end test at both phone and desktop widths**, as two Playwright projects. When people pay you or rely on it daily.
-- **Test against generated data at production size**, not just the few thousand seeded rows from [performance and cost](performance-and-cost.md). When real users bring real data.
-- **Race tests on money and shared data,** as in [data that stays correct](data-that-stays-correct.md#the-standard): send the same request twice at once and check the database ends up with one row.
-
-## Before you ship, check
-
-Paste this to your agent before you merge:
-
-- Every rule about who can see or change what has an integration test against a real Postgres (local or a branch), not a mocked database.
-- Each new route or action has tests for its failure paths: the wrong user, invalid input, an expired session.
-- Every bug fix in this change comes with a test that failed before the fix.
-- No test was deleted, skipped, or loosened, and no expected value changed, unless the behavior was meant to change.
-- Integration tests empty their tables before each test, and their files run one at a time (`fileParallelism: false`).
-
-## Sources
-
-- [Playwright: Best practices](https://playwright.dev/docs/best-practices) and [Authentication (`storageState`)](https://playwright.dev/docs/auth)
-- [Vitest: `fileParallelism`](https://vitest.dev/config/fileparallelism)
-- [Neon: Branching](https://neon.com/docs/introduction/branching)
-- [Supabase: Local development](https://supabase.com/docs/guides/local-development), [Testing in CI](https://supabase.com/docs/guides/deployment/ci/testing), and [`auth.admin.createUser`](https://supabase.com/docs/reference/javascript/auth-admin-createuser)
-- [Clerk: Testing with Playwright](https://clerk.com/docs/guides/development/testing/playwright/overview) and [test helpers (`clerk.signIn`)](https://clerk.com/docs/guides/development/testing/playwright/test-helpers)
-- [Better Auth: Test utils plugin](https://better-auth.com/docs/plugins/test-utils)
+- [Kent C. Dodds: Write tests. Not too many. Mostly integration.](https://kentcdodds.com/blog/write-tests)
+- [Playwright: best practices](https://playwright.dev/docs/best-practices)

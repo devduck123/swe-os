@@ -1,0 +1,74 @@
+[
+  {
+    "takeaway": "Get the app running on my laptop with fake data and one setup command before signing up for more hosted stuff, add services one at a time with a spend cap, and never let preview deploys touch the real database.",
+    "intended": "Build and run locally first, then add hosted services one at a time in the order features need them, with payments last.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the same one CI runs",
+        "why": "CI is never explained. I also don't know what 'one to check' means: tests, lint, type check? I don't have any of those set up, so this sentence assumes a setup I don't have."
+      },
+      {
+        "quote": "Postgres on my laptop",
+        "why": "I use Supabase hosted. I don't know how to run Postgres locally or whether Supabase has a local version, and this is the core of 'How I do it'."
+      },
+      {
+        "quote": "money brings webhooks, refunds",
+        "why": "I've heard 'webhooks' but couldn't say why they make payments risky. It reads like a reason I'm supposed to already understand."
+      }
+    ],
+    "skimmed": [
+      "'Copying production into previews copies your users': I don't have real users or database branching, so it felt like it was for someone further along.",
+      "Go deeper links: Twelve-Factor sounds like a textbook, and I'm not on Neon."
+    ],
+    "jargon": [
+      "CI",
+      "webhooks",
+      "seed script (the meaning is roughly clear from context, but I wouldn't know how to write or run one)",
+      "spend cap (where do I set it? Vercel? Supabase?)",
+      "dev/prod parity"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually run the database locally on a Next.js + Supabase stack (the command or tool). What a seed script looks like or where it goes. How to make Vercel previews use a different database than production (which env var, where). Where to find and set spend caps on the services I already use. Without these, I'd agree with every bullet and then ask my agent to figure it out.",
+    "cut": "The 'Copying production into previews copies your users' bullet. It only matters once you're using database branching and have real users, and it competes with the simpler, more important rule right above it (previews must not touch prod).",
+    "clarity": 4,
+    "usefulness": 3
+  },
+  {
+    "takeaway": "Build on my laptop with fake data first, add hosted services one at a time with spend caps, and never let preview deploys touch the real database.",
+    "intended": "Develop locally because it's the fastest feedback loop, and add managed services one at a time in the order features need them, payments last.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "the same one CI runs",
+        "why": "unexplained term: I don't know what CI is or that I'd have one. 'One to check' is also vague. Check what? Tests? Lint? I've never set that up."
+      },
+      {
+        "quote": "Postgres on my laptop",
+        "why": "a leap: I use Supabase in the cloud. Nothing says how to get Postgres running locally (Docker? the Supabase CLI?) or that Supabase is Postgres underneath."
+      },
+      {
+        "quote": "money brings webhooks, refunds",
+        "why": "unexplained term: I've heard 'webhooks' but couldn't say why they make payments risky. It reads as a scary list, not a reason."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links I'd never tap on my phone. Twelve-Factor sounds like it's for someone more senior.",
+      "'Copying production into previews' I half-skimmed, because I have no real users yet and it felt like a later problem."
+    ],
+    "jargon": [
+      "CI",
+      "seed script",
+      "Postgres (as something separate from Supabase)",
+      "webhooks",
+      "production database",
+      "database branching",
+      "spend cap (where do I set this?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The actual commands or tools: how to run Postgres or Supabase locally, what a seed script looks like (one line, like 'a file that inserts fake rows, e.g. supabase/seed.sql'), what 'one setup command' is (npm run setup?), and where Vercel and Supabase hide the spend cap setting. Right now I know what to want but not how to get it.",
+    "cut": "'Copying production into previews copies your users.' For me it overlaps the bullet before it (previews shouldn't touch prod), and branching is a concept I don't have yet. I'd fold it into the previews bullet as one clause: 'give each preview its own database made from seed data.'",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -28,9 +28,9 @@ Aim for confidence, not a coverage number.
 - "Verified" meaning the code compiles.
 - No test for the bug you just fixed, so it comes back.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Verify, don't assume](../principles.md#verify-dont-assume)
 - [How you know it works](../guides/how-you-know-it-works.md)
 - [Reading and reviewing code you didn't write](../guides/reading-and-reviewing-code.md)
 - [Shipping changes you can undo](../guides/shipping-changes-you-can-undo.md)
+- [Verify, don't assume](../principles.md#verify-dont-assume)

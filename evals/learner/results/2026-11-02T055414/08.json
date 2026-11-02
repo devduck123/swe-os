@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Get my app running on my laptop with fake data and one setup command before I sign up for more hosted stuff, and never let preview links touch my real users' database.",
+    "intended": "Build on your laptop first and add hosted services one at a time as features need them, payments last.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "so branch from seed data instead",
+        "why": "I get that copying production is bad, but I don't know what 'branching' from seed data looks like or where I'd set it up. Is this a Supabase setting? A Vercel setting? Neon is only in a link."
+      },
+      {
+        "quote": "its CLI runs it locally",
+        "why": "This is the one thing I'd actually need to do, and it's tucked in a parenthesis. I've never run a database on my laptop. Do I need Docker? What's the command? I'd stop here and go ask Claude."
+      },
+      {
+        "quote": "must never point at the production database",
+        "why": "I agree, but I don't know how a preview 'points' at a database. Is it the env vars in Vercel? I think my previews might already use prod and I wouldn't know how to check."
+      }
+    ],
+    "skimmed": [
+      "The opening paragraph's list order (database, auth, files, email, error tracking, payments). It reads like a checklist for someone planning a big app, and I'd only half-read it.",
+      "Go deeper links. 'Twelve-Factor App' sounds like reading for a senior engineer."
+    ],
+    "jargon": [
+      "pricing cliff (sort of explained later by 'free tiers end at a cliff', but not where it first appears)",
+      "linter / type checker (I've seen them, but couldn't say what each one catches)",
+      "Postgres (I know Supabase uses it, barely)",
+      "CLI"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The actual first step for local Supabase (e.g. 'supabase start', and that it needs Docker), and a concrete check for previews: 'in Vercel, open Environment Variables and make sure the Preview database URL isn't your production one.' The 'Ask your agent' prompt helps a lot, but I'd want to know enough to tell whether the agent did it right.",
+    "cut": "The 'Copying production into previews copies your users' bullet. It's the most abstract one, it depends on a feature (database branching) I don't use yet, and the previous bullet already covers 'keep real data away from previews.'",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Get the app running on my laptop with fake data and one setup command first, keep preview deploys away from the real database, and add paid services one at a time with a spend cap, payments last.",
+    "intended": "Build on your laptop first and add hosted services one at a time as features need them, in a set order with payments last because they're the easiest to get wrong.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "so branch from seed data instead",
+        "why": "A leap. The sentence before says branching makes a copy of production, so I don't get how you 'branch from seed data' or where you'd change that. Is it a Neon setting, a Supabase setting, or a Vercel one?"
+      },
+      {
+        "quote": "the same check CI runs, the service",
+        "why": "The gloss is wedged into a run-on sentence, so I read it twice. I also don't know if I even have CI. Is it GitHub Actions? Does Vercel count?"
+      },
+      {
+        "quote": "previews on their own throwaway databases",
+        "why": "I believe this matters, but I have no idea how to set it up. On Vercel my preview probably uses the same Supabase env vars as prod right now, and nothing here tells me how to check or fix that."
+      }
+    ],
+    "skimmed": [
+      "The 'Copying production into previews' bullet. I don't have real users yet and don't use database branching, so it felt like it was for someone further along.",
+      "Go deeper links. 'Dev/prod parity' sounds like a term for someone else."
+    ],
+    "jargon": [
+      "linter",
+      "type checker",
+      "database branching",
+      "Postgres (I know Supabase uses it, but not what it means to run it 'on my laptop')",
+      "dev/prod parity"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The actual commands for my stack. For example, `supabase start` to run the database locally, where the seed file goes (`supabase/seed.sql`?), and how to reset the database to it. Also how to give Vercel previews different database env vars than production. The Ask your agent prompt helps, but I'd like to know what 'done' looks like so I can tell if the agent got it right.",
+    "cut": "The 'Copying production into previews copies your users' bullet. It's the most confusing one, and it only applies after you have real users and use branching. The previews bullet already makes the main point: don't touch real data.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

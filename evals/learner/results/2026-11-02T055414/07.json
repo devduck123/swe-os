@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "A timeout doesn't mean the thing failed, so anything that charges money needs an ID tied to the order, so trying again can't charge someone twice.",
+    "intended": "Every outside call needs a timeout, a retry rule, and protection against running twice, and they only work together.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Most clients wait forever by default",
+        "why": "'Clients' threw me. My first read was customers. I figured out it probably means fetch or the Supabase/Stripe SDK, but it never says that, and I don't know how to check whether mine waits forever."
+      },
+      {
+        "quote": "Retries belong in background work",
+        "why": "In my Next.js app on Vercel, I don't know what counts as 'background work'. A server action? An API route? A cron job? A queue I don't have? It's a leap: the rule assumes I already have a place for background work."
+      },
+      {
+        "quote": "Three retries of a ten-second call is a forty-second request",
+        "why": "I had to stop and count. I thought three retries made thirty seconds before I realized it's the first try plus three. Then 'a thousand clients retrying in sync is an outage you caused' is a whole new idea crammed into half a sentence."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: the Amazon link title has 'backoff with jitter', which I don't know, and it reads like it's for infra people. I'd maybe open the Stripe one since I use Stripe.",
+      "The second half of 'Retries multiply' (the thousand clients part): it felt like it was for someone running big systems, not me."
+    ],
+    "jargon": [
+      "idempotency (it's in the title, and the word itself is never defined; I only got it from the key bullet)",
+      "clients",
+      "503 / 400 (I know 404 and 500 exist, but not which numbers mean 'temporary')",
+      "background work",
+      "retry loop",
+      "in sync"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually set a timeout in fetch or the Supabase/Stripe clients (one line of code would do it). What 'background work' looks like on Vercel. Where the idempotency key comes from in practice: do I use the order ID from my database, and do I have to create the order row before calling Stripe? The 'Ask your agent' prompt covers a lot of this, but I wouldn't be able to tell whether the agent did it right.",
+    "cut": "The 'Retries multiply' bullet. The math tripped me up, and the thundering-herd point isn't something I'd act on at my size. 'Only retry what's temporary' and 'retry only in background work' already keep me from retrying too much.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "If something charges money, a retry can charge someone twice, so send an ID tied to the order and have the server reject repeats.",
+    "intended": "Every outside call needs a timeout, a retry decision, and a plan for running twice, and they only work together.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "A timeout or a 503 might",
+        "why": "I know 404 and 500. I don't know what a 503 or a 400 means or why one is temporary and the other isn't. One gloss each ('server busy' vs 'your request is wrong') would fix it."
+      },
+      {
+        "quote": "a thousand clients retrying in sync",
+        "why": "A leap. Why would they retry at the same moment, and how does that cause an outage? I get the gist but couldn't explain it."
+      },
+      {
+        "quote": "a database rule that rejects a second",
+        "why": "I don't know what kind of rule this is or how I'd make one in Supabase. It sounds important but I can't act on it."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: an Amazon architecture article isn't something I'd open on my phone. The Stripe link I might tap because I use Stripe."
+    ],
+    "jargon": [
+      "503 / 400 (status codes, no plain meaning given)",
+      "clients (my fetch call? the Supabase SDK? the user's browser?)",
+      "background work (in a Next.js app, is a server action background? a cron job? a webhook?)",
+      "database rule (unique constraint, never named or explained)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I actually add a timeout to fetch or the Supabase client, and what number should I pick? Where does the idempotency key go: a header on the Stripe call? Do I store it? And what counts as 'background work' in a Next.js app? I'd paste the 'Ask your agent' prompt, but I couldn't check whether the agent did it right.",
+    "cut": "The 'Retries multiply' bullet. The forty-second math made me stop and count, and the 'thousand clients in sync' half is a scale problem I don't have yet. The other bullets already make the point that retries are risky.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

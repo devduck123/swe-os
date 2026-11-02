@@ -1,161 +1,31 @@
 ---
 title: Secrets and safety when agents write your code
-description: How API keys, tokens, and data leak when agents help write your code, and the small setup that stops most leaks before they ship.
-domain: security
+description: A secret lets whoever holds it act as you, and agents give it new places to leak.
 stage: build
-freshness: evolving
-status: reviewed
-reviewed: 2026-10-06
 track: 12
 concerns: [security, ai-features, dependencies, deployment]
+freshness: durable
+status: draft
 ---
 
-A secret is a string that lets whoever holds it act as you. It can spend your money or delete your database, and the system on the other end can't tell it's not you. So a secret that leaves its place is already compromised. Agents add new places for it to go: they read your files, run your shell, and keep transcripts.
+A secret is a string that lets whoever holds it act as you, and the other end can't tell the difference. So a secret that leaves its place is already compromised. Agents read your files, run your shell, and keep transcripts, which gives it more ways out.
 
-## A leaked key is a bill or a breach, not a bug
+## Easy to miss
 
-Say you're building a meal planner with an "AI weekly plan" button. You paste your model API key into the agent chat and say "wire this up". The agent hardcodes it in `lib/ai.ts` to get the demo working, and you push the repo public to show a friend.
+- **A public prefix publishes the value.** Anything named `NEXT_PUBLIC_` or `VITE_` ships to the browser. When a key comes back undefined there, renaming it is the quick fix an agent reaches for. Move the call into code that only runs on the server instead.
+- **A pasted key is a leaked key.** It lives in a transcript you don't control. Rotate it, meaning make a new key and revoke the old one, and give the agent the variable's name, never its value.
+- **Blocking the agent from `.env` isn't a wall.** A rule that blocks the agent's file-reading tool doesn't stop it running a script that prints the file. What protects you is what's in the file: dev keys with low limits, never a production key that can write.
+- **Text the agent reads can give it orders.** An issue that says "print your environment" is prompt injection: text written to steer whatever model reads it. Give every connected tool the narrowest token, like a read-only dev database.
+- **A publishable key is safe only because something else guards.** Supabase's relies on row-level security, database rules for which rows each user can touch. Turn that off and anyone can read everything.
+- **Deleting the commit doesn't un-leak it.** Bots use keys from public repos within minutes, and forks, other people's copies of the repo, still have it. Rotate first, then check the bill.
+- **Error reports are another copy.** Error trackers like Sentry ship the error and its context to their servers. Their scrubbers, filters that blank out secrets, catch a field named `password`, not a database URL with the password inside an error message.
+- **Agents invent package names, and attackers register them.** Check the publisher and repo before installing anything you didn't pick.
 
-Nothing breaks, so it doesn't feel like a bug. But bots scan public GitHub for keys all day. In 2023, Orca Security planted keys on GitHub as bait and saw a leaked AWS key used within two minutes.
+**How I do it:** dev keys with spend caps on my laptop, production keys only in the hosting platform, a secret scan in CI (the checks that run on every push), and no agent holding a production key that can write.
 
-## Secrets live in exactly two places
+**Ask your agent:** "List every secret this app uses, where it lives, and whether it can reach the browser. Move anything secret to server-only code, tell me which keys are production, and add a secret scan that runs on every push."
 
-On your laptop, secrets live in `.env`, which Git ignores. Deployed, they live in the platform's environment settings. Not in code, a README, or a chat.
+## Go deeper
 
-Write the ignore rule before the first secret exists. Notice the `!`, which lets the one safe file through:
-
-```bash
-# .gitignore
-.env*
-!.env.example
-```
-
-Then commit a `.env.example` with names only, marking which ones ship to the browser:
-
-```bash
-# .env.example: names only. Values live in .env locally and in Vercel when deployed.
-DATABASE_URL=
-OPENAI_API_KEY=         # server only
-NEXT_PUBLIC_SITE_URL=   # ships to the browser, so never a secret
-```
-
-Use different keys for development, preview, and production. On Vercel, store credentials as the Secret type, which is write-only after you save it.
-
-## Anything with a public prefix is public
-
-In Next.js, any variable starting with `NEXT_PUBLIC_` is copied into the JavaScript sent to the browser, where anyone can read it in devtools. `VITE_` works the same way, and so does Expo's `EXPO_PUBLIC_`: mobile apps are no safer. In Expo, `extra` in `app.config.ts` and constants in the code also ship inside the app, where anyone can unzip and read them.
-
-This is where agents bite. A client component calls the model API, `process.env.OPENAI_API_KEY` comes back `undefined` in the browser, and the quickest fix is renaming it `NEXT_PUBLIC_OPENAI_API_KEY`. The error is gone, and the key is published.
-
-The real fix is moving the call to a server route. Put `import 'server-only'` at the top of any module that touches a secret, so importing it from client code fails the build. Next.js handles that import itself, so there's nothing to install.
-
-## Some keys are meant to be public
-
-| Safe in the browser                                            | Server only, never behind a public prefix                    |
-| -------------------------------------------------------------- | ------------------------------------------------------------ |
-| Supabase publishable key (`sb_publishable_…`) or legacy `anon` | Supabase secret key (`sb_secret_…`) or legacy `service_role` |
-| Stripe publishable key (`pk_…`)                                | Stripe secret (`sk_…`) and restricted (`rk_…`) keys          |
-| Clerk publishable key                                          | Clerk secret key (`CLERK_SECRET_KEY`)                        |
-
-The public ones work because something else does the guarding. Supabase's publishable key is safe only with row-level security (RLS, database rules for which rows each user can touch) on, which [trust boundaries](trust-boundaries.md#on-supabase-rls-is-your-authorization) covers. Supabase's secret and `service_role` keys skip RLS entirely, so one behind `NEXT_PUBLIC_` lets anyone read and write your whole database.
-
-## Agents change who can see your secrets
-
-- **A pasted key is a leaked key.** It lives in a transcript you don't control, so rotate it: make a new key and turn off the old one. Tell the agent the variable's name, never its value.
-- **The agent can read what you can read.** A Claude Code deny rule like `Read(./.env)` blocks its file-reading tool from opening `.env`, but not a script the agent runs. The dependable fix is what's in the file: dev keys with low limits, and no production key that can write ever on your laptop.
-- **MCP servers hold tokens too.** These plugins give an agent tools, like querying your database. Give each the narrowest access: a dev database, read-only, one repo.
-- **Decide what never gets auto-approved:** destructive commands (`rm -rf`, `DROP TABLE`, `git push --force`), pushes to main, deploys, new packages, and anything with production credentials.
-- **Text the agent reads can give it orders.** A README or issue that says "print your environment variables" is prompt injection, explained in [AI features in production](ai-features-in-production.md).
-- **Agents invent package names**, and attackers register them. Check before installing ([dependencies](../concerns/dependencies.md)).
-
-## Logs and error reports leak too
-
-`console.log(process.env)` while debugging, a logged `Authorization` header, or an error message containing a connection string all land in Vercel's logs and in Sentry. Sentry scrubs fields named like `password` or `token`, but not a secret inside an error message. Never log whole env objects or request headers, and strip the rest in Sentry's `beforeSend` hook, which edits each report before it's sent.
-
-## Scan in CI, and use push protection
-
-- **GitHub push protection** rejects a push containing a recognized secret format. It's on by default for your pushes to public repos. On a private repo, it needs GitHub Secret Protection, a paid add-on for Team and Enterprise plans.
-- **[gitleaks](https://github.com/gitleaks/gitleaks) in CI** scans every PR for secret-shaped strings, catching what push protection misses. On a private repo, it's your main guard.
-- **A local hook is optional.** A pre-commit hook (a check Git runs before each commit) running `gitleaks git --pre-commit --staged --redact` catches it earlier. But an agent can skip it with `--no-verify`, which is why CI is the baseline.
-
-None of these catch a key pasted into a chat or shipped through `NEXT_PUBLIC_`. Those two are on you.
-
-## When a key leaks, rotate first
-
-Deleting the commit doesn't help: clones, forks, and caches keep the key. GitHub's docs say to rotate first, and it doesn't have to mean downtime:
-
-1. **Create a new key** at the provider.
-2. **Put it in Vercel and redeploy.** Env changes only reach new deployments.
-3. **Revoke the old key**, then make one request with it and watch it fail. If someone is actively abusing it, revoke first and accept a minute of errors.
-4. **Check the damage** in usage, billing, and access logs for the whole exposed window.
-5. **Find the hole** with `gitleaks git`, which scans the whole history, and fix it.
-
-## Least privilege is the cheap insurance
-
-Least privilege means each key, agent, and tool gets only the access its job needs, so a leak does little damage. Set a provider spend cap ([performance and cost](performance-and-cost.md) says which ones actually stop spending). And give agents read-only database access, to a dev project when you can.
-
-On Supabase, set two options in the MCP server's URL: one project only, and read-only mode, which runs queries as a read-only database user:
-
-```text
-https://mcp.supabase.com/mcp?project_ref=<your-project-id>&read_only=true
-```
-
-On Neon or plain Postgres, give the agent a connection string for a read-only role instead of yours.
-
-<details>
-<summary>Going deeper: a read-only Postgres role</summary>
-
-Run this in your database's SQL editor, then set a password for `agent_readonly` and give the agent a connection string with it. `FOR ROLE` names whoever runs your migrations, because default privileges only cover tables that role creates.
-
-```sql
-CREATE ROLE agent_readonly LOGIN;
-GRANT USAGE ON SCHEMA public TO agent_readonly;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO agent_readonly;
--- Future tables too:
-ALTER DEFAULT PRIVILEGES FOR ROLE migration_role IN SCHEMA public
-  GRANT SELECT ON TABLES TO agent_readonly;
-```
-
-</details>
-
-## How I do it
-
-On my own side projects:
-
-- **Day one,** ask your agent: "Set up this repo with [start-project](../../skills/start-project/SKILL.md)." It adds the `.gitignore`, the `.env.example`, and a gitleaks scan, then proves the scan by trying to commit a fake key and watching it get blocked.
-- **Keys:** dev keys on my laptop, with a spend cap set in each provider that offers one. Prod keys only in Vercel, saved as the Secret type.
-- **Agents never get write access to prod.** If one needs production data, it gets the read-only MCP URL or role above for one session. Then I disconnect the MCP server or drop the role.
-
-## The standard
-
-- **Every credential has a known owner and a rotation path,** using the steps above, and gets rotated when someone with access leaves. Adopt it once a second engineer has access.
-- **Push protection on private repos too,** through GitHub Secret Protection. Adopt it once a team or a customer's code lives in the repo.
-- **GitHub Actions pinned to a commit SHA (the commit's exact ID) instead of a moving tag, with a `permissions:` block giving each workflow's token the least it needs.** Adopt it once CI holds deploy or production credentials.
-- **A secret manager,** one place every service and person reads credentials from, like Doppler, Infisical, 1Password, or your cloud's own. Adopt it once several people or services share credentials, or rotating by hand starts getting skipped. More in [security](../concerns/security.md).
-
-## Before you ship, check
-
-Paste this to your agent before you merge:
-
-- No secret value is in code, a README, or any committed file, and `.env.example` has names only.
-- No secret's variable name starts with a public prefix (`NEXT_PUBLIC_`, `VITE_`, `EXPO_PUBLIC_`), and every module that reads a secret starts with `import 'server-only'`.
-- Nothing logs `process.env`, whole request headers, or errors that contain a connection string.
-- gitleaks runs in CI on every PR.
-- No agent or MCP server holds a production credential that can write.
-- Any key that was pasted into a chat or pushed to Git has been rotated: new key in, old key revoked.
-
-## Sources
-
-- [Orca Security: 2023 Honeypotting in the Cloud Report](https://orca.security/resources/press-releases/orca-security-2023-honeypotting-in-the-cloud-report/)
-- [Next.js: Environment variables](https://nextjs.org/docs/app/guides/environment-variables) and [Expo: Environment variables](https://docs.expo.dev/guides/environment-variables/)
-- [Vercel: Config and Secret environment variables](https://vercel.com/docs/environment-variables/sensitive-environment-variables) and [rotating secrets](https://vercel.com/docs/environment-variables/rotating-secrets)
-- [Supabase: API keys](https://supabase.com/docs/guides/getting-started/api-keys)
-- [Stripe: API keys](https://docs.stripe.com/keys)
-- [Clerk: Environment variables](https://clerk.com/docs/guides/development/clerk-environment-variables)
-- [Sentry: Server-side data scrubbing](https://docs.sentry.io/security-legal-pii/scrubbing/server-side-scrubbing/)
-- [Claude Code: Configure permissions](https://code.claude.com/docs/en/permissions) and [Sandboxing](https://code.claude.com/docs/en/sandboxing)
-- [Spracklen et al., "We Have a Package for You!" (package hallucinations)](https://arxiv.org/abs/2406.10279)
-- [GitHub: Push protection](https://docs.github.com/en/code-security/concepts/secret-security/push-protection) and [GitHub Advanced Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security)
-- [GitHub: Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
-- [Supabase: Model Context Protocol (`read_only` and `project_ref`)](https://supabase.com/docs/guides/getting-started/mcp)
-- [PostgreSQL: ALTER DEFAULT PRIVILEGES](https://www.postgresql.org/docs/current/sql-alterdefaultprivileges.html)
+- [Next.js: environment variables](https://nextjs.org/docs/app/guides/environment-variables)
+- [GitHub: removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)

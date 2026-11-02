@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "Anything that has to happen (emails, payment updates) should get saved to a table first and be safe to run twice, because jobs and webhooks will repeat, arrive late, or vanish.",
+    "intended": "Background work and webhooks can arrive late, twice, or never, so keep fast work in the request and make the rest recorded, retried, and safe to repeat.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "mark a job as taken in the same statement",
+        "why": "A leap. I don't know what 'statement' means here (a SQL query?) or how one query can both pick and mark a job. This is the fix for the scariest cron problem, and I couldn't write it or check my agent's version."
+      },
+      {
+        "quote": "check it on the raw body before parsing",
+        "why": "I've never seen a 'raw body' vs. a parsed one in Next.js. I just call req.json(). Nobody says what 'signature' is either: a header? a secret? I get that it matters but not what to look for."
+      },
+      {
+        "quote": "Make each write check the row's status",
+        "why": "Too dense. I get 'runs twice', but I can't picture what checking the status looks like before a write, or which row. The unique constraint gloss helped, but I still don't know where I'd put one."
+      }
+    ],
+    "skimmed": [
+      "The second half of the cron bullet. By 'can start before the last run ends' plus the secret thing, it was four problems in one bullet and I glazed over.",
+      "The Go deeper links. Stripe docs are long, and I'd only open them if my agent got stuck."
+    ],
+    "jargon": [
+      "signature (webhook signature)",
+      "raw body",
+      "200 (I kind of know it's 'OK' but not why answering it matters to Stripe)",
+      "provider's event ID",
+      "statement (as in SQL statement)",
+      "after-response task",
+      "hosted job service"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "A name or two for the 'hosted job service' (I don't know what to search for). What the jobs table's columns actually look like. One concrete line showing how a cron run claims a job so a second run skips it. How to get the raw body in a Next.js route handler for the Stripe check. I'd paste the Ask your agent prompt, but I couldn't tell if the agent did it right.",
+    "cut": "The last sentence of the failure bullet, 'A growing age on the oldest pending job is the first sign processing stopped.' I don't have monitoring and don't know where I'd see that age. It reads like on-call advice for someone else.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Webhooks and background jobs can show up twice, late, or not at all, so I save the work to a jobs table first and make running it twice harmless.",
+    "intended": "Work you move out of the request (background jobs, webhooks) can arrive late, twice, or never, so only move it out when you have to and build for those failures.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "in the same statement that picks it",
+        "why": "Which statement? I've never written the SQL that picks a job. I get the goal, two runs shouldn't grab the same job, but not how. In Supabase is that one query, a function, or something else?"
+      },
+      {
+        "quote": "check it on the raw body before parsing",
+        "why": "I don't know what a webhook signature looks like or where it comes from. In a Next.js route handler I'd just call req.json(), so I don't know how to get the 'raw body' instead. The warning lands but I couldn't follow it."
+      },
+      {
+        "quote": "growing age on the oldest pending job",
+        "why": "Took me two reads. Do I check this myself, or set up an alert? Where would I even see it?"
+      }
+    ],
+    "skimmed": [
+      "The 'Events arrive out of order' bullet. I nodded, but I don't know what 'fetch the current state from the provider' means in code. Call Stripe's API inside the webhook?",
+      "Go deeper links. I'd only open the Stripe one if the agent's code broke."
+    ],
+    "jargon": [
+      "signature (webhook signature)",
+      "raw body",
+      "statement (as in SQL statement)",
+      "200 (I sort of know it means OK, but not why answering it matters)",
+      "after-response task",
+      "hosted job service"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What columns the jobs table needs (status values? attempts? locked_at?). How 'mark as taken in the same statement' looks in Supabase. Which hosted job service you mean (Inngest? QStash? Trigger.dev?) and what 'can't wait for the next run' looks like. I'd paste the Ask your agent line, but I couldn't check what it gave back.",
+    "cut": "The 'Events arrive out of order' bullet. It's the one I couldn't act on, and 'store the event under its ID' already feels like the habit that matters. If it stays, it needs one concrete example of what 'fetch the current state' means.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

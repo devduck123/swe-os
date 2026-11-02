@@ -1,185 +1,30 @@
 ---
 title: Background jobs and webhooks
-description: 'Work that happens outside the request: deferred work, cron, hosted job services, and incoming webhooks, and how to keep them from running twice or never.'
-domain: backend
+description: Work outside the request shows up late, twice, or never, so make the repeat harmless and give every failure somewhere to land.
 stage: build
-freshness: durable
-status: reviewed
-reviewed: 2026-10-06
 track: 13
 concerns: [concurrency, reliability, observability]
+freshness: durable
+status: draft
 ---
 
-A background job is work you promise to do later, outside the request that asked for it. The request answers fast, and something else does the work, retries it, and tells you when it gives up. A webhook is someone else's background job calling you, like Stripe hitting your URL when a payment succeeds. Both can show up late, twice, or never. So design for **at least once**: assume anything can run twice, make the repeat harmless, and give every failure somewhere to land.
+A background job is work you promise to do later, outside the request that asked for it. A webhook is someone else's background job calling you, like Stripe posting to your URL when a payment lands. Both can arrive late, twice, or never. If the work is fast and the user needs the result, keep it in the request. Moving it out adds a quieter place to fail.
 
-## The import that died at row 3,100
+## Easy to miss
 
-Users import a CSV of 5,000 contacts, and each one gets enriched by a third-party API, all inside the upload request. The function hits its time limit and gets killed at row 3,100. You don't know which rows finished, and the user clicks Upload again.
+- **Fire-and-forget loses work without a trace.** Work you start without waiting, like an email sent after the response, has no record or retry. Write anything that must happen to a table first.
+- **Every job runs twice eventually.** One that finishes and crashes before recording success looks like one that never started. Make each write check the row's status, or hit a unique constraint (a database rule that rejects a duplicate).
+- **Anyone can call your webhook URL.** Without checking its signature, a stranger can post a fake "payment succeeded". The signature covers the exact text sent, so check it on the raw body before parsing it as JSON, or the check fails and tempts you to skip it.
+- **Store the event before you answer 200.** Answer first and crash, and the sender never retries. Saving it under the provider's event ID also makes a repeat do nothing.
+- **Events arrive out of order.** "Paid" can land before "created". Treat each event as a nudge to fetch the current state from the provider.
+- **Cron is weaker than it looks.** Cron, your host calling a route on a schedule, won't retry a failed run, can fire twice, and can start before the last run ends. Have each run mark a job as taken in the same statement that picks it, so a second run skips it. The route is public too, so it checks a secret first.
+- **A failure needs somewhere to land.** Count attempts, save the last error, give up after a few, and report it. A growing age on the oldest pending job is the first sign processing stopped.
 
-Work leaves the request when it's **slow** like this, needs **retries** (the enrichment API is flaky), runs on a **schedule** (a nightly digest), or arrives in **bursts** your database or API quota can't take at once. If the work is fast and the user needs the result, keep it in the request. A queue (a list of work waiting to be done) adds a second place to fail, and a way to fail quietly.
+**How I do it:** a `jobs` table with each job's status, attempts, and last error, and a cron run every few minutes that works through what's pending. When a failure can't wait for the next run, I add a hosted job service that retries for me.
 
-## Pick the smallest tool that survives what you need
+**Ask your agent:** "Find every webhook, cron route, and after-response task in this app. Check webhook signatures on the raw body, put must-happen work in a jobs table two runs can't both claim, and make every job safe to run twice."
 
-**`after()` in Next.js** runs a callback once the response is sent. Use it for analytics, logging, and best-effort cleanup. If the callback throws or hits the time limit, the work is gone, with no record and no retry.
+## Go deeper
 
-**Vercel Cron** calls one of your routes on a schedule. It suits a sweep (a scheduled run that picks up pending work), but it's weaker than it looks:
-
-- On Hobby it runs **at most once a day**, anywhere within the hour you picked.
-- A failed run isn't retried.
-- A run can arrive twice, and a slow run can overlap the next.
-
-Protect the route with `CRON_SECRET`, since it's a public URL. On Supabase, Supabase Cron can call the same route more often, from inside your database.
-
-**A hosted job service** like Inngest, Trigger.dev, or Vercel Workflows stores the job, retries it with backoff (a longer wait before each try), runs steps that outlast one function, and shows you what failed. A `jobs` table and a sweep (below) handle imports and emails at first. Switch to a hosted service once retries can't wait for the next sweep, or a job outlasts one function.
-
-<details>
-<summary>Going deeper: per-minute cron and database cost</summary>
-
-Vercel Pro allows cron once a minute. On Neon, polling every minute keeps the database from ever scaling to zero (it suspends after 5 idle minutes), so you pay for compute around the clock. Postgres queue libraries like pg-boss need a long-running worker process, which Vercel Functions don't give you.
-
-</details>
-
-## Every job will eventually run twice
-
-A job finishes its work, then crashes before recording success. That looks the same as a crash before doing anything, so the job runs again. Make every job idempotent: running it twice leaves the world the same as running it once ([the patterns](timeouts-retries-idempotency.md)).
-
-For the import, give each contact a status. Notice the `AND status = 'pending'`: it makes the write land once, even if the API call repeats.
-
-```sql
-UPDATE contacts SET status = 'done', company = $2
-WHERE id = $1 AND status = 'pending';
--- 0 rows updated means a previous run already handled it.
-```
-
-Keep jobs small. With one job per 100 rows, a killed function loses one batch, not progress you can't locate.
-
-## Webhooks: verify, record, acknowledge, then work
-
-A webhook endpoint is a public URL that changes your data. In this Stripe handler, notice the order: check the signature, save the event, then answer `200`.
-
-```ts
-export async function POST(req: Request) {
-  const body = await req.text(); // the raw body; req.json() breaks the signature
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      req.headers.get('stripe-signature') ?? '',
-      process.env.STRIPE_WEBHOOK_SECRET!,
-    );
-  } catch {
-    return new Response('Invalid signature', { status: 400 });
-  }
-
-  // `sql` is your Postgres client's query tag.
-  // A retried delivery hits the primary key and does nothing.
-  await sql`
-    INSERT INTO webhook_events (id, type, payload, status)
-    VALUES (${event.id}, ${event.type}, ${JSON.stringify(event)}, 'pending')
-    ON CONFLICT (id) DO NOTHING`;
-
-  return new Response(null, { status: 200 });
-}
-```
-
-**Verify the signature first.** The sender signs the raw body, the exact bytes it sent. Parse and re-serialize the JSON and the signature no longer matches.
-
-**Dedupe by event ID.** Stripe can send the same event more than once, and retries for up to three days in live mode. `webhook_events.id` is the primary key (the column Postgres keeps unique), so every repeat is a no-op.
-
-**Store before you acknowledge.** If you return `200`, then process in `after()` and crash, the sender never retries and the event is lost. Writing the row first makes your `200` a promise you can keep. If processing is a couple of quick writes, doing it inline before the `200` is fine too.
-
-**Don't trust the order.** `invoice.paid` can land before `invoice.created`. So use the event only to learn which object changed. Fetch its current state, like `stripe.invoices.retrieve(id)`, and save that.
-
-## Keep every job in a table you can query
-
-Your own jobs need a record too. In this `jobs` table, each column answers a question you'll ask when something breaks:
-
-```sql
-CREATE TABLE jobs (
-  id         bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  kind       text NOT NULL,                    -- what to do: 'enrich_contacts'
-  payload    jsonb NOT NULL,                   -- what to do it to: {"importId": 42, "fromRow": 0}
-  status     text NOT NULL DEFAULT 'pending',  -- pending, done, or failed
-  attempts   int NOT NULL DEFAULT 0,           -- how many times it has run
-  last_error text,                             -- why the last run failed
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-```
-
-The request inserts a row, then processes it right away, inline or in `after()`. On success, set `status` to `done`. On an error, add one to `attempts` and save `last_error`. After five attempts, set `status` to `failed` and report it to Sentry, where you'll see it.
-
-The cron sweep is the safety net. It picks up anything pending for more than a few minutes and processes it the same way:
-
-```sql
-SELECT id, kind, payload FROM jobs
-WHERE status = 'pending' AND created_at < now() - interval '5 minutes'
-ORDER BY created_at
-LIMIT 50;
-```
-
-Keep one query that shows how many jobs are pending and how old the oldest is. A growing backlog is the earliest sign processing stopped. More in [knowing it broke](knowing-it-broke.md).
-
-## Stop a sweep from overlapping itself
-
-If a sweep runs long, the next one can start before it ends, and both grab the same rows. A lease fixes it: one row that says the sweep is taken, and until when. In the `UPDATE`, notice `locked_until < now()`: only one run can claim an expired lease.
-
-```sql
--- Once:
-CREATE TABLE job_locks (name text PRIMARY KEY, locked_until timestamptz NOT NULL);
-INSERT INTO job_locks VALUES ('sweep', now());
-
--- At the start of every run:
-UPDATE job_locks SET locked_until = now() + interval '10 minutes'
-WHERE name = 'sweep' AND locked_until < now()
-RETURNING name;
--- No row back means another run holds the lease. Exit.
-```
-
-Set `locked_until = now()` when the run finishes. If a run crashes, the lease expires on its own.
-
-<details>
-<summary>Going deeper: why not an advisory lock</summary>
-
-Postgres session advisory locks are the textbook tool here, but they don't survive a transaction-mode connection pooler. Neon's pooler doesn't support them, and Supabase's transaction pooler drops session-level advisory locks between transactions. A lease row works through any pooler.
-
-</details>
-
-## How I do it
-
-On my own side projects (Next.js on Vercel, with Neon or Supabase):
-
-- For slow work, ask your agent: "Move the slow part of this route into a `jobs` table with status, attempts, and last_error. Insert the row in the request and process it in `after()`."
-- For webhooks, copy the handler above. `stripe listen --forward-to localhost:3000/api/webhooks/stripe` sends test events to your machine. It prints its own `whsec_…` signing secret: put that in your local `STRIPE_WEBHOOK_SECRET`, or every signature check fails.
-- Ask your agent: "Add a Vercel Cron route that sweeps pending jobs, protected by `CRON_SECRET`, with a lease row so runs can't overlap." On Hobby a stuck job can wait a day, and its retries take most of a week. Too slow? Sweep every few minutes with Vercel Pro or Supabase Cron.
-- Jobs that charge cards send a Stripe idempotency key, and failed jobs go to Sentry and my daily numbers email. Those habits come from [timeouts and retries](timeouts-retries-idempotency.md) and [knowing it broke](knowing-it-broke.md).
-
-I start with a `jobs` table and a sweep. I switch to a hosted job service (Inngest, Trigger.dev) once retries can't wait for the next sweep, or a job outlasts one function. Past that, I'd be rebuilding one badly in a table.
-
-## The standard
-
-Teams go further once the signal shows up. More in the [reliability concern](../concerns/reliability.md#when-stakes-rise).
-
-- **Alert when the oldest pending job passes an age you pick, and name who responds.** When real users wait on a job's result, like a receipt email.
-- **Carry the request ID (the ID that ties one request's log lines together) into each job's payload**, so one search finds the request, the job, and every retry. When support tickets or a second engineer show up.
-- **Reconciliation against Stripe,** as in [when production breaks](when-production-breaks.md#the-standard). When you take real money.
-- **Test a job killed mid-run, and two runs at once, on purpose.** When a duplicate would cost money or trust.
-
-## Before you ship, check
-
-Paste this to your agent before you merge:
-
-- Work that can outlast the function's time limit, or calls a flaky API, runs as a row in a `jobs` table or in a hosted job service, not inside the request.
-- Every job is safe to run twice: each write checks the row's status in its `WHERE`, or hits a unique key.
-- The webhook route verifies the signature on the raw body (`req.text()`) before it does anything else.
-- Each webhook event is inserted by its event ID with `ON CONFLICT DO NOTHING` before the route returns `200`.
-- Webhook handlers fetch the object's current state from Stripe instead of trusting the event's order.
-- The cron route rejects any request without `Authorization: Bearer $CRON_SECRET`, and a lease row stops sweeps from overlapping.
-
-## Sources
-
-- [Next.js: `after`](https://nextjs.org/docs/app/api-reference/functions/after)
-- [Vercel: Cron jobs usage and pricing (Hobby limits)](https://vercel.com/docs/cron-jobs/usage-and-pricing) and [Managing cron jobs (retries, duplicate delivery, concurrency)](https://vercel.com/docs/cron-jobs/manage-cron-jobs)
-- [Vercel Functions limits (max duration)](https://vercel.com/docs/functions/limitations) and [Vercel Workflows](https://vercel.com/docs/workflows)
-- [Neon: Scale to zero](https://neon.com/docs/introduction/scale-to-zero) and [Connection pooling (unsupported session features)](https://neon.com/docs/connect/connection-pooling)
-- [Supabase: Cron](https://supabase.com/docs/guides/cron) and [Connecting to Postgres (transaction mode limits)](https://supabase.com/docs/guides/database/connecting-to-postgres)
-- [Stripe: Receive events in your webhook endpoint (duplicates, ordering, `stripe listen`)](https://docs.stripe.com/webhooks) and [Retrieve an invoice](https://docs.stripe.com/api/invoices/retrieve)
+- [Stripe: receive events in your webhook endpoint](https://docs.stripe.com/webhooks)
+- [Vercel: managing cron jobs](https://vercel.com/docs/cron-jobs/manage-cron-jobs)

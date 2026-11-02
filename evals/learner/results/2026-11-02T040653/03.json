@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Before I tell the agent to build anything, I write half a page saying who it's for, the smallest usable piece, what 'done' means including weird cases like double taps, and what I'm not building, or the agent builds a bloated generic app I have to own.",
+    "intended": "Spend a few minutes shaping an idea (who, current workaround, smallest slice, done-when, not-building, stop signal) before building, scaled to the size of the work.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "One thin journey from the screen to the database",
+        "why": "A leap. I sort of get 'one feature that works end to end', but 'thin journey' is abstract and there's no example. What would a slice of the habit tracker actually be? Sign in, add one habit, check it off?"
+      },
+      {
+        "quote": "Decide the stop signal before any code.",
+        "why": "Never says what a stop signal looks like. Is it 'nobody uses it after two weeks'? A number? The reason is clear but I couldn't write one."
+      },
+      {
+        "quote": "Each line becomes a test",
+        "why": "I've never written a test. I don't know what a test for 'tapping twice records one check-in' is, or how I'd check that the agent's test really tests it."
+      }
+    ],
+    "skimmed": [
+      "The AI-coach bullet. Not building one right now, so I'd skip it, though 'write the messages yourself for a week' is a nice idea.",
+      "Go deeper links. A whole book and an essay, not on my phone."
+    ],
+    "jargon": [
+      "slice (half-explained, no concrete example)",
+      "schema",
+      "stop signal",
+      "empty state (I can guess, but it isn't glossed)",
+      "test (as in automated test)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "An actual filled-in half page, like the habit tracker shaped in six lines. And what to do if I don't use the shape-project skill: can I just paste the six questions into Cursor? 'Keep the shape in PROJECT.md' assumes I have that file and know what goes in it.",
+    "cut": "The 'Your real competition is what they do today' bullet overlaps the opening's 'what they do today', but I'd keep it because the Notes checklist example landed. I'd cut the AI-coach bullet first. It's a different lesson (validate by hand before automating) squeezed in at the end.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I tell the agent to build anything, I write half a page saying who it's for, the smallest usable piece, a 'done when' list with weird cases like double-taps, and what I'm not building, or the agent builds a generic bloated app I have to own.",
+    "intended": "Shaping, a half-page plan covering who has the problem, what they do today, the smallest slice, done-when, what you're not building, and a stop signal, comes before building.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Each line becomes a test",
+        "why": "I've never written a test. I don't know what kind of test, where it lives, or how I'd check that the agent's test actually tests the thing. It's a leap from a list in my notes to 'a test'."
+      },
+      {
+        "quote": "keep the shape in `PROJECT.md`",
+        "why": "Is PROJECT.md a standard file agents read automatically, like a README? Or just your habit? I don't know if the agent will see it unless I paste it."
+      },
+      {
+        "quote": "an edge case and an empty state",
+        "why": "I sort of know 'edge case'. 'Empty state' I had to guess: the screen before there's any data? The double-tap example covers the edge case, but nothing shows me an empty state."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: 'Shape Up' means nothing to me and I'm not reading a book on my phone right now",
+      "How I do it: I'd skim it because it's a link to a skill file, not something I can do from here"
+    ],
+    "jargon": [
+      "empty state",
+      "slice (explained after a beat, but 'thin journey from the screen to the database' took a reread)",
+      "test (as in automated tests)",
+      "shape / shaping as a noun, before I'd seen it explained"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "A filled-in example shape, like the habit tracker written out in six lines, so I can copy the format. One sentence on what shape-project actually does when I run it, and whether I run it in Claude Code or Cursor. How to ask an agent for 'one test per done-when line' if my project has no tests set up at all.",
+    "cut": "'The AI part is rarely the product.' It's a good point, but it's about whether to build an AI feature at all, not about shaping, and it's the bullet I'd forget first.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

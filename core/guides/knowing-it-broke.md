@@ -1,155 +1,30 @@
 ---
 title: Knowing it broke before your users do
-description: 'Error tracking, structured logs, a health check, and a few outcome counts: the smallest observability setup that tells a solo dev what failed, for whom, and why.'
-domain: reliability
+description: If finding out what broke, for whom, and why takes a user's email or a new log line and a redeploy, you don't have observability yet.
 stage: operate
-freshness: evolving
-status: reviewed
-reviewed: 2026-10-06
 track: 18
 concerns: [observability, reliability]
+freshness: durable
+status: draft
 ---
 
-Observability means you can answer three questions from data you already collected: is it broken, for whom, and why. If the only way to answer is to ask a user, or to add a log line and redeploy, you don't have it yet. For a solo dev, the setup is small: error tracking, structured logs, a health check, a few outcome counts, and alerts you have to act on.
+Observability means you can answer three questions from data you already collected: is it broken, for whom, and why. For one person, the setup is small. You need it the moment strangers use the app, or it does anything you can't watch happen.
 
-## Your users are a slow, lossy monitoring system
+## Easy to miss
 
-Say you run a small invoicing app. You rename a field, and the Stripe webhook handler starts throwing for customers whose invoices have a discount. Stripe takes the money. Your database never marks the invoice paid. Nothing looks wrong on any page you visit.
+- **Users are a slow, lossy monitor.** Most people who hit a bug just leave. The ones who write do it days later, after your host has deleted that day's logs.
+- **Up isn't the same as working.** An uptime check, a service that loads your site every few minutes, proves the server answers, not that signups or payments work. Count the outcomes that mean the product is doing its job, like signups per day, or payments Stripe received against orders your app marked paid.
+- **A job that never runs throws no error.** Webhooks (calls other services like Stripe make to your app), scheduled jobs, and emails fail where no page breaks. Have each important job ping a heartbeat monitor, a service that expects a ping on schedule and alerts you when one doesn't come.
+- **A minified stack trace is a riddle.** Minified code is squeezed into a few unreadable lines, so an error points at `a.js:1:48213`. Source maps translate that back to your file and line. Tag every error with the commit it came from too (Sentry calls this a release), so you can say "this started in the 2 p.m. deploy".
+- **A request ID turns a complaint into a search.** It's a random ID made fresh for each request. Put it on every log line from that request, and show it on the error screen so the user can send it to you.
+- **Logs leak.** Request bodies hold passwords, tokens, and emails, and logs get copied to more places than your database. Log IDs, not contents.
+- **An alert that cries wolf hides the real one.** Every alert should mean "stop and do something". Break each alerted thing once on purpose and watch it fire.
 
-Three days later a customer emails: "Why does it say I owe you $40? I paid." Vercel's logs are empty, because Hobby keeps runtime logs for one hour. You have no stack trace, no count of affected customers, and no idea which deploy did it.
+**How I do it:** before the first real user, I set up Sentry with source maps and releases, a request ID on every log line, one uptime check, and a daily email with yesterday's signups, payments, and failed jobs.
 
-With error tracking, the first failed webhook creates an issue within a minute, with the stack trace and the release that caused it. And plenty of users who hit a bug never email you. They just leave.
+**Ask your agent:** "Set up Sentry with source maps and the commit on every error, give every request an ID that shows up in the logs and on the error page, and add a heartbeat check to each scheduled job. Then send me a daily email with yesterday's signups, payments, and failed jobs."
 
-You need this the moment strangers use the app, or it does anything you can't watch happen: payments, webhooks, scheduled jobs, emails. Those fail silently. For a prototype only you use, the browser console is enough.
+## Go deeper
 
-## Error tracking first
-
-Sentry catches errors your code didn't handle, on the server and in the browser, groups duplicates, and shows the stack trace and how many users it hit. Its free Developer plan covers one user and 5,000 errors.
-
-Two settings decide whether it's useful:
-
-- **Source maps.** Your production JavaScript is minified, squeezed onto one line with short names, so a raw stack trace points at `a.js:1:48213`. A source map translates that back to your file and line. Sentry's Next.js setup uploads them at build time and keeps them out of the browser.
-- **Releases.** Tag every event with the commit it came from. Vercel exposes it as `VERCEL_GIT_COMMIT_SHA`. Then Sentry can say "this started in the 14:00 deploy", which is half the debugging.
-
-Tag the environment too, so preview noise doesn't bury production issues.
-
-## Logs you can search: structured, with an ID, without secrets
-
-`console.log(e)` gives you a line you can't search that doesn't say enough. Log JSON instead. In this webhook route, notice the fixed event name, the request ID made fresh at the top, and that every other field is an ID:
-
-```ts
-// lib/log.ts
-export function log(level: 'info' | 'error', event: string, fields = {}) {
-  const time = new Date().toISOString();
-  console[level](JSON.stringify({ level, event, time, ...fields }));
-}
-
-// app/api/stripe/webhook/route.ts
-export async function POST(req: Request) {
-  const requestId = crypto.randomUUID();
-  const event = await verifyStripeEvent(req);
-  try {
-    await markInvoicePaid(event);
-  } catch (err) {
-    log('error', 'invoice.mark_paid_failed', {
-      requestId,
-      stripeEventId: event.id,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    throw err; // answer with an error, not 'ok': Stripe then retries, and Sentry records it
-  }
-  return new Response('ok');
-}
-```
-
-The **request ID** connects a user's complaint to a log line. Put it on every log line and as a Sentry tag, and show it on your error screen: "Something went wrong. Reference: 3f9c…". The user sends you that, and you search for it.
-
-Log IDs, not contents. Request bodies and user objects hold passwords, tokens, and emails, and logs get copied to more places than your database. See [secrets and safety](secrets-and-agent-safety.md).
-
-Treat Vercel's runtime logs as a live view: 1 hour on Hobby, 1 day on Pro. Anything you'll need next week belongs in Sentry (30 days on the free plan) or the database.
-
-## Prove it's up, and that the important things still happen
-
-A **health check** is a route that returns `200` (HTTP for "OK") when the app can serve requests. Notice that it never touches the database:
-
-```ts
-// app/api/health/route.ts
-export function GET() {
-  return Response.json({
-    ok: true,
-    release: process.env.VERCEL_GIT_COMMIT_SHA,
-  });
-}
-```
-
-An **uptime monitor** calls it from outside every few minutes and alerts you when it stops answering. Sentry's free plan includes one. On Neon, a health check that queries the database every few minutes keeps it from sleeping, so the free compute hours run out mid-month ([cliffs](../recipes/side-project-stack.md#what-it-costs)). A broken database shows up in Sentry anyway.
-
-Uptime says the server answers, not that signups work. For that, track a few **outcomes**, the events that mean the product is doing its job:
-
-- signups per day
-- payments received vs. marked paid
-- background job runs that failed or never ran
-
-Count them with SQL over tables you already have, and email yourself the numbers through your email provider. A Vercel cron job (a schedule that calls one of your routes) can run it daily, even on Hobby.
-
-Sentry's free plan also includes one cron monitor: your job pings Sentry each run, and Sentry alerts you when a run fails or the ping never comes. Spend it on the job that matters most ([background jobs](background-jobs-and-webhooks.md)), and cover the rest in the daily summary.
-
-## Alert only when a human has to act
-
-Every alert should mean "stop and do something". Alerts that cry wolf train you to ignore all of them, including the real one.
-
-Good alerts for a side project:
-
-- The uptime check failed twice in a row.
-- A new issue appeared in Sentry, especially in payments or auth.
-- The monitored cron job missed its ping.
-- An outcome count went to zero, like no signups in 24 hours when you usually get some.
-
-Bad alerts: every error event, CPU usage, one slow request. Look at those weekly. Then break each alerted thing once on purpose to see the alert fire.
-
-## How I do it
-
-On my own side projects, before the first real user:
-
-- Run `npx @sentry/wizard@latest -i nextjs`, add `SENTRY_AUTH_TOKEN` in Vercel, then ask your agent: "Check that Sentry tags each event with the release (`VERCEL_GIT_COMMIT_SHA`) and the environment (`VERCEL_ENV`), and set them if not."
-- Ask your agent: "Add a JSON `log()` helper, make a request ID at the top of every route handler and server action, log it with every error, tag it in Sentry, and show it on the error page."
-- Add the `/api/health` route above, and create a Sentry uptime monitor for its production URL.
-- Ask your agent: "Wrap <my most important job> in `Sentry.withMonitor`."
-- Ask your agent: "Add a Vercel cron route that runs once a day, counts yesterday's signups, payments received vs. marked paid, and failed jobs, and emails me the numbers."
-- Break each alerted thing once on purpose, like stopping the cron or throwing in the webhook, and watch the alert fire.
-
-No dashboards, log platform, or tracing yet.
-
-## The standard
-
-The [observability concern](../concerns/observability.md) has the short version.
-
-- **Logs kept for weeks in a log service,** through a Vercel Pro log drain. Once you keep needing logs older than a day.
-- **Tracing,** a timeline of one request across every call it makes. Once you can't tell which call in a slow request is slow.
-- **Success rate and p95 latency on each critical path, with an alert when either drops.** Once a few hours of failed payments would cost real money.
-- **A paging alert on your phone for the critical path,** not just an email. Once an outage overnight would cost users.
-- **An owner for every alert, an on-call rotation, and a Sentry seat for each engineer.** Once there's a second engineer and customers pay for uptime.
-
-## Before you ship, check
-
-Paste this to your agent before you merge:
-
-- Every catch logs JSON with a request ID, and logs IDs, never bodies, tokens, or emails.
-- Sentry gets source maps, the release, and the environment.
-- The health check doesn't query the database.
-- A failed webhook answers with an error, so the sender retries.
-- The most important job pings a Sentry cron monitor.
-- Every alert needs me to act. None fires on each error event.
-
-## Sources
-
-- [Vercel: Runtime logs (limits and retention)](https://vercel.com/docs/logs/runtime)
-- [Vercel: Hobby plan (drains)](https://vercel.com/docs/plans/hobby)
-- [Vercel: Cron jobs usage and pricing](https://vercel.com/docs/cron-jobs/usage-and-pricing)
-- [Vercel: System environment variables](https://vercel.com/docs/environment-variables/system-environment-variables)
-- [Sentry pricing (Developer plan)](https://sentry.io/pricing/)
-- [Sentry: Next.js setup (wizard)](https://docs.sentry.io/platforms/javascript/guides/nextjs/)
+- [Google SRE book: Monitoring distributed systems](https://sre.google/sre-book/monitoring-distributed-systems/)
 - [Sentry: Source maps for Next.js](https://docs.sentry.io/platforms/javascript/guides/nextjs/sourcemaps/)
-- [Sentry: Releases for Next.js](https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/releases/)
-- [Sentry: Cron monitoring](https://docs.sentry.io/product/crons/)
-- [Neon pricing](https://neon.com/pricing)

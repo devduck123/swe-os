@@ -32,8 +32,7 @@ Run the full check on anything unfamiliar or suggested by an agent. A well-known
 - An MCP server holding a full-access production token.
 - A service with no export, chosen for its free tier.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Security](security.md) and [cost](cost.md)
-- [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)
 - [Simple first: when complexity earns its place](../guides/simple-first.md)
+- [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)

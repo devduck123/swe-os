@@ -1,0 +1,80 @@
+[
+  {
+    "takeaway": "Before I let the agent slap a cache on a slow page, time the steps and fix the actual slow query, and before shipping anything that bills per use, set a hard spend cap on the provider.",
+    "intended": "Find the one slow or expensive thing by measuring it first, then fix only that, instead of guessing.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "hidden by the ORM inside a loop",
+        "why": "I've never heard 'N+1' and I only vaguely know ORM as 'the Prisma thing'. I get that there's a loop doing a query per row, but I don't know how I'd spot it or what 'one join fixes it' means in Supabase."
+      },
+      {
+        "quote": "Small data hides a missing index, so the database reads every row to find 50, and lists that never stop growing.",
+        "why": "I can't define an index, and this sentence has two problems stacked in one clause. By 'and lists that never stop growing' I'd lost which thing was hidden."
+      },
+      {
+        "quote": "Ask the database how it runs the slow query",
+        "why": "Ask it how? I don't know there's a command for this or where I'd type it. This reads like you know and I'm supposed to."
+      }
+    ],
+    "skimmed": [
+      "'Every cache is a bet on staleness' — I don't have a cache yet, so the whole bullet feels like it's for someone further along. The 'one user's dashboard gets served to the next' part would scare me enough to read, but only that part.",
+      "'Estimate the bad month' — a line of multiplication with no example and a big number at the end. I'd skip it on my phone and tell myself I'd come back.",
+      "Go deeper — two links with no hint of why, 'Use The Index, Luke' means nothing to me."
+    ],
+    "jargon": [
+      "N+1",
+      "ORM",
+      "join",
+      "index",
+      "staleness",
+      "usage-billed",
+      "runaway loop",
+      "retry loop"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "'I measure' — measure with what? I don't know where timing shows up in a Next.js app on Vercel with Supabase. One concrete place to look (the Supabase query performance page, or wrapping steps in console.time) would get me moving. Same for 'the provider's spend limit': name where it lives in the two or three providers this reader actually uses. And 'the 10x estimate' assumes I understood the bad-month bullet, which I skimmed.",
+    "cut": "'An outage can cost more than a busy day.' It's the cap-your-spend point again from a different angle, right after a bullet that already says a cap is what stops the bill. Fold 'cap the attempts' into that one and the page gets shorter.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I let the agent add a cache or I touch anything speed-related, I should time what's actually slow, and for anything that bills by usage I should set a hard spend cap instead of trusting an alert email.",
+    "intended": "Both performance and cost work mean finding the one slow or expensive thing by measuring it first, then fixing only that thing.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "an N+1: one query for the list, then one more per row, hidden by the ORM inside a loop. One join fixes it.",
+        "why": "Three unexplained terms in two sentences. The 'one more per row' part I get, but I don't know what N+1, ORM, or join mean, so I can't tell which part of my Supabase code this describes or what 'one join' would look like."
+      },
+      {
+        "quote": "Small data hides a missing index",
+        "why": "I don't know what an index is, so 'missing index' tells me nothing is missing from my mental model. 'Ask the database how it runs the slow query' is also a leap; I have no idea how you ask a database that."
+      },
+      {
+        "quote": "Users times actions times cost, at 10x",
+        "why": "Too dense. I had to reread it three times to realize it's a formula, and I still don't know what 'at 10x' attaches to (10x users? 10x everything?). The bot example right after is clearer than the formula."
+      }
+    ],
+    "skimmed": [
+      "'Every cache is a bet on staleness' — I've never built a cache on purpose, so 'which writes clear it' and 'somewhere shared' feel like they're for someone already running one. I'd nod and move on.",
+      "'Go deeper' — 'Use The Index, Luke' reads like an inside joke and I don't know what an index is yet, so I wouldn't click. Web Vitals I recognize from Vercel so maybe."
+    ],
+    "jargon": [
+      "N+1",
+      "ORM",
+      "join",
+      "index",
+      "paginate",
+      "query (used as if I know how to see or time one)",
+      "personalized response somewhere shared (I think this means CDN but I'm guessing)",
+      "usage-billed",
+      "retry loop"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The spend-limit half I can do today: I know where the OpenAI and Vercel billing pages are. The 'measure and fix the query' half I can't. Measure with what? Where do I see how long each step took on Vercel? What do I type into Supabase to ask how it runs a query? Without one concrete tool or command I'd just tell the agent 'make it faster' again, which is exactly what the page says not to do.",
+    "cut": "'An outage can cost more than a busy day.' It's the same lesson as 'An alert doesn't stop a bill' (runaway spend needs a cap), and the retry-loop detail could be one clause in that bullet. Two spend bullets back to back made me feel the list was padding.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

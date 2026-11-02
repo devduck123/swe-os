@@ -26,8 +26,8 @@ description: What happens when two things touch the same data at the same time, 
 - A cron job that overlaps with its previous run.
 - Inventory checked, then decremented, with a gap in between.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
 - [Data that stays correct](../guides/data-that-stays-correct.md)
+- [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
 - [Background jobs and webhooks](../guides/background-jobs-and-webhooks.md)

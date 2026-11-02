@@ -24,11 +24,11 @@ description: What this will cost to run, where the pricing cliffs are, and what 
 - Storing every upload forever because nobody set a retention rule.
 - Choosing a service for its free tier without checking the cliff.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Local first, then managed services](../guides/local-first-then-managed.md)
 - [Simple first: when complexity earns its place](../guides/simple-first.md)
-- [AI features](ai-features.md), for capping model spend
+- [Local first, then managed services](../guides/local-first-then-managed.md)
+- [AI features in production](../guides/ai-features-in-production.md)
 - [Performance and cost: scale from evidence](../guides/performance-and-cost.md)
 - [The side-project stack](../recipes/side-project-stack.md)
-- [AI features in production](../guides/ai-features-in-production.md)
+- [AI features](ai-features.md), for capping model spend

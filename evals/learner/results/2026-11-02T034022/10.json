@@ -1,0 +1,38 @@
+[
+  {
+    "takeaway": "Use real buttons and links instead of clickable divs, give icons and errors actual text, and spend five minutes with keyboard-only and zoom before merging UI.",
+    "intended": "That accessibility is a correctness problem like a 500 error, so you build it in from the start instead of retrofitting.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "ARIA changes what's announced, not what works",
+        "why": "I've seen aria- attributes in generated code but nobody told me what ARIA is or what a 'role attribute' does, so this bullet warns me off something I can't picture"
+      },
+      {
+        "quote": "visible text linked to its input",
+        "why": "I get that red alone isn't enough, but 'linked' how? I don't know what makes the error text get read when focus lands on the field, and the bullet doesn't show it"
+      },
+      {
+        "quote": "keyboard only, 200% zoom, axe, then two minutes with VoiceOver",
+        "why": "I don't know what axe is. Is it an extension, a CLI, a library? I'd have to google it mid-checklist"
+      }
+    ],
+    "skimmed": [
+      "The ARIA bullet, because it reads like a correction for people who already use ARIA, which isn't me",
+      "The GOV.UK 2017 stat in 'Checkers miss most of it', because I'd skim past the percentage and keep the point that tools don't catch everything"
+    ],
+    "jargon": [
+      "ARIA",
+      "role attribute",
+      "axe",
+      "linked to its input (no hint it means an attribute pointing from the input to the error text)",
+      "native elements",
+      "focus outline (I'd guess it's the blue ring but I'm not sure that's what's meant)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "What axe is and how to run it, and one example of how error text gets 'linked' to its input. Everything else in the check I could start tomorrow.",
+    "cut": "The ARIA bullet. It assumes I know what ARIA is and what I'd be tempted to misuse it for, and the first bullet's 'use <button> and <a href>' already covers the practical advice.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Before I call something done, ask the agent what decisions it made for me, and never cut corners on secrets, login, money, personal data, or deletes.",
+    "intended": "Vibe coders and engineers both ship fast, but engineers ask questions before calling it done, and the agent won't ask them for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "The server takes who's asking from the session.",
+        "why": "I half know what a session is from Supabase auth, but I don't know how 'the server takes it' instead of the form. Is that a code change I make, or something Supabase does? One line of what that looks like would land it."
+      },
+      {
+        "quote": "A double click does it twice.",
+        "why": "A leap. I get that clicking twice sends two requests, but I don't know what I'm supposed to do about it. Disable the button? Something on the server? It reads like a known fix I'm supposed to already have."
+      },
+      {
+        "quote": "engineer the floors from the first commit",
+        "why": "'Floors' is a word this page invented one bullet earlier, and 'engineer the floors' is dense. I had to scroll back up to reconnect it to the secrets/auth/money list."
+      }
+    ],
+    "skimmed": [
+      "The 'Go deeper' link. One external essay, no hint of what it adds beyond the test already quoted, so I'd skip it on my phone.",
+      "The middle of 'Real data is meaner' after the examples. 'Free hosting on your bill' is clever but I had to reread to see it meant people uploading random files to my storage."
+    ],
+    "jargon": [
+      "session (as the trusted source of who's asking)",
+      "route (as in 'upload route')",
+      "diff",
+      "floors (defined by example, not named as a concept until the How I do it line uses it)",
+      "merge (I know it as the GitHub button, not as the moment of deciding something is done)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The one thing I'd actually do tomorrow is 'ask it to list every decision you didn't specify.' I'd try that. But 'engineer the floors' tells me what to care about, not what to do: how do I check that the user ID comes from the session, or that a leftover file gets cleaned up? Even a sentence like 'ask the agent: where does this trust the request?' would make it actionable. Also, 'a branch I won't merge' assumes I already work on branches for prototypes, and I mostly don't.",
+    "cut": "'Code you can't explain isn't yours yet.' It's true, but it's the one bullet that isn't a thing I'd miss, it's a general attitude, and the page is already seven bullets long for a phone screen. Fold 'have the agent walk you through it' into the first bullet about reading the agent's list before the diff.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Shipping fast with AI is fine for throwaway stuff, but anything touching secrets, auth, money, personal data, or deletes has to be done carefully from the start, and I should ask the agent what decisions it made for me before I read its code.",
+    "intended": "That the difference between a vibe coder and an engineer isn't speed, it's the questions you ask before calling a feature done, and the agent won't ask them for you.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "The server takes who's asking from the session.",
+        "why": "I half get it from the photo example, but I don't actually know how to 'take who's asking from the session' in Supabase or a Next.js route. I know I shouldn't trust the form's user ID, but the fix is one sentence I can't turn into code."
+      },
+      {
+        "quote": "A double click does it twice.",
+        "why": "I get that a double click submits twice, but I don't know what I'm supposed to do about it. Disable the button? Something on the server? It's stated like a known fix exists and I don't know its name."
+      },
+      {
+        "quote": "engineer the floors from the first commit",
+        "why": "'The floors' is the stop's own word for secrets, auth, money, personal data, deletes, so I followed it, but 'engineer' them how? That's the whole question and it's one verb."
+      }
+    ],
+    "skimmed": [
+      "The opening three sentences, because 'AI made code cheap. Judgment is still expensive' sounds like a quote for a conference slide and I wanted to get to the list.",
+      "The Simon Willison bullet partly, because it felt like a citation rather than something I needed to do."
+    ],
+    "jargon": [
+      "session (as the place the server learns who's asking)",
+      "diff (I kind of know this from Cursor's review panel but wouldn't define it)",
+      "storage (meaning a bucket like Supabase Storage, not my hard drive)",
+      "floors (the stop's own term, explained in the bullet, but the How I do it line relies on you remembering it)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The one thing I'd actually do tomorrow is 'ask the agent to list every decision I didn't specify.' That I can type. The rest of How I do it tells me what Tommy does, not how: I don't know what 'engineering the floors' looks like for an upload route, and I don't know what to do about the file left behind when the database write fails or the double click. One example prompt for the decisions list and one sentence on fixing the leftover file would get me to act.",
+    "cut": "The first paragraph. 'Both can ship a feature in an afternoon now' and 'Judgment is still expensive' are the kind of lines I skim past on my phone, and the first bullet already makes the point better with an actual thing to do.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

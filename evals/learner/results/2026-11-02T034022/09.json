@@ -1,0 +1,70 @@
+[
+  {
+    "takeaway": "A feature isn't done when the happy path works; it's done when the empty, loading, error, and phone versions of it work too.",
+    "intended": "A mockup shows one perfect state, but a complete frontend feature handles slow networks, empty accounts, errors, missing permissions, and phones.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "have the server reject the duplicate too",
+        "why": "a leap: I get why double-clicks are bad, but I have no idea how my API route would know a second request is a duplicate of the first"
+      },
+      {
+        "quote": "Store the moment, and format it where the user is",
+        "why": "too abstract: I store timestamps in Supabase already, so I can't tell if I'm doing this right or what 'the moment' means versus what I'd do wrong"
+      },
+      {
+        "quote": "belong in the URL",
+        "why": "I believe it, but I don't know what that looks like in Next.js, so I nodded and moved on"
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links with no hint what I'd get from them; the Scott Hurff title sounds like a blog rant, and I'm not going to read MDN docs on my phone",
+      "the time zone bullet, because it felt like a backend problem and I skipped ahead to the next bold line"
+    ],
+    "jargon": [
+      "no-permission states (I know what a 403 looks like, but 'state' here reads like React state at first)",
+      "pagination (I'd guess it, but it's not glossed)",
+      "optimistic update (defined in the next sentence, which saved it, but the bold line alone meant nothing to me)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it says 'an agent screenshots' the four states at two widths, but not how: what do I tell Claude Code to use, how does it fake the empty or error state, and where do the screenshots end up? Without that I'd just tell the agent 'check the empty state' and hope.",
+    "cut": "The second sentence of the hover bullet, 'The right input type and `autocomplete` bring up the `@` key...'. It's a different idea jammed onto the hover one, and it's the only code in the stop, so it's where my eye stalled.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "A feature isn't done until I've looked at it loading, empty, erroring, and without permission, on a phone, not just the happy screen from the mockup.",
+    "intended": "A real frontend feature has to work for the slow network, empty account, error, missing permission, and phone, not just the mockup's one perfect state.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "have the server reject the duplicate too",
+        "why": "A leap. I get why a double click is bad, but I have no idea how the server would know the second request is a duplicate or what I'd write in my Supabase route to make that happen."
+      },
+      {
+        "quote": "Store the moment, and format it where the user is.",
+        "why": "Too compressed. I'm not sure what 'store the moment' means in practice. Is that a UTC column? And 'where the user is' sounds like the browser, but the page is server-rendered in Next.js, so I don't know where that line is."
+      },
+      {
+        "quote": "An optimistic update has to fail out loud.",
+        "why": "Unexplained term. The next sentence sort of defines it, but I had to reread the bullet twice to figure out that 'optimistic update' is the thing being defined and not a different concept."
+      }
+    ],
+    "skimmed": [
+      "The 'Go deeper' links. Two links with no sentence about what I'd get from each, so I'd never tap them on my phone.",
+      "The time zone bullet. It felt like a backend thing and I skipped to the next bold line."
+    ],
+    "jargon": [
+      "optimistic update",
+      "no-permission state",
+      "view state",
+      "pagination",
+      "reject the duplicate (the server-side idea behind this has no name here, so I can't look it up)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'How I do it' line says an agent screenshots four states at two widths, but not how it gets the app into those states. I don't know how to force a loading or no-permission state on demand, and I don't know what the agent is pointed at. One sentence like 'I give the agent a test account with no data and one with no role' would make it something I could copy tonight.",
+    "cut": "The time zone bullet. It's the only item that isn't really about what the user sees on first click, it needs backend knowledge the rest of the page doesn't assume, and it's the one I skimmed. The list would feel tighter and more 'frontend' without it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
