@@ -1,24 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-  
-  width="64"
-  height="64"
-  viewBox="0 0 64 64"
- 
- 
->
-  <path
-    fill="#ff6f59"
-    d="M32 4c13 0 24 5 26 16 2 9 2 15 0 24-2 11-13 16-26 16S8 55 6 44c-2-9-2-15 0-24C8 9 19 4 32 4Z"
-  ></path>
-  <g >
-    <ellipse cx="23" cy="30" rx="4.2" ry="5.4" fill="#fff"></ellipse>
-    <ellipse cx="41" cy="30" rx="4.2" ry="5.4" fill="#fff"></ellipse>
-    <circle cx="24" cy="31.5" r="2.4" fill="#241e36"></circle>
-    <circle cx="42" cy="31.5" r="2.4" fill="#241e36"></circle>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 0 140 140">
+  <defs>
+    <path id="body" d="M60 74c16 0 28 11 28 26s-12 25-28 25-28-10-28-25 12-26 28-26Z"/>
+    <path id="armL" d="M37 70c-10 4-14 17-15 28-1 8 1 13 6 13s6-5 6-12c0-9 3-17 8-22Z"/>
+    <path id="armR" d="M83 70c10 4 14 17 15 28 1 8-1 13-6 13s-6-5-6-12c0-9-3-17-8-22Z"/>
+    <ellipse id="head" cx="60" cy="52" rx="35" ry="29"/>
+    <path id="board" d="M31 21l29-11 29 11-29 11Z"/>
+    <path id="skull" d="M42 25c2 8 34 8 36 0v6c-3 8-33 8-36 0Z"/>
+    <clipPath id="bodyClip"><use href="#body"/></clipPath>
+    <clipPath id="headClip"><use href="#head"/></clipPath>
+  </defs>
+  <g>
+    <g fill="#fffdf6" stroke="#fffdf6" stroke-width="9" stroke-linejoin="round">
+      <use href="#body"/><use href="#armL"/><use href="#armR"/><use href="#head"/>
+      <ellipse cx="47" cy="124" rx="8.5" ry="5"/><ellipse cx="73" cy="124" rx="8.5" ry="5"/>
+      <g transform="rotate(-7 60 24)"><use href="#board"/><use href="#skull"/><path d="M60 21c14-1 24 1 28 3v14" fill="none"/></g>
+    </g>
+    <g fill="oklch(0.76 0.15 50)" stroke="oklch(0.3 0.04 55)" stroke-width="2">
+      <ellipse cx="47" cy="124" rx="8" ry="4.6"/><ellipse cx="73" cy="124" rx="8" ry="4.6"/>
+    </g>
+    <use href="#body" fill="oklch(0.93 0.1 97)"/>
+    <g clip-path="url(#bodyClip)">
+      <ellipse cx="74" cy="122" rx="34" ry="18" fill="oklch(0.87 0.115 88)"/>
+    </g>
+    <use href="#body" fill="none" stroke="oklch(0.3 0.04 55)" stroke-width="2.4"/>
+    <g class="arms" fill="oklch(0.88 0.115 89)" stroke="oklch(0.3 0.04 55)" stroke-width="2.2" stroke-linejoin="round">
+      <use class="arm arm--left" href="#armL"/><use class="arm arm--right" href="#armR"/>
+    </g>
+    <use href="#head" fill="oklch(0.93 0.1 97)"/>
+    <g clip-path="url(#headClip)">
+      <ellipse cx="64" cy="86" rx="42" ry="17" fill="oklch(0.87 0.115 88)"/>
+      <ellipse cx="42" cy="34" rx="11" ry="5.5" fill="oklch(0.98 0.04 100)" transform="rotate(-24 42 34)"/>
+    </g>
+    <use href="#head" fill="none" stroke="oklch(0.3 0.04 55)" stroke-width="2.4"/>
+    <g class="eyes">
+      <ellipse cx="43" cy="52" rx="4.2" ry="5.2" fill="oklch(0.2 0.025 264)"/>
+      <ellipse cx="77" cy="52" rx="4.2" ry="5.2" fill="oklch(0.2 0.025 264)"/>
+      <circle cx="41.7" cy="49.9" r="1.6" fill="#fff"/><circle cx="75.7" cy="49.9" r="1.6" fill="#fff"/>
+    </g>
+    <ellipse cx="35" cy="62" rx="5.6" ry="3.2" fill="oklch(0.8 0.1 22 / 0.55)"/>
+    <ellipse cx="85" cy="62" rx="5.6" ry="3.2" fill="oklch(0.8 0.1 22 / 0.55)"/>
+    <path d="M48 58c3-4 21-4 24 0 2 5-5 9-12 9s-14-4-12-9Z" fill="oklch(0.76 0.15 50)" stroke="oklch(0.3 0.04 55)" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M51 62c5 2.4 13 2.4 18 0" fill="none" stroke="oklch(0.3 0.04 55)" stroke-width="1.6" stroke-linecap="round"/>
+    <g transform="rotate(-7 60 24)">
+      <use href="#skull" fill="oklch(0.24 0.03 268)" stroke="oklch(0.2 0.025 264)" stroke-width="2" stroke-linejoin="round"/>
+      <use href="#board" fill="oklch(0.27 0.035 268)" stroke="oklch(0.2 0.025 264)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M35 21.2l24-9" stroke="oklch(0.55 0.04 280)" stroke-width="1.6" stroke-linecap="round"/>
+      <g class="tassel">
+        <path d="M60 21c14-1 24 1 28 3v12" fill="none" stroke="oklch(0.76 0.15 50)" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M85.5 35h5l1.5 8.5h-8Z" fill="oklch(0.76 0.15 50)" stroke="oklch(0.3 0.04 55)" stroke-width="1.6" stroke-linejoin="round"/>
+      </g>
+      <circle cx="60" cy="21" r="2.6" fill="oklch(0.76 0.15 50)" stroke="oklch(0.3 0.04 55)" stroke-width="1.4"/>
+    </g>
   </g>
-  <path d="M26 42c3.5 3.2 8.5 3.2 12 0" fill="none" stroke="#241e36" stroke-width="3" stroke-linecap="round"
-  ></path>
-  <circle cx="15" cy="40" r="3" fill="#ff9e8a" opacity=".7"></circle>
-  <circle cx="49" cy="40" r="3" fill="#ff9e8a" opacity=".7"></circle>
-  <path fill="#ffd66b" d="M52 6l1.6 4.4L58 12l-4.4 1.6L52 18l-1.6-4.4L46 12l4.4-1.6Z"></path>
 </svg>

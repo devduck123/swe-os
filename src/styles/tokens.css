@@ -1,24 +1,20 @@
-/* Shared design tokens for the landing page and the docs. Light is the default; dark redefines. */
+/* Shared design tokens for the landing page and the docs. Light is the default; dark redefines.
+   Calm like ducktommy.com: warm paper or deep slate, one ink, and the duck's yellow and orange as
+   the only accents. Every text pair is at least 4.5:1. */
 :root {
-  --swe-paper: #fff9f2;
-  --swe-paper-2: #fff1e3;
-  --swe-card: #ffffff;
-  --swe-ink: #241e36;
-  --swe-ink-soft: #5b5270;
-  --swe-line: #eadccb;
-  --swe-coral: #ff6f59;
-  --swe-coral-text: #b83a26;
-  --swe-peach: #ffc9ad;
-  --swe-butter: #ffd66b;
-  --swe-mint: #93e2c3;
-  --swe-sky: #acd4ff;
-  --swe-lilac: #cdbdff;
-  --swe-pink: #ffbcd6;
-  --swe-on-pastel: #241e36;
+  --swe-paper: #fbf8f2;
+  --swe-paper-2: #f3eee5;
+  --swe-card: #fffdf8;
+  --swe-ink: #1c1f2b;
+  --swe-ink-soft: #5b5f6e;
+  --swe-line: #e0d9cc;
+  --swe-coral: #e8833a;
+  --swe-coral-text: #a8461a;
+  --swe-butter: #f7e3a1;
+  --swe-on-pastel: #1c1f2b;
   --swe-shadow:
-    0 1px 0 rgb(36 30 54 / 0.05), 0 14px 34px -16px rgb(36 30 54 / 0.28);
-  --swe-shadow-pop: 4px 4px 0 var(--swe-ink);
-  --swe-radius: 20px;
+    0 1px 0 rgb(28 31 43 / 0.04), 0 16px 36px -20px rgb(28 31 43 / 0.25);
+  --swe-radius: 18px;
   /* Font variables come from the `fonts` config in astro.config.mjs, fallbacks included. */
   --swe-font-display: var(--font-fraunces);
   --swe-font-body: var(--font-dm-sans);
@@ -28,27 +24,27 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --swe-paper: #16131f;
-    --swe-paper-2: #1d1929;
-    --swe-card: #231e32;
-    --swe-ink: #f7efe5;
-    --swe-ink-soft: #bfb5d1;
-    --swe-line: #393050;
-    --swe-coral: #ff7f6a;
-    --swe-coral-text: #ff9c8a;
+    --swe-paper: #12151f;
+    --swe-paper-2: #1a1e2b;
+    --swe-card: #1a1e2b;
+    --swe-ink: #f3efe6;
+    --swe-ink-soft: #a3a8bb;
+    --swe-line: #2c3142;
+    --swe-coral: #f4a261;
+    --swe-coral-text: #f4a261;
     --swe-shadow: 0 1px 0 rgb(0 0 0 / 0.2), 0 18px 40px -18px rgb(0 0 0 / 0.7);
   }
 }
 
 :root[data-theme='dark'] {
-  --swe-paper: #16131f;
-  --swe-paper-2: #1d1929;
-  --swe-card: #231e32;
-  --swe-ink: #f7efe5;
-  --swe-ink-soft: #bfb5d1;
-  --swe-line: #393050;
-  --swe-coral: #ff7f6a;
-  --swe-coral-text: #ff9c8a;
+  --swe-paper: #12151f;
+  --swe-paper-2: #1a1e2b;
+  --swe-card: #1a1e2b;
+  --swe-ink: #f3efe6;
+  --swe-ink-soft: #a3a8bb;
+  --swe-line: #2c3142;
+  --swe-coral: #f4a261;
+  --swe-coral-text: #f4a261;
   --swe-shadow: 0 1px 0 rgb(0 0 0 / 0.2), 0 18px 40px -18px rgb(0 0 0 / 0.7);
 }
 
