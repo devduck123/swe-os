@@ -58,6 +58,18 @@ test('landing: skip link, the misses, and copy prompt work from the keyboard', a
     '/skills/README.md',
   );
 
+  // The ways to point an agent here are tabs, and arrow keys move between them.
+  await page.getByRole('tab', { name: 'Quick' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByRole('tab', { name: 'Local copy' })).toBeFocused();
+  await expect(page.getByRole('tab', { name: 'Local copy' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(
+    page.getByRole('tabpanel', { name: 'Local copy' }),
+  ).toBeVisible();
+
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.getByRole('button', { name: 'Copy the clone command' }).click();
   await expect(page.locator('[data-copy-status]')).toHaveText(
