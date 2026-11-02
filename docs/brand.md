@@ -15,6 +15,7 @@ A plush toy duck in a graduation cap, drawn as a die-cut sticker.
 - **Sticker edge:** a white die-cut border, `#fffdf6`, 9 units wide, behind every part, including the arms. A part that moves takes its own border with it.
 - **Colors:** body `oklch(0.93 0.1 97)`, shade `oklch(0.87 0.115 88)`, beak and feet `oklch(0.76 0.15 50)`, cap `oklch(0.27 0.035 268)`, blush `oklch(0.8 0.1 22 / 0.55)`.
 - **Character:** curious and a little earnest. It reads, looks around, and waves. It never looks smug or corporate.
+- **Poses:** a new pose is something held, not a new duck. Things held up in front (a book, a boat) sit over the hands; things gripped by a handle (a wrench, a lantern) sit behind the hand.
 
 ## Scenes and marks
 
@@ -32,9 +33,10 @@ A plush toy duck in a graduation cap, drawn as a die-cut sticker.
 
 ## Assets
 
-| Asset       | File                                   | Used on                                                                                   |
-| ----------- | -------------------------------------- | ----------------------------------------------------------------------------------------- |
-| The duck    | `src/components/brand/Duck.astro`      | Site title, landing, footer, 404, stops                                                   |
-| Favicon     | `public/favicon.svg`                   | Browser tab (a still duck)                                                                |
-| Share image | `public/og.png`                        | Link previews (a screenshot of the hero)                                                  |
-| Stage poses | `src/components/brand/StagePose.astro` | The track map on `/guides/`, one per stage (the same duck until each stage gets its pose) |
+| Asset       | File                                                                                   | Used on                                                                                                              |
+| ----------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| The duck    | `src/components/brand/Duck.astro`                                                      | Site title, landing, footer, 404, stops                                                                              |
+| Favicon     | `public/favicon.svg`                                                                   | Browser tab (a still duck)                                                                                           |
+| Share image | `public/og.png`                                                                        | Link previews (a screenshot of the hero)                                                                             |
+| Poses       | `Duck.astro`'s `pose` prop, picked per stage by `src/components/brand/StagePose.astro` | The track map on `/guides/`: reading, sketching, a wrench, a magnifier, a paper boat, a lantern, a sprout, a diploma |
+| Pond scene  | `src/components/brand/PondScene.astro`                                                 | The landing hero, at morning or night                                                                                |

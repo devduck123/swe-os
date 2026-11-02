@@ -4,6 +4,10 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **The duck gets a world.** The landing page is a small pond at morning or night, with a dock, books, a mug, fireflies, and a lantern. The duck waves for real (the hand comes up beside its face), its eyes follow your pointer, it hops when you copy a prompt, and it tips its cap when you switch themes. Nothing loops: the ambient bits play for a few seconds and rest.
+- **Stop pages with some personality.** "How I do it" is my note card, "Ask your agent" is a speech bubble from the duck with a Copy button, the draft notice is a small label, and each stop says where it sits in the track.
+- **The track is a trail.** The track index is drawn as one path through the seven stages, with a duck pose for each and ticks on the stops you've read. Progress stays in your browser.
+
 ## v0.5.0 (2026-11-01)
 
 Less, and more like me. The track is short pages of what people and their agents miss, and the site looks like the same person built it and ducktommy.com.
