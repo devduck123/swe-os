@@ -139,6 +139,10 @@ for (const file of [
       /^\*\*How I do it:\*\* /m.test(misses),
       `${file}: end "Easy to miss" with a "**How I do it:**" line`,
     );
+    assert(
+      /^\*\*Ask your agent:\*\* /m.test(misses),
+      `${file}: add an "**Ask your agent:**" line after "How I do it"`,
+    );
     const links = body.split('## Go deeper')[1].match(/^- \[/gm) ?? [];
     assert(
       links.length >= 1 && links.length <= 4,

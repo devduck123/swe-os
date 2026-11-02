@@ -5,7 +5,7 @@ description: A path from "it works on my machine" to software you'd put your nam
 
 AI can write the code now. What it can't do for you is know what the happy path is hiding. This track is the difference between a vibe coder and an engineer, one stop at a time. Read it in order, or jump to what you need. Agents load the same pages when a concern points to them, so a lesson only has to be written once.
 
-Each stop is short on purpose: the idea, the things people and their agents tend to miss, and how I do it. It's not a course. When you want the full mechanics, each stop links to the best place to learn them.
+Each stop is short on purpose: the idea, the things people and their agents tend to miss, how I do it, and what to ask your agent. It's not a course. When you want the full mechanics, each stop links to the best place to learn them.
 
 ## Follow the work from problem to production
 
@@ -68,6 +68,7 @@ Every stop is written as me (see [Voice](../../profile/voice.md#know-which-voice
 - **The idea,** in two to four sentences.
 - **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Durable truths, not product details. No code.
 - **How I do it:** my default, in one line.
+- **Ask your agent:** one plain prompt that puts the stop to work in your project.
 - **Go deeper:** one to three links to the best place to learn the mechanics.
 
 A stop stays under 450 words. If a topic needs more, it's probably two stops, or the depth belongs in a link. AI can draft a stop. It stays a draft until a person has checked the claims and made them their own.
