@@ -5,7 +5,7 @@ description: A path from "it works on my machine" to software you'd put your nam
 
 AI can write the code now. What it can't do for you is know what the happy path is hiding. This track is the difference between a vibe coder and an engineer, one stop at a time. Read it in order, or jump to what you need. Agents load the same pages when a concern points to them, so a lesson only has to be written once.
 
-Every stop ends with **How I do it** (my own habits), **The standard** (what teams add, and when), and **Before you ship, check**: what the vibe-coded version misses, as a list you can hand your agent. Every recommendation starts from the simplest thing that works.
+Each stop is short on purpose: the idea, the things people and their agents tend to miss, and how I do it. It's not a course. When you want the full mechanics, each stop links to the best place to learn them.
 
 ## Follow the work from problem to production
 
@@ -59,37 +59,15 @@ The stops follow the lifecycle of real work. Each stage is a few stops.
 
 ## Beyond the track
 
-Planned guides, written as real projects need them. Fundamentals come before tools: caching before Redis, messaging before Kafka.
+More stops get written when real projects need them, fundamentals before tools: caching before Redis, messaging before Kafka.
 
-- **Foundations:** latency, throughput, and concurrency in depth. How Git actually works.
-- **Design:** event-driven systems. Multi-tenant data. Search.
-- **Build:** real-time features. Payments. Email that lands.
-- **Operate:** SLOs and error budgets. Disaster recovery drills.
-- **Improve:** refactoring and paying down debt on purpose. Postmortems that change something.
-- **AI engineering:** building with coding agents, beyond learning alongside them.
+## How a stop is built
 
-## How a guide is built
+Every stop is written as me (see [Voice](../../profile/voice.md#know-which-voice-youre-in)), in the same shape:
 
-Every guide is written as Tommy (see [Voice](../../profile/voice.md#know-which-voice-youre-in)) and follows [Learning](../../profile/learning.md#teach-the-shape-before-the-machinery): a short model up top, a concrete example of the happy path going wrong, then why it works the way it does and when you need it. Headings state the point, so skimming the headings alone teaches something.
+- **The idea,** in two to four sentences.
+- **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Durable truths, not product details. No code.
+- **How I do it:** my default, in one line.
+- **Go deeper:** one to three links to the best place to learn the mechanics.
 
-Code is plain SQL first wherever the lesson is about the database. It runs anywhere: Supabase's SQL editor, a Drizzle or Prisma migration, or `psql`. App code stays short and light on framework. Where a step differs by vendor, a short "On Neon" or "On Supabase" line covers it.
-
-Every guide ends with three sections, in this order. They separate my habits from the professional standard, and both from the floor:
-
-- **How I do it.** What I do on my own side projects: the simplest option that works, labeled as mine. Every item says how (a command, a file, or a prompt to give the agent), or names the trigger for an upgrade.
-- **The standard.** What professional teams do beyond that, and the signal that it's time for you to do it too, like real users, real money, a second engineer, compliance, or scale. This is the part to come back to.
-- **Before you ship, check.** The floor, every time: 3 to 6 yes/no checks the reader can paste to their agent before merging. Each one is something the stop taught.
-
-Each guide's frontmatter records:
-
-| Field       | Values                                                                                                 |
-| ----------- | ------------------------------------------------------------------------------------------------------ |
-| `domain`    | foundations, frontend, backend, data, architecture, infrastructure, security, reliability, testing, ai |
-| `stage`     | understand, design, build, verify, ship, operate, improve                                              |
-| `freshness` | **durable** (fundamentals), **evolving** (practices), **fast-moving** (products, pricing, AI tools)    |
-| `status`    | **outline** (structure only), **draft** (written, not yet checked by Tommy), **reviewed**              |
-| `track`     | Its stop on the track, if it has one                                                                   |
-| `reviewed`  | The date the claims were last checked. Required for fast-moving guides.                                |
-| `concerns`  | The concern pages that point here                                                                      |
-
-AI can outline and draft guides. A guide stays a draft until a person has verified the technical claims, improved the examples, and made the recommendation their own.
+A stop stays under 450 words. If a topic needs more, it's probably two stops, or the depth belongs in a link. AI can draft a stop. It stays a draft until a person has checked the claims and made them their own.

@@ -27,8 +27,8 @@ description: Changing a schema or existing data without losing anything or break
 - "Rollback plan: redeploy the old version", after the old column is gone.
 - A backfill that locks the table for twenty minutes.
 
-## Learn more
+## Why, and more of what people miss
 
+- [Database changes without downtime](../guides/database-changes-without-downtime.md)
 - [Protect data through change](../principles.md#protect-data-through-change)
 - [Prefer reversible decisions](../principles.md#prefer-reversible-decisions)
-- [Database changes without downtime](../guides/database-changes-without-downtime.md)

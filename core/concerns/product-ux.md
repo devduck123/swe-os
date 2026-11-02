@@ -22,9 +22,9 @@ description: Does the feature actually solve the user's problem, from first clic
 - Solving the request as written instead of the problem behind it.
 - "Something went wrong" with no next step.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Start with the user's problem](../principles.md#start-with-the-users-problem)
-- [UI quality](ui-quality.md), for the empty, loading, and error states
 - [Shape before you build](../guides/shape-before-you-build.md)
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
+- [Start with the user's problem](../principles.md#start-with-the-users-problem)
+- [UI quality](ui-quality.md), for the empty, loading, and error states

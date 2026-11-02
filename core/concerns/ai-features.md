@@ -33,9 +33,7 @@ description: What goes wrong when a product calls a language model, and how to s
 - A prompt change shipped because it felt better, with no evals to catch the regression.
 - A 30-second spinner with no streaming, timeout, or cancel button.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
-- [Security](security.md) and [cost](cost.md), which this concern always pulls in
 - [AI features in production](../guides/ai-features-in-production.md)
 - [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)

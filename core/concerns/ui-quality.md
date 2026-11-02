@@ -33,8 +33,9 @@ description: Does the UI hold up on any screen, show every state, look like it b
 - An empty state that's a blank screen.
 - Dark mode with unreadable text because colors were hard-coded.
 
-## Learn more
+## Why, and more of what people miss
 
 - [What a complete frontend feature includes](../guides/complete-frontend-features.md)
-- [Accessibility](accessibility.md), for focus, contrast, zoom, and motion
 - [Accessibility in practice](../guides/accessibility-in-practice.md)
+- [Accessibility](accessibility.md), for focus, contrast, zoom, and motion
+- [Design taste](../../profile/design.md), for the look and feel I want

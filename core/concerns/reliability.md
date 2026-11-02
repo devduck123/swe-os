@@ -28,13 +28,13 @@ description: What happens when the things you depend on are slow, down, or only 
 - Infinite retry loops that turn one outage into a self-inflicted one.
 - Catching an error and logging it, then carrying on as if it succeeded.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
-- [Design for failure](../principles.md#design-for-failure)
 - [How a request travels through your app](../guides/how-a-request-travels.md)
 - [Simple first: when complexity earns its place](../guides/simple-first.md)
+- [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
 - [AI features in production](../guides/ai-features-in-production.md)
 - [Background jobs and webhooks](../guides/background-jobs-and-webhooks.md)
 - [Knowing it broke before your users do](../guides/knowing-it-broke.md)
 - [When production breaks anyway](../guides/when-production-breaks.md)
+- [Design for failure](../principles.md#design-for-failure)

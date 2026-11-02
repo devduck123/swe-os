@@ -1,92 +1,29 @@
 ---
 title: Learning while agents write the code
-description: Why delegating to AI can quietly stop you from learning, what the evidence says actually helps, and the small habits that keep you sharp with several agents running.
-domain: ai
+description: Finishing work feels exactly like learning, so delegating to agents can quietly stop you from getting better unless you add a comprehension step on purpose.
 stage: improve
-freshness: evolving
-status: reviewed
 track: 21
-reviewed: 2026-10-06
 concerns: []
+freshness: durable
+status: draft
 next:
   link: /recipes/side-project-stack/
   label: 'Track 22: The side-project stack'
 ---
 
-Agents make you faster at shipping. They don't make you better at engineering unless you do something on purpose, and you won't notice the difference, because finishing work feels exactly like learning.
+Agents make you faster at shipping. They don't make you better at engineering unless you do something on purpose, and you won't notice the difference, because finishing work feels exactly like learning. The fix isn't less AI. It's a step after the agent's work where you check that you understood it.
 
-## Delegating feels productive and teaches you very little
+## Easy to miss
 
-In a randomized study from Anthropic, developers learning a new async library either coded by hand or with an AI assistant. On the quiz afterward, the AI group scored 50% and the hand-coding group 67%. The biggest gap was debugging. The AI group wasn't even meaningfully faster.
+- **Delegating teaches almost nothing.** In a randomized study from Anthropic, developers learning a new library with AI scored 50% on a quiz afterward, against 67% for those coding by hand. The biggest gap was debugging, and the AI group wasn't meaningfully faster.
+- **How you use it matters more than whether.** People who generated code and then made sure they understood it, or asked only conceptual questions, scored well. Those who debugged by asking the AI again scored worst.
+- **You can't feel it.** In a METR study, experienced developers took 19% longer with AI on their own repos and believed it made them about 20% faster. The check has to come from outside your gut.
+- **Answering beats rereading.** Pulling an answer from memory, even getting it wrong first, sticks far better than reading the explanation again. Coming back after a gap beats one long session. This comes from classrooms, not agent workflows, so using it here is a bet. A cheap one.
+- **Spend it where you'll have to debug.** Auth, data, money, and models that take actions. If you can't explain how auth works in your app, you can't review an agent's change to it. Throwaway prototypes and boilerplate can go by.
 
-The ones who scored under 40% delegated: they asked for code, leaned on it more over time, and debugged by asking the AI again. The ones who scored 65% or higher generated code and then made sure they understood it, asked for code with explanations, or used the AI only for conceptual questions.
+**How I do it:** every agent PR carries a "Worth learning" note and a short quiz I answer from memory before merging, I catch up on the week's notes once a week, and once per feature in an area I want to own, I write the core myself. The [learn skill](../../skills/learn/SKILL.md) runs all three.
 
-So the fix isn't using less AI. It's adding a comprehension step after the AI does the work.
+## Go deeper
 
-There's a second problem: you can't feel it. In a study by METR (a nonprofit that tests AI models), experienced developers took 19% longer with AI on their own repos, yet afterward believed AI had made them about 20% faster. Your gut won't tell you, so the check has to come from outside it.
-
-## Spend learning time where it compounds
-
-Learning matters for anything you'll have to debug, extend, or defend: your main projects, the areas you want to grow in, and especially the risky parts, like auth, data, money, and models that take actions. If you can't explain how auth works in your own app, you can't review an agent's change to it.
-
-It doesn't matter for throwaway prototypes, boilerplate, or tools you'll never touch again.
-
-## What actually builds understanding
-
-Three findings from learning science hold up across decades of studies:
-
-- **Retrieval beats rereading.** Pulling an answer from memory, even when you get it wrong and then see the right one, sticks far better than reading the explanation again. In one classic study, students who practiced recall remembered 61% a week later, against 40% for those who reread.
-- **Generating beats reading.** Things you produce yourself, like a prediction or a piece of code, stick better than things you only read.
-- **Spacing beats cramming.** Coming back to something a few times, with gaps in between, beats one long session.
-
-This research comes from classrooms and labs, not agent workflows, so applying it here is a bet. It's a cheap one.
-
-## How I do it
-
-On my own projects, learning goes in the PR, where my attention lands anyway.
-
-1. **Every agent leaves a "Worth learning" note and a short quiz** in its PR. The agent writes both; I answer.
-2. **Before merging anything non-trivial, I answer the quiz from memory,** then check the answers. It takes five to ten minutes. Simon Willison's rule is the same idea: don't commit code you couldn't explain to someone else. Geoffrey Litt won't [send code to others until he can pass the quiz](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html).
-3. **Once a week, I catch up.** I group the week's "Worth learning" notes, learn the one or two that matter most, and finish with one recall question from an older lesson. That's the spacing.
-4. **Once per feature, in an area I want to own, I write the core myself.** I ask the agent: "Leave me the core as one `TODO(human)`, with a failing test."
-
-For step 1, this goes in `AGENTS.md` or `CLAUDE.md`, the file the agent reads first. Copy it into yours. No PRs? The prompt covers commits too. Notice that the answers stay hidden until you've tried:
-
-```text
-When you open a PR, add a "Worth learning" section to its description
-(with no PR, put it in the commit message and the questions in your reply):
-one to three decisions or concepts in this change I probably don't know
-yet, two sentences each, or "Nothing new" if there aren't any.
-
-Then add 3–5 questions that check I understand this change. Ask me to
-predict what the code does in a specific case, explain why you chose one
-approach over another, or say what breaks if a given line is removed.
-Put the answers in a collapsed <details> block below the questions.
-```
-
-The [learn skill](../../skills/learn/SKILL.md) (a saved workflow you ask your agent for) runs the PR quiz, the weekly catch-up, and writing the core yourself.
-
-## The standard
-
-- **The PR author can explain every line in review, and agent-written code gets the same review as human code.** Once anyone else reviews or runs your code. See [reading and reviewing code](reading-and-reviewing-code.md).
-- **Whoever reviews an auth, data, or money change can explain how that part works.** Once real users or real money depend on it.
-- **Measure what agents speed up, like cycle time and how often their PRs need rework, instead of trusting how it feels.** Once a team decides how much work to hand them.
-
-## Before you ship, check
-
-Paste this to your agent before you merge:
-
-- There's a "Worth learning" note, or "Nothing new".
-- There are 3 to 5 questions, with the answers hidden.
-- For a non-trivial change, I've answered the questions from memory. If I haven't, ask me them now.
-- I can explain any auth, data, or money change without the code.
-
-## Sources
-
-- [Shen and Tamkin, "How AI Impacts Skill Formation" (Anthropic, 2026)](https://arxiv.org/abs/2601.20245). A randomized study with 52 developers that measured understanding immediately after the task. The usage-pattern subgroups were small.
-- [METR, "Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity" (2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/)
-- [Roediger and Karpicke, "Test-Enhanced Learning" (2006)](https://doi.org/10.1111/j.1467-9280.2006.01693.x)
-- [Dunlosky et al., "Improving Students' Learning With Effective Learning Techniques" (2013)](https://doi.org/10.1177/1529100612453266)
-- [Geoffrey Litt, "Understanding is the new bottleneck" (2026)](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html)
-- [Simon Willison on not committing code you can't explain (2025)](https://simonwillison.net/2025/Mar/19/vibe-coding/)
-- Matt Pocock's [`teach` skill](https://github.com/mattpocock/skills), for evidence-gated learning records
+- [Shen and Tamkin, "How AI Impacts Skill Formation" (Anthropic, 2026)](https://arxiv.org/abs/2601.20245)
+- [Geoffrey Litt, "Understanding is the new bottleneck"](https://geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html)

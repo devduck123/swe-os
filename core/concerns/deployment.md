@@ -24,11 +24,11 @@ description: Getting a change from your machine to users, and back out again if 
 - A migration and a code change that must deploy together but can't.
 - Production deployed by hand from a laptop with no record of what shipped.
 
-## Learn more
+## Why, and more of what people miss
 
-- [Prefer reversible decisions](../principles.md#prefer-reversible-decisions)
 - [Local first, then managed services](../guides/local-first-then-managed.md)
 - [Secrets and safety when agents write your code](../guides/secrets-and-agent-safety.md)
 - [Shipping changes you can undo](../guides/shipping-changes-you-can-undo.md)
 - [Database changes without downtime](../guides/database-changes-without-downtime.md)
 - [The side-project stack](../recipes/side-project-stack.md)
+- [Prefer reversible decisions](../principles.md#prefer-reversible-decisions)

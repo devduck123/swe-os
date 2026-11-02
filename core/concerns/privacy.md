@@ -26,6 +26,6 @@ description: What personal data you collect, where copies go, and whether you ca
 - "Delete account" that soft-deletes forever.
 - Sending full user records to an analytics or AI provider when an ID would do.
 
-## Learn more
+## Why, and more of what people miss
 
 - [Trust boundaries: validation and authorization](../guides/trust-boundaries.md)

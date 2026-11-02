@@ -112,25 +112,41 @@ for (const file of [
   if (data.freshness === 'fast-moving')
     assert(data.reviewed, `${file} is fast-moving and needs a reviewed date`);
   if (data.track) {
-    // Every stop ends the same way: How I do it (Tommy's habits), The standard (what teams add, and when), Before you ship (checks to paste to the agent), then Sources.
-    const text = read(file).replace(/^```[^\n]*\n[\s\S]*?^```/gm, '');
-    const heads = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
-    const end = heads.filter((h) => h !== 'Sources').slice(-3);
+    // A stop is the idea, then what people miss, then Tommy's default, then links out. No code:
+    // the point is the consideration, not the implementation.
+    const body = read(file).replace(/^---\n[\s\S]*?\n---\n/, '');
+    const isRecipe = file.startsWith('core/recipes/');
+    assert(!/^\s*```/m.test(body), `${file}: track stops have no code blocks`);
+    const heads = [...body.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
     assert.deepEqual(
-      end,
-      ['How I do it', 'The standard', 'Before you ship, check'],
-      `${file} must end with "## How I do it", "## The standard", then "## Before you ship, check", then Sources`,
+      heads.slice(-2),
+      ['Easy to miss', 'Go deeper'],
+      `${file} must end with "## Easy to miss", then "## Go deeper"`,
     );
-    // Plain bullets, not "- [ ]": a task-list checkbox renders as an unlabeled form input.
-    const checks =
-      text
-        .split('## Before you ship, check')[1]
-        .split('## Sources')[0]
-        .match(/^- /gm) ?? [];
+    if (!isRecipe)
+      assert.equal(
+        heads.length,
+        2,
+        `${file}: a stop has only "Easy to miss" and "Go deeper" as sections`,
+      );
+    const misses = body.split('## Easy to miss')[1].split('## Go deeper')[0];
+    const bullets = misses.match(/^- \*\*/gm) ?? [];
     assert(
-      checks.length >= 3 && checks.length <= 6,
-      `${file}: "Before you ship, check" needs 3 to 6 checks as bullets, has ${checks.length}`,
+      bullets.length >= 4 && bullets.length <= 8,
+      `${file}: "Easy to miss" needs 4 to 8 bullets with a bold lead, has ${bullets.length}`,
     );
+    assert(
+      /^\*\*How I do it:\*\* /m.test(misses),
+      `${file}: end "Easy to miss" with a "**How I do it:**" line`,
+    );
+    const links = body.split('## Go deeper')[1].match(/^- \[/gm) ?? [];
+    assert(
+      links.length >= 1 && links.length <= 4,
+      `${file}: "Go deeper" needs 1 to 4 links, has ${links.length}`,
+    );
+    const words = body.split(/\s+/).filter(Boolean).length;
+    const cap = isRecipe ? 700 : 450;
+    assert(words <= cap, `${file}: ${words} words, over the ${cap}-word cap`);
     assert(
       !seenTrack.has(data.track),
       `${file} and ${seenTrack.get(data.track)} share track ${data.track}`,

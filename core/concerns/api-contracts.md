@@ -26,8 +26,8 @@ description: Is the interface other code depends on explicit, validated, and saf
 - Renaming a field and breaking the mobile app that still uses the old name.
 - Trusting IDs in the body without checking the caller owns them.
 
-## Learn more
+## Why, and more of what people miss
 
+- [Trust boundaries: validation and authorization](../guides/trust-boundaries.md)
 - [Timeouts, retries, and idempotency](../guides/timeouts-retries-idempotency.md)
 - [Validate at the boundaries](../principles.md#validate-at-the-boundaries)
-- [Trust boundaries: validation and authorization](../guides/trust-boundaries.md)
