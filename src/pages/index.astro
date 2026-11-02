@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import { version } from '../../package.json';
-import Logo from '../components/Logo.astro';
+import Duck from '../components/brand/Duck.astro';
 import Fonts from '../components/Fonts.astro';
 import '../styles/tokens.css';
 import '../styles/landing.css';
@@ -80,7 +80,7 @@ const misses = await Promise.all(
 
     <header class="nav">
       <a class="brand" href="/">
-        <Logo size={28} />
+        <Duck size={28} />
         <span class="brand__name">
           <span class="sr-only">Tommy's </span>swe <em>os</em>
         </span>
@@ -143,7 +143,7 @@ const misses = await Promise.all(
         </div>
         <div class="hero__art" aria-hidden="true">
           <div class="moon"></div>
-          <Logo size={210} alive class="hero__duck" />
+          <Duck size={210} alive class="hero__duck" />
           <p class="note">
             same pages,
             <br />
@@ -283,7 +283,7 @@ const misses = await Promise.all(
     </main>
 
     <footer class="footer">
-      <Logo size={22} />
+      <Duck size={22} />
       <p>
         Made by <a href="/profile/tommy/">Tommy</a>, with a lot of help from
         agents. Opinions are labeled as mine. Writing under{' '}
