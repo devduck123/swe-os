@@ -15,7 +15,7 @@ A plush toy duck in a graduation cap, drawn as a die-cut sticker.
 - **Sticker edge:** a white die-cut border, `#fffdf6`, 9 units wide, behind every part, including the arms. A part that moves takes its own border with it.
 - **Colors:** body `oklch(0.93 0.1 97)`, shade `oklch(0.87 0.115 88)`, beak and feet `oklch(0.76 0.15 50)`, cap `oklch(0.27 0.035 268)`, blush `oklch(0.8 0.1 22 / 0.55)`.
 - **Character:** curious and a little earnest. It reads, looks around, and waves. It never looks smug or corporate.
-- **Its agent:** a smaller robot duck, the same plush shape in cool steel, with an antenna instead of a cap and screen eyes (`bot` on `Duck.astro`). It's the second reader: it reads along with the duck, never instead of it.
+- **Its agent:** a smaller robot duck, the same plush shape in cool steel, with an antenna instead of a cap and screen eyes (`bot` on `Duck.astro`). It's the second reader: on the landing, the two sit side by side and share one book, and each waves with its outer arm so neither covers the other.
 - **Poses:** a new pose is something held, not a new duck. Things held up in front (a book, a boat) sit over the hands; things gripped by a handle (a wrench, a lantern) sit behind the hand.
 
 ## Scenes and marks

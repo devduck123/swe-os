@@ -18,13 +18,16 @@ export type Pose =
   | 'lantern'
   | 'grow'
   | 'diploma'
-  | 'peek';
+  | 'shareLeft'
+  | 'shareRight';
 interface Props {
   size?: number;
   class?: string;
   alive?: boolean;
   pose?: Pose;
   bot?: boolean;
+  /** Seconds to wait before the wave, so two ducks don't wave in lockstep. */
+  delay?: number;
 }
 const {
   size = 32,
@@ -32,11 +35,20 @@ const {
   alive = false,
   pose = 'stand',
   bot = false,
+  delay = 0,
 } = Astro.props;
 // How each pose holds its arms (degrees from hanging) and where it looks.
 const poses: Record<
   Pose,
-  { left: number; right: number; look: [number, number]; happy?: boolean }
+  {
+    left: number;
+    right: number;
+    look: [number, number];
+    happy?: boolean;
+    // Head tilt in degrees, and whether it sits with its feet dangling.
+    tilt?: number;
+    sit?: boolean;
+  }
 > = {
   stand: { left: 0, right: 0, look: [0, 0] },
   read: { left: -30, right: 30, look: [0, 1.8] },
@@ -47,7 +59,9 @@ const poses: Record<
   lantern: { left: 4, right: -30, look: [1.5, 0.8] },
   grow: { left: -30, right: 30, look: [0, 1.6] },
   diploma: { left: -15, right: -118, look: [0, 0], happy: true },
-  peek: { left: -14, right: 4, look: [-2.4, 1.8] },
+  // Two readers sharing one book across their laps: one holds its left page, one its right.
+  shareRight: { left: 6, right: 26, look: [1.8, 2.2], tilt: 6, sit: true },
+  shareLeft: { left: -26, right: -6, look: [-1.8, 2.2], tilt: -6, sit: true },
 };
 const held = poses[pose];
 const paper = '#fffdf6';
@@ -79,9 +93,13 @@ const skull = 'M42 25c2 8 34 8 36 0v6c-3 8-33 8-36 0Z';
   height={Math.round((size * 140) / 104)}
   viewBox="8 0 104 140"
   style={
-    pose === 'stand'
-      ? undefined
-      : `--look-x:${held.look[0]}px;--look-y:${held.look[1]}px`
+    [
+      pose !== 'stand' &&
+        `--look-x:${held.look[0]}px;--look-y:${held.look[1]}px`,
+      delay && `--wave-delay:${delay}s`,
+    ]
+      .filter(Boolean)
+      .join(';') || undefined
   }
   data-pose={pose === 'stand' ? undefined : pose}
   aria-hidden="true"
@@ -130,8 +148,30 @@ const skull = 'M42 25c2 8 34 8 36 0v6c-3 8-33 8-36 0Z';
       <g class="duck__rig">
         <g transform="translate(-60 -128)">
           <g fill={feet} stroke={line} stroke-width="2">
-            <ellipse cx="47" cy="124" rx="8" ry="4.6"></ellipse>
-            <ellipse cx="73" cy="124" rx="8" ry="4.6"></ellipse>
+            {held.sit ? (
+              <>
+                {/* Sitting on an edge, the feet dangle below the body. */}
+                <ellipse
+                  cx="47"
+                  cy="131"
+                  rx="5.4"
+                  ry="8"
+                  transform="rotate(10 47 131)"
+                />
+                <ellipse
+                  cx="73"
+                  cy="131"
+                  rx="5.4"
+                  ry="8"
+                  transform="rotate(-10 73 131)"
+                />
+              </>
+            ) : (
+              <>
+                <ellipse cx="47" cy="124" rx="8" ry="4.6" />
+                <ellipse cx="73" cy="124" rx="8" ry="4.6" />
+              </>
+            )}
           </g>
           <path d={body} fill={yellow}></path>
           <g clip-path={`url(#${id}-body)`}>
@@ -344,7 +384,7 @@ const skull = 'M42 25c2 8 34 8 36 0v6c-3 8-33 8-36 0Z';
               />
             </g>
           )}
-          <g transform="translate(60 80)">
+          <g transform={`translate(60 80) rotate(${held.tilt ?? 0})`}>
             <g class="duck__head">
               <g transform="translate(-60 -80)">
                 <ellipse
@@ -669,29 +709,31 @@ const skull = 'M42 25c2 8 34 8 36 0v6c-3 8-33 8-36 0Z';
 
   @media (prefers-reduced-motion: no-preference) {
     .duck--wave .duck__rig {
-      animation: duck-lean 1.9s ease-in-out both;
+      animation: duck-lean 1.9s ease-in-out var(--wave-delay, 0s) both;
     }
     .duck--wave .duck__head {
-      animation: duck-tilt 1.9s ease-in-out both;
+      animation: duck-tilt 1.9s ease-in-out var(--wave-delay, 0s) both;
     }
     .duck--wave .duck__arm--right {
-      animation: duck-wave 1.9s ease-in-out both;
+      animation: duck-wave 1.9s ease-in-out var(--wave-delay, 0s) both;
     }
     .duck--wave .duck__arm--left {
-      animation: duck-sway 1.9s ease-in-out both;
+      animation: duck-sway 1.9s ease-in-out var(--wave-delay, 0s) both;
     }
-    /* A reading duck holds its book with the right hand and waves with the left. */
-    .duck--wave[data-pose='read'] {
+    /* A duck holding a book in its right hand waves with its left. */
+    .duck--wave:is([data-pose='read'], [data-pose='shareRight']) {
       --dir: -1;
     }
-    .duck--wave[data-pose='read'] .duck__arm--left {
+    .duck--wave:is([data-pose='read'], [data-pose='shareRight'])
+      .duck__arm--left {
       animation-name: duck-wave;
     }
-    .duck--wave[data-pose='read'] .duck__arm--right {
+    .duck--wave:is([data-pose='read'], [data-pose='shareRight'])
+      .duck__arm--right {
       animation-name: duck-sway;
     }
     .duck--wave .duck__tassel {
-      animation: duck-tassel 1.9s ease-in-out both;
+      animation: duck-tassel 1.9s ease-in-out var(--wave-delay, 0s) both;
     }
     .duck--alive .duck__eyes {
       animation: duck-blink 3.4s linear 0.4s both;

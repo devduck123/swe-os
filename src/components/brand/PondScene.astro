@@ -1,9 +1,10 @@
 ---
-// The landing page's world (see docs/brand.md): a small pond with a dock, where the duck reads
-// a book and its agent, a little robot duck, reads the same page over its shoulder. Morning in the light theme, night in the dark one, with
-// the colors easing between them when the theme changes. The ambient bits (fireflies,
-// steam, mist, ripples) play for a few seconds and rest; hovering the scene, or scrolling
-// back to it, plays them again. Decorative, so it's hidden from screen readers.
+// The landing page's world (see docs/brand.md): a small pond with a dock, where the duck and
+// its agent, a little robot duck, sit on the end and read one book together. Morning in the
+// light theme, night in the dark one, with the colors easing between them when the theme
+// changes. The ambient bits (fireflies, steam, mist, ripples) play for a few seconds and rest;
+// hovering the scene, or scrolling back to it, plays them again. Decorative, so it's hidden
+// from screen readers.
 import Duck from './Duck.astro';
 
 const fireflies = [
@@ -78,7 +79,7 @@ const stars = [
       r="150"
       fill="url(#scene-glow)"
     ></circle>
-    <circle class="orb" cx="452" cy="262" r="64"></circle>
+    <circle class="orb" cx="458" cy="236" r="62"></circle>
 
     <!-- Far hills, with a little schoolhouse whose window is lit at night. -->
     <path
@@ -188,13 +189,31 @@ const stars = [
       <path class="steam" d="M5-2c-3-5 3-8 0-14M12-4c-3-5 3-8 0-14"></path>
     </g>
 
-    <!-- The two readers on the dock: the duck with the book, and its agent, a little robot
-         duck, reading the same page over its shoulder. -->
-    <g transform="translate(436 292) rotate(-9 48 118)">
-      <Duck size={96} bot pose="peek" />
+    <!-- The two readers, sitting on the end of the dock with their feet over the water: the
+         duck and its agent, a little robot duck, sharing one book across their laps. -->
+    <g transform="translate(354 257)">
+      <Duck size={124} alive pose="shareRight" />
     </g>
-    <g transform="translate(352 244)">
-      <Duck size={130} alive pose="read" />
+    <g transform="translate(446 283)">
+      <Duck size={102} alive bot pose="shareLeft" delay={0.7} />
+    </g>
+    <g class="book" stroke-linejoin="round">
+      <path
+        class="book-cover"
+        d="M406 384c18-7 36-7 54 1 18-8 36-8 54-1v20c-18-6-36-6-54 2-18-8-36-8-54-2Z"
+      ></path>
+      <path
+        class="book-page"
+        d="M410 382c16-6 33-5 50 1v19c-17-6-34-6-50-1Z"
+      ></path>
+      <path
+        class="book-page"
+        d="M460 383c17-6 34-7 50-1v19c-16-5-33-5-50 1Z"
+      ></path>
+      <path
+        class="book-lines"
+        d="M416 388c11-3 23-3 36 0M416 394c11-3 23-3 36 0M468 388c12-3 24-3 36 0M468 394c12-3 24-3 36 0"
+      ></path>
     </g>
 
     <!-- Night: fireflies. Morning: mist drifting over the water. -->
@@ -224,7 +243,7 @@ const stars = [
       </text>
       <path
         class="note-arrow"
-        d="M500 186c-4 10-10 18-18 24M482 210c-14 8-28 18-42 28m0 0 2-10m-2 10 10-1M482 210c4 14 5 34 3 54m0 0-6-8m6 8 5-8"
+        d="M520 186c-4 10-10 16-18 22M502 208c-30 8-58 26-76 50m0 0 0-11m0 11 10-5M502 208c-1 22-3 44-6 64m0 0-4-9m4 9 6-7"
       ></path>
     </g>
   </svg>
@@ -349,7 +368,6 @@ const stars = [
   .reeds path:not(.cattail),
   .steam,
   .mug-handle,
-  .pages,
   .lantern-post,
   .mist path {
     fill: none;
@@ -472,23 +490,21 @@ const stars = [
   :global(:root[data-theme='dark']) .scene .lantern-flame {
     fill: #f4a261;
   }
-  .book {
+  .book path {
     stroke: oklch(0.3 0.04 55);
     stroke-width: 1.8;
-    stroke-linejoin: round;
   }
-  .book--a {
+  .book-cover {
     fill: #e8833a;
   }
-  .book--b {
-    fill: #8fb3a8;
+  .book-page {
+    fill: #fffdf6;
   }
-  .book--c {
-    fill: oklch(0.27 0.035 268);
-  }
-  .pages {
-    stroke: #fffdf6;
-    stroke-width: 1.6;
+  .book-lines {
+    fill: none;
+    stroke-linecap: round;
+    stroke-width: 1.2 !important;
+    opacity: 0.45;
   }
   .mug-body {
     fill: #fffdf6;
@@ -574,7 +590,7 @@ const stars = [
       animation: birds 5s ease-in-out both;
     }
     .scene--play .note-arrow {
-      stroke-dasharray: 220;
+      stroke-dasharray: 300;
       animation: draw 0.9s ease-out 1.6s both;
     }
   }
@@ -662,7 +678,7 @@ const stars = [
   }
   @keyframes draw {
     from {
-      stroke-dashoffset: 220;
+      stroke-dashoffset: 300;
     }
     to {
       stroke-dashoffset: 0;
