@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "Don't rename or delete a database column in one go: add the new one, copy the data over, switch the code, and only then drop the old one, because the old version of my app is still running and needs it.",
+    "intended": "Changes to your database's structure have to go out over several releases (add, copy, switch, drop) because data can't be undone the way code can.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "A lock timeout, one line at the top",
+        "why": "I get what a lock is now, but I don't know what the line looks like or what number to put. 'One line' makes it sound easy, but I couldn't write it. Same for 'build it concurrently': is that a flag? A setting in Supabase?"
+      },
+      {
+        "quote": "picking only rows that still need it",
+        "why": "I follow the idea, but I couldn't picture the actual query or how I'd run it 'a few thousand rows at a time.' Is that a script? A loop? Something I run by hand?"
+      },
+      {
+        "quote": "restore a backup into a scratch database",
+        "why": "Big leap for me. I've never restored a backup. On Supabase I don't know where backups live or how I'd get a 'scratch database.' Same with 'a copy with production's size and mess': how do I get that without copying real users' data onto my laptop?"
+      }
+    ],
+    "skimmed": [
+      "Go deeper: strong_migrations is Rails, and I don't use Rails. The Postgres ALTER TABLE docs would be a wall of text on my phone."
+    ],
+    "jargon": [
+      "concurrently (building an index concurrently)",
+      "lock timeout (glossed as an idea, but not how to set it)",
+      "UPDATE (I can guess it's SQL, but never wrote one)",
+      "scheduled job / background worker (I roughly know, but don't have them, I think?)",
+      "schema"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I actually see the SQL migration in my PR if my agent or Supabase generates it? Where does that file live in a Next.js + Supabase project (supabase/migrations?). Show the actual lock timeout line once. And tell me what to do about the rehearse and backup steps on Supabase, because right now I'd just skip those since I don't know how.",
+    "cut": "The Go deeper links. A Rails gem and raw Postgres docs aren't for me. Inside the stop, I'd keep everything. The bullets are short and each one told me something I didn't know.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't rename or delete a database column in one go, because the old version of my app is still running and asking for it; add the new one, copy, switch, then drop.",
+    "intended": "Because data can't be undone like code, risky schema changes (rename, drop, type change) go out over several releases: add, copy, switch, drop.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "unless you build it concurrently",
+        "why": "No idea what building an index 'concurrently' means or how I'd do it. Is it a setting? A keyword? I wouldn't know what to ask for."
+      },
+      {
+        "quote": "A lock timeout, one line at",
+        "why": "It says it's one line but never shows the line. I don't know what it looks like, what number to put, or what happens after it 'gives up'. Does the migration fail? Do I rerun it?"
+      },
+      {
+        "quote": "restore a backup into a scratch database",
+        "why": "I use Supabase. I don't know where my backups are or what a scratch database is. The link to another page helps, but the step feels big for one sentence."
+      }
+    ],
+    "skimmed": [
+      "The giant UPDATE bullet. 'Picking only rows that still need it, so you can stop and restart' went over my head. I got 'do it in chunks' and moved on.",
+      "Go deeper. A Ruby gem and the Postgres docs are clearly not for me."
+    ],
+    "jargon": [
+      "concurrently (building an index)",
+      "lock timeout",
+      "UPDATE (I know it's SQL, but not why one statement is bad)",
+      "schema",
+      "background worker",
+      "scratch database"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it says 'I read the SQL migration in every PR', but not what I'm looking for when I read it. Give me two or three red flags I'd spot as a beginner, like a DROP COLUMN, a RENAME, or a type change. Also, I use Supabase. Does Supabase's dashboard count as a 'schema push'? Should I use `supabase migration new` instead? One concrete line for my stack would make this something I'd actually do.",
+    "cut": "The 'Your dev database is too small to warn you' bullet. It packs three ideas into one bullet: type rewrites, concurrent indexes, and nulls and duplicates. Then it ends with 'rehearse on a copy with production's size', which I have no idea how to do. I'd split it or cut it to the nulls-and-duplicates point, which I actually understood.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "Never paste a real key into the agent chat or give it a production key; if a key leaks, make a new one and kill the old one before doing anything else.",
+    "intended": "Secrets let anyone act as you, and agents give them more ways to escape, so keep them where they belong and limit what each one can do.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "something else guards",
+        "why": "The heading is a leap. I use Supabase's anon key and didn't know it was the 'publishable' one. The body explains row-level security, but I still don't know how to check whether mine is on."
+      },
+      {
+        "quote": "Move the call into code that only runs on the server",
+        "why": "In Next.js I'm not sure what counts as server-only. Server components? API routes? Server actions? One example would fix this."
+      },
+      {
+        "quote": "a production key that can write",
+        "why": "I didn't know keys had read vs write. Where do I see that, and how do I make a read-only one in Supabase or Stripe?"
+      }
+    ],
+    "skimmed": [
+      "Error reports are another copy: I don't use Sentry yet, so this felt like it was for someone further along.",
+      "Go deeper links: I won't open docs on my phone."
+    ],
+    "jargon": [
+      "revoke (mostly clear from context)",
+      "spend caps (where do I set them?)",
+      "prompt injection is glossed, but 'narrowest token' isn't",
+      "secret scan (what tool?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Name a secret scan tool, or say 'GitHub secret scanning, turn it on in settings'. Say where spend caps live (OpenAI and Stripe dashboards?). Explain how to tell a dev key from a production key. The Ask your agent line helps, but I'd want to check what it did.",
+    "cut": "Error reports are another copy. It's real, but it's the least likely to hit me now, and the scrubber detail is dense compared to the rest.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Never paste a real key into the agent chat or put it behind NEXT_PUBLIC_; give the agent the variable's name, and if a key leaks, make a new one and kill the old one before doing anything else.",
+    "intended": "A secret lets anyone who holds it act as you, and agents add new ways for secrets to escape, so limit what each secret can do and keep it in one place.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Move the call into code that only runs on the server",
+        "why": "Which call? I get that the browser shouldn't see it, but I don't know how to tell whether my Next.js code runs on the server or the client. Is a server component enough? A route handler? This is the fix, and it's the vaguest line on the page."
+      },
+      {
+        "quote": "Give every connected tool the narrowest token",
+        "why": "What's a 'connected tool' here? MCP servers? The Supabase integration in Cursor? And 'narrowest token' is jargon. The read-only dev database example helps, but I wouldn't know where to set that up."
+      },
+      {
+        "quote": "which gives it more ways out",
+        "why": "I had to reread this. 'It' means the secret, but the sentence before is about the agent, so I first read it as the agent getting out."
+      }
+    ],
+    "skimmed": [
+      "The Sentry/error reports bullet. I don't use Sentry yet, so it felt like it was for someone further along.",
+      "Go deeper links. On my phone I'm not opening the GitHub docs."
+    ],
+    "jargon": [
+      "narrowest token",
+      "connected tool",
+      "production key that can write (I sort of get it, but I don't know which of my keys are 'write' keys)",
+      "spend caps (where do I set these?)",
+      "secret scan (what tool?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Name an actual secret scanner (e.g. GitHub secret scanning or gitleaks) and say whether it's a toggle or a config file. Say Supabase's service_role key is the dangerous one and the anon/publishable key is the safe one; that's the exact mix-up I'd make. Say how to mark code as server-only in Next.js. Say where spend caps live (OpenAI and Stripe dashboards, etc.). The 'Ask your agent' prompt is the most useful part, because I'd paste it as-is.",
+    "cut": "The 'Agents invent package names' bullet. It's real, but it's about supply-chain attacks, not my secrets, and 'check the publisher and repo' doesn't tell me what a bad one looks like. It dilutes a page that's otherwise tightly about keys.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

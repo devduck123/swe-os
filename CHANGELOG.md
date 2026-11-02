@@ -4,7 +4,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
-- **A shorter track.** Every stop is now a short page of what people and their agents miss: the idea, "Easy to miss", how I do it, and a link or two to go deeper. No code. The track went from 36,000 words with 64 code blocks to about 9,700 with none. "The standard" and "Before you ship, check" are gone; what teams add when stakes rise lives in the concern pages. Each concern page now links only the stops that cover its risk.
+- **A shorter track.** Every stop is now a short page of what people and their agents miss: the idea, "Easy to miss", how I do it, and a link or two to go deeper. No code. The track went from 36,000 words with 64 code blocks to about 9,700 with none. "The standard" and "Before you ship, check" are gone; what teams add when stakes rise lives in the concern pages. Each concern page now links only the stops that cover its risk. Every stop glosses its terms and ends with an "Ask your agent" prompt. A learner test puts clarity (3.9) and usefulness (4.2) back at the long track's level.
 
 ## v0.4.0 (2026-10-17)
 

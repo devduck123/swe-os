@@ -1,0 +1,73 @@
+[
+  {
+    "takeaway": "Before letting the agent add a cache, find out which step is actually slow (often a query inside a loop or a missing index), and set a hard spend cap on anything that bills per call because an alert email won't stop a runaway bill.",
+    "intended": "Performance and cost work should start from a measured number pointing at the one slow or expensive thing, not a hunch.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Time each step first",
+        "why": "A leap. I don't know how to time a database call versus a render in Next.js. Is it console.time, Vercel logs, the browser Network tab, Supabase's dashboard? The stop says measure first but never says with what."
+      },
+      {
+        "quote": "Postgres's `EXPLAIN` shows whether a query",
+        "why": "I use Supabase and have never typed raw SQL into anything. Where do I run EXPLAIN, and what in the output tells me 'reads every row'? I'd hand this to the agent and not understand its answer."
+      },
+      {
+        "quote": "which changes to the data throw",
+        "why": "Too dense. 'Throw the cached copy away' is clear enough, but I don't know where caches even live in my app (Next.js fetch cache? Vercel? the browser?), so 'somewhere shared' is fuzzy. I get the scary dashboard example, though."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links with no hint of why I'd click them or how long they are; on my phone I'm not opening 'Use The Index, Luke'",
+      "Averages hide the slow visits: I got the point in one line, but I have no idea where I'd see p95 for my app, so I'd nod and move on"
+    ],
+    "jargon": [
+      "query (I sort of know, but 'one query for the list plus one more for every row' assumes I picture what my Supabase client calls turn into)",
+      "render (as a separate timed step)",
+      "Postgres EXPLAIN",
+      "p95 is glossed, but where to find it isn't",
+      "spend cap vs. budget alert (glossed by contrast, OK)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Which tool shows me timing and p95 for a Next.js/Vercel/Supabase app (Vercel Observability? Supabase query performance page?), and where the spend cap setting lives for common providers like OpenAI or Resend. I'd also like to know what to look for in the agent's answer so I can tell if it's right. Right now the 'Ask your agent' prompt does all the work and I'd just trust whatever comes back.",
+    "cut": "The 'Averages hide the slow visits' bullet. It's true but I can't act on it without knowing where p95 lives, and the other bullets are more urgent for someone my size. The bot math (864,000 calls) does the 'scary' job better.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before letting the agent add a cache, make it time each step and look for a query running once per row, and set a spend cap on anything that bills per call so a bot can't run up my bill overnight.",
+    "intended": "Fix performance and cost by measuring first and fixing the one slow or expensive thing, not by guessing.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a sorted lookup the database keeps",
+        "why": "The book analogy helps, but the sentence crams the gloss into the middle of another sentence and I had to reread it. I also don't know how to add an index in Supabase. Is it something I click, or SQL I write?"
+      },
+      {
+        "quote": "Postgres's `EXPLAIN` shows whether a query",
+        "why": "I don't know where I'd run this or what the output looks like. 'Shows whether a query reads every row' doesn't tell me what to look for in the output. I'd just paste it to the agent."
+      },
+      {
+        "quote": "which changes to the data throw",
+        "why": "This is cache invalidation, and the sentence is abstract. An example would help, like 'when a user edits their profile, the cached profile has to be cleared'."
+      }
+    ],
+    "skimmed": [
+      "Averages hide the slow visits: the point lands, but I have no idea where I'd see p95 for my app (Vercel? Supabase?), so it's trivia to me right now.",
+      "Go deeper: two links I won't open on my phone."
+    ],
+    "jargon": [
+      "Postgres (I know Supabase uses it, but plenty of readers won't connect the two)",
+      "EXPLAIN",
+      "render (as a step you can time)",
+      "p95 is glossed, but 'ms' and 'one visit in twenty' then 'slowest 5%' is the same idea twice in different forms",
+      "cached / cache (never actually defined; I sort of know it as 'saved copy')",
+      "shared (cache) — shared where? CDN? I don't know where caches live"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to actually find a spend cap for the services I use (Vercel, Supabase, OpenAI). That's the one thing I'd do today, and I'd go hunting. Also, how do I 'time each step' myself? The 'Ask your agent' line covers it, but I wouldn't know if the agent did it right.",
+    "cut": "The 'Averages hide the slow visits' bullet. It's true, but I can't act on it with a small app and no monitoring, and it's the one I forgot first. The spend cap and N+1 bullets are the ones that stuck.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

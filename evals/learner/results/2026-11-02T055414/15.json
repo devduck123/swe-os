@@ -1,0 +1,69 @@
+[
+  {
+    "takeaway": "Passing tests don't mean it's safe: on every route I check myself whether a signed-in user could change an ID and get someone else's data, because that bug won't show up in the diff.",
+    "intended": "Before merging anything important, you should be able to say what the change does, why it's built this way, and how it fails, instead of trusting the agent's summary or green CI.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "merged in that order",
+        "why": "A leap. Why database first, then server, then UI? I'd guess it's so nothing points at a column that doesn't exist yet, but the stop never says, so I'd ignore the order."
+      },
+      {
+        "quote": "Request team 7's export as a user on team 3",
+        "why": "I get the idea, but I don't know how to actually send that request. Do I edit the URL in my browser? Use curl? Do I need a second account? I'd stall right here."
+      },
+      {
+        "quote": "a second opinion from a fresh session",
+        "why": "Fresh session of what? I think it means a new Claude chat with no history, but why does that help? Is the old one biased toward its own code? One clause would fix this."
+      }
+    ],
+    "skimmed": [
+      "'Style comments can make a review worse.' I'm the only reviewer and I don't leave style comments on my own PRs, so it feels like it's for teams.",
+      "Go deeper links. Google engineering practices sounds like it's for big-company people, and I'm not opening that on my phone."
+    ],
+    "jargon": [
+      "CI (glossed, but 'the checks that run on every PR' assumes I have checks; I mostly just have Vercel previews)",
+      "auth (used as if I know where the boundary is; in Supabase is that RLS, middleware, or my route?)",
+      "PR description as 'a set of claims' (fine, but I don't know which claims are worth checking first)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How do I make a 'small PR for every change' when I'm solo and push straight to main? Do I make a branch, open the PR on GitHub, and merge it myself? Also, how do I actually run the 'request that proves' the bug once the agent hands it to me? And for Supabase specifically, does RLS cover the ownership check or do I still need it in the route?",
+    "cut": "'Style comments can make a review worse.' It's true for teams, but for me it's the least useful bullet, and the 'spend attention where a mistake costs most' bullet already says the same thing more usefully.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Passing tests don't mean it's safe: before I merge anything that reads or changes data, I check that it verifies who's signed in and that they actually own that specific record, because nothing in the code will look wrong if that check is missing.",
+    "intended": "Before merging anything important you should be able to say what a change does, why it's built that way, and how it fails, instead of trusting the agent's summary.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "where the diff meets code it didn't touch",
+        "why": "'Diff' is never explained, and the idea is abstract. The second sentence about callers helps, but I'd still be unsure what I'm opening and what I'm looking for once I'm there."
+      },
+      {
+        "quote": "why it's built this way, and how it fails",
+        "why": "This is the core test the stop sets, but nothing tells me how to figure out 'how it fails'. The ownership bullet covers one failure. I wouldn't know how to find the others."
+      },
+      {
+        "quote": "merged in that order",
+        "why": "Why database first, then server, then UI? It's stated like a rule with no reason, so I wouldn't trust myself to apply it when a change doesn't split cleanly."
+      }
+    ],
+    "skimmed": [
+      "'Agents sound just as sure when they're wrong': I already know this from using them, and the opening already says not to trust the summary.",
+      "'Style comments can make a review worse': I'm usually the only reviewer and I don't leave style comments, so it felt like it was for someone on a team."
+    ],
+    "jargon": [
+      "diff",
+      "ownership check (half-explained by the next sentence, but I'd still not know how to write one in Supabase)",
+      "reject bad input (what counts as bad?)",
+      "auth"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "'Line by line' on auth or database code doesn't tell me what I'm checking each line for. Give me a short checklist I can hold in my head: who's signed in, do they own this record, is the input validated, what happens if it runs twice or fails halfway. Also say how to get the 'second opinion from a fresh session' (paste the diff? point it at the branch?).",
+    "cut": "The 'Style comments can make a review worse' bullet. For a solo dev shipping with agents it's the least relevant, and 'spend attention where a mistake costs most' already makes the same point.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

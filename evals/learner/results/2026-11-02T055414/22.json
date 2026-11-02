@@ -1,0 +1,77 @@
+[
+  {
+    "takeaway": "Free tiers don't slow down, they shut off, so before launch I should check Vercel's no-charging rule, Supabase pausing my project, email send caps, and turn on MFA and spend caps everywhere.",
+    "intended": "A recommended managed stack for building a real web app alone, and mainly where each piece's free tier ends abruptly.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Each copy has its own memory",
+        "why": "A leap. I don't know what 'memory' means in my code. Is it a variable at the top of a file? I wouldn't know whether my rate limit is 'kept there', and 'Keep counts like that in Postgres' gives no hint how, like a table with a timestamp."
+      },
+      {
+        "quote": "signed so I can check it's really Stripe",
+        "why": "I believe it matters, but I have no idea what checking a signature looks like or what happens if I skip it. It reads like a warning I can't act on."
+      },
+      {
+        "quote": "Postgres on Neon through Drizzle, or Supabase",
+        "why": "I already use Supabase. Do I also need Drizzle? 'TypeScript query layer' doesn't tell me whether it replaces the Supabase client. I couldn't tell which path is for me."
+      }
+    ],
+    "skimmed": [
+      "The 'Why' column for Errors and Input: Sentry and Zod I've heard of, and the one-liners didn't add anything.",
+      "Go deeper links: pricing pages I'd only open once something breaks.",
+      "The Neon bullet: I'm on Supabase, so I'd skip the 'never sleeps' half and only read the pausing sentence."
+    ],
+    "jargon": [
+      "serverless (assumed, though the bullet half-explains it)",
+      "rate limit",
+      "query layer",
+      "compute / compute hours",
+      "hand-roll",
+      "preview per PR (I get it from Vercel, but a newer reader might not)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where the spend cap setting actually lives on Vercel and Supabase (or just 'ask your agent' covers it?), one concrete example of a Postgres-backed rate limit, and what verifying the Stripe signature means in practice. MFA I'd do tonight. The rest I'd hand to my agent without being able to check its answer.",
+    "cut": "The 'Listing files is metered' bullet. It's narrow to Vercel Blob, and 'save the URL in Postgres' is already said in the Files row of the table.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Free tiers don't slow down, they just shut off, so I need to know which one breaks first, set spend caps on paid plans, and turn on MFA on every account before real users show up.",
+    "intended": "A managed, free-to-start stack for building a real web app alone, and mostly where its free tiers end abruptly.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Serverless runs many copies of your app",
+        "why": "I deploy to Vercel but never knew it was 'serverless' or that it runs copies. The five-login-attempts example helped, but I wouldn't know how to 'keep counts like that in Postgres'. Is that a table? Do I write it myself?"
+      },
+      {
+        "quote": "calls my app when it's paid, signed",
+        "why": "'Signed' isn't explained. Signed how? I'd guess there's a secret involved, but I don't know what checking it looks like or where my app gets 'called'."
+      },
+      {
+        "quote": "Drizzle doesn't care who hosts it",
+        "why": "Small leap. I get pg_dump moves the data, but I don't know why Drizzle matters for leaving. And if I picked Supabase I'm not using Drizzle, so does this exit plan apply to me?"
+      }
+    ],
+    "skimmed": [
+      "Most of the 'Why' column in the table. It's wide on my phone, and rows like Database pack three ideas into one cell. I read the Pick column and moved on.",
+      "Go deeper links. I'd only open them if something actually broke."
+    ],
+    "jargon": [
+      "serverless",
+      "constraints (glossed, but 'rules Postgres checks on every write' still didn't tell me what one looks like)",
+      "query layer",
+      "compute / compute hours",
+      "cron (glossed, fine)",
+      "signed (Stripe)",
+      "pg_dump (glossed, fine)",
+      "rate limit"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The Ask-your-agent line gives me a real next step, but How I do it is vague for someone at my level. I'd want 'where to set a spend cap' as a concrete thing for Vercel and Supabase, at least for the two I already use. 'One upgrade at a time for a reason I can name' doesn't tell me what reasons look like. Also, which do I pick, Neon+Drizzle or Supabase? I already use Supabase, so is that fine?",
+    "cut": "The table's Why column for Database. 'Constraints, rules Postgres checks on every write, catch what code forgets. Drizzle is the TypeScript query layer. Supabase adds auth and storage' is three half-ideas crammed in a cell, and none of them helps me pick. 'Supabase if you want auth and storage in one place' would do.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

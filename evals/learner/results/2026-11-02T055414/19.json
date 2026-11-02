@@ -1,0 +1,71 @@
+[
+  {
+    "takeaway": "When prod breaks, roll back or flip a switch first and figure out why later, and check that nothing like a background job is still messing up data after the rollback.",
+    "intended": "The order for handling a production break (stop, understand, fix, prevent) plus making sure backups can actually restore lost data.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "or a database trigger can keep",
+        "why": "Background worker got a gloss, trigger didn't. I don't know what a database trigger is or how I'd find out if I have one in Supabase."
+      },
+      {
+        "quote": "Point-in-time recovery, restoring to any minute",
+        "why": "I get the idea, but I don't know if my Supabase plan has it or where to check. 'Some free tiers keep none' scared me without telling me if that's me."
+      },
+      {
+        "quote": "copy back only the rows that were lost",
+        "why": "Big leap. How do I know which rows were lost, and how do I copy rows between two databases? This sounds hard and the stop moves on in one sentence."
+      }
+    ],
+    "skimmed": [
+      "The postmortem bullet. I've never been on call and it reads like advice for a team, not a solo dev shipping with Cursor.",
+      "Go deeper links. A whole SRE book chapter isn't something I'd open on my phone."
+    ],
+    "jargon": [
+      "database trigger",
+      "restore in place",
+      "restore drill",
+      "deploy (as in 'some hosts only go back one deploy', does Vercel?)",
+      "route offline (how do I take one route offline on Vercel?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "For my stack: where the rollback button is on Vercel, where Supabase shows my backup and PITR window, and what 'stop buttons' means concretely for a Next.js app. The 100-row delete limit sounds good, but I'd have no idea where that code goes. The Ask your agent line helps most here, because I'd just paste it.",
+    "cut": "The postmortem bullet. 'Ask why the system made the mistake easy' is a fine idea, but it's the least actionable for me, and the How I do it line already says to ship a change afterward.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When the app breaks, roll back first and make sure nothing (cron jobs, workers) is still writing, and don't trust a backup until I've actually restored one into a copy.",
+    "intended": "When production breaks, stop the damage before understanding it, then fix it and prevent a repeat, and have backups you've actually tested so lost data can come back.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "some hosts only go back one deploy",
+        "why": "A leap. I don't get why pushing a fix first breaks rolling back. Does my fix become the 'one deploy' I can go back to, so the bad deploy is now stuck behind it? Spell it out in one more clause."
+      },
+      {
+        "quote": "or a database trigger can keep",
+        "why": "Unexplained term. Background worker got a gloss, trigger didn't. I don't know if I even have triggers in Supabase or how I'd find them."
+      },
+      {
+        "quote": "copy back only the rows that were lost",
+        "why": "Sounds right, but I have no idea how to do it. A SQL query between two databases? A CSV export? This is the step I'd panic at, and the page just waves at it."
+      }
+    ],
+    "skimmed": [
+      "The '\"Be more careful\" changes nothing' bullet. I'm solo, there's no 'who', so the postmortem part felt like it was for a team. I only slowed down at 'a check in code that blocks it'."
+    ],
+    "jargon": [
+      "database trigger",
+      "scheduled job (I'd guess cron, but it's not said)",
+      "take the route offline (how? in Next.js?)",
+      "filter bug",
+      "restore in place"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where to check my plan's point-in-time recovery window in Supabase and what it is on the free and Pro tiers. How 'refuse any delete over 100 rows' actually looks: in my API code, an RLS policy, or something in Postgres? One sentence on how the copy-back works so the drill isn't just 'look at the rows'. The 'Ask your agent' line helps, but I'd like to know what a good answer looks like.",
+    "cut": "The last sentence of the postmortem bullet's setup, 'ask why the system made the mistake easy, not who made it'. It's fine, but as a solo builder it reads like someone else's problem. The 'each fix is a check, a test, or an alert' part is the useful bit.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

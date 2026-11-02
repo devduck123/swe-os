@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "Don't let the agent add Redis, Docker, a separate API, or extra packages until I can name the actual problem and a number that proves it, because each one is another thing that can break.",
+    "intended": "Build the simplest thing that solves today's problem, because every added service, layer, or package has a cost that agents won't weigh unless you ask.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "three layers of files per feature",
+        "why": "I don't know what a 'layer' is here. Is it like a controller/service/repository thing? I've seen agents make folders like that but nobody told me that's what 'layers' means. The later bullet 'Layers cost reading time' leans on this too."
+      },
+      {
+        "quote": "work that can run twice or sit stuck",
+        "why": "The queue gloss helped, but why would a job run twice? That's a leap. I believe it, I just don't get how it happens."
+      },
+      {
+        "quote": "Folding a separate API back into the app",
+        "why": "I get the general idea, but 'touches everything' is vague. I can't picture why it's a rewrite and a cache isn't."
+      }
+    ],
+    "skimmed": [
+      "'A free tier isn't a plan': feels like a different topic (billing, lock-in) bolted on. 'How you'd get your data out' doesn't say how I'd check that.",
+      "Go deeper links: I'm on my phone, not opening two long essays."
+    ],
+    "jargon": [
+      "layers (in the code-structure sense)",
+      "Docker",
+      "source of truth",
+      "Postgres (I know Supabase uses it, but the page doesn't say so)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "The rule depends on timing a slow page 'even with the right indexes', but I don't know how to time a page or check whether indexes are right. One line on how to measure it, or a prompt for asking the agent to, would make the 3-second example something I could actually do. It would also help to say plainly that Supabase counts as 'one Postgres database' so I know my stack already fits.",
+    "cut": "'A free tier isn't a plan.' It's useful advice, but it's about picking vendors, not about complexity earning its place, and it's too thin to act on.",
+    "clarity": 4,
+    "usefulness": 5
+  },
+  {
+    "takeaway": "Start with one Next.js app and one Supabase/Postgres database, and don't let the agent add Redis, Docker, a separate API, or random packages until I can write down the actual problem and a number that proves it.",
+    "intended": "Build the simplest thing that fully solves today's problem, because every extra service, layer, or package costs you to run and debug, and agents won't weigh that unless you ask.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "three layers of files per feature",
+        "why": "I don't know what a 'layer' is here. Is it like components/hooks/services folders? Controllers? I've seen agents make a bunch of folders but I couldn't tell you which ones count as layers or which ones are the bad kind. The later 'Layers cost reading time' bullet assumes I already know."
+      },
+      {
+        "quote": "even with the right indexes, the lookups",
+        "why": "The gloss helps a bit, but 'the right indexes' implies I'd know how to check whether I have them. I wouldn't. So I can't tell if my slow page has earned a cache or just needs an index, which is the whole point of the bullet."
+      },
+      {
+        "quote": "work that's slow, flaky, and must not be lost",
+        "why": "I get the words, but not what that looks like in my app. Is sending a welcome email that? Stripe webhooks? One example would have made the queue rule usable."
+      }
+    ],
+    "skimmed": [
+      "'A free tier isn't a plan', because it feels like a different topic (picking vendors) tacked onto the end. I'd skim past it.",
+      "'Go deeper' links. They're long blog posts and I'm on my phone, so I'd probably never open them."
+    ],
+    "jargon": [
+      "layers (of files)",
+      "source of truth",
+      "Redis",
+      "Docker",
+      "separate API (vs. what I have now with Next.js API routes? not clear)",
+      "monolith (only in the link title, but still)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How do I check what's already in my project that I could remove? The Ask your agent line covers new stuff, but most of my apps already have the junk in them. A one-line prompt like 'list every service, package, and folder layer in this repo and what each one is for' would help. Also, I don't have a PROJECT.md. Is that a thing I should make? What goes in it besides this?",
+    "cut": "'A free tier isn't a plan.' It's good advice but it's about vendor choice and lock-in, not about complexity. It dilutes the page and I'd lose it anyway.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

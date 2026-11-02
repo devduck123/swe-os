@@ -1,0 +1,64 @@
+[
+  {
+    "takeaway": "Before I let the agent write code, I write half a page on who it's for, the smallest thing someone can actually use, what done means, and what I'm not building, or the agent builds a bloated average app I didn't ask for.",
+    "intended": "Shaping means deciding what to build before building it: who has the problem, what they do today, the smallest slice, how you'll know it's done, what you're not building, and when to stop.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Put an edge case and an empty state",
+        "why": "Empty state gets explained right there, but edge case doesn't. I sort of know it means weird situations, but I couldn't come up with my own."
+      },
+      {
+        "quote": "tapping twice records one check-in",
+        "why": "I didn't get why this is the example. Why would tapping twice break anything? It feels like there's a lesson hiding here that the page doesn't explain."
+      },
+      {
+        "quote": "I run shape-project on any new idea",
+        "why": "What is shape-project? A command, a prompt, a plugin? I don't know how I'd run it in Cursor. The link goes to a SKILL.md, and I don't know what a skill is."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: the Basecamp link is a whole book, and I'm not reading that on my phone between things",
+      "The 'real competition' bullet. I got the point from the bold line and skimmed the rest."
+    ],
+    "jargon": [
+      "edge case",
+      "stack (as in 'before an agent picks a stack'), which I half know",
+      "shape-project / skill (as a thing you run)"
+    ],
+    "would_act": "yes",
+    "missing_to_act": "How to run shape-project if I'm not using your setup. The 'Ask your agent' prompt covers it, so I'd just paste that. It would help to have one tiny example of a finished PROJECT.md shape for the habit tracker so I could see what half a page looks like.",
+    "cut": "The 'AI part is rarely the product' bullet. It's a good point, but it's a different lesson (validate before you build AI) and it breaks the flow of the shaping list.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I let the agent write anything, I write half a page: who it's for, what they do now, the smallest usable version, a 'done when' list that becomes tests, what I'm not building, and what result would make me quit.",
+    "intended": "Shaping, deciding what to build before building it, fits on half a page of six questions and takes minutes, not days.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "I run shape-project on any new idea",
+        "why": "No idea what shape-project is or how you 'run' it. Is it a command, a prompt, a Claude Code thing? I use Cursor half the time. It reads like an insider tool."
+      },
+      {
+        "quote": "tapping twice records one check-in",
+        "why": "I get that it's an example, but not why tapping twice is the thing to worry about. Would my app really record two? One clause on why this breaks would make it click."
+      },
+      {
+        "quote": "before an agent picks a stack",
+        "why": "I know 'stack' loosely, but I don't see why picking it is the moment that matters. For me it's always Next.js and Supabase anyway."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links to long reads, and I'm on my phone.",
+      "How I do it: mostly repeats the Ask your agent line, plus a tool I don't have."
+    ],
+    "jargon": ["shape-project (the skill)", "edge case", "stack"],
+    "would_act": "yes",
+    "missing_to_act": "A filled-in example of the half page, like the habit tracker written out as six short lines, so I can copy the format. Also say what shape-project is, or that the Ask your agent prompt does the same job without it.",
+    "cut": "How I do it. The Ask your agent prompt already gives me the action in words I can paste, and this paragraph adds an unexplained tool on top.",
+    "clarity": 4,
+    "usefulness": 5
+  }
+]

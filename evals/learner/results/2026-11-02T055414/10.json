@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "Don't make clickable divs. Use real buttons, give icon buttons a name, and before merging, try the page with just the keyboard and zoomed to 200%.",
+    "intended": "That accessibility means people using a keyboard, a screen reader, or big text can actually use your app, so treat it like a bug and build it in from the start.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "tied to its input with `aria-describedby`",
+        "why": "Never seen this attribute. I get the idea (connect the error to the field) but I couldn't write it myself. Do I put the error's id on the input? One tiny example would fix it."
+      },
+      {
+        "quote": "keep Tab from leaving",
+        "why": "Didn't follow at first. Leaving what, the dialog? And why is that bad? Then it says component libraries handle it, so I'm unsure whether I'm supposed to care or not."
+      },
+      {
+        "quote": "Render it on page load and change only its text",
+        "why": "This is a leap. Why does it have to exist first? And what's the actual markup for a 'live region'? It says 'an element marked so' but marked how? I'd have to ask my agent."
+      }
+    ],
+    "skimmed": [
+      "The GOV.UK 2017 bullet. The point (tools miss stuff) is clear from the first sentence; the study details are for someone else.",
+      "Go deeper links. WCAG quick reference sounds like a wall of rules I won't read on my phone."
+    ],
+    "jargon": [
+      "ARIA / ARIA attributes",
+      "aria-describedby",
+      "axe (glossed as a browser extension but not what it does)",
+      "shadcn/ui (I've heard of it, but some readers won't, and it's not said why it helps)",
+      "500 (as in error code, I know it, but it's dropped without context)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually do the VoiceOver check: how do I turn it on and what am I listening for in two minutes? Same for axe: do I just click it and fix whatever's red? And the five-minute check doesn't say what 'pass' looks like at 200% zoom (nothing overlaps? nothing cut off?).",
+    "cut": "The 'Checkers miss most of it' bullet's study details. Keep the last sentence about alt text, which is the useful part; the 2017 stat feels like proof for a reviewer, not help for me.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Use real <button> and <a> tags instead of clickable divs, because otherwise keyboard and screen reader users literally can't use my app.",
+    "intended": "That accessibility means people using a keyboard, a screen reader, or big text can actually use your app, and you should build it in from the start because broken for them is just broken.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "tied to its input with aria-describedby",
+        "why": "I don't know what aria-describedby does or how to write it. 'Tied to its input' doesn't tell me whether it goes on the input or the error, or what value it takes. I'd have to ask my agent."
+      },
+      {
+        "quote": "Render it on page load and change only its text",
+        "why": "I got that a live region is a special element, but not how you mark it. Is it an attribute? A component? And I don't get why it has to exist on load. That's the leap the bullet header hints at, but it never says why."
+      },
+      {
+        "quote": "keep Tab from leaving, close on Escape",
+        "why": "I followed the list, but then 'Component libraries handle that, not your labels or colors' confused me. Does that mean the library does focus but I still do labels and colors? It reads backwards on first pass."
+      }
+    ],
+    "skimmed": [
+      "The 'Checkers miss most of it' bullet. GOV.UK in 2017 feels like a citation for someone else. I took the 40% number and moved on.",
+      "The Go deeper links. WCAG quick reference sounds like a spec I'd never open on my phone."
+    ],
+    "jargon": [
+      "ARIA",
+      "aria-describedby",
+      "axe (named, but I don't know what it outputs or what to do with it)",
+      "a 500 (I know it's a server error, but some readers might not)",
+      "native elements"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How to actually run the VoiceOver check. What do I press to turn it on, and what am I listening for in two minutes? Same for the keyboard-only check: what counts as passing? I'd do the zoom and axe steps, but I'd skip VoiceOver because I don't know where to start.",
+    "cut": "The 'Checkers miss most of it' bullet. The useful part (a tool can't tell if alt text is right) could be one clause in How I do it, and the 2017 study detail is for someone who wants to be convinced, not someone who wants to do it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]
