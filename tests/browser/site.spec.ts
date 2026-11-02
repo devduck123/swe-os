@@ -35,7 +35,7 @@ for (const scheme of ['light', 'dark'] as const) {
   });
 }
 
-test('landing: skip link, demo tabs, and copy prompt work from the keyboard', async ({
+test('landing: skip link, the misses, and copy prompt work from the keyboard', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -45,12 +45,14 @@ test('landing: skip link, demo tabs, and copy prompt work from the keyboard', as
     page.getByRole('link', { name: 'Skip to content' }),
   ).toBeFocused();
 
-  const tabs = page.getByRole('tab');
-  await tabs.first().focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-  await expect(page.locator('[data-skill]')).toHaveText('shape-project');
-  await expect(page.locator('.concern.is-on')).toHaveCount(3);
+  // Each row is a real miss from a stop, linking to that stop.
+  const row = page.getByRole('link', {
+    name: /A timeout doesn.t mean it failed/,
+  });
+  await expect(row).toHaveAttribute(
+    'href',
+    '/guides/timeouts-retries-idempotency/',
+  );
 
   await expect(page.locator('[data-origin]')).toContainText(
     '/skills/README.md',
@@ -104,9 +106,7 @@ test('docs navigation and search work', async ({ page, isMobile }) => {
   await expect(page.locator('.pagefind-ui__result-link').first()).toBeVisible();
 });
 
-test('landing reflows at 320px and its motion can be paused', async ({
-  page,
-}) => {
+test('landing reflows at 320px, and nothing loops', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto('/');
   expect(
@@ -114,23 +114,12 @@ test('landing reflows at 320px and its motion can be paused', async ({
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
-  // The ribbon moves, so it must not hold keyboard focus targets.
-  await expect(page.locator('.ribbon a, .ribbon [tabindex]')).toHaveCount(0);
-
-  const pause = page.getByRole('button', { name: 'Pause animations' });
-  await pause.click();
-  await expect(pause).toHaveAttribute('aria-pressed', 'true');
-  const running = await page.evaluate(
+  // The duck waves once and stops, so the page needs no pause control (WCAG 2.2.2).
+  const looping = await page.evaluate(
     () =>
       document
         .getAnimations()
-        .filter(
-          (a) =>
-            a.playState === 'running' &&
-            a.effect?.getTiming().iterations === Infinity,
-        ).length,
+        .filter((a) => a.effect?.getTiming().iterations === Infinity).length,
   );
-  expect(running).toBe(0);
-  await page.reload();
-  await expect(page.locator('html')).toHaveClass(/motion-paused/);
+  expect(looping).toBe(0);
 });

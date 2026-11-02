@@ -3,38 +3,38 @@
 :root[data-theme='dark'] {
   --sl-font: var(--swe-font-body);
   --sl-font-mono: var(--swe-font-mono);
-  --sl-color-white: #f7efe5;
-  --sl-color-gray-1: #ece3d7;
-  --sl-color-gray-2: #d3c9de;
-  --sl-color-gray-3: #a79cbb;
-  --sl-color-gray-4: #756b8c;
-  --sl-color-gray-5: #3b3251;
-  --sl-color-gray-6: #211c30;
-  --sl-color-black: #16131f;
-  --sl-color-accent-low: #46231f;
-  --sl-color-accent: #ff7f6a;
-  --sl-color-accent-high: #ffd2c8;
-  --sl-color-bg-nav: rgb(22 19 31 / 0.82);
-  --sl-color-bg-sidebar: #16131f;
+  --sl-color-white: #f3efe6;
+  --sl-color-gray-1: #e9e6df;
+  --sl-color-gray-2: #cfd2dc;
+  --sl-color-gray-3: #a3a8bb;
+  --sl-color-gray-4: #6a7088;
+  --sl-color-gray-5: #2c3142;
+  --sl-color-gray-6: #1a1e2b;
+  --sl-color-black: #12151f;
+  --sl-color-accent-low: #3a2617;
+  --sl-color-accent: #f4a261;
+  --sl-color-accent-high: #ffd9b8;
+  --sl-color-bg-nav: rgb(18 21 31 / 0.85);
+  --sl-color-bg-sidebar: #12151f;
   --sl-content-width: 46rem;
   --sl-text-h1: 2.6rem;
 }
 
 :root[data-theme='light'] {
-  --sl-color-white: #241e36;
-  --sl-color-gray-1: #332b48;
-  --sl-color-gray-2: #463d5e;
-  --sl-color-gray-3: #625979;
-  --sl-color-gray-4: #9a90ab;
-  --sl-color-gray-5: #e3d6c5;
-  --sl-color-gray-6: #f7ede1;
-  --sl-color-gray-7: #fcf5ec;
-  --sl-color-black: #fff9f2;
-  --sl-color-accent-low: #ffe2d9;
-  --sl-color-accent: #b83a26;
-  --sl-color-accent-high: #8c2a1a;
-  --sl-color-bg-nav: rgb(255 249 242 / 0.85);
-  --sl-color-bg-sidebar: #fff9f2;
+  --sl-color-white: #1c1f2b;
+  --sl-color-gray-1: #2a2d3b;
+  --sl-color-gray-2: #3d4050;
+  --sl-color-gray-3: #5b5f6e;
+  --sl-color-gray-4: #8c8a84;
+  --sl-color-gray-5: #e0d9cc;
+  --sl-color-gray-6: #efe9df;
+  --sl-color-gray-7: #f6f2ea;
+  --sl-color-black: #fbf8f2;
+  --sl-color-accent-low: #fbe3cf;
+  --sl-color-accent: #a8461a;
+  --sl-color-accent-high: #7e3311;
+  --sl-color-bg-nav: rgb(251 248 242 / 0.88);
+  --sl-color-bg-sidebar: #fbf8f2;
 }
 
 header.header {
@@ -62,10 +62,10 @@ header.header {
 .site-brand__os {
   color: var(--sl-color-accent);
 }
-.site-brand:hover .logo {
-  transform: rotate(-8deg) scale(1.06);
+.site-brand:hover .duck {
+  transform: rotate(-6deg) scale(1.05);
 }
-.site-brand .logo {
+.site-brand .duck {
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -80,15 +80,15 @@ header.header {
   color: var(--sl-color-white);
 }
 .content-panel h1 {
-  font-weight: 700;
+  font-weight: 520;
   line-height: 1.08;
 }
 .sl-markdown-content h2 {
-  font-weight: 650;
+  font-weight: 540;
   margin-top: 2.6rem;
 }
 .sl-markdown-content h3 {
-  font-weight: 600;
+  font-weight: 560;
 }
 
 /* Body text */
@@ -177,33 +177,15 @@ header.header {
   gap: 0.45rem;
   margin-top: 0.9rem;
 }
-.chip {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--swe-font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.02em;
-  padding: 0.22rem 0.65rem;
-  border-radius: 999px;
-  background: var(--sl-color-gray-6);
-  border: 1px solid var(--sl-color-gray-5);
-  color: var(--sl-color-gray-2);
+.page-meta__raw {
+  font-size: 0.82rem;
+  color: var(--sl-color-gray-3);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
 }
-.chip--track {
-  background: var(--sl-color-accent-low);
-  color: var(--sl-color-accent-high);
-  border-color: transparent;
-}
-.chip--quiet {
-  background: transparent;
-}
-.chip--link {
+.page-meta__raw:hover {
   color: var(--sl-color-accent);
-  text-decoration: none;
-  border-style: dashed;
-}
-.chip--link:hover {
-  border-style: solid;
 }
 .draft-note {
   margin-top: 1rem;
@@ -218,11 +200,10 @@ header.header {
 
 /* Skill pages */
 .skill-card {
-  border: 2px solid var(--sl-color-white);
+  border: 1px solid var(--sl-color-gray-5);
   border-radius: var(--swe-radius);
   padding: 1.1rem 1.25rem;
   background: var(--sl-color-gray-6);
-  box-shadow: 4px 4px 0 var(--sl-color-white);
   margin-bottom: 2rem;
 }
 .skill-card p {
