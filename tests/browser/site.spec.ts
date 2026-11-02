@@ -123,3 +123,33 @@ test('landing reflows at 320px, and nothing loops', async ({ page }) => {
   );
   expect(looping).toBe(0);
 });
+
+test("a stop shows Tommy's note and a duck that hands you the prompt", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/guides/timeouts-retries-idempotency/');
+  await expect(page.locator('.stop-eyebrow')).toHaveText(
+    /Design · stop 7 of \d+/,
+  );
+  await expect(page.locator('.page-meta__status summary')).toHaveText(
+    /Draft · not reviewed by Tommy yet/,
+  );
+
+  const note = page.locator('.stop-note');
+  await expect(note).toContainText('How I do it:');
+  await expect(note).toContainText('a timeout on every outside call');
+
+  const ask = page.locator('.stop-ask');
+  await expect(ask.locator('svg.duck')).toBeVisible();
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  const copy = ask.getByRole('button', { name: /Copy/ });
+  await copy.focus();
+  await page.keyboard.press('Enter');
+  await expect(ask.getByRole('status')).toHaveText(
+    'Copied. Paste it to your agent.',
+  );
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copied).toMatch(/^List every call this app makes/);
+  expect(copied).toMatch(/keyed on the record it belongs to\.$/);
+});
