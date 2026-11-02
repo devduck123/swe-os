@@ -15,15 +15,16 @@ What's in it:
 ## Next
 
 1. **Tommy reviews the short track.** All 22 stops are `status: draft`. He reads them, keeps or cuts misses, and rewrites the "How I do it" lines in his own words.
-2. **The site, in ducktommy.com's spirit.** Calm and minimal, expressive in hand-drawn art and animation: a duck in a graduation cap as the mascot, fewer landing sections and colors, two doors (read it, point your agent at it), a demo that matches today's reports, no metadata chips above stops, one name for the track everywhere.
-3. **A UI eval.** [Design taste](profile/design.md) gives agents freedom on direction, art, and motion, with fixed rules for contrast, reduced motion, and tokens. Test it: does a feature built with it feel designed (states, micro-interactions, real art) and still pass the rules, in both themes?
-4. **More `learn` evals.** The walkthrough eval exists: SWE OS now scores 2.92 vs 2.53 (3 reps). Catch-up and own-a-piece are still untested.
-5. **Trim the agent guidance to what earns its place.** The first ablation cut the step-by-step procedure from debug, review-change, and explain, and all three scored lower than a same-day control (−0.25, −0.06, −0.11), so the steps stay. Next to test: the concerns README and the rules in skills/README.md.
-6. **A real-use baseline with Tommy.** The project eval gave the synthetic one: with a fresh session per feature, SWE OS scored 2.63 vs 2.50 at 1.8× the cost (see [project eval](evals/project/README.md)). Next, Tommy builds one real side project with it, with a learning area named in its AGENTS.md, and records what helped and what got in the way.
-7. **Real readers.** Share the site with a few people who build with AI, and turn on Vercel Web Analytics.
-8. **On each new model:** rerun the evals, and delete guidance that no longer helps.
-9. Try one task in Codex with each path.
-10. A custom domain, when wanted. Change the URL in `astro.config.mjs`, the README, and the repo's homepage.
+2. **Tommy refines the About me pages.** He reviews `profile/tommy.md`, `voice.md`, `writing.md`, `learning.md`, and `design.md`, and proposes changes so they match how he actually talks, writes, and wants his agents to work. Fold them in as he says them.
+3. **The site, in ducktommy.com's spirit.** Calm and minimal, expressive in hand-drawn art and animation: a duck in a graduation cap as the mascot, fewer landing sections and colors, two doors (read it, point your agent at it), a demo that matches today's reports, no metadata chips above stops, one name for the track everywhere.
+4. **A UI eval.** [Design taste](profile/design.md) gives agents freedom on direction, art, and motion, with fixed rules for contrast, reduced motion, and tokens. Test it: does a feature built with it feel designed (states, micro-interactions, real art) and still pass the rules, in both themes?
+5. **More `learn` evals.** The walkthrough eval exists: SWE OS now scores 2.92 vs 2.53 (3 reps). Catch-up and own-a-piece are still untested.
+6. **Trim the agent guidance to what earns its place.** The first ablation cut the step-by-step procedure from debug, review-change, and explain, and all three scored lower than a same-day control (−0.25, −0.06, −0.11), so the steps stay. Next to test: the concerns README and the rules in skills/README.md.
+7. **A real-use baseline with Tommy.** The project eval gave the synthetic one: with a fresh session per feature, SWE OS scored 2.63 vs 2.50 at 1.8× the cost (see [project eval](evals/project/README.md)). Next, Tommy builds one real side project with it, with a learning area named in its AGENTS.md, and records what helped and what got in the way.
+8. **Real readers.** Share the site with a few people who build with AI, and turn on Vercel Web Analytics.
+9. **On each new model:** rerun the evals, and delete guidance that no longer helps.
+10. Try one task in Codex with each path.
+11. A custom domain, when wanted. Change the URL in `astro.config.mjs`, the README, and the repo's homepage.
 
 ## Decisions
 

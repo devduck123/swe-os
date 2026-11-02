@@ -1,0 +1,83 @@
+[
+  {
+    "takeaway": "Start with one Next.js app and one database, and don't add a cache, queue, separate API, or new package until something is actually, measurably slow or broken.",
+    "intended": "Build the simplest thing that fully solves today's problem, because every extra piece costs you deploying, securing, upgrading, and debugging, and agents won't count that cost unless you ask.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "timed as slow with the right indexes",
+        "why": "unexplained term. I don't know what an index is or how to tell if mine are 'right', so I can't tell when a cache is earned"
+      },
+      {
+        "quote": "attackers register them",
+        "why": "a leap. Register where? How does an attacker know what name my agent made up? I get that fake packages are bad but not the mechanism"
+      },
+      {
+        "quote": "A separate API, by a second client",
+        "why": "too dense. 'Client' here isn't explained. Does a mobile app count? Does a second Next.js page count?"
+      }
+    ],
+    "skimmed": [
+      "'Layers cost reading time' bullet, because 'layers' is never pinned down and it reads like a repeat of the first bullet",
+      "'A free tier isn't a plan', because it feels like a different topic (pricing) tacked onto a page about simplicity",
+      "Go deeper links, because they're two long essays and I'm on my phone"
+    ],
+    "jargon": [
+      "indexes",
+      "queue (as a piece of infrastructure, not a line of people)",
+      "cache",
+      "Redis",
+      "Docker",
+      "browser state store",
+      "source of truth",
+      "layers / three layers per feature",
+      "second client",
+      "the platform (which platform?)",
+      "Postgres as something separate from Supabase"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'm on Supabase, not 'one Postgres database', so I'm not sure if that already counts as extra pieces. I don't know what 'the number that proves it' looks like: a page load time? How do I time a page? What is PROJECT.md and do I need one? The rule is clear but the test for 'earned' is not something I know how to run.",
+    "cut": "'Layers cost reading time.' It never says what a layer is, the first bullet already covers 'three layers per feature', and 'another file to open' is the weakest cost on the page next to 'two copies of the truth that can disagree'.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't let the agent add Redis, a queue, or a separate backend until I can point to something I actually measured that's slow or broken.",
+    "intended": "Build the simplest thing that solves today's problem, because every extra service, layer, or package costs something to run and agents won't count that cost unless you ask.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "timed as slow with the right indexes",
+        "why": "unexplained term. I don't know what an index is, so I can't tell whether my slow page already has the 'right' ones or how I'd check."
+      },
+      {
+        "quote": "three layers per feature",
+        "why": "I don't know what a 'layer' is here. Folders? Files? Controller/service/repository? I've seen agents generate that structure but couldn't name it."
+      },
+      {
+        "quote": "A separate API, by a second client",
+        "why": "a leap. Is a mobile app a second client? Is a cron job? Is another dev's script? I can't apply the rule without knowing."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two links with no hint of what I'd get from each, so I'd skip them on my phone.",
+      "'A free tier isn't a plan': felt like a side point about billing, not about keeping things simple, so I half-read it."
+    ],
+    "jargon": [
+      "indexes",
+      "layer / layers",
+      "browser state store",
+      "Redis",
+      "queue",
+      "second source of truth",
+      "second client",
+      "Docker",
+      "PROJECT.md (assumes I already have one and know what goes in it)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I use Supabase, not a Postgres I run, so I'm not sure if 'one Next.js app and one Postgres database' means I'm already doing it right or already over-built. And 'the number that proves it' doesn't say what kind of number: page load seconds? failed requests? users? One example line in PROJECT.md would get me moving.",
+    "cut": "'A free tier isn't a plan.' It's about picking a vendor and getting your data out, which is a different lesson from 'don't add pieces you haven't earned', and it's the one bullet that didn't connect back to the opening.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

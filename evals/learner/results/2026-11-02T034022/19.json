@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "When something breaks, undo it first and stop anything still writing, and don't trust a backup until you've actually restored one.",
+    "intended": "Handle a production break in order (stop, understand, fix, prevent) and know whether your backups can really bring data back.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "refuse bulk deletes over a cap",
+        "why": "a leap: I don't know where this lives. Is it a Supabase setting, a database rule, or code in my API route? I can't picture what I'd write."
+      },
+      {
+        "quote": "move back only what was lost",
+        "why": "too dense: restoring a copy next to production sounds right, but how do I get rows from the copy into the real database? That step is the scary one and it's skipped."
+      },
+      {
+        "quote": "reaches back only as far as your plan keeps history",
+        "why": "this sentence packs the definition of point-in-time recovery, a plan limit, and a free-tier warning into one line. I read it three times on my phone."
+      }
+    ],
+    "skimmed": [
+      "'Be more careful' changes nothing: I've never had a team or a postmortem, so 'blameless postmortem' reads like a corporate ritual for someone else, even though the guard/test/alert bit is good."
+    ],
+    "jargon": [
+      "feature's flag (I've heard of feature flags but have never set one up, so 'flip it off' isn't a button I have)",
+      "worker (I know cron jobs vaguely; 'a worker' I'd have to guess at)",
+      "soft-delete (the bullet explains the idea but the term only shows up in How I do it, so I had to connect them myself)",
+      "guard (as in 'a guard, test, or alert', not sure what counts as a guard)",
+      "stop buttons (I get the metaphor but don't know what mine are on Vercel and Supabase)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd add a deleted_at column tomorrow because the bullet tells me exactly what that means. The restore drill I'd put off, because I don't know what 'restore a copy' looks like in Supabase or whether my free project even has a backup to restore. 'Know my stop buttons' needs one example each: rollback is a button in Vercel, but what's the stop button for a scheduled job?",
+    "cut": "'Silence is worse than bad news.' It's true but it's the only bullet that isn't a thing I'd do to my app, and it reads like advice for someone with a status page and a team. If I had to make room, this goes first.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "When something breaks, hit undo first (roll back, turn the feature off) before trying to figure it out, and actually try restoring a backup once so I know whether it would save me.",
+    "intended": "Fix outages in the order stop, understand, fix, prevent, and treat a backup as real only once you've restored from it.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "some hosts only go back one deploy",
+        "why": "a leap: I had to reread to get that pushing a fix makes the broken deploy the 'previous' one, so the rollback button now points at the bug"
+      },
+      {
+        "quote": "A filter bug then hits a wall",
+        "why": "unexplained: I guessed 'filter bug' means a delete with the wrong condition that wipes too many rows, but it isn't said"
+      },
+      {
+        "quote": "A scheduled job or a worker can keep destroying data",
+        "why": "I use cron routes and Supabase edge functions but wouldn't have called them 'workers'; took a second to map it to my stack"
+      }
+    ],
+    "skimmed": [
+      "'Silence is worse than bad news' — I'm solo, there's no team channel to post in, so it read as advice for someone else",
+      "Go deeper links — the SRE book sounds like a 300-page thing for people with on-call rotations; I'd only open the Supabase one"
+    ],
+    "jargon": [
+      "feature's flag (I've heard 'feature flag' but don't have any; not clear what flipping one means in a Next.js app)",
+      "worker",
+      "soft-delete (used in How I do it; the idea is explained in the bullet above but the word is never attached to it)",
+      "writes (as a noun for 'things saving to the database')",
+      "filter bug",
+      "postmortem (half-explained: I get it's a write-up after a failure, 'blameless' is clear from context)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd do the restore drill because the Supabase link is right there. 'Know my stop buttons' is fuzzy: I don't know what my buttons are beyond Vercel's rollback. One line naming them for a Vercel + Supabase app (Vercel instant rollback, pause the cron, disable the edge function, Supabase pause project) would turn it into a checklist. 'Soft-delete what users create' also needs one concrete hint, like 'add a deleted_at column and filter on it'.",
+    "cut": "The 'Silence is worse than bad news' bullet. It's the only one that isn't about stopping damage or getting data back, and for a solo dev with no status page it's the paragraph I skipped.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

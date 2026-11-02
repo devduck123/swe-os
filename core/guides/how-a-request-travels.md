@@ -16,7 +16,6 @@ One tap goes from the browser to a CDN near the user, to a function in one regio
 - **Anything that ships to the browser is public.** That includes everything a client component imports and every public-prefixed environment variable. It runs the other way too: [server actions are public endpoints](trust-boundaries.md).
 - **A shared cache doesn't know who's signed in.** A CDN hands its copy of a response to everyone, session cookie or not. Cache a per-user page and one user sees another's data.
 - **Server memory is shared and temporary.** One instance serves many users at once, so a variable at the top of a file is shared by all of them. Instances come and go with traffic, so an in-memory counter or rate limit quietly resets.
-- **A CORS error is the browser talking.** The server usually answered fine. The browser just won't let your page read a response from another site.
 - **Slow only after a quiet period is a cold start.** A function or database that scales to zero has to wake up first.
 - **Works locally, broken when deployed** is usually a missing environment variable. Check that before the code.
 

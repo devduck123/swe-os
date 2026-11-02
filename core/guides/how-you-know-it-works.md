@@ -13,14 +13,13 @@ status: draft
 ## Easy to miss
 
 - **The bugs live in the failure paths.** Agent-written code handles the happy path. Test the wrong user, invalid input, and the expired session first.
-- **A mocked database enforces none of your rules.** It passes the query that forgets to filter by user and the duplicate a real one would reject. Run integration tests against a real Postgres.
+- **A fake database enforces none of your rules.** A mock passes the query that forgets to filter by user and the duplicate a real one would reject. Test the important paths against a real Postgres.
 - **"The mock was called" isn't "it worked".** Checking that `sendEmail` ran doesn't prove the right person got the right email. Assert what the user sees or what the database holds.
 - **A test that can't fail looks like protection.** Break the line it guards and run it. If it still passes, it isn't testing that line.
 - **A bug fix needs a test that failed first.** Reproduce the bug, watch it go red, then fix it.
 - **An agent can teach the test the bug.** Watch for a skipped test, a loosened assertion, or an expected value that changed in the same diff as the code it checks.
-- **Flaky tests teach everyone to ignore red.** Then a real failure ships looking like every other flake. Fix it, or skip it on purpose with an owner.
 
-**How I do it:** integration tests against a local Postgres for every rule about who can see or change what, Playwright for the flows I'd hate to see broken, one `check` script CI requires before merge, and no coverage target.
+**How I do it:** tests against a local Postgres for every rule about who can see or change what, Playwright for the flows I'd hate to see broken, and one `check` command that has to pass before anything merges. No coverage target.
 
 ## Go deeper
 

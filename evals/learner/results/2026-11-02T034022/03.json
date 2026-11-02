@@ -1,0 +1,72 @@
+[
+  {
+    "takeaway": "Before I let the agent build anything, write half a page saying who it's for, the one thin thing they can actually use, a checklist of what 'done' means, and what I'm not building.",
+    "intended": "Spend a few minutes writing down the problem, the smallest usable slice, the done-when list, the not-building list, and a stop signal before any code gets written.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "One thin journey from the screen to the database",
+        "why": "I get that it means a full path, but 'journey' and 'slice' are new words for the same idea, and 'Nobody can use a schema' assumes I know the agent would otherwise start with the database shape, which I wouldn't have thought of."
+      },
+      {
+        "quote": "Decide the stop signal before any code",
+        "why": "A leap. The opener lists 'what would tell you to stop' but never gives an example. Stop what? The feature? The whole product? I'd want one line like 'if nobody opens it twice in two weeks, I stop.'"
+      },
+      {
+        "quote": "ask for one test per done-when line",
+        "why": "I've never written a test on purpose. I don't know what I'd literally type to the agent to get this, or how I'd know the test is real and not the agent saying it passed."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: two external links with no sentence saying why I'd read them or how long they are. Shape Up is a whole book. On a phone I'd never tap these."
+    ],
+    "jargon": [
+      "schema",
+      "slice (used before it's defined, in the opener)",
+      "edge case",
+      "empty state",
+      "stack (in 'before an agent picks a stack')",
+      "idempotent is avoided, but 'tapping twice records one check-in' is the example and I didn't know that was a named thing worth testing for"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'How I do it' line sends me to a skill file and PROJECT.md but never shows what the half page looks like. One real filled-in example, even for the habit tracker, would let me copy it tonight. I also don't know how to phrase 'one test per done-when line' to the agent, or what to do when it says it added the tests.",
+    "cut": "The last bullet, 'The AI part is rarely the product.' It's good advice but it's a different lesson about validating ideas, not about shaping, and the 'AI coach' example feels aimed at someone building a startup rather than me shipping an app. It's also the bullet where I started skimming.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Before I let an agent build anything, I write half a page saying who it's for, the one thin thing they can actually use, what 'done' looks like as a checklist, and what I'm not building.",
+    "intended": "Shaping is a half-page answering who has the problem, what they do today, the smallest usable slice, how you know it's done, what you're not building, and what would make you stop.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "One thin journey from the screen to the database",
+        "why": "I think I get 'journey' as a user flow, but 'thin' and 'to the database' are vague. Does a slice mean one page with one Supabase table? I'd want one concrete example like 'a form that saves one check-in and a page that lists them.'"
+      },
+      {
+        "quote": "Nobody can use a schema.",
+        "why": "I know 'schema' loosely as table setup, but this line reads like an inside joke for people who've shipped schemas first. It took me a second to realize it means 'don't start with the data model.'"
+      },
+      {
+        "quote": "Each line becomes a test",
+        "why": "I don't write tests. How does 'tapping twice records one check-in' become a test? Do I ask the agent to write it, and what do I check? One sentence would fix it."
+      }
+    ],
+    "skimmed": [
+      "'Go deeper' links. Shape Up is a whole book and Paul Graham essays are long. On my phone I'd skip both unless one line told me what I'd get from each.",
+      "The 'What they do today' bullet half-registered. The Notes checklist example saved it, but 'there's no product yet' sounded like startup advice rather than something I'd do."
+    ],
+    "jargon": [
+      "schema",
+      "edge case",
+      "empty state",
+      "test (as in 'one test per done-when line')",
+      "stack (in 'before an agent picks a stack')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I do it points to a skill I have to go open, and tells me to keep the shape in PROJECT.md, which I've never had. I'd want the six questions listed as a copyable template right here, and one line on what 'ask for one test per done-when line' sounds like when I type it to Claude Code.",
+    "cut": "The 'AI part is rarely the product' bullet. It's good advice but it's about picking what to build, not shaping it, and it's the one bullet that made the list feel long on my phone.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

@@ -14,14 +14,14 @@ A background job is work you promise to do later, outside the request that asked
 
 - **Fire-and-forget loses work without a trace.** Work that runs after the response has no record and no retry. Anything that must happen gets written to a table first.
 - **Every job runs twice eventually.** One that finishes and crashes before recording success looks like one that never started. Make each write check the row's status, or hit a unique constraint (a database rule that rejects a duplicate).
-- **The signature covers the raw bytes.** Parse the JSON before verifying and the check fails, which tempts people to skip it. Then anyone can post a fake "payment succeeded".
+- **Anyone can call your webhook URL.** Without checking the provider's signature, a stranger can post a fake "payment succeeded". Check it against the request exactly as it arrived, before you parse it, or the check fails and tempts you to skip it.
 - **Store the event before you answer 200.** Answer first and crash, and the sender never retries. Saving it by event ID also makes a repeat delivery do nothing.
 - **Events arrive out of order.** "Paid" can land before "created". Use the event to learn what changed, then fetch its current state.
-- **Cron is weaker than it looks.** A failed run isn't retried, a run can arrive twice, and a slow one can overlap the next. A lease row, saying who holds the sweep until when, keeps two runs apart.
+- **Cron is weaker than it looks.** A scheduled run that fails isn't retried, a run can arrive twice, and a slow one can still be going when the next starts. Make sure two runs can't grab the same work.
 - **A cron route is a public URL.** Anyone who finds it can trigger the job, so it checks a secret before doing anything.
 - **A failure needs somewhere to land.** Count attempts, save the last error, give up after a few, and report it. A growing age on the oldest pending job is the first sign processing stopped.
 
-**How I do it:** a `jobs` table with status, attempts, and the last error, processed right after the request and swept by cron, until retries can't wait for the next sweep and a hosted job service earns its place.
+**How I do it:** a `jobs` table that records each job's status, attempts, and last error. A scheduled sweep picks up whatever's pending, until retries can't wait for the next sweep and a hosted job service earns its place.
 
 ## Go deeper
 

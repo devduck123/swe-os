@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "Before real people use my app, set up error tracking and a daily count of signups, payments, and failed jobs, because users won't tell me when things break.",
+    "intended": "Observability means you can answer 'is it broken, for whom, and why' from data you already collected, with a small setup you need the moment strangers use the app.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Tag every error with the commit it came from",
+        "why": "I don't know how you 'tag' an error with a commit. Is this a Sentry setting? Something in Vercel? It sounds like a thing I'd have to do manually on every error."
+      },
+      {
+        "quote": "Make one per request, put it on every log line",
+        "why": "A leap. Where do I 'make' a request ID in a Next.js app, and how does it get onto every log line? I console.log in API routes; I don't have a system that stamps lines."
+      },
+      {
+        "quote": "Have the important job check in each run",
+        "why": "Check in where? I get the idea (the job should say 'I ran'), but I have no picture of what it checks in to or what watches for the silence."
+      }
+    ],
+    "skimmed": [
+      "The Google SRE book link. 'Distributed systems' already tells me it's for Google-sized teams, not me and my Supabase project.",
+      "The 'Logs leak' bullet, because I don't think of myself as having 'logs' beyond the Vercel function tab, so it felt aimed at someone else even though the advice is probably right."
+    ],
+    "jargon": [
+      "source maps (I've seen the word in Next.js build output but couldn't say what one is)",
+      "minified stack trace",
+      "releases (in the Sentry sense)",
+      "health check / uptime check",
+      "webhooks (I've wired Stripe ones by following a tutorial, but 'fail where no page breaks' assumes I know how they run)",
+      "request ID"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The How I do it list is the right shape, but half the items are nouns I can't turn into actions. I'd install Sentry (it has a Next.js wizard). I'd probably find an uptime service. I would not know how to do 'a request ID on every log line' or where the daily email comes from: is that a cron job I write, a Supabase query, a Sentry feature? One sentence each on where that lives would get me to do it.",
+    "cut": "The 'A minified stack trace is a riddle' bullet. It's the most technical bullet, it introduces three unexplained terms, and the Sentry line in How I do it ('with source maps and releases') already covers the action. Keep the idea, lose the riddle.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Don't wait for users to tell you it's broken: set up error tracking, count the things that should be happening (signups, payments, jobs), and get told when they stop.",
+    "intended": "Observability means being able to answer whether the app is broken, for whom, and why from data you already collected, and a solo dev needs a small setup for that before strangers use the app.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "after your host's logs have rolled over",
+        "why": "unexplained term; I don't know what 'rolled over' means or that Vercel throws logs away"
+      },
+      {
+        "quote": "Without source maps it points at `a.js:1:48213`",
+        "why": "I've seen 'source maps' in build output but don't know what they are or why this fixes the riddle"
+      },
+      {
+        "quote": "Have the important job check in each run",
+        "why": "a leap; check in to what? I don't know what tool receives the check-in or how it alerts me"
+      }
+    ],
+    "skimmed": [
+      "Go deeper: the Google SRE book link feels like it's for people with teams and pagers, not me",
+      "Second half of the opening paragraph: the list of five things reads like a checklist I'll come back to, not something to read now"
+    ],
+    "jargon": [
+      "source maps",
+      "releases (in the Sentry sense)",
+      "minified stack trace",
+      "health check / uptime check",
+      "request ID",
+      "logs rolled over",
+      "lossy"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd install Sentry because it's named, but I don't know how to put a request ID on every log line in Next.js, what to use for the uptime check, or how to build the daily email of signups, payments, and failed jobs. One tool name or snippet for each would get me moving.",
+    "cut": "The 'Go deeper' SRE book link. It's written for big distributed systems and I'd bounce off it in a minute; the Sentry link alone is enough.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

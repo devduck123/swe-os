@@ -1,0 +1,79 @@
+[
+  {
+    "takeaway": "Clicking through once isn't proof; write tests that fail when the thing breaks, especially for the wrong-user and bad-input cases, and don't trust a fake database.",
+    "intended": "A test is how a requirement survives past the session that wrote it, and coverage numbers don't tell you anything actually got checked.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Run integration tests against a real Postgres.",
+        "why": "I don't know what makes a test an 'integration' test versus whatever else, and my database is Supabase in the cloud. I don't know how I'd point a test at 'a real Postgres' on my laptop."
+      },
+      {
+        "quote": "Coverage tells you which lines ran",
+        "why": "I've seen a coverage percentage in a PR comment once but never set it up. This sentence assumes I already understand what it measures, so the point that it's misleading lands softer than it should."
+      },
+      {
+        "quote": "one check script CI requires before merge",
+        "why": "I push to GitHub and Vercel deploys. I don't have a step that blocks a merge, and I'm not sure if 'CI' here means GitHub Actions or something else, or what goes in the script."
+      }
+    ],
+    "skimmed": [
+      "The 'Flaky tests teach everyone to ignore red' bullet. I work alone and have never had a test that passes sometimes and fails sometimes, so it felt like a team problem, not mine.",
+      "The Go deeper links. The Kent C. Dodds title is intriguing but 'Playwright best practices' sounds like docs for a tool I don't use yet."
+    ],
+    "jargon": [
+      "integration tests",
+      "mocked database / the mock was called",
+      "assert",
+      "coverage",
+      "flaky",
+      "CI",
+      "Playwright (named but not said what it does)",
+      "local Postgres (as something separate from Supabase)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I can act on 'break the line it guards and run it' and 'reproduce the bug and watch it go red' today. I can't act on the integration-tests-against-Postgres part because I don't know how to get a real database running for tests when my app talks to Supabase, and the How I do it line names the tools without a hint of how they're wired up or what the check script contains.",
+    "cut": "The flaky tests bullet. For someone who doesn't have tests yet, the problem of having too many unreliable tests is three steps away, and it's the one bullet that reads like it's about a team I'm not on.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Clicking through the app only proves it worked once; tests are how a rule survives after the agent session that wrote it, and the ones that matter check the wrong user and bad input against a real database.",
+    "intended": "A test is how a requirement outlives the session that wrote it, because clicking proves one path once and agents change code faster than you can re-click.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "A mocked database enforces none of your rules",
+        "why": "I don't know what a mocked database is or why I'd have one. The agent sometimes writes jest.mock stuff in my tests and I never asked what it does, so I can't tell whether this bullet is about me."
+      },
+      {
+        "quote": "Coverage tells you which lines ran",
+        "why": "I've heard 'coverage' as a percentage people brag about but never seen a coverage report, so 'which lines ran' versus 'anything checked them' didn't land as a distinction."
+      },
+      {
+        "quote": "one `check` script CI requires before merge",
+        "why": "Too dense. I don't have CI, I don't know what goes in a check script, and I push to Vercel straight from main, so I couldn't picture what this sentence wants me to set up."
+      }
+    ],
+    "skimmed": [
+      "The 'Flaky tests teach everyone to ignore red' bullet, because I don't know what flaky means here and 'skip it on purpose with an owner' sounds like a team-of-twenty problem, not mine.",
+      "Go deeper links, because I'm on my phone and 'best practices' pages are where I go to feel bad."
+    ],
+    "jargon": [
+      "mocked database / mock",
+      "integration tests",
+      "assert / assertion",
+      "coverage",
+      "happy path",
+      "flaky",
+      "CI",
+      "Playwright",
+      "owner (of a skipped test)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "How I actually run tests against a real Postgres from a Next.js + Supabase project. Is that the Supabase local thing, Docker, a second project? What file does the test live in and what does one test for 'the wrong user can't see this row' look like? What do I put in a check script and where does it run if I don't have CI? And the thing I'd really use: what to tell the agent so it writes the failure-path test first instead of the mock-was-called test.",
+    "cut": "The 'Flaky tests' bullet. It assumes I have a test suite big enough to have flakes and a team that could own a skip. The other bullets are about my situation, that one is about someone else's, and it's the one I'd stop reading on.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

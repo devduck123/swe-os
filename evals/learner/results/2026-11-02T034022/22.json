@@ -1,0 +1,93 @@
+[
+  {
+    "takeaway": "Free tiers don't fail where you'd expect (a cron can keep your database awake and burn the free hours, Vercel's free plan won't let me take payments, email caps hit on launch day), and I should turn on MFA on every vendor account before real users show up.",
+    "intended": "The managed, free-to-start stack the author would use to build a real web app alone, and specifically where each free tier ends abruptly.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Constraints catch what code forgets",
+        "why": "unexplained term: I don't know what a database constraint is or what it catches, so the reason for picking Postgres read as a slogan"
+      },
+      {
+        "quote": "a database client per request runs out of connections",
+        "why": "a leap: I don't know what a connection is or that there's a limit, and I don't know what 'create the client once' looks like in a Next.js app where everything is a route file"
+      },
+      {
+        "quote": "A signed webhook says it was paid",
+        "why": "unexplained term: I know Stripe sends webhooks but not what 'signed' means or why that's the thing that proves payment"
+      }
+    ],
+    "skimmed": [
+      "The Why column of the table, because half the reasons use words I don't have (constraints, signed webhook, 'parse everything') and the picks themselves were enough to keep reading",
+      "The 'Listing files is metered' bullet, because I'd read it as a Vercel Blob billing detail for a product I don't use and move on",
+      "Go deeper, because it's four pricing pages and I'd only open one when something actually breaks"
+    ],
+    "jargon": [
+      "constraints",
+      "Drizzle (I think it's an ORM but the page assumes I know)",
+      "transactional email",
+      "signed webhook",
+      "parse (as in 'Parse everything from outside')",
+      "cron",
+      "spend cap",
+      "compute / compute hours",
+      "health check",
+      "polling",
+      "metered",
+      "rate limit",
+      "database client / connections",
+      "pg_dump",
+      "registrar",
+      "perimeter"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd turn on MFA today, that's concrete. But 'set a spend cap, not just an alert' doesn't tell me which dashboards even have one, 'create the client once' doesn't tell me where that goes in Next.js, and 'one upgrade at a time for a reason I can name' gives me no idea what the first reason usually is. The pg_dump mention at the end assumes I know how to run it and against what.",
+    "cut": "The second half of 'How I do it' ('knowing before each how I'd leave: pg_dump exports Postgres, and Drizzle doesn't care who hosts it'). It's the one place the page talks about leaving a vendor, it's crammed into one sentence with two tool names, and it dilutes the actual instruction, which is MFA first and upgrade deliberately.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Free plans don't fade out, they cut off suddenly in spots I wouldn't guess, so set a spend cap and turn on MFA on every vendor account before I have real users.",
+    "intended": "The one-person stack it would use for a real web app, and where each piece's free tier ends unexpectedly.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Constraints catch what code forgets",
+        "why": "unexplained term. I don't know what a constraint is in Postgres or how it would catch anything. Same row says 'through Drizzle' with no hint what Drizzle is."
+      },
+      {
+        "quote": "an in-memory login rate limit is several times looser",
+        "why": "too dense. Rate limit, in-memory, 'a database client per request runs out of connections', 'keep the counts in Postgres' (which counts?) all land in two sentences. I've seen Supabase warn about connection pooling and never understood why; this didn't help."
+      },
+      {
+        "quote": "A signed webhook says it was paid",
+        "why": "a leap. I roughly know a webhook is Stripe calling my URL, but 'signed' isn't explained and I don't know why the signature is the thing that matters."
+      }
+    ],
+    "skimmed": [
+      "The 'Why' column of the table: half the cells read like reminders for someone who already knows the tool, so I scanned the 'My pick' column and moved on.",
+      "The 'Serverless runs many copies' bullet: it isn't about free tiers like the others and felt aimed at a backend person, so I skipped to the next bold line.",
+      "Go deeper: four pricing pages I'd open 'later' on my phone and never would."
+    ],
+    "jargon": [
+      "constraints",
+      "Drizzle",
+      "signed webhook",
+      "transactional email API",
+      "cron",
+      "compute / free hours",
+      "polling",
+      "serverless",
+      "in-memory",
+      "rate limit",
+      "database client / connections",
+      "registrar",
+      "metered"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "MFA everywhere is clear and I'd do it tonight. The rest is fuzzy: 'set a spend cap' doesn't say where that setting lives or what number to put in, and 'one upgrade at a time for a reason I can name' doesn't tell me which signal means it's time (an email from Neon? an error in Sentry?). The table also gives me two 'or' choices for database, auth, and files with no rule for picking, so I'd just keep what I already use.",
+    "cut": "The 'Serverless runs many copies of your app at once' bullet. It's the densest paragraph on the page, it's the only one not about free tiers or vendor accounts, and I couldn't follow it well enough to change anything. It belongs on a stop that explains what a connection and a rate limit are.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

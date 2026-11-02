@@ -1,0 +1,76 @@
+[
+  {
+    "takeaway": "Most 'it's broken' problems happen at one of a few hops between the browser and the database, and if I check which hop before touching code I'll usually find it faster.",
+    "intended": "That a request passes through a CDN, a function, and a database, and knowing what each hop is and what it remembers lets you answer 'it's broken'.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "a variable at the top of a file is shared",
+        "why": "A leap. I write top-of-file consts all the time and thought each request got its own copy. The bullet tells me it's shared but not which kind of variable or what goes wrong when it is."
+      },
+      {
+        "quote": "read the failing request's status, timing, and cache header",
+        "why": "I know the Network tab exists but I don't know which cache header, what value is good or bad, or what 'timing' is supposed to tell me."
+      },
+      {
+        "quote": "ten times",
+        "why": "Five queries crossing ten times took me a second. I got it (there and back) but the math pulled me out of the point."
+      }
+    ],
+    "skimmed": [
+      "The CORS bullet. I've only hit CORS once and the bullet doesn't tell me what to do about it, so it reads like trivia.",
+      "The Go deeper links. Two docs pages with no hint of what I'd get from each, so I'd not tap them on my phone."
+    ],
+    "jargon": [
+      "instance",
+      "cold start (used as the name of the bullet before it's defined)",
+      "scales to zero",
+      "cache header",
+      "rate limit",
+      "region (I know Vercel has regions but not that the function and database are placed separately)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where I set the function's region, and which Supabase region is 'the database's'. 'Mark code for the browser only where something's interactive' is clear. The Network tab step needs the actual header name and what a bad answer looks like.",
+    "cut": "The CORS bullet. It's the only item that doesn't connect to the opening's hops, it gives no fix, and it's the one I'd forget first.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "A tap goes browser → CDN → one function → database and back, so put the function next to the database and read the Network tab before guessing what broke.",
+    "intended": "If you know where each hop is and what it remembers, \"it's broken\" becomes a question you can answer.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "Know where each hop is and what it remembers",
+        "why": "A leap. I don't know what 'remembers' means here until I hit the cache and server-memory bullets later, and the stop never draws the four hops out so I can picture them."
+      },
+      {
+        "quote": "A function or database that scales to zero",
+        "why": "Unexplained term. I get that something has to 'wake up', but I don't know what scaling to zero is or whether my Vercel functions and Supabase project do it."
+      },
+      {
+        "quote": "timing, and cache header in the Network tab",
+        "why": "Too dense. I know the Network tab exists, but which header is 'the cache header' and what would a good vs bad value look like?"
+      }
+    ],
+    "skimmed": [
+      "The CORS bullet. It reads like a different topic dropped into a list about hops, and I've only seen CORS errors a couple of times, so I'd skip it.",
+      "Go deeper. Two doc links with no hint of what I'd get from each, so I'd not tap them on my phone."
+    ],
+    "jargon": [
+      "CDN",
+      "region",
+      "instance",
+      "scales to zero",
+      "cache header",
+      "rate limit",
+      "session cookie",
+      "server actions"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "Where in Vercel I actually set the function's region and how I find my Supabase project's region. What 'mark code for the browser' means in Next.js terms (I'm guessing 'use client' but it doesn't say). Which header to look at in the Network tab and what a cache hit vs miss looks like.",
+    "cut": "The CORS bullet. It's the one item that isn't about where a hop lives or what it remembers, it adds a new acronym, and the stop would feel tighter and more like one idea without it.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

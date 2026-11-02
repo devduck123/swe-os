@@ -1,0 +1,73 @@
+[
+  {
+    "takeaway": "Every request from the browser is something a stranger could have typed, so check who they are from the session and only ever fetch rows that belong to them.",
+    "intended": "At every line where outside data enters your code, check that it's the right shape (validation) and that this caller is allowed to touch this exact thing (authorization).",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Put the owner in the query itself",
+        "why": "I think this means add a where user_id = ... clause, but it's a leap with no example, and I wasn't sure if 'query' meant the URL or the database call."
+      },
+      {
+        "quote": "each serverless instance has its own memory",
+        "why": "I don't know what a serverless instance is or why it would have separate memory. I just trusted 'put it in the database' without understanding why."
+      },
+      {
+        "quote": "a data access layer that takes the user",
+        "why": "Unexplained term. I don't know if this is a folder, a set of functions, a library, or a pattern I should look up."
+      }
+    ],
+    "skimmed": [
+      "The 'Logged in isn't allowed' bullet after the first sentence, because '404 for both' sounded like a detail for people who already know why you'd lie about existence.",
+      "The 'Bots find tiny apps too' bullet after 'rate limits from day one', because the IP/account/serverless part felt like it was for someone who has already done this once."
+    ],
+    "jargon": [
+      "data access layer",
+      "serverless instance",
+      "middleware",
+      "public key",
+      "rate limits (by IP and by account)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I can't picture what 'a data access layer' looks like in a Next.js + Supabase app. One tiny example (a getInvoice(sessionUser, id) function with the owner filter) and one example test would turn this from a principle into something I'd actually do. Also, which of these does Supabase RLS already handle for me and which ones do I still have to do myself?",
+    "cut": "The last sentence of the opening ('People forget the browser is outside, because they wrote the frontend. Anyone can edit the request.') is the best line on the page, so keep that. I'd cut 'Keep the counts in the database, since each serverless instance has its own memory' from the bots bullet. It's the one line that assumes knowledge I don't have, and the bullet works fine without it.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Anything the browser sends can be faked, so on the server I have to check that the logged-in user actually owns the exact row before I return or update it.",
+    "intended": "Wherever data crosses from something you don't control into something you do, check that it's shaped right (validation) and that this caller may touch this exact thing (authorization).",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Put the owner in the query itself",
+        "why": "a leap. I get that the URL ID isn't enough, but I don't know what 'in the query' looks like. Is that a where clause? A Supabase .eq('user_id', ...)? I'd want one line of code."
+      },
+      {
+        "quote": "Spreading the body into an update",
+        "why": "too dense. I had to reread it to realize it means ...body in an update call. The attack (someone adds role) only clicked after the next sentence."
+      },
+      {
+        "quote": "each serverless instance has its own memory",
+        "why": "unexplained. I deploy to Vercel but I've never thought about 'instances' or why a counter in a variable would be wrong. I nodded and moved on without understanding."
+      }
+    ],
+    "skimmed": [
+      "The 'Bots find tiny apps too' bullet, because it felt like a different topic (rate limits) from the rest of the page, and 'by IP and by account' sounded like an ops thing for bigger apps.",
+      "The Go deeper links. OWASP with a code like API1:2023 looks like it's for security people, and I'm on my phone."
+    ],
+    "jargon": [
+      "data access layer",
+      "serverless instance",
+      "rate limits by IP",
+      "public key (I know it as the anon key in Supabase, so I wasn't sure it was the same thing)",
+      "the query itself",
+      "resource (in 'one test per resource')"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I believe the advice but can't picture it. 'A data access layer' is a name, not a pattern. I'd need one short example: a function that reads the user from the session, queries Supabase filtered by that user's id, and returns three fields. And I've never written a test, so 'user B asks for user A's record and gets a 404' needs to show me how you even run as user B in a test.",
+    "cut": "The 'Bots find tiny apps too' bullet. It's real advice but it's about rate limiting, not validation or authorization, and it drags in instances and memory that the rest of the page didn't prepare me for. It would fit better on its own stop.",
+    "clarity": 4,
+    "usefulness": 4
+  }
+]

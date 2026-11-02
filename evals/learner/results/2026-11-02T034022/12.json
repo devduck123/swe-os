@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "Any key that lands in a browser bundle, a chat transcript, or a commit is already leaked, so rotate it and only ever give the agent the variable's name.",
+    "intended": "A secret that leaves its place is already compromised, and agents give it more ways to leave.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "a read-only dev database",
+        "why": "I use Supabase and have one database. I don't know how I'd make a second 'dev' one or how to make it read-only."
+      },
+      {
+        "quote": "Scrubbers catch a field named `password`",
+        "why": "I don't know what a scrubber is or which error reports have one. I assume this means Sentry, but I'm guessing."
+      },
+      {
+        "quote": "gives it more ways out",
+        "why": "Small thing, but 'it' is the secret and the sentence is about agents, so I reread it twice on my phone."
+      }
+    ],
+    "skimmed": [
+      "The 'Agents invent package names' bullet. It's about npm installs, not secrets, so it felt like it wandered in from another stop and I skipped it.",
+      "The row-level security bullet after the first clause. I turned RLS on because Supabase nagged me, and once I saw 'turn that off and anyone can read everything' I had the point."
+    ],
+    "jargon": [
+      "rotate (I inferred 'make a new key and delete the old one' but it's never said)",
+      "prompt injection (named right after the example, which helps, but the example is the only definition)",
+      "spend caps (which keys even have these? I know OpenAI does, I don't think Supabase does)",
+      "secret scan in CI (I know CI is the thing that runs on push, I don't know what tool does a secret scan or how to add one)",
+      "scrubbers",
+      "production key that can write (what's a key that can only read, for a Supabase or Stripe key?)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'How I do it' line is four habits with no handle on any of them. I'd move the API call to the server today and I'd stop pasting keys into Cursor. But I don't know where to click to set a spend cap, which tool does a secret scan in CI, or how to get a dev key for Supabase that's separate from my real one. One link or one tool name per habit would turn it into a checklist.",
+    "cut": "The 'Agents invent package names' bullet. It's real advice but it isn't about secrets, it breaks the thread, and the stop would feel tighter and more memorable at seven bullets.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Once a key is in a chat transcript, a commit, or the browser, it's gone, so only give the agent cheap dev keys and keep the real ones in Vercel.",
+    "intended": "A secret that leaves its place is already compromised, and agents give it more ways to leave.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "Rotate it, and give the agent",
+        "why": "unexplained term. 'Rotate' is used three times and never defined. I guess it means make a new key, but I don't know where or how, or what happens to the old one."
+      },
+      {
+        "quote": "a connection string inside an error message",
+        "why": "unexplained term. I don't know what a connection string is or what 'scrubbers' are, so this whole bullet felt like it was for someone running a tool I don't have."
+      },
+      {
+        "quote": "Move the call to the server instead",
+        "why": "a leap. I've hit the undefined-key problem exactly as described, but 'the call' and 'the server' are vague. An API route? A server component? One more clause would have landed it."
+      }
+    ],
+    "skimmed": [
+      "'Error reports are another copy' — I don't use an error reporting service and the words in it are foreign, so I skipped it.",
+      "'Agents invent package names' — short and clear, but it felt like a different topic bolted onto a secrets page, so I half-read it."
+    ],
+    "jargon": [
+      "rotate",
+      "connection string",
+      "scrubbers",
+      "CI",
+      "secret scan",
+      "publishable key",
+      "token"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'How I do it' line is four things I believe but can't do. Where do I set a spend cap on a key? What's a secret scan in CI and what do I install? How do I make a database key read-only? 'Rotate' needs one sentence on what it actually means. Each needs a verb I can type, or a link.",
+    "cut": "The 'Error reports are another copy' bullet. It uses two terms I don't know to warn about a tool I don't use, and it's the only bullet that didn't connect to anything I've done.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

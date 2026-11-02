@@ -1,0 +1,70 @@
+[
+  {
+    "takeaway": "Any call that leaves my code needs a time limit, a decision about whether to retry, and a way to make sure it doesn't run twice if I do.",
+    "intended": "Every outside call needs a timeout, a retry decision, and protection against running twice, and they only work together.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "what happens if the same thing runs twice",
+        "why": "The word 'idempotency' is in the title and never defined. I pieced together it means 'safe to run twice' from context, but the opening never says that plainly."
+      },
+      {
+        "quote": "An idempotency key made fresh on each attempt",
+        "why": "I don't know what an idempotency key is or where it goes. Is it a header? A database column? Something Stripe gives me? The bullet tells me a rule about it before I know what the thing is."
+      },
+      {
+        "quote": "a thousand clients retrying in sync",
+        "why": "I get that it's bad, but I don't know how my retries would end up 'in sync' or what to do about it. Feels like it's for someone running a big system."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: both links look long and corporate. The Stripe one I'd maybe open because I use Stripe. The Amazon one has 'jitter' in the title, which I don't know, so I'd skip."
+    ],
+    "jargon": [
+      "idempotency / idempotency key",
+      "503",
+      "400 (I know these are error codes, but not which ones mean 'try again' vs 'give up')",
+      "background work (as opposed to what? a server route? a cron job?)",
+      "jitter (in the link title)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd add a timeout today, but I don't know how in fetch or the Supabase client, and I don't know how to actually add an idempotency key. One line like 'send the order ID as a header and have the server check if it's already seen it' or 'Stripe accepts an Idempotency-Key header' would get me moving.",
+    "cut": "The 'Retries multiply' bullet. The forty-second math I get, but the 'thousand clients in sync' half is for people running infrastructure, not someone with one Next.js app, and it's the one bullet that made me feel like this page wasn't for me.",
+    "clarity": 4,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "A timed-out request might have actually gone through, so if you retry something that charges a card you can charge twice unless the server can recognize the repeat.",
+    "intended": "Every call out of your code needs a timeout, a retry decision, and a plan for the same thing running twice, chosen together ahead of time.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "An idempotency key made fresh on each attempt",
+        "why": "I still don't know what an idempotency key actually is. Is it a header? A column in Supabase? Where do I put it and who checks it? The sentence tells me how not to make one before telling me what one is."
+      },
+      {
+        "quote": "Retries belong in background work",
+        "why": "In my apps everything is a Next.js route handler or a server action that someone is waiting on. I don't have 'background work', so I don't know where retries are supposed to live for me."
+      },
+      {
+        "quote": "A timeout or a 503 might work next time. A 400 never will.",
+        "why": "I know 404 and 500. I'd have to guess that 503 means the server is overloaded and 400 means I sent something wrong. The point only lands if you already know the codes."
+      }
+    ],
+    "skimmed": [
+      "'Retries multiply' second half: 'a thousand clients retrying in sync is an outage you caused' sounds like a problem for people with a thousand clients, not me, so my eyes slid off it.",
+      "'Go deeper' links: Amazon Builders' Library with 'backoff with jitter' in the title feels like a different reader's homework."
+    ],
+    "jargon": [
+      "idempotency / idempotency key (the title term is never said plainly; the opening gets close with 'what happens if the same thing runs twice' but never connects that phrase to the word)",
+      "503 / 400",
+      "background work",
+      "backoff with jitter (in the link title)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I believe I should add a timeout, but I don't know how in fetch (is that AbortController?). I'd want one concrete picture of an idempotency key: the client generates an id for the order, sends it in a header, the server stores it and returns the saved result if it sees it again. And a sentence on what 'one attempt when someone's waiting' looks like in a Next.js app where every call is someone waiting.",
+    "cut": "The clause 'and a thousand clients retrying in sync is an outage you caused.' The first half of that bullet already made the point for my scale; the second half is for people running fleets and made me feel the page wasn't for me.",
+    "clarity": 4,
+    "usefulness": 3
+  }
+]

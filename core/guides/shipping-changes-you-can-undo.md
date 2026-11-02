@@ -15,13 +15,11 @@ Every change breaks something eventually. What you control is how big the break 
 - **A rollback undoes code, not consequences.** Sent emails, charged cards, and rewritten rows stay. Before merging anything that writes, sends, or charges, ask what's still wrong if you roll back in ten minutes.
 - **The old code keeps serving while the new one deploys.** So every migration has to work with the code in production now. Rename a column and the old queries fail. Add first, remove later, as in [database changes without downtime](database-changes-without-downtime.md).
 - **A preview is only as safe as what it talks to.** With production's database and live payment keys, "delete account" on a half-finished branch deletes a real account.
-- **The bypass list is you.** A required check is only binding if nobody can skip it, and on your own repo the admin who can is you. Keep the list empty.
 - **A fresh machine catches what yours hides.** A global tool or an untracked `.env` makes it work on your laptop. CI installs from the lockfile on a clean machine, so it fails where production would.
 - **A schema edit in the dashboard skips everything.** Nobody reviews it, and no other database gets it.
-- **Every flag is an `if`, and both sides have to work.** Delete it once the feature is fully on.
-- **Roll back first, investigate second.** After each deploy, run one critical flow on the real site and watch errors for ten minutes.
+- **A feature flag doubles the paths.** A flag, a switch that turns a feature on without a deploy, means the code runs both ways, and both have to work. Delete it once the feature is fully on.
 
-**How I do it:** a branch under a day old and a PR for every change, a required `check` with an empty bypass list, a preview with its own database that I click through on my phone, and migrations that run in the build before the new deploy takes traffic.
+**How I do it:** a short-lived branch and a PR for every change, a `check` that has to pass before merge, a preview with its own database that I click through on my phone, and one critical flow tried on the real site after each deploy.
 
 ## Go deeper
 

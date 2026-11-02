@@ -1,0 +1,77 @@
+[
+  {
+    "takeaway": "Anything that has to happen later goes in a database table first, because every job or webhook will eventually show up twice or not at all.",
+    "intended": "Background jobs and webhooks can arrive late, twice, or never, so you have to record the work and make repeats harmless.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "The signature covers the raw bytes",
+        "why": "I don't know what signature this is or what 'raw bytes' means versus the JSON I normally read. Why would parsing first make a check fail? I've copied Stripe's verify snippet before but this bullet assumes I understand what it does."
+      },
+      {
+        "quote": "A lease row, saying who holds the sweep until when",
+        "why": "'Sweep' hasn't been defined, 'lease row' is a new term, and the sentence packs two ideas into one. I couldn't picture what to build."
+      },
+      {
+        "quote": "processed right after the request and swept by cron",
+        "why": "This is the one line telling me what to do and I can't follow it. 'Processed right after the request' sounds like the fire-and-forget thing the first bullet just told me not to do. Where does the processing run on Vercel?"
+      }
+    ],
+    "skimmed": [
+      "'Events arrive out of order' — I half-skimmed it because 'fetch its current state' is abstract; I'd want one concrete example like 'call Stripe for the payment instead of trusting the event body'.",
+      "The 'How I do it' line — it's one long sentence with three clauses, and on a phone it reads like a summary for someone who already does this."
+    ],
+    "jargon": [
+      "fire-and-forget",
+      "queue",
+      "signature (of a webhook)",
+      "raw bytes",
+      "sweep / swept",
+      "lease row",
+      "hosted job service",
+      "pending job age"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I'd make a jobs table with status, attempts, and last_error, but I don't know how to actually run the job: is it an API route the request calls? A Vercel cron route that reads the table? How do 'processed right after the request' and 'swept by cron' fit together without the fire-and-forget problem? One or two named example services ('a hosted job service') would also help me know when I've outgrown the table.",
+    "cut": "The 'signature covers the raw bytes' bullet as written. I can tell it matters (fake 'payment succeeded' scared me) but I can't use it, so right now it only makes me feel the page is for someone else. Rewrite it as 'verify the webhook with the provider's library before you JSON.parse the body' or drop it.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Write the job to a table before doing it, assume it'll run twice, and save a webhook event before you reply 200.",
+    "intended": "Background jobs and webhooks can arrive late, twice, or never, so record the work first and only move it out of the request when you have to.",
+    "match": "yes",
+    "lost_at": [
+      {
+        "quote": "The signature covers the raw bytes.",
+        "why": "Unexplained term and a leap. I didn't know webhooks come with a signature, what 'raw bytes' means in a Next.js route, or why parsing JSON first would break the check. I just know Stripe's docs told me to paste something."
+      },
+      {
+        "quote": "A lease row, saying who holds the sweep until when",
+        "why": "Two undefined words in one phrase. I don't know what a 'sweep' is or what a 'lease' row looks like, so I couldn't picture the table or the code."
+      },
+      {
+        "quote": "processed right after the request and swept by cron",
+        "why": "Too dense. On Vercel my function ends when the response is sent, so 'processed right after the request' doesn't tell me where that code runs, and 'swept' is the same undefined word again."
+      }
+    ],
+    "skimmed": [
+      "The 'Cron is weaker than it looks' bullet after the first sentence, because the lease part read like it was for someone who already runs cron jobs.",
+      "The 'How I do it' line, because it's one long sentence with four moving parts and I'd scroll past it looking for a list."
+    ],
+    "jargon": [
+      "queue",
+      "fire-and-forget",
+      "signature (webhook signature)",
+      "raw bytes",
+      "sweep / swept",
+      "lease row",
+      "hosted job service"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The jobs table columns are listed, but not what 'processed right after the request' means on a serverless host, what the cron route actually does when it runs, how a job gets marked done, or which hosted job service to look at when the table stops being enough.",
+    "cut": "The 'signature covers the raw bytes' bullet. It's the only one that assumes a thing I've never heard of and gives no way in, so it reads as a warning for other people. Either gloss 'signature' in a few words or drop it and lean on the Stripe link.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]

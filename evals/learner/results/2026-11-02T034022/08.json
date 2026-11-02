@@ -1,0 +1,75 @@
+[
+  {
+    "takeaway": "Get the whole app running on my laptop first, then bolt on hosted services one at a time, and never point a preview at the real database.",
+    "intended": "Add hosted services one at a time in the order features need them, starting with the fastest loop you have, your laptop.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "If the build runs migrations",
+        "why": "I don't know what a migration is or whether my Vercel build runs one, so I can't tell if this warning applies to me."
+      },
+      {
+        "quote": "A pinned runtime, a committed lockfile",
+        "why": "Four things in one sentence with no gloss. I think lockfile is package-lock.json, but 'pinned runtime' means nothing to me."
+      },
+      {
+        "quote": "Postgres on my laptop with seed data",
+        "why": "My database has always been Supabase in the cloud. I don't know how to run Postgres locally or what that would mean for my Supabase client code."
+      }
+    ],
+    "skimmed": [
+      "Go deeper: 'Twelve-Factor App' sounds like a textbook, and 'Neon' is a product I don't use.",
+      "Each environment gets its own keys: felt like the same point as the two preview bullets above it, so my eyes slid past."
+    ],
+    "jargon": [
+      "migrations",
+      "pinned runtime",
+      "lockfile",
+      "seed script / seed data",
+      "CI",
+      "database branching",
+      "dev key"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "The 'How I do it' line names the end state but not the first move. I'd want: how to get Postgres running locally when everything I have is Supabase, what the 'one setup command' actually is, and how to give a Vercel preview its own database instead of mine.",
+    "cut": "'Each environment gets its own keys.' The two preview bullets already told me previews must not touch production, and this one just restates it with the word 'keys'.",
+    "clarity": 3,
+    "usefulness": 4
+  },
+  {
+    "takeaway": "Build on my laptop with fake seed data first, add one paid service at a time with a spend cap, and never let a preview deploy touch the production database.",
+    "intended": "Keep the fastest feedback loop on your laptop and add hosted services one at a time, in the order features need them, with payments last.",
+    "match": "partly",
+    "lost_at": [
+      {
+        "quote": "If the build runs migrations",
+        "why": "unexplained term. I use Supabase's dashboard to change tables. I don't know what a migration is or why a build would run one, so I couldn't tell if this applies to me."
+      },
+      {
+        "quote": "A pinned runtime, a committed lockfile",
+        "why": "unexplained term. I'm guessing 'pinned runtime' means a Node version somewhere, but I don't know the file or how it gets enforced."
+      },
+      {
+        "quote": "branch from seed data instead",
+        "why": "a leap. Database branching was just explained as a copy of production, then I'm told to branch from seed data with no idea what that looks like in Neon or Supabase."
+      }
+    ],
+    "skimmed": [
+      "'An agent that can't run the app can't check its work' because it mentions CI, which feels like a team thing, and it reads like a repeat of the fresh clone bullet.",
+      "'Go deeper' links, because The Twelve-Factor App sounds like a dense manifesto for someone else and I'm on my phone."
+    ],
+    "jargon": [
+      "migrations",
+      "pinned runtime",
+      "lockfile",
+      "CI",
+      "webhooks",
+      "seed data (used in the first bullet before the second bullet explains it)"
+    ],
+    "would_act": "partly",
+    "missing_to_act": "I use hosted Supabase, so 'Postgres on my laptop' is the hard part. Does the Supabase CLI local setup count, and what is the 'one check command' supposed to run? Also how to point a Vercel preview at its own database branch instead of production.",
+    "cut": "The 'An agent that can't run the app can't check its work' bullet. The fresh clone bullet already says a clone must run from the README, and this one adds CI without saying what the check command is.",
+    "clarity": 3,
+    "usefulness": 4
+  }
+]
