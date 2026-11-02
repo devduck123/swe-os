@@ -33,6 +33,6 @@ A plush toy duck in a graduation cap, drawn as a die-cut sticker.
 
 | Asset       | File                              | Used on                                  |
 | ----------- | --------------------------------- | ---------------------------------------- |
-| The duck    | `src/components/brand/Duck.astro` | Site title, landing, footer, 404         |
+| The duck    | `src/components/brand/Duck.astro` | Site title, landing, footer, 404, stops  |
 | Favicon     | `public/favicon.svg`              | Browser tab (a still duck)               |
 | Share image | `public/og.png`                   | Link previews (a screenshot of the hero) |

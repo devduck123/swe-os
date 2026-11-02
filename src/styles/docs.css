@@ -172,12 +172,12 @@ header.header {
 
 /* Page meta (PageTitle override) */
 .page-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
+  color: var(--swe-ink-soft);
+  font-size: 0.82rem;
   margin-top: 0.9rem;
 }
 .page-meta__raw {
+  margin-inline-end: 0.9rem;
   font-size: 0.82rem;
   color: var(--sl-color-gray-3);
   text-decoration: underline;
@@ -187,15 +187,37 @@ header.header {
 .page-meta__raw:hover {
   color: var(--sl-color-accent);
 }
-.draft-note {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--swe-butter) 22%, var(--sl-color-black));
-  border: 1px dashed
-    color-mix(in srgb, var(--swe-butter) 70%, var(--sl-color-gray-4));
-  color: var(--sl-color-gray-1);
-  font-size: 0.92rem;
+/* Draft or outline: a quiet label beside the raw link that opens to say what it means.
+   Inline, so the label stays put and the sentence opens on its own line below. */
+.page-meta__status {
+  display: inline;
+}
+.page-meta__status summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 4px;
+}
+.page-meta__status summary::-webkit-details-marker {
+  display: none;
+}
+.page-meta__status summary:hover {
+  color: var(--swe-ink);
+}
+.page-meta__mark {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--swe-butter);
+  box-shadow: 0 0 0 1px var(--swe-coral);
+}
+.page-meta__status p {
+  display: block;
+  max-width: 34rem;
+  margin: 0.35rem 0 0;
+  line-height: 1.5;
 }
 
 /* Skill pages */
