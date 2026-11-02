@@ -1,11 +1,11 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import Logo from '../components/Logo.astro';
+import Duck from '../components/brand/Duck.astro';
 ---
 
 <StarlightPage frontmatter={{ title: 'Page not found', template: 'splash' }}>
   <div class="not-found">
-    <Logo size={96} class="not-found__logo" />
+    <Duck size={96} class="not-found__logo" />
     <p>
       This page doesn't exist. Maybe it was deferred, or maybe it was never
       planned. Search above, or head back to the start.

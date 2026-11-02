@@ -1,7 +1,26 @@
 ---
 import Default from '@astrojs/starlight/components/Head.astro';
 import Fonts from './Fonts.astro';
+import { progressKey } from '../lib/track-progress';
+
+// A page with a `track` number is a stop. Visiting one marks it read on the track map.
+const { entry } = Astro.locals.starlightRoute;
+const stop = (entry.data as { track?: number }).track
+  ? `/${entry.id}/`
+  : undefined;
 ---
 
 <Default />
 <Fonts />
+{stop && <script is:inline define:vars={{ stop, progressKey }}>
+  try {
+    let read = [];
+    try {
+      read = JSON.parse(localStorage.getItem(progressKey) || '[]');
+    } catch {}
+    // Start over if what's stored isn't a list.
+    if (!Array.isArray(read)) read = [];
+    if (!read.includes(stop))
+      localStorage.setItem(progressKey, JSON.stringify([...read, stop]));
+  } catch {}
+</script>}

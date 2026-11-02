@@ -3,6 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 const pages = [
   '/',
+  '/guides/',
   '/guides/timeouts-retries-idempotency/',
   '/concerns/',
   '/principles/',
@@ -57,6 +58,18 @@ test('landing: skip link, the misses, and copy prompt work from the keyboard', a
   await expect(page.locator('[data-origin]')).toContainText(
     '/skills/README.md',
   );
+
+  // The ways to point an agent here are tabs, and arrow keys move between them.
+  await page.getByRole('tab', { name: 'Quick' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByRole('tab', { name: 'Local copy' })).toBeFocused();
+  await expect(page.getByRole('tab', { name: 'Local copy' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(
+    page.getByRole('tabpanel', { name: 'Local copy' }),
+  ).toBeVisible();
 
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.getByRole('button', { name: 'Copy the clone command' }).click();
@@ -122,4 +135,66 @@ test('landing reflows at 320px, and nothing loops', async ({ page }) => {
         .filter((a) => a.effect?.getTiming().iterations === Infinity).length,
   );
   expect(looping).toBe(0);
+});
+
+test("a stop shows Tommy's note and a duck that hands you the prompt", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/guides/timeouts-retries-idempotency/');
+  await expect(page.locator('.stop-eyebrow')).toHaveText(
+    /Design · stop 7 of \d+/,
+  );
+  await expect(page.locator('.page-meta__status summary')).toHaveText(
+    /Draft · not reviewed by Tommy yet/,
+  );
+
+  const note = page.locator('.stop-note');
+  await expect(note).toContainText('How I do it:');
+  await expect(note).toContainText('a timeout on every outside call');
+
+  const ask = page.locator('.stop-ask');
+  await expect(ask.locator('svg.duck')).toBeVisible();
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  const copy = ask.getByRole('button', { name: /Copy/ });
+  await copy.focus();
+  await page.keyboard.press('Enter');
+  await expect(ask.getByRole('status')).toHaveText(
+    'Copied. Paste it to your agent.',
+  );
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copied).toMatch(/^List every call this app makes/);
+  expect(copied).toMatch(/keyed on the record it belongs to\.$/);
+});
+
+test('the track map remembers the stops you read, until you reset it', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/guides/simple-first/');
+  await page.goto('/recipes/side-project-stack/');
+  await page.goto('/guides/');
+
+  const progress = page.locator('[data-track-progress]');
+  await expect(progress.getByText('2 of 22 read')).toBeVisible();
+  const read = page.locator('.track-stop[data-read]');
+  await expect(read).toHaveCount(2);
+  await expect(read.getByRole('link')).toHaveText([
+    'Simple first',
+    'The side-project stack',
+  ]);
+  // Screen readers hear it too.
+  await expect(read.first()).toContainText('(read)');
+
+  await page.getByRole('button', { name: 'Reset' }).click();
+  await expect(read).toHaveCount(0);
+  await expect(
+    progress.getByRole('link', { name: 'Start at stop 1' }),
+  ).toBeFocused();
+  await page.reload();
+  await expect(progress.getByText('of 22 read')).toBeHidden();
+  await expect(
+    progress.getByRole('link', { name: 'Start at stop 1' }),
+  ).toBeVisible();
+  await expect(read).toHaveCount(0);
 });

@@ -1,9 +1,13 @@
 ---
+import { getCollection } from 'astro:content';
 import Default from '@astrojs/starlight/components/PageTitle.astro';
+import Duck from './brand/Duck.astro';
 
 const { entry } = Astro.locals.starlightRoute;
 const data = entry.data as typeof entry.data & {
   status?: 'outline' | 'draft' | 'reviewed';
+  stage?: string;
+  track?: number;
 };
 // Skill pages are built by StarlightPage, which reports a placeholder path under
 // src/content/docs/ (a Starlight internal). Those pages show their own raw link instead.
@@ -11,25 +15,66 @@ const raw =
   entry.filePath && !entry.filePath.startsWith('src/')
     ? `/${entry.filePath}`
     : undefined;
+
+// Where this stop sits on the track, for the line above the title.
+const stops = data.track
+  ? (await getCollection('docs')).filter((doc) => doc.data.track).length
+  : 0;
+const stage = data.stage
+  ? data.stage[0].toUpperCase() + data.stage.slice(1)
+  : '';
+
+const notes = {
+  outline: {
+    label: 'Outline · being written',
+    full: 'This page is being written. The headings and notes show what it will cover.',
+  },
+  draft: {
+    label: 'Draft · not reviewed by Tommy yet',
+    full: "An agent wrote this and Tommy hasn't reviewed it yet. Check the claims against the sources before relying on them.",
+  },
+};
+const note =
+  data.status === 'outline' || data.status === 'draft'
+    ? notes[data.status]
+    : undefined;
+
+// The "Ask your agent" bubble gets a duck, cloned from this template by src/scripts/stop.ts.
+const asks = entry.body?.includes('**Ask your agent:**') ?? false;
 ---
 
+{data.track && (
+  <p class="stop-eyebrow not-content">
+    <span class="stop-eyebrow__dot" aria-hidden="true"></span>
+    {stage && <>{stage} · </>}stop {data.track} of {stops}
+  </p>
+)}
 <Default />
-{raw && (
+{(raw || note) && (
   <div class="page-meta not-content">
-    <a class="page-meta__raw" href={raw}>
-      View as Markdown
-    </a>
+    {raw && (
+      <a class="page-meta__raw" href={raw}>
+        View as Markdown
+      </a>
+    )}
+    {note && (
+      <details class="page-meta__status">
+        <summary>
+          <span class="page-meta__mark" aria-hidden="true"></span>
+          {note.label}
+        </summary>
+        <p>{note.full}</p>
+      </details>
+    )}
   </div>
 )}
-{data.status === 'outline' && (
-  <p class="draft-note not-content" role="note">
-    <strong>Outline.</strong> This page is being written. The headings and notes
-    show what it will cover.
-  </p>
+{asks && (
+  <template id="stop-duck">
+    <Duck size={44} />
+  </template>
 )}
-{data.status === 'draft' && (
-  <p class="draft-note not-content" role="note">
-    <strong>Draft.</strong> An agent wrote this and Tommy hasn't reviewed it
-    yet. Check the claims against the sources before relying on them.
-  </p>
-)}
+
+<script>
+  import { setupStopAsks } from '../scripts/stop';
+  setupStopAsks();
+</script>
