@@ -1,0 +1,48 @@
+---
+// On the track index, src/lib/rehype-track-map.mjs leaves empty `<span data-slot>` markers in the
+// rendered Markdown. This fills them with components: the reading progress and each stage's duck.
+// Every other page renders exactly as Starlight's default.
+import Default from '@astrojs/starlight/components/MarkdownContent.astro';
+import StagePose, { type Stage } from './brand/StagePose.astro';
+import TrackProgress from './track/TrackProgress.astro';
+import TrackScript from './track/TrackScript.astro';
+
+const isTrack = Astro.locals.starlightRoute.entry.id === 'guides';
+type Part = { html: string } | { slot: string; attrs: Record<string, string> };
+const parts: Part[] = [];
+if (isTrack) {
+  const html = await Astro.slots.render('default');
+  let last = 0;
+  for (const match of html.matchAll(/<span data-slot="[^"]*"[^>]*><\/span>/g)) {
+    const attrs = Object.fromEntries(
+      [...match[0].matchAll(/([\w-]+)="([^"]*)"/g)].map(([, k, v]) => [k, v]),
+    );
+    parts.push({ html: html.slice(last, match.index) });
+    parts.push({ slot: attrs['data-slot'], attrs });
+    last = match.index + match[0].length;
+  }
+  parts.push({ html: html.slice(last) });
+}
+---
+
+{isTrack ? (
+  <Default>
+    {parts.map((part) =>
+      'html' in part ? (
+        <Fragment set:html={part.html} />
+      ) : part.slot === 'progress' ? (
+        <TrackProgress
+          first={part.attrs['data-first']}
+          total={Number(part.attrs['data-total'])}
+        />
+      ) : (
+        <StagePose stage={part.slot.replace('pose:', '') as Stage} />
+      ),
+    )}
+    <TrackScript />
+  </Default>
+) : (
+  <Default>
+    <slot />
+  </Default>
+)}

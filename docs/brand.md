@@ -20,6 +20,7 @@ A plush toy duck in a graduation cap, drawn as a die-cut sticker.
 
 - **Scene art** (the pond, dock, lamp, reeds, stars) uses the same brown line, but thinner and without a sticker edge, so the duck stays the focus. Shapes are slightly uneven, like they were drawn by hand: no perfect circles or ruler-straight lines.
 - **Night** is deep slate into a dusky plum at the horizon, with a butter moon and warm lamp light. **Morning** is warm paper into peach, with a soft sun and mist. Each theme gets its own scene, not a recolor.
+- **The trail** on the track map is one dashed scene line that winds through the stops, with stepping stones for stops, a patch of ground under each stage's duck, and a small flag at the end. A stop you've read gets a butter stone and a coral tick, drawn on once.
 - **Hand-drawn marks** (underlines, arrows, circles, highlights) are single SVG strokes with round caps in the accent color or soft ink, and handwritten notes use Caveat. Use them sparingly, a few per page, where Tommy would scribble on a printout.
 
 ## Motion
@@ -31,8 +32,9 @@ A plush toy duck in a graduation cap, drawn as a die-cut sticker.
 
 ## Assets
 
-| Asset       | File                              | Used on                                  |
-| ----------- | --------------------------------- | ---------------------------------------- |
-| The duck    | `src/components/brand/Duck.astro` | Site title, landing, footer, 404, stops  |
-| Favicon     | `public/favicon.svg`              | Browser tab (a still duck)               |
-| Share image | `public/og.png`                   | Link previews (a screenshot of the hero) |
+| Asset       | File                                   | Used on                                                                                   |
+| ----------- | -------------------------------------- | ----------------------------------------------------------------------------------------- |
+| The duck    | `src/components/brand/Duck.astro`      | Site title, landing, footer, 404, stops                                                   |
+| Favicon     | `public/favicon.svg`                   | Browser tab (a still duck)                                                                |
+| Share image | `public/og.png`                        | Link previews (a screenshot of the hero)                                                  |
+| Stage poses | `src/components/brand/StagePose.astro` | The track map on `/guides/`, one per stage (the same duck until each stage gets its pose) |

@@ -1,0 +1,25 @@
+---
+// The duck at each stage of the track map. For now every stage shows the same duck; each stage
+// will get its own pose. Decorative: the stage heading next to it says where you are.
+import Duck from './Duck.astro';
+
+export type Stage =
+  | 'understand'
+  | 'design'
+  | 'build'
+  | 'verify'
+  | 'ship'
+  | 'operate'
+  | 'improve'
+  | 'together';
+
+interface Props {
+  stage: Stage;
+  size?: number;
+}
+const { stage, size = 56 } = Astro.props;
+---
+
+<span class="stage-pose" data-pose={stage} aria-hidden="true">
+  <Duck size={size} />
+</span>

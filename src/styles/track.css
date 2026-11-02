@@ -1,0 +1,389 @@
+/* The track map on /guides/: the stages and stops of core/guides/README.md, drawn as one trail
+   winding down the page. src/lib/rehype-track-map.mjs adds the hooks, and src/scripts/track-map.ts
+   draws the trail and the ticks. Without the script it's still a readable list of stages. */
+
+.track-map {
+  /* How far the trail sways to each side, the duck's patch of ground, and a stepping stone. */
+  --amp: 0.3rem;
+  --halo: 4.25rem;
+  --stone: 2.75rem;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --trail: color-mix(in srgb, var(--swe-ink-soft) 70%, transparent);
+  /* Morning ground is a sunny patch; at night it's a slate puddle the lamp barely reaches. */
+  --ground: color-mix(in srgb, var(--swe-butter) 45%, var(--swe-paper));
+  margin-top: 1.5rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .track-map {
+    --ground: color-mix(in srgb, var(--swe-ink-soft) 22%, var(--swe-paper));
+  }
+}
+:root[data-theme='dark'] .track-map {
+  --ground: color-mix(in srgb, var(--swe-ink-soft) 22%, var(--swe-paper));
+}
+@media (min-width: 50rem) {
+  .track-map {
+    --amp: 3rem;
+  }
+}
+
+/* The trail point of each row: a gutter so the widest thing on the trail fits, plus the sway. */
+.track-stage__head,
+.track-stop {
+  --cx: calc(var(--halo) / 2 + (1 + var(--sway, 0)) * var(--amp));
+}
+
+.track-map__stages {
+  position: relative;
+  padding-bottom: 4.5rem;
+}
+.track-map__trail {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.track-map__line {
+  fill: none;
+  stroke: var(--trail);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 8 10;
+}
+.track-map__flag {
+  fill: none;
+  stroke: var(--swe-coral);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.track-stage {
+  position: relative;
+}
+.track-stage + .track-stage {
+  margin-top: 1.75rem;
+}
+
+/* A stage: the duck on its patch of ground, then the heading. */
+.track-stage__head {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.85rem;
+  padding-inline-start: calc(var(--cx) - var(--halo) / 2);
+}
+.track-stage__pose {
+  position: relative;
+  flex: none;
+  display: grid;
+  justify-items: center;
+  width: var(--halo);
+}
+.track-stage__pose .stage-pose {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-bottom: -0.55rem;
+}
+.track-stage__pose .duck {
+  display: block;
+}
+.track-stage__ground {
+  order: 2;
+  width: var(--halo);
+  height: 1.35rem;
+  background: var(--ground);
+  border: 2px solid color-mix(in srgb, var(--swe-ink-soft) 45%, transparent);
+  border-radius: 52% 48% 46% 54% / 58% 50% 50% 42%;
+  rotate: -3deg;
+}
+.track-stage:nth-child(even) .track-stage__ground {
+  border-radius: 46% 54% 55% 45% / 50% 60% 40% 50%;
+  rotate: 2deg;
+}
+.track-stage__title {
+  min-width: 0;
+  padding-bottom: 0.35rem;
+}
+.track-map .track-stage__title h3 {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+.track-stage__note {
+  margin: 0.1rem 0 0;
+  font-family: var(--swe-font-hand);
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--swe-coral-text);
+  rotate: -2deg;
+  transform-origin: left center;
+}
+
+/* The stops: stepping stones along the trail, each with its title and one line. */
+.track-stops {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+}
+.track-stop {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.5rem 0.25rem 0.5rem calc(var(--cx) - var(--stone) / 2);
+}
+.track-stop__stone {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--stone);
+  height: var(--stone);
+  background: var(--swe-card);
+  border: 2px solid color-mix(in srgb, var(--swe-ink-soft) 60%, transparent);
+  border-radius: 58% 42% 55% 45% / 47% 56% 44% 53%;
+  color: var(--swe-ink);
+  font-family: var(--swe-font-display);
+  font-variation-settings: 'SOFT' 100;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition:
+    transform 0.25s var(--spring),
+    background-color 0.2s ease;
+}
+/* No two stones quite alike. */
+.track-stop:nth-child(3n + 2) .track-stop__stone {
+  border-radius: 45% 55% 48% 52% / 56% 44% 56% 44%;
+  rotate: 4deg;
+}
+.track-stop:nth-child(3n) .track-stop__stone {
+  border-radius: 52% 48% 40% 60% / 50% 58% 42% 50%;
+  rotate: -5deg;
+}
+.track-stop__num {
+  rotate: inherit;
+}
+.track-stop:nth-child(3n + 2) .track-stop__num {
+  rotate: -4deg;
+}
+.track-stop:nth-child(3n) .track-stop__num {
+  rotate: 5deg;
+}
+
+.track-stop__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-top: 0.2rem;
+  line-height: 1.45;
+}
+.track-map .track-stop a {
+  align-self: flex-start;
+  font-family: var(--swe-font-display);
+  font-variation-settings: 'SOFT' 100;
+  font-weight: 600;
+  font-size: 1.12rem;
+  line-height: 1.3;
+  color: var(--swe-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, var(--swe-coral) 55%, transparent);
+}
+/* The whole stop is the link's target, not just its title. */
+.track-stop a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.track-map .track-stop a:hover {
+  text-decoration-color: var(--swe-coral);
+}
+.track-stop a:focus-visible {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.track-stop__desc {
+  margin-top: 0.15rem;
+  color: var(--swe-ink-soft);
+  font-size: 0.97rem;
+}
+.track-stop:hover .track-stop__stone,
+.track-stop:focus-within .track-stop__stone {
+  transform: translateY(-2px) rotate(-6deg) scale(1.06);
+}
+
+/* A stop you've read: a butter stone and a tick drawn on once. */
+.track-stop[data-read] .track-stop__stone {
+  background: var(--swe-butter);
+  color: var(--swe-on-pastel);
+  border-color: color-mix(in srgb, var(--swe-on-pastel) 55%, transparent);
+}
+.track-stop__tick {
+  position: absolute;
+  top: -0.8rem;
+  right: -0.95rem;
+  width: 1.85rem;
+  height: 1.85rem;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  visibility: hidden;
+}
+.track-stop__tick path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.track-stop__tick-edge {
+  stroke: var(--swe-paper);
+  stroke-width: 8;
+}
+.track-stop__tick-ink {
+  stroke: var(--swe-coral-text);
+  stroke-width: 3.6;
+}
+.track-stop[data-read] .track-stop__tick {
+  visibility: visible;
+}
+.track-stop[data-read] .track-stop__tick path {
+  animation: track-tick 0.45s cubic-bezier(0.55, 0, 0.3, 1) forwards;
+  animation-delay: calc(0.2s + var(--order, 0) * 0.08s);
+}
+@keyframes track-tick {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Reading progress, at the top of the map. */
+.track-progress {
+  display: flex;
+  align-items: center;
+  min-height: 3.25rem;
+  margin-bottom: 0.25rem;
+}
+.track-progress p {
+  margin: 0;
+}
+.track-progress__start {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.track-map .track-progress__start a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--swe-font-hand);
+  font-weight: 700;
+  font-size: 1.65rem;
+  color: var(--swe-coral-text);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--swe-coral-text) 40%,
+    transparent
+  );
+}
+.track-map .track-progress__start a:hover {
+  text-decoration-color: currentColor;
+}
+.track-progress__arrow {
+  width: 2.6rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: var(--swe-coral-text);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.track-progress__done {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+}
+.track-progress__done[hidden],
+.track-progress__start[hidden] {
+  display: none;
+}
+.track-progress__count {
+  font-family: var(--swe-font-hand);
+  font-weight: 700;
+  font-size: 1.65rem;
+  line-height: 1.1;
+  color: var(--swe-ink);
+}
+.track-progress__count [data-progress-count] {
+  color: var(--swe-coral-text);
+  font-size: 1.2em;
+}
+.track-progress__bar {
+  width: clamp(5rem, 22vw, 10rem);
+  height: 0.75rem;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+}
+.track-progress__bar-track {
+  stroke: var(--trail);
+  stroke-width: 2.4;
+  stroke-dasharray: 0.035 0.04;
+}
+.track-progress__bar-fill {
+  stroke: var(--swe-coral);
+  stroke-width: 5;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) 0.15s;
+}
+.track-progress__reset {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 1.05rem;
+  border: 1.5px dashed var(--swe-ink-soft);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--swe-ink-soft);
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--spring),
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.track-progress__reset:hover {
+  color: var(--swe-ink);
+  border-style: solid;
+}
+.track-progress__reset:active {
+  transform: scale(0.95);
+}
+.track-progress__reset:focus-visible {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+}
+
+/* Still and fully drawn under reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .track-stop__stone,
+  .track-progress__bar-fill,
+  .track-progress__reset {
+    transition: none;
+  }
+  .track-stop:hover .track-stop__stone,
+  .track-stop:focus-within .track-stop__stone {
+    transform: none;
+  }
+  .track-stop[data-read] .track-stop__tick path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
