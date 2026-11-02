@@ -4,8 +4,14 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
-- **A calmer site, and a duck.** The mascot is a duck in a graduation cap, drawn as a die-cut sticker that waves once on load. The landing page matches ducktommy.com: warm paper or deep slate, an editorial serif, and a list of real misses pulled from the stops. Gone: five pastel accents, the marquee, the stale demo, and the metadata chips above every stop.
+## v0.5.0 (2026-11-01)
+
+Less, and more like me. The track is short pages of what people and their agents miss, and the site looks like the same person built it and ducktommy.com.
+
 - **A shorter track.** Every stop is now a short page of what people and their agents miss: the idea, "Easy to miss", how I do it, and a link or two to go deeper. No code. The track went from 36,000 words with 64 code blocks to about 9,700 with none. "The standard" and "Before you ship, check" are gone; what teams add when stakes rise lives in the concern pages. Each concern page now links only the stops that cover its risk. Every stop glosses its terms and ends with an "Ask your agent" prompt. A learner test puts clarity (3.9) and usefulness (4.2) back at the long track's level.
+- **A calmer site, and a duck.** The mascot is a duck in a graduation cap, drawn as a die-cut sticker that waves once on load. The landing page matches ducktommy.com: warm paper or deep slate, an editorial serif, and a list of real misses pulled from the stops. Gone: five pastel accents, the marquee, the stale demo, and the metadata chips above every stop.
+- **A voice that sounds like me.** Agents talk like a friend who's great at engineering and design, not an older brother. Anything written as me is placeholder content in my simple style, for me to revise. The profanity rule and the "bro" examples are gone.
+- **Evals pin their model.** The CLI's default moved to Fable 5.1, which made one round incomparable. Rounds that compare with earlier ones now pin Opus 5.5 with `ANTHROPIC_MODEL`.
 
 ## v0.4.0 (2026-10-17)
 
