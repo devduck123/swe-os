@@ -4,6 +4,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import { unified } from '@astrojs/markdown-remark';
 import remarkRepoLinks from './src/lib/remark-repo-links.mjs';
+import rehypeTrackMap from './src/lib/rehype-track-map.mjs';
 import { frontmatter, root } from './src/lib/routes.mjs';
 
 // Sidebar entries come from the files on disk, so a new guide or concern shows up by existing.
@@ -103,7 +104,12 @@ export default defineConfig({
   site,
   output: 'static',
   fonts,
-  markdown: { processor: unified({ remarkPlugins: [remarkRepoLinks] }) },
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkRepoLinks],
+      rehypePlugins: [rehypeTrackMap],
+    }),
+  },
   integrations: [
     starlight({
       title: "Tommy's SWE OS",
@@ -125,7 +131,11 @@ export default defineConfig({
           attrs: { property: 'og:image:alt', content: "Tommy's SWE OS" },
         },
       ],
-      customCss: ['./src/styles/tokens.css', './src/styles/docs.css'],
+      customCss: [
+        './src/styles/tokens.css',
+        './src/styles/docs.css',
+        './src/styles/track.css',
+      ],
       // Wrap long lines so code blocks never need a keyboard-unreachable horizontal scroll.
       expressiveCode: { defaultProps: { wrap: true } },
       // Content lives at the repo root, not src/content/docs, so opt it into Starlight's Markdown transforms.
@@ -134,6 +144,8 @@ export default defineConfig({
       disable404Route: true,
       components: {
         Head: './src/components/Head.astro',
+        // Only changes the track index: fills in the journey map's duck poses and progress.
+        MarkdownContent: './src/components/MarkdownContent.astro',
         PageTitle: './src/components/PageTitle.astro',
         SiteTitle: './src/components/SiteTitle.astro',
       },

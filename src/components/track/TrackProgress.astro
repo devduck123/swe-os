@@ -1,0 +1,53 @@
+---
+// The top of the track map: how many stops you've read, or where to start. Without JavaScript or
+// storage, it stays on "Start at stop 1". The map's script fills in the count.
+interface Props {
+  first: string;
+  total: number;
+}
+const { first, total } = Astro.props;
+// One slightly uneven stroke, used twice: the dashed track and the part you've walked.
+const line = 'M3 7.5c22-2.2 44 1.6 66-.4s42-2.4 64 .2 40 1.4 64-.8';
+---
+
+<div class="track-progress" data-track-progress>
+  <p class="track-progress__start" data-progress-start>
+    <a href={first}>Start at stop 1</a>
+    <svg
+      class="track-progress__arrow"
+      viewBox="0 0 44 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M3 13c9-3.5 22-4.6 35-1.4M30 5.5c3.4 2.4 6.2 4.4 8.6 6.4-3 1.8-5.8 4-8.2 6.6"></path>
+    </svg>
+  </p>
+  <div class="track-progress__done" data-progress-done hidden>
+    <p class="track-progress__count">
+      <span data-progress-count>0</span> of {total} read
+    </p>
+    <svg
+      class="track-progress__bar"
+      viewBox="0 0 200 15"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path class="track-progress__bar-track" d={line} pathLength="1"></path>
+      <path
+        class="track-progress__bar-fill"
+        d={line}
+        pathLength="1"
+        data-progress-fill
+      ></path>
+    </svg>
+    <button
+      type="button"
+      class="track-progress__reset"
+      aria-label="Reset reading progress"
+      data-progress-reset
+    >
+      Reset
+    </button>
+  </div>
+  <p class="sr-only" aria-live="polite" data-progress-status></p>
+</div>
