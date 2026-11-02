@@ -114,7 +114,9 @@ for (const file of [
   if (data.track) {
     // A stop is the idea, then what people miss, then Tommy's default, then links out. No code:
     // the point is the consideration, not the implementation.
-    const body = read(file).replace(/^---\n[\s\S]*?\n---\n/, '');
+    const body = read(file)
+      .replace(/\r\n/g, '\n')
+      .replace(/^---\n[\s\S]*?\n---\n/, '');
     const isRecipe = file.startsWith('core/recipes/');
     assert(!/^\s*```/m.test(body), `${file}: track stops have no code blocks`);
     const heads = [...body.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
