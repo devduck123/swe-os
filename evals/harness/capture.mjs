@@ -78,6 +78,11 @@ const readMotion = (page) =>
     };
   });
 
+/**
+ * @param {string} work
+ * @param {string} out
+ * @param {{ filled?: () => Record<string, string>, empty?: Record<string, string>, expectText?: string }} [options]
+ */
 export async function capture(
   work,
   out,
