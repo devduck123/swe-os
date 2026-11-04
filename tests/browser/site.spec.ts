@@ -119,7 +119,9 @@ test('docs navigation and search work', async ({ page, isMobile }) => {
   await expect(page.locator('.pagefind-ui__result-link').first()).toBeVisible();
 });
 
-test('landing reflows at 320px, and nothing loops', async ({ page }) => {
+test('landing reflows at 320px, and nothing moves past five seconds', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto('/');
   expect(
@@ -127,14 +129,15 @@ test('landing reflows at 320px, and nothing loops', async ({ page }) => {
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
-  // The duck waves once and stops, so the page needs no pause control (WCAG 2.2.2).
-  const looping = await page.evaluate(
-    () =>
-      document
-        .getAnimations()
-        .filter((a) => a.effect?.getTiming().iterations === Infinity).length,
+  // Everything moving on its own stops within five seconds, so the page needs no pause
+  // control (WCAG 2.2.2).
+  const timings = await page.evaluate(() =>
+    document
+      .getAnimations()
+      .map((a) => Number(a.effect?.getComputedTiming().endTime)),
   );
-  expect(looping).toBe(0);
+  expect(timings.length).toBeGreaterThan(0);
+  expect(timings.filter((end) => !(end <= 5000))).toEqual([]);
 });
 
 test("a stop shows Tommy's note and a duck that hands you the prompt", async ({
