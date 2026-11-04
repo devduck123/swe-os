@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sprout</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Sprout</h1>
+    <p id="summary"></p>
+    <ul id="plants"></ul>
+    <p id="empty" hidden>No plants yet.</p>
+    <h2>Add a plant</h2>
+    <form id="add">
+      <label>
+        Name
+        <input name="name" required maxlength="80" />
+      </label>
+      <label>
+        Water every
+        <input name="every" type="number" min="1" max="60" value="7" required />
+        days
+      </label>
+      <button>Add</button>
+    </form>
+    <script src="app.js"></script>
+  </body>
+</html>

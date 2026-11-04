@@ -4,6 +4,8 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **A design eval, ready to run.** A new scenario asks an agent to make a plain app feel like a product. The harness screenshots each result in both themes and measures the rules (accessibility, sideways scrolling, motion, touch targets), so graders judge the page and not only the diff. It hasn't run yet.
+- **Graders are more blind.** They ran from a folder named after the arm they were grading. Now they run from a neutral one.
 - **Two readers, drawn.** The duck and its agent, a little robot duck, sit on the end of the dock and read one book together, and the note's arrow points at both. The landing copy says what SWE OS is plainly: a slightly opinionated guide for people and the coding agents that build with them.
 - **The duck gets a world.** The landing page is a small pond at morning or night, with a dock, books, a mug, fireflies, and a lantern. The duck waves for real (the hand comes up beside its face), its eyes follow your pointer, it hops when you copy a prompt, and it tips its cap when you switch themes. Nothing loops: the ambient bits play for a few seconds and rest.
 - **Stop pages with some personality.** "How I do it" is my note card, "Ask your agent" is a speech bubble from the duck with a Copy button, the draft notice is a small label, and each stop says where it sits in the track.

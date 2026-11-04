@@ -49,7 +49,7 @@ How it keeps the comparison fair:
 - **One difference.** B's first message starts with "Use Tommy's SWE OS at <a snapshot of the current commit>…". A gets the task alone.
 - **Nothing escapes the temp folder.** Pushing, `gh`, deploys, Docker, and the Supabase and EAS CLIs are denied in both arms.
 - **The same answers for both.** When a scenario's starting state says "if asked", the harness answers once, the same way for both arms.
-- **Graded blind.** The grader sees the task, the reviewer-only notes, the rubric, the commands the agent ran, its replies with SWE OS tells stripped, and the diff. It never sees which arm it's grading.
+- **Graded blind.** Graders run from a neutral temp folder, since a run's own folder is named after its arm. The grader sees the task, the reviewer-only notes, the rubric, the commands the agent ran, its replies with SWE OS tells stripped, and the diff. It never sees which arm it's grading.
 
 Raw transcripts and diffs stay in `runs/`, which Git ignores. Commit the round's `summary.md` and `round.json`.
 
@@ -72,19 +72,23 @@ The traps in these scenarios aren't written anywhere in SWE OS, so B can't win b
 | [Connection pooling](scenarios/connection-pooling.md)             | explain       |
 | [Pushback, two variants](scenarios/pushback.md)                   | voice         |
 | [Walk me through a PR](scenarios/learn-walkthrough.md)            | learn         |
+| [Make Sprout feel like a product](scenarios/sprout-design.md)     | build-feature |
 
 ## Rubric
 
 Score each dimension 0 to 3. Mark N/A when it doesn't apply. Don't reward length.
 
-| Dimension        | 0                        | 1                        | 2                                  | 3                                                   |
-| ---------------- | ------------------------ | ------------------------ | ---------------------------------- | --------------------------------------------------- |
-| Product judgment | Solves the wrong problem | Assumes the value        | Fits the stated outcome            | Challenges a key assumption and scopes a good slice |
-| Completeness     | Core behavior fails      | Happy path only          | The states that matter are covered | Complete, with reasons for what's left out          |
-| Simplicity       | Needless architecture    | Some avoidable machinery | Small solution that fits           | Removes complexity and keeps what matters           |
-| Risk             | Misses a serious risk    | Names risks, doesn't act | Handles the risks that apply       | Failure behavior backed by evidence                 |
-| Verification     | Fake or missing          | "Looks right"            | Real checks, actually run          | Targets failure paths, honest about limits          |
-| Communication    | Misleading               | Generic or bloated       | Clear, with reasons and gaps       | Short, accurate, concrete                           |
+| Dimension        | 0                                                     | 1                                         | 2                                                             | 3                                                                                                        |
+| ---------------- | ----------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Product judgment | Solves the wrong problem                              | Assumes the value                         | Fits the stated outcome                                       | Challenges a key assumption and scopes a good slice                                                      |
+| Completeness     | Core behavior fails                                   | Happy path only                           | The states that matter are covered                            | Complete, with reasons for what's left out                                                               |
+| Simplicity       | Needless architecture                                 | Some avoidable machinery                  | Small solution that fits                                      | Removes complexity and keeps what matters                                                                |
+| Risk             | Misses a serious risk                                 | Names risks, doesn't act                  | Handles the risks that apply                                  | Failure behavior backed by evidence                                                                      |
+| Verification     | Fake or missing                                       | "Looks right"                             | Real checks, actually run                                     | Targets failure paths, honest about limits                                                               |
+| Communication    | Misleading                                            | Generic or bloated                        | Clear, with reasons and gaps                                  | Short, accurate, concrete                                                                                |
+| Design           | Default look, or a rule broken that costs someone use | Tidy but generic: it could be any product | A clear direction that fits this product, with the rules kept | Distinct: art and motion made for this product, small states with personality, rules kept in every theme |
+
+Design applies only to scenarios the harness screenshots. Graders see the page there, along with measured facts: accessibility violations in each theme, sideways scrolling, motion past five seconds, small touch targets.
 
 **Cost.** Record tokens and wall time for each arm next to its scores. Don't average them in. A better score bought with a lot more time or tokens has to be weighed, not just counted: say whether it was worth it.
 

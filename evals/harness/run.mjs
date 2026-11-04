@@ -182,6 +182,11 @@ async function runOne(s, arm, rep, root, sweos) {
     diff = String(e.stdout ?? '');
   }
   writeFileSync(join(dir, 'diff.patch'), diff);
+  // Imported here so only scenarios with screenshots need a browser installed.
+  if (s.capture) {
+    const { capture } = await import('./capture.mjs');
+    await capture(work, join(dir, 'shots'), s.capture);
+  }
   const meta = {
     scenario: s.id,
     arm,
@@ -224,6 +229,17 @@ async function gradeOne(dir, sweos) {
     )
     .join('\n\n');
   const diff = readFileSync(join(dir, 'diff.patch'), 'utf8').slice(0, 60_000);
+  const shots = join(dir, 'shots');
+  const seen = existsSync(shots);
+  const page = seen
+    ? `\n\n## What the page looks like\n\nThe harness opened the result in a browser after the run. These screenshots are in your working folder. Read every one before you score: ${readdirSync(
+        shots,
+      )
+        .filter((f) => f.endsWith('.png'))
+        .join(
+          ', ',
+        )}. Judge what you see, not what the agent says about it.\n\nWhat the harness measured:\n\n\`\`\`json\n${readFileSync(join(shots, 'facts.json'), 'utf8')}\n\`\`\``
+    : '';
   const prompt = `You are grading one AI coding agent's work. You don't know how the agent was set up. Judge only the work.
 
 ## Scenario
@@ -246,12 +262,19 @@ ${conversation}
 
 ## Changes to the project (unified diff)
 
-${diff || '(no file changes)'}
+${diff || '(no file changes)'}${page}
 
 Score each rubric dimension 0 to 3, or null if it doesn't apply. Don't reward length. List serious flaws (data loss, a leaked secret, an auth bypass, a fake verification claim) separately.
 Reply with only this JSON:
-{"scores":{"product_judgment":n,"completeness":n,"simplicity":n,"risk":n,"verification":n,"communication":n},"serious_flaws":["..."],"reasons":{"product_judgment":"one sentence","completeness":"...","simplicity":"...","risk":"...","verification":"...","communication":"..."}}`;
+{"scores":{"product_judgment":n,"completeness":n,"simplicity":n,"risk":n,"verification":n,"communication":n${seen ? ',"design":n' : ''}},"serious_flaws":["..."],"reasons":{"product_judgment":"one sentence","completeness":"...","simplicity":"...","risk":"...","verification":"...","communication":"..."}}`;
   writeFileSync(join(dir, 'grade-prompt.md'), prompt);
+  // A neutral folder: a run's own folder is named after its arm, which would unblind the grader.
+  const room = mkdtempSync(join(tmpdir(), 'swe-os-grade-'));
+  if (seen)
+    cpSync(shots, room, {
+      recursive: true,
+      filter: (src) => !src.endsWith('facts.json'),
+    });
   const grade1 = (i) =>
     claude(
       [
@@ -260,23 +283,29 @@ Reply with only this JSON:
         'stream-json',
         '--verbose',
         '--tools',
-        '',
+        seen ? 'Read' : '',
+        ...(seen ? ['--allowedTools', 'Read'] : []),
         ...ISOLATION,
         '--',
         prompt,
       ],
-      dir,
+      room,
       join(dir, `grade-transcript-${i + 1}.jsonl`),
     );
   const results = await Promise.all(
     Array.from({ length: Number(opts.graders) }, (_, i) => grade1(i)),
   );
+  rmSync(room, { recursive: true, force: true });
   const cost = results.reduce((n, r) => n + r.cost, 0);
   spent += cost;
   const grade = combineGrades(results.map((r) => parseGrade(r.reply)));
+  // How many screenshots each grader opened, so a grade that never saw the page shows up.
+  const looked = seen
+    ? results.map((r) => r.commands.filter((c) => c.startsWith('Read')).length)
+    : undefined;
   writeFileSync(
     join(dir, 'grade.json'),
-    JSON.stringify({ ...grade, cost }, null, 2),
+    JSON.stringify({ ...grade, cost, looked }, null, 2),
   );
 }
 
@@ -350,6 +379,7 @@ function summarize(root) {
       (f) => `- ${r.scenario} ${r.arm}${r.rep}: ${f}`,
     ),
   );
+  const blind = runs.filter((r) => r.grade.looked?.includes(0));
   const lines = [
     `# Eval round ${info.started}`,
     '',
@@ -369,6 +399,12 @@ function summarize(root) {
     '',
     ...(disputed.length
       ? ['Flagged by only one grader, so not counted:', '', ...disputed, '']
+      : []),
+    ...(blind.length
+      ? [
+          `**Not trustworthy:** a grader opened no screenshots for ${blind.map((r) => `${r.scenario} ${r.arm}${r.rep}`).join(', ')}.`,
+          '',
+        ]
       : []),
     'Raw transcripts, diffs, and per-dimension reasons are in `runs/` next to this file, which Git ignores.',
   ];
