@@ -58,7 +58,10 @@ const SETTLE_MS = 6000;
 const readMotion = (page) =>
   page.evaluate(() => {
     const moving = /transform|translate|rotate|scale|left|top|offset/i;
-    const all = document.getAnimations();
+    // A 1ms animation is the usual way to switch motion off, so it doesn't count as moving.
+    const all = document
+      .getAnimations()
+      .filter((a) => a.effect?.getComputedTiming().endTime > 50);
     const ends = all
       .map((a) => a.effect?.getComputedTiming().endTime)
       .filter((end) => Number.isFinite(end));
@@ -75,7 +78,14 @@ const readMotion = (page) =>
     };
   });
 
-export async function capture(work, out, { empty = {} } = {}) {
+export async function capture(
+  work,
+  out,
+  { filled, empty = {}, expectText } = {},
+) {
+  // Fresh for each capture, since saved dates are relative to now. An agent may drop the demo
+  // data, so the main screenshots load saved data instead of relying on it.
+  const saved = filled?.();
   mkdirSync(out, { recursive: true });
   const server = await serve(work);
   const url = `http://127.0.0.1:${server.address().port}/`;
@@ -118,10 +128,26 @@ export async function capture(work, out, { empty = {} } = {}) {
   };
 
   try {
-    await shot('phone-light', { viewport: PHONE, colorScheme: 'light' });
-    await shot('phone-dark', { viewport: PHONE, colorScheme: 'dark' });
-    await shot('desktop-light', { viewport: DESKTOP, colorScheme: 'light' });
-    await shot('desktop-dark', { viewport: DESKTOP, colorScheme: 'dark' });
+    await shot('phone-light', {
+      viewport: PHONE,
+      colorScheme: 'light',
+      storage: saved,
+    });
+    await shot('phone-dark', {
+      viewport: PHONE,
+      colorScheme: 'dark',
+      storage: saved,
+    });
+    await shot('desktop-light', {
+      viewport: DESKTOP,
+      colorScheme: 'light',
+      storage: saved,
+    });
+    await shot('desktop-dark', {
+      viewport: DESKTOP,
+      colorScheme: 'dark',
+      storage: saved,
+    });
     await shot('phone-empty', {
       viewport: PHONE,
       colorScheme: 'light',
@@ -133,6 +159,7 @@ export async function capture(work, out, { empty = {} } = {}) {
         viewport: PHONE,
         colorScheme,
         reducedMotion: true,
+        storage: saved,
       });
       await page.goto(url, { waitUntil: 'load' });
       const { violations } = await new AxeBuilder({ page })
@@ -144,7 +171,11 @@ export async function capture(work, out, { empty = {} } = {}) {
       await context.close();
     }
 
-    const motion = await open({ viewport: PHONE, colorScheme: 'light' });
+    const motion = await open({
+      viewport: PHONE,
+      colorScheme: 'light',
+      storage: saved,
+    });
     motion.page.on('response', async (response) => {
       try {
         pageBytes += (await response.body()).length;
@@ -153,8 +184,11 @@ export async function capture(work, out, { empty = {} } = {}) {
       }
     });
     await motion.page.goto(url, { waitUntil: 'load' });
-    const { looping, longestMs } = await readMotion(motion.page);
-    facts.motion = { looping, longestMs };
+    const filledMotion = await readMotion(motion.page);
+    if (expectText)
+      facts.savedDataShows = (await motion.page.textContent('body')).includes(
+        expectText,
+      );
     // How many interactive things are smaller than a thumb on a phone.
     facts.smallTouchTargets = await motion.page.evaluate(() =>
       [...document.querySelectorAll('a, button, input, select, textarea')]
@@ -169,14 +203,38 @@ export async function capture(work, out, { empty = {} } = {}) {
     );
     await motion.context.close();
 
-    const still = await open({
+    // Motion can differ by screen, so read the empty state too and report the worst.
+    const bare = await open({
       viewport: PHONE,
       colorScheme: 'light',
-      reducedMotion: true,
+      storage: empty,
     });
-    await still.page.goto(url, { waitUntil: 'load' });
-    facts.movingUnderReducedMotion = (await readMotion(still.page)).moving;
-    await still.context.close();
+    await bare.page.goto(url, { waitUntil: 'load' });
+    const emptyMotion = await readMotion(bare.page);
+    await bare.context.close();
+    facts.motion = {
+      looping: Math.max(filledMotion.looping, emptyMotion.looping),
+      longestMs: Math.max(filledMotion.longestMs, emptyMotion.longestMs),
+      longestMsWithPlants: filledMotion.longestMs,
+      longestMsEmpty: emptyMotion.longestMs,
+    };
+
+    let movingStill = 0;
+    for (const storage of [saved, empty]) {
+      const still = await open({
+        viewport: PHONE,
+        colorScheme: 'light',
+        reducedMotion: true,
+        storage,
+      });
+      await still.page.goto(url, { waitUntil: 'load' });
+      movingStill = Math.max(
+        movingStill,
+        (await readMotion(still.page)).moving,
+      );
+      await still.context.close();
+    }
+    facts.movingUnderReducedMotion = movingStill;
 
     const narrow = await open({
       viewport: { width: 320, height: 700 },
