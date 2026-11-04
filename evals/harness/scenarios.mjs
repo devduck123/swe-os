@@ -8,6 +8,8 @@
 //   a branch and leave it checked out, like a PR waiting for review. Needs git.
 // ifAsked: facts from the scenario's starting state. If the agent's reply asks a question,
 //   the harness answers with these once and lets it continue, the same for both arms.
+// capture: { empty: { key: value } }: the result is a static page, so screenshot it for the
+//   graders and measure the design rules. `empty` is the localStorage that shows its empty state.
 
 export const scenarios = [
   {
@@ -36,6 +38,15 @@ export const scenarios = [
     ],
     ifAsked:
       "The Supabase project is on the free plan and empty. Node 22, Docker, and a signed-in `gh` CLI are available. There's no Vercel project.",
+  },
+  {
+    id: 'sprout-design',
+    fixture: 'sprout',
+    git: true,
+    capture: { empty: { 'sprout.plants': '[]' } },
+    turns: [
+      "Sprout works, but it looks like a homework assignment. Make it feel like a real product, something people would actually want to open every morning. It's for people who keep killing their houseplants, and most of them will use it on their phone.",
+    ],
   },
   {
     id: 'receipt-gallery',
