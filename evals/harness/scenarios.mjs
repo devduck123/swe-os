@@ -8,8 +8,9 @@
 //   a branch and leave it checked out, like a PR waiting for review. Needs git.
 // ifAsked: facts from the scenario's starting state. If the agent's reply asks a question,
 //   the harness answers with these once and lets it continue, the same for both arms.
-// capture: { empty: { key: value } }: the result is a static page, so screenshot it for the
-//   graders and measure the design rules. `empty` is the localStorage that shows its empty state.
+// capture: the result is a static page, so screenshot it for the graders and measure the design
+//   rules. filled() returns the localStorage that shows it in use, and empty the localStorage
+//   for its empty state. expectText must appear if that saved data still loads.
 
 export const scenarios = [
   {
@@ -43,7 +44,26 @@ export const scenarios = [
     id: 'sprout-design',
     fixture: 'sprout',
     git: true,
-    capture: { empty: { 'sprout.plants': '[]' } },
+    capture: {
+      filled: () => {
+        const ago = (days) => Date.now() - days * 24 * 60 * 60 * 1000;
+        return {
+          'sprout.plants': JSON.stringify([
+            { id: 1, name: 'Fern', every: 3, watered: ago(5) },
+            { id: 2, name: 'Snake plant', every: 14, watered: ago(14) },
+            {
+              id: 3,
+              name: "Monstera from Grandma's kitchen, the one by the window",
+              every: 7,
+              watered: ago(2),
+            },
+            { id: 4, name: 'Pothos', every: 7, watered: ago(0) },
+          ]),
+        };
+      },
+      empty: { 'sprout.plants': '[]' },
+      expectText: 'Fern',
+    },
     turns: [
       "Sprout works, but it looks like a homework assignment. Make it feel like a real product, something people would actually want to open every morning. It's for people who keep killing their houseplants, and most of them will use it on their phone.",
     ],

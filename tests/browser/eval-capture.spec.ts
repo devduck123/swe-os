@@ -20,15 +20,21 @@ test('the eval capture catches a page that breaks the rules', async ({
       body { background: #fff; color: #eee; }
       @media (prefers-color-scheme: dark) { body { background: #000; } }
       .wide { width: 900px; animation: spin 2s infinite; }
+      .off { animation: spin 1ms; }
     </style></head><body><main><h1>Bad</h1><button>x</button>
-    <div class="wide">wide</div></main>
+    <div class="off">off</div><div class="wide">wide</div></main>
     <script>throw new Error('boom');</script></body></html>`,
   );
   const out = join(room, 'shots');
-  const facts = (await capture(work, out)) as Record<string, any>;
+  const facts = (await capture(work, out, {
+    filled: () => ({ saved: 'yes' }),
+    expectText: 'Missing',
+  })) as Record<string, any>;
   expect(facts.captureError).toBeUndefined();
   expect(facts.motion.looping).toBe(1);
+  // The spin counts, and the 1ms animation that switches motion off doesn't.
   expect(facts.movingUnderReducedMotion).toBe(1);
+  expect(facts.savedDataShows).toBe(false);
   expect(facts.sidewaysScrollAt320).toBe(true);
   expect(facts.followsSystemDarkMode).toBe(true);
   expect(facts.accessibility.light.join()).toContain('color-contrast');
