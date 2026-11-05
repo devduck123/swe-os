@@ -81,18 +81,21 @@ const readMotion = (page) =>
 /**
  * @param {string} work
  * @param {string} out
- * @param {{ filled?: () => Record<string, string>, empty?: Record<string, string>, expectText?: string }} [options]
+ * @param {{ filled?: () => Record<string, string>, empty?: Record<string, string>, expectText?: string, root?: string, scroll?: boolean }} [options]
  */
 export async function capture(
   work,
   out,
-  { filled, empty = {}, expectText } = {},
+  { filled, empty = {}, expectText, root = '', scroll = false } = {},
 ) {
   // Fresh for each capture, since saved dates are relative to now. An agent may drop the demo
   // data, so the main screenshots load saved data instead of relying on it.
   const saved = filled?.();
   mkdirSync(out, { recursive: true });
-  const server = await serve(work);
+  // The agent may not have used the folder it was asked to. Then there's no site to see there.
+  const server = await serve(
+    existsSync(join(work, root, 'index.html')) ? join(work, root) : work,
+  );
   const url = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch();
   const facts = { accessibility: {}, shots: [] };
@@ -127,6 +130,20 @@ export async function capture(
     const { context, page } = await open(options);
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForTimeout(SETTLE_MS);
+    if (scroll) {
+      await page.screenshot({ path: join(out, `${name}-fold.png`) });
+      facts.shots.push(`${name}-fold.png`);
+      // Art that appears on scroll stays hidden in a full-page shot until it's been on screen.
+      await page.evaluate(async () => {
+        const end = document.documentElement.scrollHeight;
+        for (let y = 0; y < end; y += window.innerHeight / 2) {
+          window.scrollTo(0, y);
+          await new Promise((done) => setTimeout(done, 250));
+        }
+        window.scrollTo(0, 0);
+      });
+      await page.waitForTimeout(1000);
+    }
     await page.screenshot({ path: join(out, `${name}.png`), fullPage: true });
     facts.shots.push(`${name}.png`);
     await context.close();
@@ -153,11 +170,13 @@ export async function capture(
       colorScheme: 'dark',
       storage: saved,
     });
-    await shot('phone-empty', {
-      viewport: PHONE,
-      colorScheme: 'light',
-      storage: empty,
-    });
+    // Only a page with saved data has a separate empty state to show.
+    if (filled)
+      await shot('phone-empty', {
+        viewport: PHONE,
+        colorScheme: 'light',
+        storage: empty,
+      });
 
     for (const colorScheme of ['light', 'dark']) {
       const { context, page } = await open({

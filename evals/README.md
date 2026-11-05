@@ -41,6 +41,7 @@ node evals/harness/run.mjs --dry-run                 # what would run, spends no
 node evals/harness/run.mjs                           # every scenario, 1 rep, $50 budget
 node evals/harness/run.mjs --only overhead,extension-key --reps 3 --budget 20
 node evals/harness/run.mjs --grade evals/results/<date>   # regrade a past round
+node evals/harness/run.mjs --round evals/results/<date> --only overhead --resume   # finish a stopped round
 ```
 
 Run it from a normal terminal: Claude Code won't start inside another Claude Code session.
@@ -54,6 +55,8 @@ How it keeps the comparison fair:
 - **Graded blind.** Graders run from a neutral temp folder, since a run's own folder is named after its arm. The grader sees the task, the reviewer-only notes, the rubric, the commands the agent ran, its replies with SWE OS tells stripped, and the diff. It never sees which arm it's grading.
 
 Raw transcripts and diffs stay in `runs/`, which Git ignores. Commit the round's `summary.md` and `round.json`.
+
+A scenario about a private project stays out of this public repo. Set `EVAL_PRIVATE` to a folder outside it, with a `scenarios.mjs` that adds entries using absolute paths. The round's results go in that folder too.
 
 One rep is one noisy data point. Repeat a scenario three times before trusting a difference. To test another client, like Codex, run a pair by hand: same fixture, same task, with and without the SWE OS line, and score it with the rubric below.
 
@@ -80,15 +83,15 @@ The traps in these scenarios aren't written anywhere in SWE OS, so B can't win b
 
 Score each dimension 0 to 3. Mark N/A when it doesn't apply. Don't reward length.
 
-| Dimension        | 0                                                     | 1                                         | 2                                                             | 3                                                                                                        |
-| ---------------- | ----------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Product judgment | Solves the wrong problem                              | Assumes the value                         | Fits the stated outcome                                       | Challenges a key assumption and scopes a good slice                                                      |
-| Completeness     | Core behavior fails                                   | Happy path only                           | The states that matter are covered                            | Complete, with reasons for what's left out                                                               |
-| Simplicity       | Needless architecture                                 | Some avoidable machinery                  | Small solution that fits                                      | Removes complexity and keeps what matters                                                                |
-| Risk             | Misses a serious risk                                 | Names risks, doesn't act                  | Handles the risks that apply                                  | Failure behavior backed by evidence                                                                      |
-| Verification     | Fake or missing                                       | "Looks right"                             | Real checks, actually run                                     | Targets failure paths, honest about limits                                                               |
-| Communication    | Misleading                                            | Generic or bloated                        | Clear, with reasons and gaps                                  | Short, accurate, concrete                                                                                |
-| Design           | Default look, or a rule broken that costs someone use | Tidy but generic: it could be any product | A clear direction that fits this product, with the rules kept | Distinct: art and motion made for this product, small states with personality, rules kept in every theme |
+| Dimension        | 0                                                     | 1                                         | 2                                                             | 3                                                                                                                                                                   |
+| ---------------- | ----------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Product judgment | Solves the wrong problem                              | Assumes the value                         | Fits the stated outcome                                       | Challenges a key assumption and scopes a good slice                                                                                                                 |
+| Completeness     | Core behavior fails                                   | Happy path only                           | The states that matter are covered                            | Complete, with reasons for what's left out                                                                                                                          |
+| Simplicity       | Needless architecture                                 | Some avoidable machinery                  | Small solution that fits                                      | Removes complexity and keeps what matters                                                                                                                           |
+| Risk             | Misses a serious risk                                 | Names risks, doesn't act                  | Handles the risks that apply                                  | Failure behavior backed by evidence                                                                                                                                 |
+| Verification     | Fake or missing                                       | "Looks right"                             | Real checks, actually run                                     | Targets failure paths, honest about limits                                                                                                                          |
+| Communication    | Misleading                                            | Generic or bloated                        | Clear, with reasons and gaps                                  | Short, accurate, concrete                                                                                                                                           |
+| Design           | Default look, or a rule broken that costs someone use | Tidy but generic: it could be any product | A clear direction that fits this product, with the rules kept | Distinct and human: art and motion that feel drawn by a person for this product, a layout you'd recognize, small states with personality, rules kept in every theme |
 
 Design applies only to scenarios the harness screenshots. Graders see the page there, along with measured facts: accessibility violations in each theme, sideways scrolling, motion past five seconds, small touch targets.
 
