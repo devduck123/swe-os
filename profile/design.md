@@ -19,6 +19,12 @@ What I keep noticing on sites I love:
 - **Type with a point of view.** A display face that carries the mood, like an editorial serif or something rounded and friendly, with a quiet text face doing the reading.
 - **Friendly beats corporate.** Restraint is a choice for a product that needs it, not the default.
 
+## No designer? Code can be your artist
+
+Frontier models keep getting better at making art with code: SVG stickers and illustrations, canvas scenes, and animation that feels drawn by a person. If you haven't hired an artist or a designer, this is how your product gets real art, so use it before reaching for stock images, an icon pack, or a template. If you have hired one, follow their lead.
+
+Aim higher than a mascot. The [Extras page on my portfolio](https://www.ducktommy.com/extras) has a street in Ginza lighting up after dark, drawn in code behind the whole page with people walking through it, and an origami duck folded from SVG polygons. You can step through every draft of that duck, from a crane through five sketches, which is the other lesson: first drafts of art are rarely good. Render it, look at it, and redraw.
+
 ## Don't build your first idea
 
 Your first idea is everyone's first idea. In my first design eval, six agents given the same app made nearly the same screen: a greeting over a list of cards, on cream, with a floating add button. Before you build, say what the obvious version would be, then build something else. Change the layout and the structure, not only the colors.
@@ -29,7 +35,7 @@ On a new product or a redesign, sketch three directions that differ in layout an
 
 Clean, cute, and accessible is where agents land by default now, and it still feels generated. I want to feel the hand of whoever made it, and feel like they were thinking about me.
 
-- **Drawn by hand.** Art built from perfect circles and rounded rectangles looks generated. Plot the paths so lines wobble, change weight, and overshoot at the corners, and let a fill miss its outline.
+- **A hand or a craft behind it.** Art built from perfect circles and rounded rectangles looks generated. Plot the paths so lines wobble, change weight, and overshoot at the corners, and let a fill miss its outline. Or pick a real craft and follow its rules, like a woodblock's few inks, cut paper, or origami's flat folds.
 - **Real range.** A character with one smile and one frown is a sticker. Give it big feelings it commits to, like dramatic, grumpy, smug, or relieved, and push the pose until it's funny.
 - **Art with a job.** Art belongs all over the main screen, carrying what a label or a badge would otherwise say, and each item gets its own. One mascot in the corner of a normal app is decoration.
 - **A bold layout.** One thing huge, scale that jumps, something that breaks the grid. Someone should recognize the page with its text blurred.
