@@ -21,9 +21,9 @@ What I keep noticing on sites I love:
 
 ## No designer? Code can be your artist
 
-Frontier models keep getting better at making art with code: SVG stickers and illustrations, canvas scenes, and animation that feels drawn by a person. If you haven't hired an artist or a designer, this is how your product gets real art, so use it before reaching for stock images, an icon pack, or a template. If you have hired one, follow their lead.
+If it's a real, legit project, hire a designer. A person with taste is still better than an agent. But if you can't hire one, code is a solid option, and it keeps getting better: frontier models can make SVG stickers and illustrations, canvas scenes, and animation that feels drawn by a person. Use that before reaching for stock images, an icon pack, or a template. If you have hired someone, follow their lead.
 
-Aim higher than a mascot. The [Extras page on my portfolio](https://www.ducktommy.com/extras) has a street in Ginza lighting up after dark, drawn in code behind the whole page with people walking through it, and an origami duck folded from SVG polygons. You can step through every draft of that duck, from a crane through five sketches, which is the other lesson: first drafts of art are rarely good. Render it, look at it, and redraw.
+Aim higher than a mascot. No artist worked on my portfolio. [Its landing page](https://www.ducktommy.com/) floats an origami duck on a bay at dusk, with a city skyline behind it and ripples around it. The [Extras page](https://www.ducktommy.com/extras) runs an animation of a street in Ginza behind the whole page, lighting up after dark with people walking through it. It also lets you step through every draft of that duck, from a crane through five sketches, which is the other lesson: first drafts of art are rarely good. Render it, look at it, and redraw.
 
 ## Don't build your first idea
 
