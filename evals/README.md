@@ -41,6 +41,7 @@ node evals/harness/run.mjs --dry-run                 # what would run, spends no
 node evals/harness/run.mjs                           # every scenario, 1 rep, $50 budget
 node evals/harness/run.mjs --only overhead,extension-key --reps 3 --budget 20
 node evals/harness/run.mjs --grade evals/results/<date>   # regrade a past round
+node evals/harness/run.mjs --round evals/results/<date> --only overhead --resume   # finish a stopped round
 ```
 
 Run it from a normal terminal: Claude Code won't start inside another Claude Code session.

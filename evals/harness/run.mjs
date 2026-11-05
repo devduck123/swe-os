@@ -9,6 +9,8 @@
 //   node evals/harness/run.mjs --grade <results dir> grade what's ungraded in a past round, re-summarize
 //   node evals/harness/run.mjs --round <results dir> --only receipt-gallery
 //                                                   rerun scenarios into a past round, at its SWE OS commit
+//   node evals/harness/run.mjs --round <results dir> --only receipt-gallery --resume
+//                                                   same, but keep the runs that already finished
 import { execFileSync } from 'node:child_process';
 import {
   cpSync,
@@ -52,6 +54,7 @@ const { values: opts } = parseArgs({
     'dry-run': { type: 'boolean', default: false },
     grade: { type: 'string' },
     round: { type: 'string' },
+    resume: { type: 'boolean', default: false },
   },
 });
 const budget = Number(opts.budget);
@@ -455,11 +458,17 @@ const newRoot = (name, n = 1) => {
   return existsSync(dir) ? newRoot(name, n + 1) : dir;
 };
 const root = past ?? newRoot(started);
-const jobs = picked.flatMap((s) =>
-  Array.from({ length: reps }, (_, i) =>
-    ['A', 'B'].map((arm) => [s, arm, i + 1]),
-  ).flat(),
-);
+const finished = (s, arm, rep) => {
+  const meta = join(root, 'runs', `${s.id}-${arm}-${rep}`, 'meta.json');
+  return existsSync(meta) && !JSON.parse(readFileSync(meta, 'utf8')).error;
+};
+const jobs = picked
+  .flatMap((s) =>
+    Array.from({ length: reps }, (_, i) =>
+      ['A', 'B'].map((arm) => [s, arm, i + 1]),
+    ).flat(),
+  )
+  .filter(([s, arm, rep]) => !(opts.resume && finished(s, arm, rep)));
 
 if (opts['dry-run']) {
   console.log(
@@ -476,7 +485,8 @@ refuseNested();
 // A fresh temp folder per round, so a rerun never finds an earlier round's files.
 const scratch = mkdtempSync(join(tmpdir(), `swe-os-evals-${started}-`));
 mkdirSync(join(root, 'runs'), { recursive: true });
-const sweos = join(scratch, 'swe-os');
+// A resumed round keeps the old path, since grading hides that path from the finished runs' output.
+const sweos = opts.resume ? pastInfo.sweos : join(scratch, 'swe-os');
 const commit = snapshotSweos(sweos, pastInfo?.commit ?? 'HEAD');
 const info = pastInfo
   ? {
