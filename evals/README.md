@@ -32,6 +32,10 @@ Six rounds in October 2026, on Claude Code with Opus 5.5, under a Max plan. Each
 
 Rounds 1–3 found and fixed four harness bugs (B could read reviewer notes, a leading "Go ahead", unparseable grades, hidden checks). Rounds 2–5 drove the guidance changes in CHANGELOG: build first and ask at the end, shorter reports, and only open concerns.
 
+## Real use
+
+[Topher website, November 5](dogfood/2026-11-05-topher-site.md): Codex used the local SWE OS checkout to build a public project introduction. The record names what was inspected, what rendered checks caught, and what remains unverified. There is no control run or comparative score.
+
 ## Run a round
 
 The harness runs every scenario headless with Claude Code, once without SWE OS (A) and once with it (B). Then it grades each run blind and writes `evals/results/<date>/summary.md`. It uses whatever account `claude` is logged into, and stops at the budget, measured in API-equivalent dollars.
