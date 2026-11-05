@@ -47,6 +47,16 @@ test('the harness sends exactly what each scenario file says', () => {
   }
 });
 
+test('grading hides the run folder, whose name gives the arm away', async () => {
+  const { hideRunFolder } = await import('../evals/harness/neutralize.mjs');
+  assert.equal(
+    hideRunFolder(
+      'Bash cd /tmp/swe-os-evals-1-x/runs/sprout-design-B-2/work/site && ls',
+    ),
+    'Bash cd <project>/site && ls',
+  );
+});
+
 test('grading strips SWE OS tells but keeps what they say', () => {
   const reply = [
     'Fixed the typo in both files. Tests pass.',
