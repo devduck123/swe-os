@@ -52,7 +52,7 @@ How it keeps the comparison fair:
 - **One difference.** B's first message starts with "Use Tommy's SWE OS at <a snapshot of the current commit>…". A gets the task alone.
 - **Nothing escapes the temp folder.** Pushing, `gh`, deploys, Docker, and the Supabase and EAS CLIs are denied in both arms.
 - **The same answers for both.** When a scenario's starting state says "if asked", the harness answers once, the same way for both arms.
-- **Graded blind.** Graders run from a neutral temp folder, since a run's own folder is named after its arm. The grader sees the task, the reviewer-only notes, the rubric, the commands the agent ran, its replies with SWE OS tells stripped, and the diff. It never sees which arm it's grading.
+- **Graded blind.** Graders run from a neutral temp folder, since a run's own folder is named after its arm. Its path is hidden from them too, since an agent's commands include it. Rounds before November 5 didn't hide it, so a grader could see the arm's letter in those commands, though not what the letter meant. The grader sees the task, the reviewer-only notes, the rubric, the commands the agent ran, its replies with SWE OS tells stripped, and the diff. It never sees which arm it's grading.
 
 Raw transcripts and diffs stay in `runs/`, which Git ignores. Commit the round's `summary.md` and `round.json`.
 

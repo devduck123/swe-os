@@ -27,7 +27,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { scenarios } from './scenarios.mjs';
-import { hideSweos, neutralize } from './neutralize.mjs';
+import { hideRunFolder, hideSweos, neutralize } from './neutralize.mjs';
 import { combineGrades, parseGrade } from './parse-grade.mjs';
 import {
   ALLOWED,
@@ -231,9 +231,9 @@ async function gradeOne(dir, sweos) {
           t.commands
             .map((c) => hideSweos(c, sweos))
             .filter(Boolean)
-            .map((c) => `- ${c}`)
+            .map((c) => `- ${hideRunFolder(c)}`)
             .join('\n') || '- none'
-        }\n\nAgent's final reply:\n\n${neutralize(t.reply, sweos)}`,
+        }\n\nAgent's final reply:\n\n${hideRunFolder(neutralize(t.reply, sweos))}`,
     )
     .join('\n\n');
   const diff = readFileSync(join(dir, 'diff.patch'), 'utf8').slice(0, 60_000);

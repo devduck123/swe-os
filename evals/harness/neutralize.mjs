@@ -47,6 +47,10 @@ export function neutralize(text, sweosPath = '') {
 // command keeps its other parts: in round 3, hiding all of "cd <swe-os> && ... && npm view x"
 // hid the npm check too, and the grader called the agent's true report of it fake.
 // Entries look like "Bash <command>" or "Read <path>".
+// A run works in .../runs/<scenario>-<arm>-<rep>/work, so its absolute paths name the arm.
+export const hideRunFolder = (text) =>
+  text.replace(/[^\s'"`]*\/runs\/[\w-]+-[AB]-\d+\/work/g, '<project>');
+
 export function hideSweos(entry, sweosPath) {
   if (!entry.includes(sweosPath)) return entry;
   const [tool, ...rest] = entry.split(' ');
