@@ -61,13 +61,18 @@ let spent = 0;
 let stopReason = null;
 
 const scenarioText = (s) =>
-  readFileSync(join(repo, 'evals/scenarios', `${s.file ?? s.id}.md`), 'utf8');
+  readFileSync(
+    resolve(repo, 'evals/scenarios', `${s.file ?? s.id}.md`),
+    'utf8',
+  );
 
 function setUp(s, dir) {
   const work = join(dir, 'work');
   mkdirSync(work, { recursive: true });
   if (s.fixture)
-    cpSync(join(repo, 'evals/fixtures', s.fixture), work, { recursive: true });
+    cpSync(resolve(repo, 'evals/fixtures', s.fixture), work, {
+      recursive: true,
+    });
   restoreDotfiles(work);
   if (s.git) {
     const git = (...args) =>
@@ -443,7 +448,10 @@ const started =
   new Date().toISOString().slice(0, 19).replaceAll(':', '');
 // Two rounds started in the same second get separate folders.
 const newRoot = (name, n = 1) => {
-  const dir = join(repo, 'evals/results', n === 1 ? name : `${name}-${n}`);
+  const results = process.env.EVAL_PRIVATE
+    ? join(process.env.EVAL_PRIVATE, 'results')
+    : join(repo, 'evals/results');
+  const dir = join(results, n === 1 ? name : `${name}-${n}`);
   return existsSync(dir) ? newRoot(name, n + 1) : dir;
 };
 const root = past ?? newRoot(started);

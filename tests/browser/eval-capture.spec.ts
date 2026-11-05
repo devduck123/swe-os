@@ -44,3 +44,28 @@ test('the eval capture catches a page that breaks the rules', async ({
     expect(existsSync(join(out, shot))).toBe(true);
   expect(facts.shots).toHaveLength(5);
 });
+
+test('the eval capture finds a site in its folder and shows the first screen', async ({
+  isMobile,
+}) => {
+  test.skip(isMobile, 'It opens its own browser, so one run is enough.');
+  test.setTimeout(120_000);
+  const room = mkdtempSync(join(tmpdir(), 'capture-'));
+  const site = join(room, 'work', 'site');
+  mkdirSync(site, { recursive: true });
+  writeFileSync(
+    join(site, 'index.html'),
+    '<!doctype html><html lang="en"><title>Site</title><main><h1>Site</h1></main></html>',
+  );
+  const out = join(room, 'shots');
+  const facts = (await capture(join(room, 'work'), out, {
+    root: 'site',
+    scroll: true,
+    expectText: 'Site',
+  })) as Record<string, any>;
+  expect(facts.captureError).toBeUndefined();
+  expect(facts.savedDataShows).toBe(true);
+  expect(facts.shots).toContain('phone-light-fold.png');
+  expect(facts.shots).not.toContain('phone-empty.png');
+  expect(facts.shots).toHaveLength(8);
+});

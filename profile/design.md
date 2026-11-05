@@ -8,7 +8,7 @@ I don't design much by hand anymore. Agents go straight to code, and some of the
 
 ## Go further than the default
 
-Default framework styling shipped as-is isn't a design. Every product gets its own visual direction: a palette, type, shapes, and motion that fit what it is and who it's for. Pick one with conviction, and surprise me. If you're torn between two directions, build the bolder one and say what the quieter one would look like.
+Default framework styling shipped as-is isn't a design. Every product gets its own visual direction: a palette, type, shapes, and motion that fit what it is and who it's for. Pick one with conviction, and surprise me.
 
 What I keep noticing on sites I love:
 
@@ -17,11 +17,23 @@ What I keep noticing on sites I love:
 - **Motion with character.** Things enter and leave with intent. Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened. CSS transitions first. In React, [Motion](https://motion.dev/) (formerly Framer Motion) is the reference for springs, gestures, layout, and exit animations.
 - **Personality in the small places.** Empty states, loading states, errors, and the 404 get the same care as the main screen, in words and in pictures.
 - **Type with a point of view.** A display face that carries the mood, like an editorial serif or something rounded and friendly, with a quiet text face doing the reading.
-- **Cute, artsy, and expressive is welcome.** Friendly beats corporate. Restraint is a choice for a product that needs it, not the default.
+- **Friendly beats corporate.** Restraint is a choice for a product that needs it, not the default.
 
-## Look at what others do first
+## Don't build your first idea
 
-Before designing a screen or a flow, look at how two or three similar products handle it. [Mobbin](https://mobbin.com/) collects real app screens by flow, like onboarding, paywalls, and empty states. It needs my account, so ask me for screenshots instead of signing in, or visit the products' own sites. [Framer](https://www.framer.com/) sites are good for polish and motion ideas. Borrow patterns, not looks, and say in your report what you borrowed and from where. Then go straight to code. There's no mockup step.
+Your first idea is everyone's first idea. In my first design eval, six agents given the same app made nearly the same screen: a greeting over a list of cards, on cream, with a floating add button. Before you build, say what the obvious version would be, then build something else. Change the layout and the structure, not only the colors.
+
+On a new product or a redesign, sketch three directions that differ in layout and structure, build the boldest, and say in your report what the other two were. Sketching costs tokens, so ask whoever's running you first, in one line, unless they've already told you to spend them. If they say no, or nobody's there to answer, skip the sketches and build your best idea that isn't the obvious one.
+
+## Make it feel like a person drew it
+
+Clean, cute, and accessible is where agents land by default now, and it still feels generated. I want to feel the hand of whoever made it, and feel like they were thinking about me.
+
+- **Drawn by hand.** Art built from perfect circles and rounded rectangles looks generated. Plot the paths so lines wobble, change weight, and overshoot at the corners, and let a fill miss its outline.
+- **Real range.** A character with one smile and one frown is a sticker. Give it big feelings it commits to, like dramatic, grumpy, smug, or relieved, and push the pose until it's funny.
+- **Art with a job.** Art belongs all over the main screen, carrying what a label or a badge would otherwise say, and each item gets its own. One mascot in the corner of a normal app is decoration.
+- **A bold layout.** One thing huge, scale that jumps, something that breaks the grid. Someone should recognize the page with its text blurred.
+- **Words from someone.** Write what one specific person would say to this reader, including the joke only they'd make and the feeling the reader won't admit to. If a line would fit any app, it's filler.
 
 ## What I've liked
 
@@ -44,7 +56,7 @@ The mascots, stickers, icons, illustrations, and animations an agent draws for a
 Expressive never costs someone the ability to use the thing.
 
 - **Contrast.** Text is at least 4.5:1 against what's behind it, large text 3:1, and a form field's edge and focus ring 3:1. Check every color pair you add, in every theme the product has.
-- **Reduced motion.** Under `prefers-reduced-motion: reduce`, keep fades and drop movement, parallax, and looping animation. Anything that loops for more than five seconds gets a pause control.
+- **Reduced motion.** Under `prefers-reduced-motion: reduce`, keep fades and drop movement, parallax, and looping animation. Anything that moves on its own for more than five seconds gets a pause control, whether it loops or repeats a few times, and delays count.
 - **Motion never blocks.** Nobody waits for an animation to finish before they can act. UI transitions take 150 to 300ms. Animate `opacity` and `transform`, which don't make the page recompute its layout.
 - **Art is accessible and light.** A decorative graphic is hidden from screen readers (`aria-hidden="true"` or empty `alt`), and a meaningful one gets a text alternative. Inline SVG and CSS before big images and heavy animation libraries. The page's main content still loads fast on a phone.
 - **Keyboard and touch work.** Every interactive thing has a visible focus state and works by keyboard. Hover effects are a bonus, never the only way to find a control. Primary touch targets are about 44px.

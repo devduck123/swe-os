@@ -64,6 +64,8 @@ export const scenarios = [
       empty: { 'sprout.plants': '[]' },
       expectText: 'Fern',
     },
+    ifAsked:
+      'Yes, spend the tokens if it is for exploring design directions. Otherwise use your judgment.',
     turns: [
       "Sprout works, but it looks like a homework assignment. Make it feel like a real product, something people would actually want to open every morning. It's for people who keep killing their houseplants, and most of them will use it on their phone.",
     ],
@@ -163,3 +165,12 @@ could both see none. It also trusted memberId from the request body.
     ],
   },
 ];
+
+// A scenario about a private project stays out of this public repo. EVAL_PRIVATE names a folder
+// outside it, whose scenarios.mjs adds entries with absolute fixture and file paths. The round's
+// results stay in that folder too.
+if (process.env.EVAL_PRIVATE) {
+  const { pathToFileURL } = await import('node:url');
+  const extra = pathToFileURL(`${process.env.EVAL_PRIVATE}/scenarios.mjs`).href;
+  scenarios.push(...(await import(extra)).scenarios);
+}

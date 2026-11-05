@@ -4,6 +4,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Design taste pushes past the first idea.** Agents say what the obvious version would be and build something else. On a new product or a redesign, they ask once before sketching three directions, since that costs tokens. A new section asks for art that feels drawn by a person: uneven lines, real range, art with a job, a bold layout. The "look at what others do" step is gone, because no agent followed it. The five-second motion rule now covers anything that moves on its own, not only loops.
 - **A design eval.** A new scenario asks an agent to make a plain app feel like a product. The harness screenshots each result in both themes and measures the rules (accessibility, sideways scrolling, motion, touch targets), so graders judge the page and not only the diff. First result: Design 2.67 with SWE OS vs 1.33 without, at about 2× the cost, with gaps listed in the [evals README](evals/README.md#results-so-far).
 - **Graders are more blind.** They ran from a folder named after the arm they were grading. Now they run from a neutral one.
 - **Two readers, drawn.** The duck and its agent, a little robot duck, sit on the end of the dock and read one book together, and the note's arrow points at both. The landing copy says what SWE OS is plainly: a slightly opinionated guide for people and the coding agents that build with them.
