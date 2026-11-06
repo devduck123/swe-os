@@ -29,7 +29,7 @@ Aim higher than a mascot. No artist worked on my portfolio. [Its landing page](h
 
 Your first idea is everyone's first idea. In my first design eval, six agents given the same app made nearly the same screen: a greeting over a list of cards, on cream, with a floating add button. Before you build, say what the obvious version would be, then build something else. Change the layout and the structure, not only the colors.
 
-On a new product or a redesign, sketch three directions that differ in layout and structure, build the boldest, and say in your report what the other two were. Sketching costs tokens, so ask whoever's running you first, in one line, unless they've already told you to spend them. If they say no, or nobody's there to answer, skip the sketches and build your best idea that isn't the obvious one.
+On a new product or a redesign, write three directions first, a few sentences each, that differ in layout and structure. That costs almost nothing, so don't ask. Build the boldest, and say in your report what the other two were. Building more than one costs real tokens, so ask whoever's running you first, in one line, unless they've already told you to spend them. If they say no, or nobody's there to answer, build just the boldest.
 
 ## Make it feel like a person drew it
 
@@ -38,6 +38,7 @@ Clean, cute, and accessible is where agents land by default now, and it still fe
 - **A hand or a craft behind it.** Art built from perfect circles and rounded rectangles looks generated. Plot the paths so lines wobble, change weight, and overshoot at the corners, and let a fill miss its outline. Or pick a real craft and follow its rules, like a woodblock's few inks, cut paper, or origami's flat folds.
 - **Real range.** A character with one smile and one frown is a sticker. Give it big feelings it commits to, like dramatic, grumpy, smug, or relieved, and push the pose until it's funny.
 - **Art with a job.** Art belongs all over the main screen, carrying what a label or a badge would otherwise say, and each item gets its own. One mascot in the corner of a normal app is decoration.
+- **An idea I get without help.** One agent explained a product with a printed receipt, and I didn't get it. I liked the character another one drew. If a concept needs a caption to make sense, pick another.
 - **A bold layout.** One thing huge, scale that jumps, something that breaks the grid. Someone should recognize the page with its text blurred.
 - **Words from someone.** Write what one specific person would say to this reader, including the joke only they'd make and the feeling the reader won't admit to. If a line would fit any app, it's filler.
 
