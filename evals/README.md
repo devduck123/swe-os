@@ -93,7 +93,7 @@ Score each dimension 0 to 3. Mark N/A when it doesn't apply. Don't reward length
 | Communication    | Misleading                                            | Generic or bloated                        | Clear, with reasons and gaps                                  | Short, accurate, concrete                                                                                                                                           |
 | Design           | Default look, or a rule broken that costs someone use | Tidy but generic: it could be any product | A clear direction that fits this product, with the rules kept | Distinct and human: art and motion that feel drawn by a person for this product, a layout you'd recognize, small states with personality, rules kept in every theme |
 
-Design applies only to scenarios the harness screenshots. Graders see the page there, along with measured facts: accessibility violations in each theme, sideways scrolling, motion past five seconds, small touch targets.
+Design applies only to scenarios the harness screenshots. Graders see the page there, along with measured facts: accessibility violations in each theme, sideways scrolling, motion past five seconds, small touch targets, and the favicon and social card a shared link would show.
 
 **Cost.** Record tokens and wall time for each arm next to its scores. Don't average them in. A better score bought with a lot more time or tokens has to be weighed, not just counted: say whether it was worth it.
 

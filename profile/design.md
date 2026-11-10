@@ -16,6 +16,7 @@ What I keep noticing on sites I love:
 - **Real art.** Illustrations, stickers, icons, and graphics drawn for this product, usually as inline SVG, instead of stock images or an emoji in a circle. A mascot, a hand-drawn empty state, a hero graphic with one slow, glowing motion.
 - **Motion with character.** Things enter and leave with intent. Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened. CSS transitions first. In React, [Motion](https://motion.dev/) (formerly Framer Motion) is the reference for springs, gestures, layout, and exit animations.
 - **Personality in the small places.** Empty states, loading states, errors, and the 404 get the same care as the main screen, in words and in pictures.
+- **A favicon and a social card, every time.** People see the tab icon and the preview of a shared link before they see the page, so a blank card makes even a great site look unfinished. Draw both from the product's own art: an SVG favicon with a 180px Apple touch icon, and a 1200×630 social image with a title and description. Render the image from the page itself so it stays in sync, then look at it.
 - **Type with a point of view.** A display face that carries the mood, like an editorial serif or something rounded and friendly, with a quiet text face doing the reading.
 - **Friendly beats corporate.** Restraint is a choice for a product that needs it, not the default.
 
