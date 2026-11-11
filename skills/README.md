@@ -21,6 +21,8 @@ If you're a person, this is the page to point your agent at. [Three ways to do i
 | "Explain X", "how does X work", "why would I use X".                           | [explain](explain/SKILL.md)             |
 | "Walk me through this PR", "catch me up", "quiz me". Learning from agent work. | [learn](learn/SKILL.md)                 |
 
+**A website is a project too.** A landing page or a coming-soon site gets start-project for its repo and build-feature for each change, even when the ask is casual, like "do the sections below the hero next". Agents building one tend to skip the skills because it feels like just a page, and that's where the checks went missing.
+
 **Tiny changes skip the skills.** A typo, a copy edit, or a one-line fix that adds no behavior: make it, run the checks, and report in a sentence or two. No concern report, and no Worth learning unless something surprised you.
 
 If none fit, work normally and still follow the rules below. If a request spans two, finish the first before the second. Shape before you build.
@@ -28,7 +30,7 @@ If none fit, work normally and still follow the rules below. If a request spans 
 ## Rules for every task
 
 1. **The user and the project come first.** Explicit instructions and the project's own `AGENTS.md` override anything in SWE OS.
-2. **Load only what you need.** Read the skill and the concerns and guides it sends you to, not the whole OS.
+2. **Load only what you need.** Read the skill and the concerns and guides it sends you to, not the whole OS. Read them one at a time: a tool that reads several files at once can cut one short without saying so.
 3. **Done means you saw it work.** Report what you ran and what it showed. Never claim what you didn't see.
 4. **Keep moving on reversible work.** When a question doesn't block code you could undo, make the most likely assumption, say it, build, and ask at the end. A plan with open questions is not a deliverable when the user asked for a feature. The exception is a new product's look when you can't tell [what the product is](../profile/design.md#start-from-what-the-product-is): a wrong guess there means rebuilding it, so ask one question first.
 5. **Ask before anything hard to undo,** like destructive data changes, force-pushes, permission or secret changes, or production deploys nobody asked for.
