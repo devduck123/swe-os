@@ -17,8 +17,10 @@ test('the eval capture catches a page that breaks the rules', async ({
     join(work, 'index.html'),
     `<!doctype html><html lang="en"><head><title>Bad</title><style>
       @keyframes spin { to { transform: rotate(360deg); } }
-      body { background: #fff; color: #eee; }
-      @media (prefers-color-scheme: dark) { body { background: #000; } }
+      html { background: #fff; }
+      body { color: #eee; }
+      /* Painted on <html>, which an earlier check missed. */
+      @media (prefers-color-scheme: dark) { html { background: #000; } }
       .wide { width: 900px; animation: spin 2s infinite; }
       .off { animation: spin 1ms; }
     </style></head><body><main><h1>Bad</h1><button>x</button>
@@ -65,6 +67,7 @@ test('the eval capture finds a site in its folder and shows the first screen', a
   })) as Record<string, any>;
   expect(facts.captureError).toBeUndefined();
   expect(facts.savedDataShows).toBe(true);
+  expect(facts.followsSystemDarkMode).toBe(false);
   expect(facts.shots).toContain('phone-light-fold.png');
   expect(facts.shots).not.toContain('phone-empty.png');
   expect(facts.shots).toHaveLength(8);

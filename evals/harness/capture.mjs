@@ -289,19 +289,25 @@ export async function capture(
     );
     await narrow.context.close();
 
-    // Whether dark mode changes anything at all.
-    const backgrounds = [];
+    // Whether dark mode changes anything at all. A page can paint its background on <html> or
+    // <body>, as a color or a gradient, so compare all of them, plus the text color.
+    const looks = [];
     for (const colorScheme of ['light', 'dark']) {
       const { context, page } = await open({ viewport: PHONE, colorScheme });
       await page.goto(url, { waitUntil: 'load' });
-      backgrounds.push(
-        await page.evaluate(
-          () => getComputedStyle(document.body).backgroundColor,
+      looks.push(
+        await page.evaluate(() =>
+          [document.documentElement, document.body]
+            .flatMap((el) => {
+              const css = getComputedStyle(el);
+              return [css.backgroundColor, css.backgroundImage, css.color];
+            })
+            .join('|'),
         ),
       );
       await context.close();
     }
-    facts.followsSystemDarkMode = backgrounds[0] !== backgrounds[1];
+    facts.followsSystemDarkMode = looks[0] !== looks[1];
     facts.pageBytes = pageBytes;
   } catch (error) {
     facts.captureError = String(error.message ?? error).slice(0, 400);

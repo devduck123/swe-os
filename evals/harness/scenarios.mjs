@@ -71,6 +71,17 @@ export const scenarios = [
     ],
   },
   {
+    id: 'clipjar-page',
+    fixture: 'clipjar',
+    git: true,
+    capture: { root: 'site', scroll: true, expectText: 'Clipjar' },
+    ifAsked:
+      "It's for developers and writers who copy a lot. It should feel like a polished, native Mac utility. Use your judgment on everything else and finish.",
+    turns: [
+      'Clipjar is in private beta. Build its coming-soon page in site/, something I can link from my portfolio. Make it look great.',
+    ],
+  },
+  {
     id: 'receipt-gallery',
     fixture: 'receipt-gallery',
     git: true,
