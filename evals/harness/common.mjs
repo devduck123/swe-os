@@ -26,6 +26,18 @@ export const ALLOWED = [
   'Bash(mkdir:*)',
   'Bash(grep:*)',
   'Bash(find:*)',
+  // Harmless helpers that checks chain onto: `cd site && …`, `… | head`, `sleep 2` while a
+  // server starts. Without them, compound commands were blocked, so a run couldn't look at its
+  // own page for reasons that had nothing to do with its judgment.
+  'Bash(cd:*)',
+  'Bash(head:*)',
+  'Bash(tail:*)',
+  'Bash(echo:*)',
+  'Bash(which:*)',
+  'Bash(wc:*)',
+  'Bash(sort:*)',
+  'Bash(sleep:*)',
+  'Bash(pwd:*)',
 ];
 export const DENIED = [
   'Bash(git push:*)',
@@ -80,46 +92,53 @@ export function claude(
     child.on('close', (code) => {
       clearTimeout(timer);
       writeFileSync(transcript, out);
-      const events = out
-        .split('\n')
-        .filter((line) => line.startsWith('{'))
-        .map((line) => {
-          try {
-            return JSON.parse(line);
-          } catch {
-            return null;
-          }
-        })
-        .filter(Boolean);
-      const result = events.findLast((e) => e.type === 'result') ?? {};
-      const init = events.find(
-        (e) => e.type === 'system' && e.subtype === 'init',
-      );
-      const commands = events
-        .filter((e) => e.type === 'assistant')
-        .flatMap((e) => e.message.content)
-        .filter((c) => c.type === 'tool_use')
-        .map((c) =>
-          `${c.name} ${c.input.command ?? c.input.file_path ?? c.input.url ?? c.input.pattern ?? ''}`.trim(),
-        );
-      done({
-        code,
-        sessionId: result.session_id ?? init?.session_id,
-        reply: result.result ?? '',
-        error: result.is_error
-          ? result.result
-          : code !== 0
-            ? out.slice(-500)
-            : null,
-        cost: result.total_cost_usd ?? 0,
-        ms: result.duration_ms ?? 0,
-        turns: result.num_turns ?? 0,
-        model: init?.model,
-        skills: init?.slash_commands ?? [],
-        commands,
-      });
+      done(parseStream(out, code));
     });
   });
+}
+
+// Reads the stream-json a `claude -p` call printed: the reply, its cost, the commands the agent
+// ran, and the ones the permission settings blocked.
+export function parseStream(out, code = 0) {
+  const events = out
+    .split('\n')
+    .filter((line) => line.startsWith('{'))
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+  const result = events.findLast((e) => e.type === 'result') ?? {};
+  const init = events.find((e) => e.type === 'system' && e.subtype === 'init');
+  const describe = (name, input = {}) =>
+    `${name} ${input.command ?? input.file_path ?? input.url ?? input.pattern ?? ''}`.trim();
+  const commands = events
+    .filter((e) => e.type === 'assistant')
+    .flatMap((e) => e.message.content)
+    .filter((c) => c.type === 'tool_use')
+    .map((c) => describe(c.name, c.input));
+  return {
+    code,
+    sessionId: result.session_id ?? init?.session_id,
+    reply: result.result ?? '',
+    error: result.is_error
+      ? result.result
+      : code !== 0
+        ? out.slice(-500)
+        : null,
+    cost: result.total_cost_usd ?? 0,
+    ms: result.duration_ms ?? 0,
+    turns: result.num_turns ?? 0,
+    model: init?.model,
+    skills: init?.slash_commands ?? [],
+    commands,
+    denied: (result.permission_denials ?? []).map((d) =>
+      describe(d.tool_name, d.tool_input),
+    ),
+  };
 }
 
 // A failure every later run would hit too, so the caller should stop. Null otherwise.

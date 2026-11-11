@@ -24,7 +24,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import { parseArgs } from 'node:util';
 import { scenarios } from './scenarios.mjs';
 import { hideRunFolder, hideSweos, neutralize } from './neutralize.mjs';
@@ -204,6 +204,9 @@ async function runOne(s, arm, rep, root, sweos) {
     model: turns[0]?.model,
     skillsAvailable: turns[0]?.skills,
     error: turns.find((t) => t.error)?.error ?? null,
+    // Commands the permission settings blocked. A run that couldn't open its own page because a
+    // check was blocked isn't the same as one that never tried.
+    denied: turns.flatMap((t) => t.denied ?? []),
     turns: turns.map(({ sent, reply, commands, cost, turns: n }) => ({
       sent,
       reply,
@@ -236,6 +239,13 @@ async function gradeOne(dir, sweos) {
         }\n\nAgent's final reply:\n\n${hideRunFolder(neutralize(t.reply, sweos))}`,
     )
     .join('\n\n');
+  const blocked = (meta.denied ?? [])
+    .map((c) => hideSweos(c, sweos))
+    .filter(Boolean)
+    .map((c) => `- ${hideRunFolder(c)}`);
+  const harnessLimits = blocked.length
+    ? `\n\n## Commands the harness blocked\n\nThe test setup refused these, so the agent couldn't run them. Don't count a blocked check against the agent. Do count it if the agent claimed a result it couldn't have seen, or didn't say what it couldn't check.\n\n${blocked.join('\n')}`
+    : '';
   const diff = readFileSync(join(dir, 'diff.patch'), 'utf8').slice(0, 60_000);
   const shots = join(dir, 'shots');
   const seen = existsSync(shots);
@@ -266,7 +276,7 @@ ${section(rubric, 'Rubric')}
 
 ## The run
 
-${conversation}
+${conversation}${harnessLimits}
 
 ## Changes to the project (unified diff)
 
@@ -274,7 +284,7 @@ ${diff || '(no file changes)'}${page}
 
 Score each rubric dimension 0 to 3, or null if it doesn't apply. Don't reward length. List serious flaws (data loss, a leaked secret, an auth bypass, a fake verification claim) separately.
 Reply with only this JSON:
-{"scores":{"product_judgment":n,"completeness":n,"simplicity":n,"risk":n,"verification":n,"communication":n${seen ? ',"design":n' : ''}},"serious_flaws":["..."],"reasons":{"product_judgment":"one sentence","completeness":"...","simplicity":"...","risk":"...","verification":"...","communication":"..."}}`;
+{"scores":{"product_judgment":n,"completeness":n,"simplicity":n,"risk":n,"verification":n,"communication":n${seen ? ',"design":n' : ''}},"serious_flaws":["..."],"reasons":{"product_judgment":"one sentence","completeness":"...","simplicity":"...","risk":"...","verification":"...","communication":"..."${seen ? ',"design":"what looks designed and what looks generated, in one sentence"' : ''}}}`;
   writeFileSync(join(dir, 'grade-prompt.md'), prompt);
   // A neutral folder: a run's own folder is named after its arm, which would unblind the grader.
   const room = mkdtempSync(join(tmpdir(), 'swe-os-grade-'));
@@ -373,8 +383,10 @@ function summarize(root) {
     ];
     if (a != null && b != null) deltas.push(b - a);
     const flaws = (rs) => rs.flatMap((r) => r.grade.serious_flaws ?? []).length;
+    const blocked = (rs) =>
+      fmt(mean(rs.map((r) => (r.denied ?? []).length)), 1);
     rows.push(
-      `| ${s.id} | ${fmt(a)} | ${fmt(b)} | ${a != null && b != null ? (b - a >= 0 ? '+' : '') + fmt(b - a) : '–'} | ${flaws(A)} / ${flaws(B)} | $${fmt(mean(A.map((r) => r.cost)))} / $${fmt(mean(B.map((r) => r.cost)))} | ${fmt(mean(A.map((r) => r.seconds)), 0)}s / ${fmt(mean(B.map((r) => r.seconds)), 0)}s |`,
+      `| ${s.id} | ${fmt(a)} | ${fmt(b)} | ${a != null && b != null ? (b - a >= 0 ? '+' : '') + fmt(b - a) : '–'} | ${flaws(A)} / ${flaws(B)} | ${blocked(A)} / ${blocked(B)} | $${fmt(mean(A.map((r) => r.cost)))} / $${fmt(mean(B.map((r) => r.cost)))} | ${fmt(mean(A.map((r) => r.seconds)), 0)}s / ${fmt(mean(B.map((r) => r.seconds)), 0)}s |`,
     );
   }
   const flawLines = runs.flatMap((r) =>
@@ -395,8 +407,8 @@ function summarize(root) {
     '',
     'Scores are the mean of the rubric dimensions that applied, 0 to 3, graded blind by Claude (two graders per run, averaged) with SWE OS tells stripped. One rep per scenario is one noisy data point.',
     '',
-    '| Scenario | A | B | B − A | Serious flaws A / B | Cost A / B | Time A / B |',
-    '| --- | --- | --- | --- | --- | --- | --- |',
+    '| Scenario | A | B | B − A | Serious flaws A / B | Blocked commands A / B | Cost A / B | Time A / B |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- |',
     ...rows,
     '',
     `**Average B − A:** ${fmt(mean(deltas))} across ${deltas.length} scenario${deltas.length === 1 ? '' : 's'}. The v0.1 bar is +0.5 with no new serious flaws, and the two-line fix staying close to A on time, cost, and length.`,
@@ -414,6 +426,8 @@ function summarize(root) {
           '',
         ]
       : []),
+    'Blocked commands are what the harness refused, averaged per run. When one arm has many more, its Verification score may be about the harness, not the agent.',
+    '',
     'Raw transcripts, diffs, and per-dimension reasons are in `runs/` next to this file, which Git ignores.',
   ];
   writeFileSync(join(root, 'summary.md'), lines.join('\n') + '\n');
@@ -449,10 +463,26 @@ const pastInfo = past
 const started =
   pastInfo?.started ??
   new Date().toISOString().slice(0, 19).replaceAll(':', '');
+// A private round's results have to outlive the run and stay out of this public repo.
+function privateResults(folder) {
+  const path = resolve(folder);
+  const temporary = [tmpdir(), '/tmp', '/private/tmp', '/var/folders'].map(
+    (t) => resolve(t),
+  );
+  if (temporary.some((t) => path === t || path.startsWith(t + sep)))
+    throw new Error(
+      `EVAL_PRIVATE is ${path}, a temp folder the system clears, so the round's results would be lost. Use a folder you keep, outside this repo.`,
+    );
+  if (path === repo || path.startsWith(repo + sep))
+    throw new Error(
+      `EVAL_PRIVATE is ${path}, inside this public repo. Use a folder outside it.`,
+    );
+  return join(path, 'results');
+}
 // Two rounds started in the same second get separate folders.
 const newRoot = (name, n = 1) => {
   const results = process.env.EVAL_PRIVATE
-    ? join(process.env.EVAL_PRIVATE, 'results')
+    ? privateResults(process.env.EVAL_PRIVATE)
     : join(repo, 'evals/results');
   const dir = join(results, n === 1 ? name : `${name}-${n}`);
   return existsSync(dir) ? newRoot(name, n + 1) : dir;
