@@ -130,3 +130,54 @@ test('the learner reads the main path only', async () => {
   assert.match(out, /Intro\.[\s\S]*Ship it\./);
   assert.doesNotMatch(out, /title: X|Lock levels|a link/);
 });
+
+test('a run records the commands the harness blocked', async () => {
+  const { parseStream } = await import('../evals/harness/common.mjs');
+  const out = [
+    { type: 'system', subtype: 'init', session_id: 's', model: 'm' },
+    {
+      type: 'assistant',
+      message: {
+        content: [{ type: 'tool_use', name: 'Bash', input: { command: 'ls' } }],
+      },
+    },
+    {
+      type: 'result',
+      result: 'Done.',
+      session_id: 's',
+      total_cost_usd: 0.5,
+      permission_denials: [
+        { tool_name: 'Bash', tool_input: { command: 'gh pr create' } },
+        { tool_name: 'WebFetch', tool_input: { url: 'https://example.com' } },
+      ],
+    },
+  ]
+    .map((e) => JSON.stringify(e))
+    .join('\n');
+  const r = parseStream(out);
+  assert.equal(r.reply, 'Done.');
+  assert.deepEqual(r.commands, ['Bash ls']);
+  assert.deepEqual(r.denied, [
+    'Bash gh pr create',
+    'WebFetch https://example.com',
+  ]);
+  assert.deepEqual(parseStream('').denied, []);
+});
+
+test('a private round refuses a temp folder, which would lose its results', async () => {
+  const { spawnSync } = await import('node:child_process');
+  const { mkdtempSync, writeFileSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const folder = mkdtempSync(join(tmpdir(), 'private-'));
+  writeFileSync(
+    join(folder, 'scenarios.mjs'),
+    'export const scenarios = [];\n',
+  );
+  const r = spawnSync(
+    process.execPath,
+    ['evals/harness/run.mjs', '--dry-run', '--only', 'overhead'],
+    { env: { ...process.env, EVAL_PRIVATE: folder }, encoding: 'utf8' },
+  );
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /temp folder the system clears/);
+});
