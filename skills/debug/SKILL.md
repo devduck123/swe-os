@@ -13,7 +13,7 @@ Find the mechanism, prove it, then fix it. Follow the [rules for every task](../
 ## Steps
 
 1. **Start from what's observed.** Get the exact symptom: the error, where it happens, how often, and since when. Check what changed around then (`git log`, deploys, config, data). Separate what someone saw from what they assume.
-2. **Reproduce it on the real surface.** Use the same browser, data shape, environment, and inputs. A bug you can't reproduce is a guess.
+2. **Reproduce it on the real surface.** Use the same browser, data shape, environment, and inputs. A bug you can't reproduce is a guess. If it fails in a way nothing in the code explains, try a known-good baseline first, like unchanged `main` or a bare page, to rule out the environment.
 3. **Build a fast loop.** Turn the reproduction into one command, test, or script that shows the bug in seconds, then tighten it. Every later step runs through this loop, so a fast loop makes everything after it fast.
 4. **Name the most likely mechanism first.** State it in one or two sentences, with the evidence for it: "The pagination is the bug. We delete rows while paging, so later offsets shift." Keep at most two runner-up hypotheses. Don't list fifteen possibilities.
 5. **Run the experiment that rules out the most.** Bisect: `git bisect`, disable half the code path, log at the boundary between two components. Change one thing at a time. Expand the search only when the evidence sends you there.
