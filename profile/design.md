@@ -8,7 +8,7 @@ I don't design much by hand anymore. Agents go straight to code, and some of the
 
 ## Start from what the product is
 
-Learn the product before you draw anything. Read its README, its code, or what the person told you, and answer three questions: what does it do, who uses it, and where does it live? A phone app, a browser tab, and a tool in a Mac's menu bar want different pages.
+Learn the product before you draw anything. Read its README, any product or vision doc (it says what the product is for better than a feature list), its code, and what the person told you, and answer three questions: what does it do, who uses it, and where does it live? A phone app, a browser tab, and a tool in a Mac's menu bar want different pages.
 
 Then pick the register, which is how serious it should feel. A tool that lives on someone's computer should look at home there: calm, in the platform's own type and surfaces, with the charm in the details. A personal site, a game, or a kids' app can be loud. My portfolio is expressive because it's about me. A Mac utility's page that leaned into poster art, with condensed capitals and road-sign buttons, read as goofy, and the only parts that looked right were its recreated app panels.
 
@@ -26,7 +26,7 @@ What I keep noticing on sites I love:
 - **Motion with character.** Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened. CSS transitions first. In React, [Motion](https://motion.dev/) is the reference for springs, gestures, and exit animations.
 - **Personality in the small places.** Empty states, loading states, errors, and the 404 get the same care as the main screen, in words and in pictures.
 - **A favicon and a social card, every time.** People see both before they see the page, and a blank card makes a great site look unfinished. Draw them from the product's own art: an SVG favicon with a 180px Apple touch icon, and a 1200×630 social image with a title and description, rendered from the page so it stays in sync.
-- **Type that fits the register.** A tool for one platform often wants that platform's own system font. Elsewhere, a display face that carries the mood, with a quiet text face doing the reading.
+- **Type that fits the register.** A tool for one platform often wants that platform's own system font, with a fallback that still looks right to visitors on other platforms. Elsewhere, a display face that carries the mood, with a quiet text face doing the reading.
 
 ## No designer? Code can be your artist
 
@@ -87,7 +87,7 @@ Expressive never costs someone the ability to use the thing.
 - **Motion never blocks.** Nobody waits for an animation to finish before they can act. UI transitions take 150 to 300ms. Animate `opacity` and `transform`, which don't make the page recompute its layout.
 - **Art is accessible and light.** A decorative graphic is hidden from screen readers (`aria-hidden="true"` or empty `alt`), and a meaningful one gets a text alternative. Inline SVG and CSS before big images and heavy animation libraries. The page's main content still loads fast on a phone.
 - **Keyboard and touch work.** Every interactive thing has a visible focus state and works by keyboard. Hover effects are a bonus, never the only way to find a control. Primary touch targets are about 44px.
-- **One system per project.** Whatever direction you pick, write it down as tokens in the theme file: colors for light and dark, type, radius, shadows, and motion timing. Components use the tokens, never raw hex or one-off values, so the tenth screen matches the first. With shadcn/ui, that's its [theme variables](https://ui.shadcn.com/docs/theming), and new ones go through `@theme inline`.
+- **One system per project.** Whatever direction you pick, write it down as tokens in the theme file: colors for light and dark, type, radius, shadows, and motion timing. Components use the tokens, never raw hex or one-off values, so the tenth screen matches the first. A site follows the system's theme and has a toggle that remembers the visitor's choice. With shadcn/ui, that's its [theme variables](https://ui.shadcn.com/docs/theming), and new ones go through `@theme inline`.
 
 ## Sources
 

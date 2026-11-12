@@ -1,6 +1,6 @@
 # Working on SWE OS
 
-This repo is the SWE OS itself. Read [PROJECT.md](PROJECT.md) for what's in progress and what's deferred.
+This repo is the SWE OS itself. Read [PROJECT.md](PROJECT.md) for what's in progress and what's deferred. If you were sent here to build a different project, work from that project's folder instead: this file and PROJECT.md only cover changing SWE OS.
 
 - Use the SWE OS skills on this repo too. Start at [skills/README.md](skills/README.md).
 - The Markdown in `core/`, `profile/`, `skills/`, and `templates/` is the content. `src/` only renders it. Never copy content into `src/`.

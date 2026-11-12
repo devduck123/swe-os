@@ -14,6 +14,8 @@ description: Does the UI hold up on any screen, show every state, look like it b
 - Make interactive elements look interactive, with hover, focus, active, and disabled states.
 - Design the empty, loading, success, and error states. The first time a user sees your feature, it's probably empty. Error messages say what happened and what to do next, when there is a next step.
 - Check light and dark themes if the project has both.
+- Nothing moves after the page first paints. Reserve space for what loads late, and don't hide content until a script runs. Keep layout shift (CLS) under 0.1.
+- Where text sits on or beside art, check every width from 320px up to a very wide screen, not just two. A test that sweeps widths catches the collision two screenshots miss.
 
 ## When stakes rise
 
@@ -31,6 +33,7 @@ description: Does the UI hold up on any screen, show every state, look like it b
 - A "generic" component with a boolean prop for every new caller.
 - A form with no feedback after submit, so users click twice.
 - An empty state that's a blank screen.
+- A sidebar or menu hidden until its script loads, so the page jumps when it appears.
 - Dark mode with unreadable text because colors were hard-coded.
 
 ## Why, and more of what people miss
