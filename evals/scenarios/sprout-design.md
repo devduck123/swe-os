@@ -10,7 +10,7 @@ This one measures [Design taste](../../profile/design.md) directly, so unlike th
 
 A small working app in plain HTML, CSS, and JavaScript, with no build step, hosted as static files on GitHub Pages. Plants are saved in `localStorage`. You can add a plant, mark it watered, and remove it. It's almost unstyled. The seed data has an overdue plant, one due today, and one with a very long name.
 
-If asked: Yes, spend the tokens if it is for exploring design directions. Otherwise use your judgment.
+If asked: If you're asking to build several design directions, yes, spend the tokens. For anything else, use your judgment and finish.
 
 ## Reviewer-only notes
 

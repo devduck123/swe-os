@@ -179,6 +179,7 @@ export default defineConfig({
           items: [
             { label: 'My defaults', slug: 'profile/defaults' },
             { label: 'My design taste', slug: 'profile/design' },
+            { label: 'My palette', slug: 'profile/palette' },
             ...pages('core/recipes').map((p) => ({ slug: `recipes/${p}` })),
             { label: 'All recipes', slug: 'recipes' },
           ],
@@ -205,7 +206,7 @@ export default defineConfig({
           items: ['tommy', 'voice', 'writing', 'learning']
             .concat(
               pages('profile').filter(
-                (p) => !['defaults', 'design'].includes(p),
+                (p) => !['defaults', 'design', 'palette'].includes(p),
               ),
             )
             .filter((p, i, all) => all.indexOf(p) === i)

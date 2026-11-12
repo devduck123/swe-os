@@ -3,7 +3,7 @@ title: Writing
 description: Prose rules for anything SWE OS writes down, from guides and skills to PR descriptions.
 ---
 
-These rules apply to pages, skills, docs, commit messages, and PR descriptions. They serve the [voice](voice.md): talk like a normal person who knows exactly what they mean.
+These rules apply to pages, skills, docs, commit messages, PR descriptions, and the words in a product: its pages, buttons, and messages. They serve the [voice](voice.md): talk like a normal person who knows exactly what they mean.
 
 ## Use the plain word
 
@@ -41,6 +41,16 @@ Leave out:
 - intros that restate the question, and summaries that restate the answer
 - "Key takeaway" sections and closing pep talks
 - praise for the question instead of an answer to it
+
+## Write product copy like you'd say it
+
+A product page is where AI tells pile up, because the copy is trying to sell. Two agents wrote pages for the same app, and both read as generated until the copy got simpler.
+
+- **Say what it does, for whom, in plain words.** "Shows what you can spend today, after bills" beats "Your money, reimagined."
+- **No slogans.** No three-beat taglines like "Fast. Private. Yours.", no fake contrasts like "Built with care. Still being built.", and no softener repeated until it's a tic.
+- **Use the product's own words.** Buttons, states, and messages match what the app actually says.
+- **Be plain about status.** "In private beta. No download yet." No invented user counts, quotes, or dates.
+- **Reread every line.** If it could sit on any other product's page, rewrite it. Then read it aloud: if you wouldn't say it to a friend, it isn't done.
 
 ## Let structure serve the thought
 

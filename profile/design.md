@@ -4,56 +4,77 @@ description: What I want UIs to feel like, the freedom agents have to get there,
 freshness: durable
 ---
 
-I don't design much by hand anymore. Agents go straight to code, and some of the best UIs I've shipped came from an agent trying something I wouldn't have thought of. So this page isn't a template. It's what I like, what separates a site with soul from a vibe-coded one, and the few rules that keep a bold design usable.
+I don't design much by hand anymore. Agents go straight to code, and some of the best UIs I've shipped came from an agent trying something I wouldn't have thought of. So this page isn't a template. It's what I like, what separates a designed product from a vibe-coded one, and the few rules that keep a bold design usable.
+
+## Start from what the product is
+
+Learn the product before you draw anything. Read its README, its code, or what the person told you, and answer three questions: what does it do, who uses it, and where does it live? A phone app, a browser tab, and a tool in a Mac's menu bar want different pages.
+
+Then pick the register, which is how serious it should feel. A tool that lives on someone's computer should look at home there: calm, in the platform's own type and surfaces, with the charm in the details. A personal site, a game, or a kids' app can be loud. My portfolio is expressive because it's about me. A Mac utility's page that leaned into poster art, with condensed capitals and road-sign buttons, read as goofy, and the only parts that looked right were its recreated app panels.
+
+If what you can read doesn't answer those questions, ask one short question before you design, like who it's for or how serious it should feel. A wrong guess here costs a rebuild, not a tweak. Don't ask anything you can read for yourself.
 
 ## Go further than the default
 
-Default framework styling shipped as-is isn't a design. Every product gets its own visual direction: a palette, type, shapes, and motion that fit what it is and who it's for. Pick one with conviction, and surprise me.
+Default framework styling shipped as-is isn't a design. Every product gets its own palette, type, shapes, and motion, picked with conviction within its register. Surprise me.
 
 What I keep noticing on sites I love:
 
-- **Micro-interactions.** A button that gives a little when pressed, a checkbox that draws its tick, a count that rolls up, a card that lifts toward the cursor, a toast that settles instead of popping. They're what make a site feel thought out.
-- **Real art.** Illustrations, stickers, icons, and graphics drawn for this product, usually as inline SVG, instead of stock images or an emoji in a circle. A mascot, a hand-drawn empty state, a hero graphic with one slow, glowing motion.
-- **Motion with character.** Things enter and leave with intent. Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened. CSS transitions first. In React, [Motion](https://motion.dev/) (formerly Framer Motion) is the reference for springs, gestures, layout, and exit animations.
+- **The real product, working.** If there's a product, show it: its real screens, states, and messages, moving on their own the way they do in use. Recreate them faithfully from the app. A page that only describes a product feels like a pitch.
+- **Micro-interactions.** A button that gives a little when pressed, a checkbox that draws its tick, a toast that settles instead of popping.
+- **Real art.** Illustrations, icons, and graphics drawn for this product, usually as inline SVG, instead of stock images or an emoji in a circle.
+- **Motion with character.** Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened. CSS transitions first. In React, [Motion](https://motion.dev/) is the reference for springs, gestures, and exit animations.
 - **Personality in the small places.** Empty states, loading states, errors, and the 404 get the same care as the main screen, in words and in pictures.
-- **Type with a point of view.** A display face that carries the mood, like an editorial serif or something rounded and friendly, with a quiet text face doing the reading.
-- **Friendly beats corporate.** Restraint is a choice for a product that needs it, not the default.
+- **A favicon and a social card, every time.** People see both before they see the page, and a blank card makes a great site look unfinished. Draw them from the product's own art: an SVG favicon with a 180px Apple touch icon, and a 1200×630 social image with a title and description, rendered from the page so it stays in sync.
+- **Type that fits the register.** A tool for one platform often wants that platform's own system font. Elsewhere, a display face that carries the mood, with a quiet text face doing the reading.
 
 ## No designer? Code can be your artist
 
-If it's a real, legit project, hire a designer. A person with taste is still better than an agent. But if you can't hire one, code is a solid option, and it keeps getting better: frontier models can make SVG stickers and illustrations, canvas scenes, and animation that feels drawn by a person. Use that before reaching for stock images, an icon pack, or a template. If you have hired someone, follow their lead.
-
-Aim higher than a mascot. No artist worked on my portfolio. [Its landing page](https://www.ducktommy.com/) floats an origami duck on a bay at dusk, with a city skyline behind it and ripples around it. The [Extras page](https://www.ducktommy.com/extras) runs an animation of a street in Ginza behind the whole page, lighting up after dark with people walking through it. It also lets you step through every draft of that duck, from a crane through five sketches, which is the other lesson: first drafts of art are rarely good. Render it, look at it, and redraw.
+For a real, legit project, hire a designer, and follow their lead once you have. If you can't, frontier models can make SVG illustrations, canvas scenes, and animation that feels drawn by a person. Use that before stock images, an icon pack, or a template. No artist worked on [my portfolio](https://www.ducktommy.com/), and its [Extras page](https://www.ducktommy.com/extras) shows every draft of its duck, from a crane through five sketches. First drafts of art are rarely good. Render it, look at it, and redraw.
 
 ## Don't build your first idea
 
 Your first idea is everyone's first idea. In my first design eval, six agents given the same app made nearly the same screen: a greeting over a list of cards, on cream, with a floating add button. Before you build, say what the obvious version would be, then build something else. Change the layout and the structure, not only the colors.
 
-On a new product or a redesign, sketch three directions that differ in layout and structure, build the boldest, and say in your report what the other two were. Sketching costs tokens, so ask whoever's running you first, in one line, unless they've already told you to spend them. If they say no, or nobody's there to answer, skip the sketches and build your best idea that isn't the obvious one.
+On a new product or a redesign, write three directions first, a few sentences each, all in the product's register but different in layout and structure. That costs almost nothing, so don't ask. Build the boldest, and say in your report what the other two were. Building more than one costs real tokens, so ask whoever's running you first, in one line, unless they've already told you to spend them. If they say no, or nobody's there to answer, build just the boldest.
 
-## Make it feel like a person drew it
+## Make it feel like a person made it
 
 Clean, cute, and accessible is where agents land by default now, and it still feels generated. I want to feel the hand of whoever made it, and feel like they were thinking about me.
 
-- **A hand or a craft behind it.** Art built from perfect circles and rounded rectangles looks generated. Plot the paths so lines wobble, change weight, and overshoot at the corners, and let a fill miss its outline. Or pick a real craft and follow its rules, like a woodblock's few inks, cut paper, or origami's flat folds.
-- **Real range.** A character with one smile and one frown is a sticker. Give it big feelings it commits to, like dramatic, grumpy, smug, or relieved, and push the pose until it's funny.
-- **Art with a job.** Art belongs all over the main screen, carrying what a label or a badge would otherwise say, and each item gets its own. One mascot in the corner of a normal app is decoration.
+- **A skilled hand or a craft behind it.** Art built from perfect circles and rounded rectangles looks generated, but wobble everywhere and cartoon proportions read as a kid's book cover. Draw confident lines that vary on purpose, or follow a real craft's rules, like a woodblock's few inks or origami's flat folds.
+- **Real range, played straight.** A character with one smile and one frown is a sticker. Give it feelings it commits to, like grumpy, smug, or relieved, and let the situation carry the joke instead of a mugging face.
+- **Art with a job, in the right amount.** Each piece carries something a label would otherwise say. How much art a page holds depends on the register: a playful app can have it all over the main screen, while a tool gets one focal moment, like its app icon or a scene you find, and lets its own interface do the rest.
+- **An idea I get without help.** One agent explained a product with a printed receipt, and I didn't get it. If a concept needs a caption to make sense, pick another.
+- **One metaphor, once, with the product in it.** A metaphor earns the hero, not every section. Repeat it in the roadmap, the footer, and the 404, and it turns into a theme park. If the metaphor is about the product, show the product in the picture.
 - **A bold layout.** One thing huge, scale that jumps, something that breaks the grid. Someone should recognize the page with its text blurred.
-- **Words from someone.** Write what one specific person would say to this reader, including the joke only they'd make and the feeling the reader won't admit to. If a line would fit any app, it's filler.
+- **Plain words.** Say what it does the way you'd tell a friend: short, specific, calm. Product copy follows [Writing](writing.md) too, so no slogans, no three-beat taglines, and no line that would fit any app. A little humor goes a long way.
+
+## Critique it before you show it
+
+On my last product page, the biggest fixes came when I asked the agent to review it as a 10x designer, not while it was building. Do that before anyone sees it: look at screenshots at phone and desktop width, cold, as a senior product designer who knows the product.
+
+- Can someone tell what this is and where it lives within five seconds?
+- Does it fit the register, or does it look like a different kind of product?
+- What looks generated? Template sections, icons in circles, three cards in a row, copy that would fit any app.
+- Is the real product on the page? Is anything empty, static, or unfinished?
+- Where does the eye land first, and is that the right thing?
+
+Fix the worst problems, then look again. Your report gives an honest read of what's still weak. "It looks good" isn't a critique.
 
 ## What I've liked
 
-- [My portfolio](https://www.ducktommy.com/): a big editorial serif, a dark, quiet palette, one focal visual with a soft glow and slow motion, small uppercase labels, and room to breathe.
+- [My portfolio](https://www.ducktommy.com/): a big editorial serif, a dark, quiet [palette](palette.md), one focal visual with a soft glow and slow motion, and room to breathe.
 - This site's landing page: the playful end, a little cute and a little animated, with a mascot.
+- A coming-soon page for a desktop tool, drawn as the desktop itself: the system font, the app's real panels replaying real requests on their own, and the character kept to its app icon and a small scene in the wallpaper.
 - [OpenPacks](https://backpacks-app.vercel.app/): a product screen kept neutral on purpose. That's the floor for a tool, not the goal.
 
 ## Keep the art: it's an asset
 
-The mascots, stickers, icons, illustrations, and animations an agent draws for a product are some of the most valuable things in the repo, and the hardest to recreate exactly. Treat them like code: named, kept, and reused.
+The art an agent draws for a product is some of the most valuable work in the repo, and the hardest to recreate exactly. Treat it like code: named, kept, and reused.
 
-- **Each piece is a component.** Inline SVG in `components/brand/`, like `Mascot.tsx` or `EmptyInbox.tsx`, with props for size and pose. Colors come from theme tokens or `currentColor`, so it works in both themes. Its animation lives with it, reduced motion included. Files the browser fetches on their own, like the favicon and social image, go in `public/`.
-- **One style, written down.** `docs/brand.md` describes the look: the mascot's character and proportions, stroke width, corner shape, the colors art may use, and how things move. New art follows it. To change the style, change the doc first.
-- **An index.** `docs/brand.md` lists every asset in one line: what it is and where it's used. Once there are more than a few, a page that shows them all in both themes makes drift easy to spot.
+- **Each piece is a component.** Inline SVG in `components/brand/`, with props for size and pose, colors from theme tokens or `currentColor`, and its animation (reduced motion included) beside it. The favicon and social image go in `public/`.
+- **One style, written down.** `docs/brand.md` describes the look (the character's proportions, stroke, corners, colors, and motion) and lists every asset in one line: what it is and where it's used. New art follows it. To change the style, change the doc first.
 - **Reuse before drawing new.** Give the mascot a new pose before inventing a second character.
 - **Don't replace or restyle an existing piece** unless asked. Add a variant instead.
 
@@ -67,84 +88,6 @@ Expressive never costs someone the ability to use the thing.
 - **Art is accessible and light.** A decorative graphic is hidden from screen readers (`aria-hidden="true"` or empty `alt`), and a meaningful one gets a text alternative. Inline SVG and CSS before big images and heavy animation libraries. The page's main content still loads fast on a phone.
 - **Keyboard and touch work.** Every interactive thing has a visible focus state and works by keyboard. Hover effects are a bonus, never the only way to find a control. Primary touch targets are about 44px.
 - **One system per project.** Whatever direction you pick, write it down as tokens in the theme file: colors for light and dark, type, radius, shadows, and motion timing. Components use the tokens, never raw hex or one-off values, so the tenth screen matches the first. With shadcn/ui, that's its [theme variables](https://ui.shadcn.com/docs/theming), and new ones go through `@theme inline`.
-
-<details>
-<summary>One palette I like, if a product wants this feel</summary>
-
-My portfolio's colors as shadcn/ui tokens: warm paper (hue 90) and ink in light mode, deep slate (hue 260) with warm off-white text in dark. I darkened four light-mode text colors from the original so each passes 4.5:1 on the background, on `muted`, and on its own 10% tint. `--input` is darker than `--border` so form fields have a 3:1 edge. This was built with Tailwind 4.3.3 and checked in both themes. Tailwind ignores `--shadow-*` set in `:root`, which is why shadows and easing map through `@theme inline`.
-
-```css
-:root {
-  --radius: 0.5rem;
-  --background: oklch(0.98 0.01 90); /* warm paper */
-  --foreground: oklch(0.25 0.02 260); /* ink */
-  --card: oklch(0.99 0 0);
-  --card-foreground: oklch(0.25 0.02 260);
-  --popover: oklch(0.99 0 0);
-  --popover-foreground: oklch(0.25 0.02 260);
-  --primary: oklch(0.35 0.04 260); /* ink navy: the main action */
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.96 0.01 90);
-  --secondary-foreground: oklch(0.35 0.04 260);
-  --muted: oklch(0.96 0.01 90);
-  --muted-foreground: oklch(0.52 0.02 260);
-  --accent: oklch(0.96 0.01 90); /* shadcn's hover surface, not a brand color */
-  --accent-foreground: oklch(0.35 0.04 260);
-  --destructive: oklch(0.52 0.16 25);
-  --success: oklch(0.49 0.13 155);
-  --warning: oklch(0.51 0.12 70);
-  --info: oklch(0.5 0.13 250);
-  --status-foreground: oklch(0.98 0 0);
-  --border: oklch(0.9 0.01 90);
-  --input: oklch(0.64 0.02 260);
-  --ring: oklch(0.35 0.04 260);
-  --elevation-sm: 0 1px 3px oklch(0.25 0.02 260 / 0.06);
-  --elevation-md: 0 2px 12px -2px oklch(0.25 0.02 260 / 0.1);
-  --elevation-lg: 0 4px 24px -4px oklch(0.25 0.02 260 / 0.12);
-  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.dark {
-  --background: oklch(0.18 0.02 260); /* deep slate */
-  --foreground: oklch(0.95 0.01 90); /* warm off-white */
-  --card: oklch(0.22 0.02 260);
-  --card-foreground: oklch(0.95 0.01 90);
-  --popover: oklch(0.22 0.02 260);
-  --popover-foreground: oklch(0.95 0.01 90);
-  --primary: oklch(0.9 0.01 90);
-  --primary-foreground: oklch(0.25 0.02 260);
-  --secondary: oklch(0.25 0.02 260);
-  --secondary-foreground: oklch(0.95 0.01 90);
-  --muted: oklch(0.25 0.02 260);
-  --muted-foreground: oklch(0.7 0.02 260);
-  --accent: oklch(0.25 0.02 260);
-  --accent-foreground: oklch(0.95 0.01 90);
-  --destructive: oklch(0.7 0.15 25);
-  --success: oklch(0.65 0.15 155);
-  --warning: oklch(0.75 0.14 75);
-  --info: oklch(0.65 0.12 250);
-  --status-foreground: oklch(0.18 0.02 260);
-  --border: oklch(0.3 0.02 260);
-  --input: oklch(0.52 0.02 260);
-  --ring: oklch(0.8 0.01 90);
-  --elevation-sm: 0 1px 3px oklch(0 0 0 / 0.2);
-  --elevation-md: 0 2px 12px -2px oklch(0 0 0 / 0.3);
-  --elevation-lg: 0 4px 24px -4px oklch(0 0 0 / 0.35);
-}
-
-@theme inline {
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-info: var(--info);
-  --color-status-foreground: var(--status-foreground);
-  --shadow-sm: var(--elevation-sm);
-  --shadow-md: var(--elevation-md);
-  --shadow-lg: var(--elevation-lg);
-  --ease-out: var(--ease-smooth);
-}
-```
-
-</details>
 
 ## Sources
 

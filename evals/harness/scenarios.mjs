@@ -65,7 +65,7 @@ export const scenarios = [
       expectText: 'Fern',
     },
     ifAsked:
-      'Yes, spend the tokens if it is for exploring design directions. Otherwise use your judgment.',
+      "If you're asking to build several design directions, yes, spend the tokens. For anything else, use your judgment and finish.",
     turns: [
       "Sprout works, but it looks like a homework assignment. Make it feel like a real product, something people would actually want to open every morning. It's for people who keep killing their houseplants, and most of them will use it on their phone.",
     ],

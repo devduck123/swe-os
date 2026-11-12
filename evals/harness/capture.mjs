@@ -225,6 +225,25 @@ export async function capture(
             `${el.tagName.toLowerCase()}: ${(el.textContent || el.name || '').trim().slice(0, 30)}`,
         ),
     );
+    // What a tab, a home screen, and a shared link show before anyone opens the page.
+    facts.firstImpression = await motion.page.evaluate(() => {
+      const href = (sel) =>
+        document.querySelector(sel)?.getAttribute('href') ?? null;
+      const meta = (sel) =>
+        document.querySelector(sel)?.getAttribute('content') ?? null;
+      return {
+        title: document.title || null,
+        favicon: href('link[rel~="icon"]'),
+        appleTouchIcon: href('link[rel="apple-touch-icon"]'),
+        socialImage:
+          meta('meta[property="og:image"]') ??
+          meta('meta[name="twitter:image"]'),
+        socialTitle: meta('meta[property="og:title"]'),
+        description:
+          meta('meta[name="description"]') ??
+          meta('meta[property="og:description"]'),
+      };
+    });
     await motion.context.close();
 
     // Motion can differ by screen, so read the empty state too and report the worst.
