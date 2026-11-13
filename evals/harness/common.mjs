@@ -145,7 +145,9 @@ export function parseStream(out, code = 0) {
 export function stopReasonFor(error) {
   if (/authenticat|OAuth|logged out|login/i.test(error ?? ''))
     return 'A run failed to log in. Run `claude auth login`';
-  if (/rate.?limit|usage limit|429|overloaded/i.test(error ?? ''))
+  if (
+    /rate.?limit|usage.?limit|session limit|429|overloaded/i.test(error ?? '')
+  )
     return 'A run hit a usage or rate limit. Wait for it to reset';
   return null;
 }

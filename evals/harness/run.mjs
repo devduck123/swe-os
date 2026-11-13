@@ -316,6 +316,12 @@ Reply with only this JSON:
   rmSync(room, { recursive: true, force: true });
   const cost = results.reduce((n, r) => n + r.cost, 0);
   spent += cost;
+  // A grader cut off by a usage limit isn't a grade. Stop, and leave the run ungraded for --grade.
+  const stop = results.map((r) => stopReasonFor(r.error)).find(Boolean);
+  if (stop)
+    throw new Error(
+      `${stop}, then grade the rest: --grade ${resolve(dir, '..', '..')}`,
+    );
   const grade = combineGrades(results.map((r) => parseGrade(r.reply)));
   // How many screenshots each grader opened, so a grade that never saw the page shows up.
   const looked = seen

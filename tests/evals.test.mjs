@@ -181,3 +181,14 @@ test('a private round refuses a temp folder, which would lose its results', asyn
   assert.notEqual(r.status, 0);
   assert.match(r.stderr, /temp folder the system clears/);
 });
+
+test('a session limit stops the round instead of counting as a run', async () => {
+  const { stopReasonFor } = await import('../evals/harness/common.mjs');
+  assert.ok(
+    stopReasonFor(
+      "You've hit your session limit · resets 5:10pm (America/Los_Angeles)",
+    ),
+  );
+  assert.ok(stopReasonFor('usage_limit_reached'));
+  assert.equal(stopReasonFor('Build failed: missing semicolon'), null);
+});
