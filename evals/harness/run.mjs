@@ -46,7 +46,7 @@ import {
 const { values: opts } = parseArgs({
   options: {
     only: { type: 'string' },
-    reps: { type: 'string', default: '1' },
+    reps: { type: 'string' },
     budget: { type: 'string', default: '50' },
     parallel: { type: 'string', default: '2' },
     'per-run': { type: 'string', default: '5' },
@@ -58,7 +58,7 @@ const { values: opts } = parseArgs({
   },
 });
 const budget = Number(opts.budget);
-const reps = Number(opts.reps);
+const reps = Number(opts.reps ?? 1);
 let spent = 0;
 // Set when a run fails in a way every later run would too, so the round stops early.
 let stopReason = null;
@@ -498,9 +498,11 @@ const finished = (s, arm, rep) => {
   const meta = join(root, 'runs', `${s.id}-${arm}-${rep}`, 'meta.json');
   return existsSync(meta) && !JSON.parse(readFileSync(meta, 'utf8')).error;
 };
+// Adding to a round reruns it at its own rep count unless --reps says otherwise.
+const jobReps = opts.reps ? reps : (pastInfo?.reps ?? reps);
 const jobs = picked
   .flatMap((s) =>
-    Array.from({ length: reps }, (_, i) =>
+    Array.from({ length: jobReps }, (_, i) =>
       ['A', 'B'].map((arm) => [s, arm, i + 1]),
     ).flat(),
   )
