@@ -92,10 +92,12 @@ export async function capture(
   // data, so the main screenshots load saved data instead of relying on it.
   const saved = filled?.();
   mkdirSync(out, { recursive: true });
-  // The agent may not have used the folder it was asked to. Then there's no site to see there.
-  const server = await serve(
-    existsSync(join(work, root, 'index.html')) ? join(work, root) : work,
-  );
+  // A framework site's page is in its build output. The agent may also not have used the folder
+  // it was asked to. Then there's no site to see there.
+  const site = ['', 'dist', 'build', 'out']
+    .map((d) => join(work, root, d))
+    .find((d) => existsSync(join(d, 'index.html')));
+  const server = await serve(site ?? work);
   const url = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch();
   const facts = { accessibility: {}, shots: [] };
