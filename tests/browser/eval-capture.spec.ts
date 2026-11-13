@@ -72,3 +72,24 @@ test('the eval capture finds a site in its folder and shows the first screen', a
   expect(facts.shots).not.toContain('phone-empty.png');
   expect(facts.shots).toHaveLength(8);
 });
+
+test('the eval capture finds a framework site in its build output', async ({
+  isMobile,
+}) => {
+  test.skip(isMobile, 'It opens its own browser, so one run is enough.');
+  test.setTimeout(120_000);
+  const room = mkdtempSync(join(tmpdir(), 'capture-'));
+  const dist = join(room, 'work', 'site', 'dist');
+  mkdirSync(dist, { recursive: true });
+  writeFileSync(join(room, 'work', 'site', 'package.json'), '{}');
+  writeFileSync(
+    join(dist, 'index.html'),
+    '<!doctype html><html lang="en"><title>Built</title><main><h1>Built</h1></main></html>',
+  );
+  const facts = (await capture(join(room, 'work'), join(room, 'shots'), {
+    root: 'site',
+    expectText: 'Built',
+  })) as Record<string, any>;
+  expect(facts.captureError).toBeUndefined();
+  expect(facts.savedDataShows).toBe(true);
+});
