@@ -36,7 +36,11 @@ For a real, legit project, hire a designer, and follow their lead once you have.
 
 Your first idea is everyone's first idea. In my first design eval, six agents given the same app made nearly the same screen: a greeting over a list of cards, on cream, with a floating add button. Before you build, say what the obvious version would be, then build something else. Change the layout and the structure, not only the colors.
 
-On a new product or a redesign, write three directions first, a few sentences each, all in the product's register but different in layout and structure. That costs almost nothing, so don't ask. Build the boldest, and say in your report what the other two were. Building more than one costs real tokens, so ask whoever's running you first, in one line, unless they've already told you to spend them. If they say no, or nobody's there to answer, build just the boldest.
+On a new product or a redesign, write three directions first, a few sentences each, all in the product's register but different in layout and structure. That costs almost nothing, so don't ask.
+
+Your three directions are probably everyone's three, too. In the next eval, three agents given the same app wrote the same three directions, word for word in places, and all built the same one. So cross out any direction someone could guess from the kind of product alone, like a recipe card for a cooking app or a notebook for a notes app. Replace it with one that grows from something only this product has: its people, its data, its name, or when and where it gets used. Build the strongest one left, and say in your report what the other two were.
+
+Building more than one costs real tokens, so ask whoever's running you first, in one line, unless they've already told you to spend them. If they say no, or nobody's there to answer, build just one.
 
 ## Make it feel like a person made it
 
