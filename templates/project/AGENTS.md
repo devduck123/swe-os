@@ -10,7 +10,7 @@ Read [PROJECT.md](PROJECT.md) for the current goal, decisions, and known gaps. I
 
 This project uses Tommy's SWE OS <v0.0.0>. Read it from whichever source is available:
 
-- A local clone at `<path, like ~/repos/swe-os>`, checked out at that version: `git -C <path> checkout <v0.0.0>`.
+- A local clone at `<path, like ~/repos/swe-os>`. Read each file at that version without changing the clone's checkout: `git -C <path> show <v0.0.0>:skills/README.md`. If the tag is missing, run `git -C <path> fetch --tags` first.
 - Otherwise, print https://raw.githubusercontent.com/devduck123/swe-os/<v0.0.0>/skills/README.md with `curl`, and fetch the files it links the same way.
 
 Start at `skills/README.md`. Pick the matching skill and load only the concerns and guides the task needs. This file and PROJECT.md override SWE OS wherever they disagree.
