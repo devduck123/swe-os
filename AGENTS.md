@@ -7,6 +7,7 @@ This repo is the SWE OS itself. Read [PROJECT.md](PROJECT.md) for what's in prog
 - Each idea lives in one place: principles for judgment, concerns for risks, guides for teaching, skills for workflow, profile for Tommy's preferences. Link instead of repeating.
 - All writing follows [profile/voice.md](profile/voice.md) and [profile/writing.md](profile/writing.md). Read both before editing any page.
 - Guides you draft stay `status: draft` until Tommy reviews them.
+- Agents merge their own tooling, harness, and eval PRs once the gate in [rule 14](skills/README.md#rules-for-every-task) passes. Changes to `profile/`, the track, guides, or the rules wait for Tommy's approval.
 - Prefer deleting guidance that doesn't help over adding more. Agent guidance covers only what models don't do well by default, plus Tommy's preferences. Prefer outcomes and limits over step-by-step procedure. A rule stays if evals show it helps; rerun them on each new model and delete what stops helping.
 - Use Node from `.nvmrc` (`nvm use`). Run `npm run check`. For site changes, also run `npm run test:browser` and look at the pages at phone and desktop widths.
 - `npm run dev` live-reloads Markdown edits. The sidebar is built from the file list at startup, so restart it after adding or removing a page.
