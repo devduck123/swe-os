@@ -20,7 +20,7 @@ Default framework styling shipped as-is isn't a design. Every product gets its o
 
 What I keep noticing on sites I love:
 
-- **The real product, working.** If there's a product, show it: its real screens, states, and messages, moving on their own the way they do in use. Recreate them faithfully from the app. A page that only describes a product feels like a pitch.
+- **The real product, working.** If there's a product, show it: its real screens, states, and messages, moving on their own the way they do in use. Recreate them faithfully from the app. Between beats, and when paused or under reduced motion, the product stays open and full. A demo that closes its window between scenes leaves an empty space for anyone who arrives then, and in every screenshot. A page that only describes a product feels like a pitch.
 - **Micro-interactions.** A button that gives a little when pressed, a checkbox that draws its tick, a toast that settles instead of popping.
 - **Real art.** Illustrations, icons, and graphics drawn for this product, usually as inline SVG, instead of stock images or an emoji in a circle.
 - **Motion with character.** Springy where the product is playful, smooth and quick where it's a tool. Motion explains a change: where something went, what just happened. CSS transitions first. In React, [Motion](https://motion.dev/) is the reference for springs, gestures, and exit animations.

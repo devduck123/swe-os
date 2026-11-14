@@ -1,6 +1,6 @@
 ---
 name: start-project
-description: Set up a new repository the engineer way, with project context, protected secrets, quality checks, CI, preview deploys, and one command to run locally. Use when starting a new app or website, or adopting SWE OS in a repo that has none of this. Not for shaping the idea (use shape-project first) or for adding features.
+description: Set up a new repository the engineer way, with project context, protected secrets, quality checks, CI, preview deploys, and one command to run locally. Use when starting a new app or website in its own repo, or adopting SWE OS in a repo that has none of this. Not for shaping the idea (use shape-project first), adding features, or a page inside an existing repo (use build-feature).
 metadata:
   title: Start a project
   example: 'Set up a new Next.js app for my habit tracker. Use my SWE OS.'

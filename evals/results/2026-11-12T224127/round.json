@@ -1,0 +1,22 @@
+{
+  "started": "2026-11-12T224127",
+  "commit": "7f8c788",
+  "reps": 3,
+  "budget": 35,
+  "sweos": "/var/folders/vb/_1kzd2gx3zq_07z5nswm4qfw0000gn/T/swe-os-evals-2026-11-12T224127-HP04sg/swe-os",
+  "spent": 42.57885,
+  "reruns": [
+    {
+      "at": "2026-11-13T01:27:40.006Z",
+      "only": ["clipjar-page"]
+    },
+    {
+      "at": "2026-11-13T01:28:02.171Z",
+      "only": ["clipjar-page"]
+    },
+    {
+      "at": "2026-11-13T21:52:05.060Z",
+      "only": ["clipjar-page"]
+    }
+  ]
+}

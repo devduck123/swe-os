@@ -21,7 +21,7 @@ If you're a person, this is the page to point your agent at. [Three ways to do i
 | "Explain X", "how does X work", "why would I use X".                           | [explain](explain/SKILL.md)             |
 | "Walk me through this PR", "catch me up", "quiz me". Learning from agent work. | [learn](learn/SKILL.md)                 |
 
-**A website is a project too.** A landing page or a coming-soon site gets start-project for its repo and build-feature for each change, even when the ask is casual, like "do the sections below the hero next". Agents building one tend to skip the skills because it feels like just a page, and that's where the checks went missing.
+**A website is a project too.** A landing page or a coming-soon site in its own repo gets start-project for that repo and build-feature for each change, even when the ask is casual, like "do the sections below the hero next". Agents building one tend to skip the skills because it feels like just a page, and that's where the checks went missing. A page inside a repo that already exists is build-feature alone: use the repo's own tooling, and keep a static page as static files, with no framework, CI, or project docs of its own.
 
 **Tiny changes skip the skills.** A typo, a copy edit, or a one-line fix that adds no behavior: make it, run the checks, and report in a sentence or two. No concern report, and no Worth learning unless something surprised you.
 
