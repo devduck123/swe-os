@@ -4,6 +4,8 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Projects read SWE OS at their pinned tag without checking it out.** The project template said to `git checkout` the pinned version in the local clone, which detaches the branch of anyone who also works on SWE OS there. It now reads files with `git show <tag>:<path>`.
+
 ## v0.6.0 (2026-11-14)
 
 Lessons from building a real product page with SWE OS. Design starts from what the product is, agents critique their own work before showing it, product copy reads like a person wrote it, and setup avoids the traps a real repo hit. With SWE OS, design evals score 3.0 vs 1.0 on a plant app and 2.67 vs 1.67 on a Mac utility's coming-soon page.
