@@ -4,6 +4,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Agents ask for merge autonomy instead of assuming it.** Where a project's `AGENTS.md` doesn't say whether agents merge their own PRs, an agent asks once, and start-project asks during setup. A yes goes into `AGENTS.md`.
 - **Agents see a PR through to merged.** A merge waits for a gate: required checks green on the latest commit, the branch up to date with `main`, and the change seen working. Then it goes ahead on a clear approval, or on its own where a project's `AGENTS.md` says agents merge their own PRs. In one session I had to say "merge" about ten times, and an agent merged before checks finished. build-feature's self-critique now fixes real bugs and lists the rest as follow-ups, so review doesn't grow the change.
 - **Projects read SWE OS at their pinned tag without checking it out.** The project template said to `git checkout` the pinned version in the local clone, which detaches the branch of anyone who also works on SWE OS there. It now reads files with `git show <tag>:<path>`.
 
