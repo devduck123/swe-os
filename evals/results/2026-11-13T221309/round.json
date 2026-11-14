@@ -1,0 +1,14 @@
+{
+  "started": "2026-11-13T221309",
+  "commit": "abf4f28",
+  "reps": 3,
+  "budget": 40,
+  "sweos": "/var/folders/vb/_1kzd2gx3zq_07z5nswm4qfw0000gn/T/swe-os-evals-2026-11-13T221309-NkWOJW/swe-os",
+  "spent": 11.3104318,
+  "reruns": [
+    {
+      "at": "2026-11-14T02:53:04.773Z",
+      "only": ["sprout-design", "clipjar-page"]
+    }
+  ]
+}
