@@ -2,13 +2,13 @@
 title: Learning while agents write the code
 description: Finishing work feels exactly like learning, so delegating to agents can quietly stop you from getting better unless you add a comprehension step on purpose.
 stage: improve
-track: 21
+track: 22
 concerns: []
 freshness: durable
 status: draft
 next:
   link: /recipes/side-project-stack/
-  label: 'Track 22: The side-project stack'
+  label: 'Track 23: The side-project stack'
 ---
 
 Agents make you faster at shipping. They don't make you better at engineering unless you do something on purpose, and you won't notice the difference, because finishing work feels exactly like learning. The fix isn't less AI. It's a step after the agent's work where you check that you understood it.

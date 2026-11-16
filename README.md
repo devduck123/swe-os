@@ -8,7 +8,7 @@ SWE OS is a slightly opinionated guide to building and designing software, writt
 
 ## Learn
 
-Start with [the track](https://tommy-swe-os.vercel.app/guides/): 22 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Each stop is a short page: the idea, the things people and their agents tend to miss, and how I do it. Not a course. The links at the bottom go deeper.
+Start with [the track](https://tommy-swe-os.vercel.app/guides/): 23 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Each stop is a short page: the idea, the things people and their agents tend to miss, and how I do it. Not a course. The links at the bottom go deeper.
 
 ## Use it with an agent
 
@@ -44,7 +44,7 @@ The pin applies when agents read the site or a clone. The plugin uses whichever 
 
 | Path                                              | What it is                                                     |
 | ------------------------------------------------- | -------------------------------------------------------------- |
-| [core/guides/](core/guides/README.md)             | The track: 22 stops across the software lifecycle.             |
+| [core/guides/](core/guides/README.md)             | The track: 23 stops across the software lifecycle.             |
 | [core/recipes/](core/recipes/README.md)           | Whole setups, like the side-project stack.                     |
 | [core/principles.md](core/principles.md)          | Fourteen rules of engineering judgment.                        |
 | [core/concerns/](core/concerns/README.md)         | What a feature can get wrong, and how deep to go on each risk. |

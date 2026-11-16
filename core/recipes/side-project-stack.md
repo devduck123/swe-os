@@ -2,14 +2,14 @@
 title: The side-project stack
 description: One app on managed services that a single person can ship this weekend, run for free, and grow without a rewrite, as long as you know where each free tier ends.
 stage: design
-track: 22
+track: 23
 concerns: [deployment, cost, security, data]
 freshness: fast-moving
 reviewed: 2026-11-01
 status: draft
 prev:
   link: /guides/learning-with-agents/
-  label: 'Track 21: Learning while agents write the code'
+  label: 'Track 22: Learning while agents write the code'
 ---
 
 This is the stack I'd use to build a real web app alone. Every piece is managed, starts free, and grows a long way before you'd want to replace it. Free tiers end abruptly, though, and rarely where you'd guess, so most of this page is about where. No separate API server, job queue, cache server like Redis, or staging copy of the site until something real asks for one ([simple first](../guides/simple-first.md)).
