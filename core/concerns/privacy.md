@@ -19,6 +19,7 @@ description: What personal data you collect, where copies go, and whether you ca
 - Make deletion reach all of those copies, or document which ones it doesn't and why.
 - Set a retention period and enforce it.
 - Know which laws or terms apply (GDPR, CCPA, your provider's terms). Ask whoever owns that call rather than guessing.
+- If personal data leaks, tell the people affected soon and plainly: what happened, what it means for them, and what you're doing. Some laws set a deadline for this.
 
 ## Common misses
 

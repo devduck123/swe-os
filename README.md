@@ -35,7 +35,7 @@ The agent picks a skill (shape, start, build, refactor, debug, review, explain, 
 A project's `AGENTS.md` says which SWE OS version it follows, so a new release can't change how agents work on it mid-build.
 
 - **A new project:** ask your agent, "Set up a new project for my habit tracker. Use SWE OS." It shapes the idea if it needs it, copies the [project template](templates/project/AGENTS.md), fills it in, and pins the latest release.
-- **A repo you already have:** ask the same, and say the repo exists. To do it by hand instead, copy `templates/project/` without overwriting your files. If you already have a `CLAUDE.md`, add the line `@AGENTS.md` to it, or Claude Code never reads `AGENTS.md`. Skip `docs/brand.md` if the product has no art.
+- **A repo you already have:** ask the same, and say the repo exists. To do it by hand instead, copy `templates/project/` without overwriting your files. If you already have a `CLAUDE.md`, add the line `@AGENTS.md` to it, or Claude Code never reads `AGENTS.md`. If the product has no art, keep only the voice section of `docs/brand.md`.
 - **Your own voice and stack:** copy the files in [profile/](profile/tommy.md) you want to change into a folder of your own, edit them, and name that folder in your `AGENTS.md`. `voice.md` and `defaults.md` matter most. Anything you don't copy stays mine.
 
 The pin applies when agents read the site or a clone. The plugin uses whichever version you installed.

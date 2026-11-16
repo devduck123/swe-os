@@ -16,6 +16,7 @@ description: Does the feature actually solve the user's problem, from first clic
 - Check that the smallest slice delivers the outcome. Cut anything that doesn't.
 - Test the riskiest assumption with a real user or real data before building more.
 - Decide what signal tells you it's working, and what tells you to stop.
+- Give users a way to reach you that you actually read. Turn each report into a reproduction before you fix it ([debug](../../skills/debug/SKILL.md)).
 
 ## Common misses
 
