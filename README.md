@@ -54,6 +54,8 @@ The pin applies when agents read the site or a clone. The plugin uses whichever 
 | [evals/](evals/README.md)                         | A/B scenarios for testing whether this improves agent work.    |
 | `src/`                                            | The Astro site that renders all of the above.                  |
 
+The site counts visits with Vercel Web Analytics, which sets no cookies and keeps no way to recognize a visitor past one day.
+
 The Markdown files are the source of truth. The site renders them, and serves each one as raw Markdown at the same path for agents, with an index at `/llms.txt`.
 
 ## Develop

@@ -4,6 +4,12 @@ import { version } from '../../package.json';
 import Duck from '../components/brand/Duck.astro';
 import PondScene from '../components/brand/PondScene.astro';
 import Fonts from '../components/Fonts.astro';
+import {
+  analytics,
+  analyticsScript,
+  ogImageAlt,
+  siteName,
+} from '../lib/share.mjs';
 import '../styles/tokens.css';
 import '../styles/landing.css';
 
@@ -51,12 +57,13 @@ const misses = await Promise.all(
     <meta name="description" content={description} />
     {Astro.site && <link rel="canonical" href={Astro.site.href} />}
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Tommy's SWE OS" />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {Astro.site && <meta property="og:url" content={Astro.site.href} />}
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:alt" content="Tommy's SWE OS" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    {analytics && <script is:inline defer src={analyticsScript} />}
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <Fonts display />

@@ -4,6 +4,8 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **The site follows its own Launch page.** A `robots.txt` points at the sitemap, every page names the site and describes its social card, the card no longer cuts a sentence off, and production builds count visits with Vercel Web Analytics, which sets no cookies.
+
 ## v0.8.0 (2026-11-15)
 
 SWE OS covers more of the road from idea to real users: launching in public, payments, desktop apps, caching, running several agents at once, and keeping a codebase healthy. Pages and a refactor skill fill the gaps that three reviews and a coverage audit found. It also talks about "the user" instead of me, and spells out how to adopt it in a new or existing repo. None of the new pages has been measured by evals yet.

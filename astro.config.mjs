@@ -6,6 +6,12 @@ import { unified } from '@astrojs/markdown-remark';
 import remarkRepoLinks from './src/lib/remark-repo-links.mjs';
 import rehypeStopNotes from './src/lib/rehype-stop-notes.mjs';
 import rehypeTrackMap from './src/lib/rehype-track-map.mjs';
+import {
+  analytics,
+  analyticsScript,
+  ogImageAlt,
+  siteName,
+} from './src/lib/share.mjs';
 import { frontmatter, root } from './src/lib/routes.mjs';
 
 // Sidebar entries come from the files on disk, so a new guide or concern shows up by existing.
@@ -113,7 +119,7 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: "Tommy's SWE OS",
+      title: siteName,
       description: 'Engineering judgment for people and their coding agents.',
       editLink: {
         baseUrl: 'https://github.com/devduck123/swe-os/edit/main/',
@@ -126,11 +132,15 @@ export default defineConfig({
         },
       ],
       head: [
+        { tag: 'meta', attrs: { property: 'og:site_name', content: siteName } },
         { tag: 'meta', attrs: { property: 'og:image', content: ogImage } },
         {
           tag: 'meta',
-          attrs: { property: 'og:image:alt', content: "Tommy's SWE OS" },
+          attrs: { property: 'og:image:alt', content: ogImageAlt },
         },
+        ...(analytics
+          ? [{ tag: 'script', attrs: { defer: true, src: analyticsScript } }]
+          : []),
       ],
       customCss: [
         './src/styles/tokens.css',
