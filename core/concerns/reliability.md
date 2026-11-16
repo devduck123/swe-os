@@ -27,6 +27,7 @@ description: What happens when the things you depend on are slow, down, or only 
 - Retrying a non-idempotent POST and creating duplicates.
 - Infinite retry loops that turn one outage into a self-inflicted one.
 - Catching an error and logging it, then carrying on as if it succeeded.
+- A "9am" reminder scheduled in the server's time zone, or stored as a fixed time, so it moves an hour when the clocks change.
 
 ## Why, and more of what people miss
 
