@@ -2,7 +2,7 @@
 title: When production breaks anyway
 description: Stop the damage before you understand it, and restore from a backup you've actually tested. Most incidents get worse because someone did things out of order.
 stage: operate
-track: 20
+track: 23
 concerns: [reliability, data, observability]
 freshness: durable
 status: draft

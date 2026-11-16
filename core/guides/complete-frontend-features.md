@@ -2,7 +2,7 @@
 title: What a complete frontend feature includes
 description: A mockup is one frame. A complete feature handles every frame a real user can land on.
 stage: build
-track: 9
+track: 10
 concerns: [product-ux, accessibility, ui-quality, performance]
 freshness: durable
 status: draft

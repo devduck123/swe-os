@@ -16,7 +16,7 @@ description: Is it fast enough for the people using it, with real data, and do y
 - Set a budget ("search responds in under 300ms at p95") and measure against it with realistic data.
 - Check the query plan for slow queries before adding a cache.
 - Test under expected load and see what breaks first.
-- Add caching or capacity only for a bottleneck you measured.
+- Add caching or capacity only for a bottleneck you measured. Every cache needs an answer to what clears it when the data changes, and nothing per-user goes in a shared one. See [caching without stale data](../guides/caching-without-stale-data.md).
 
 ## Common misses
 

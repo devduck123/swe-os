@@ -2,7 +2,7 @@
 title: Local first, then managed services
 description: Build on your laptop, where feedback is instant and free, and add a hosted service only when a feature needs it.
 stage: build
-track: 8
+track: 9
 concerns: [deployment, cost, data, security]
 freshness: durable
 status: draft

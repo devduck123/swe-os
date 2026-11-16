@@ -2,7 +2,7 @@
 title: Database changes without downtime
 description: During every deploy, old and new code share one database, so every schema change has to work for both, and rolling back the code never rolls back the data.
 stage: ship
-track: 17
+track: 19
 concerns: [migrations, data, deployment]
 freshness: durable
 status: draft
