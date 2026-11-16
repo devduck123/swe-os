@@ -14,7 +14,7 @@ description: Who can do what, what input you trust, and where secrets live.
 - Verify webhook signatures before parsing the body.
 - On Supabase, turn on row-level security (RLS) for every exposed table, and keep the `service_role` or secret (`sb_secret_...`) key out of client code. Both bypass RLS.
 - Keep secrets out of client code, logs, error messages, Git, and agent chats. Load them from the environment. Variables with a public prefix (`NEXT_PUBLIC_`, `VITE_`, `EXPO_PUBLIC_`) ship to the browser or the app, where anyone can read them.
-- Turn on MFA for every account that can deploy, read production data, or move money: GitHub, hosting, the database, payments, email, and the domain registrar.
+- Turn on MFA for every account that can deploy, read production data, or move money: GitHub, hosting, the database, payments, email, and the domain registrar. Keep the recovery codes somewhere you can reach without your phone. The email account that resets all the others, and the domain it's on, guard everything, so they get the strongest protection.
 - Give agents and tools their own scoped, dev-only keys. Production keys live only in the hosting platform. See [secrets and agent safety](../guides/secrets-and-agent-safety.md).
 - Use parameterized queries and the framework's escaping. Never build SQL or HTML by string concatenation.
 
@@ -24,6 +24,7 @@ description: Who can do what, what input you trust, and where secrets live.
 - For uploads, limit size before parsing, check the real content type, store under keys you generate, and serve from a separate origin or with `Content-Disposition: attachment`.
 - Give each credential the least privilege it needs, and know how you'd rotate it.
 - Rate-limit anything that costs money or can be brute-forced.
+- Send a Content-Security-Policy that blocks scripts you didn't write, and check the real response headers instead of assuming the host adds them.
 - Check the account flows past sign-in. Trust an email only once it's verified, including before linking a Google sign-in to an existing account. Compare emails ignoring case. Reset and verification links expire and work once. A password change or account deletion ends every other session. Auth libraries leave some of this off by default, so read the settings.
 - Check new dependencies: who maintains them, and what do they get access to?
 

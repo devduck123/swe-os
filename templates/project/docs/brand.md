@@ -1,6 +1,12 @@
 # Brand
 
-<!-- The look of this product's art, and every piece of it. New art follows this page. To change the style, change this page first. -->
+<!-- How this product sounds, and the look of its art and every piece of it. New copy and art follow this page. To change either, change this page first. Delete the art sections if the product has no art. -->
+
+## The voice
+
+- **Sounds like:** <A few words, and who it's talking to. "Plain and a little dry, for developers who hate fluff.">
+- **Never says:** <Words and moves it avoids. "No 'supercharge', no exclamation marks, no fake urgency.">
+- **Example:** <One real line from the product, in its voice.>
 
 ## The look
 

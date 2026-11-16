@@ -44,7 +44,7 @@ Leave out:
 
 ## Write product copy like you'd say it
 
-A product page is where AI tells pile up, because the copy is trying to sell. Two agents wrote pages for the same app, and both read as generated until the copy got simpler.
+A product page is where AI tells pile up, because the copy is trying to sell. Two agents wrote pages for the same app, and both read as generated until the copy got simpler. Each product also has its own voice, which isn't mine: write it down in the project's `docs/brand.md` before the first page, and follow it.
 
 - **Say what it does, for whom, in plain words.** "Shows what you can spend today, after bills" beats "Your money, reimagined."
 - **No slogans.** No three-beat taglines like "Fast. Private. Yours.", no fake contrasts like "Built with care. Still being built.", and no softener repeated until it's a tic.
