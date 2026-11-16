@@ -40,7 +40,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 
 **Evidence.** The fresh-clone run and its `check` output. The CI secret scan catching a fake key.
 
-**For you to do.** Accounts to create, env vars to fill, and settings to turn on (a ruleset on `main` requiring a PR and `check`, which needs GitHub Pro on a private repo; push protection for a public repo; the host's preview deploys), with links.
+**For you to do.** Accounts to create, env vars to fill, and settings to turn on (a ruleset on `main` requiring a PR and `check`, which needs GitHub Pro on a private repo; push protection for a public repo; Dependabot alerts and security updates, so a quiet project still gets patched; the host's preview deploys), with links.
 
 **Deferred.** What was left out on purpose, and the trigger to add it. Also written in PROJECT.md.
 
