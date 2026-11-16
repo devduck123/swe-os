@@ -17,8 +17,9 @@ description: Where data lives, who owns it, what keeps it valid, and how you get
 
 - Wrap multi-step writes in a transaction.
 - Add indexes for the queries you actually run, and check the query plan.
-- Set up backups and practice a restore with real-shaped data. A backup you haven't restored is a hope.
+- Set up backups and practice a restore with real-shaped data. A backup you haven't restored is a hope. Uploaded files live outside the database, so back them up too, or a restore leaves rows pointing at files that are gone.
 - Plan reconciliation for data that also lives in another system, like a payment provider.
+- Fix production data by hand only with a script someone read: run it as a dry run first, inside a transaction, and check that the row count matches what you expected before you commit it.
 
 ## Common misses
 
@@ -26,6 +27,7 @@ description: Where data lives, who owns it, what keeps it valid, and how you get
 - Files uploaded to storage with no record pointing to them, or records pointing to missing files.
 - A JSON blob column that slowly becomes the real schema.
 - Timestamps without time zones.
+- A one-off `UPDATE` in the database dashboard with the wrong `WHERE`, and no record of what it changed.
 
 ## Why, and more of what people miss
 

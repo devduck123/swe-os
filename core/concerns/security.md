@@ -23,7 +23,7 @@ description: Who can do what, what input you trust, and where secrets live.
 - Walk the abuse cases: what does an attacker send? Try it.
 - For uploads, limit size before parsing, check the real content type, store under keys you generate, and serve from a separate origin or with `Content-Disposition: attachment`.
 - Give each credential the least privilege it needs, and know how you'd rotate it.
-- Rate-limit anything that costs money or can be brute-forced.
+- Rate-limit anything that costs money or can be brute-forced. Per-user limits need accounts that cost something to make, like a verified email, or 200 throwaway signups get 200 times the limit. Anything users can publish or send, like profiles, files, or invites, can be used for spam or phishing from your domain.
 - Send a Content-Security-Policy that blocks scripts you didn't write, and check the real response headers instead of assuming the host adds them.
 - Check the account flows past sign-in. Trust an email only once it's verified, including before linking a Google sign-in to an existing account. Compare emails ignoring case. Reset and verification links expire and work once. A password change or account deletion ends every other session. Auth libraries leave some of this off by default, so read the settings.
 - Check new dependencies: who maintains them, and what do they get access to?

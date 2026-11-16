@@ -18,6 +18,7 @@ When production breaks, the order is: stop the damage, understand it, fix it, th
 - **Restore next to production, not over it.** Restoring in place throws away every good write since. Restore into a separate database, then copy back only the rows that were lost. Sent emails and charges don't come back either way.
 - **The cheapest restore is the one you skip.** Soft-delete: mark rows deleted instead of removing them, and remove them for real on a schedule. Have the code refuse any delete that would hit more than, say, 100 rows. A filter bug then hits a wall instead of the whole table.
 - **"Be more careful" changes nothing.** In the write-up afterward, a postmortem, ask why the system made the mistake easy, not who made it. Each fix is a check in code that blocks it, a test, or an alert.
+- **The people affected hear it from you.** If their data leaked or their work was lost, tell them what happened, what it means for them, and what you're doing, soon and plainly. Some places set legal deadlines for a data leak.
 
 **How I do it:** before launch I know my stop buttons, soft-delete what users create, and do one restore drill: restore a backup into a copy and check that yesterday's rows are there. After anything that hits users, I ship at least one change from the postmortem.
 
