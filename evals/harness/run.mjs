@@ -417,7 +417,7 @@ function summarize(root) {
     '| --- | --- | --- | --- | --- | --- | --- | --- |',
     ...rows,
     '',
-    `**Average B − A:** ${fmt(mean(deltas))} across ${deltas.length} scenario${deltas.length === 1 ? '' : 's'}. The v0.1 bar is +0.5 with no new serious flaws, and the two-line fix staying close to A on time, cost, and length.`,
+    `**Average B − A:** ${fmt(mean(deltas))} across ${deltas.length} scenario${deltas.length === 1 ? '' : 's'}. The bar is per scenario: B ties or beats A within noise, has no serious flaws of its own, and stays close to A on the two-line fix (see evals/README.md).`,
     '',
     '## Serious flaws',
     '',
