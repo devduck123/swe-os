@@ -28,7 +28,17 @@ git clone https://github.com/devduck123/swe-os ~/swe-os
 
 **Claude Code: install the plugin.** The skills then trigger on their own, with no prompt to paste. In Claude Code, run `/plugin marketplace add devduck123/swe-os`, then `/plugin install swe-os@swe-os`. It updates when a new version is released.
 
-The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Start a fresh agent session for each feature: `PROJECT.md` carries the plan between sessions, and a long session re-reads everything it has done on every message. In one test build, that made the later messages cost 5–10× the early ones. Your project's own `AGENTS.md` always wins. To use your own voice and default stack instead of mine, point it at your own profile files; the [project template](templates/project/AGENTS.md) shows how.
+The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Start a fresh agent session for each feature: `PROJECT.md` carries the plan between sessions, and a long session re-reads everything it has done on every message. In one test build, that made the later messages cost 5–10× the early ones. Your project's own `AGENTS.md` always wins.
+
+## Adopt it in a project
+
+A project's `AGENTS.md` says which SWE OS version it follows, so a new release can't change how agents work on it mid-build.
+
+- **A new project:** ask your agent, "Set up a new project for my habit tracker. Use SWE OS." It shapes the idea if it needs it, copies the [project template](templates/project/AGENTS.md), fills it in, and pins the latest release.
+- **A repo you already have:** ask the same, and say the repo exists. To do it by hand instead, copy `templates/project/` without overwriting your files. If you already have a `CLAUDE.md`, add the line `@AGENTS.md` to it, or Claude Code never reads `AGENTS.md`. Skip `docs/brand.md` if the product has no art.
+- **Your own voice and stack:** copy the files in [profile/](profile/tommy.md) you want to change into a folder of your own, edit them, and name that folder in your `AGENTS.md`. `voice.md` and `defaults.md` matter most. Anything you don't copy stays mine.
+
+The pin applies when agents read the site or a clone. The plugin uses whichever version you installed.
 
 ## What's inside
 

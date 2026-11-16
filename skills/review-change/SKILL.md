@@ -1,6 +1,6 @@
 ---
 name: review-change
-description: Review a diff, PR, or proposed plan for real defects, unnecessary complexity, and user or operational impact. Use when asked to review a change. Read-only unless the user asks for fixes. Not for building, debugging, or quizzing Tommy on a PR (use learn).
+description: Review a diff, PR, or proposed plan for real defects, unnecessary complexity, and user or operational impact. Use when asked to review a change. Read-only unless the user asks for fixes. Not for building, debugging, or quizzing the user on a PR (use learn).
 metadata:
   title: Review a change
   example: 'Review this upload endpoint before we turn it on. Use my SWE OS.'

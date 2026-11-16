@@ -4,6 +4,9 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Skills talk about "the user", not me.** Someone else adopting SWE OS had their agent report "For Tommy to do". The profile still says whose preferences they are, and a project's own profile can replace any of its files, falling back to mine for the rest.
+- **Adopting it is spelled out.** The README has a section for a new project and for an existing repo. An existing `CLAUDE.md` gets `@AGENTS.md` added, since without it Claude Code never reads SWE OS. The template's two `<path>` placeholders have distinct names, its clone path matches the README, and it says how to follow links when reading at a tag.
+
 ## v0.7.0 (2026-11-14)
 
 Agents see their PRs through to merged. A merge waits for green checks on the latest commit, a branch up to date with `main`, and the change seen working, then goes ahead on my approval or where a project hands merging over. Projects also read SWE OS at their pinned tag without touching the clone's checkout.
