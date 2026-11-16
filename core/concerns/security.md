@@ -24,6 +24,7 @@ description: Who can do what, what input you trust, and where secrets live.
 - For uploads, limit size before parsing, check the real content type, store under keys you generate, and serve from a separate origin or with `Content-Disposition: attachment`.
 - Give each credential the least privilege it needs, and know how you'd rotate it.
 - Rate-limit anything that costs money or can be brute-forced.
+- Check the account flows past sign-in. Trust an email only once it's verified, including before linking a Google sign-in to an existing account. Compare emails ignoring case. Reset and verification links expire and work once. A password change or account deletion ends every other session. Auth libraries leave some of this off by default, so read the settings.
 - Check new dependencies: who maintains them, and what do they get access to?
 
 ## Common misses
@@ -33,6 +34,8 @@ description: Who can do what, what input you trust, and where secrets live.
 - Trusting a file's name or MIME type from the client.
 - Admin routes protected only by being hidden from the menu.
 - Detailed stack traces returned to users.
+- A Google sign-in linked to an account whose email was never verified, so whoever signed up first with that address takes the account.
+- User-written Markdown or rich text rendered as raw HTML, and a login that redirects to whatever `?next=` says.
 - A production key pasted into an agent chat, or exposed through a public env prefix.
 
 ## Why, and more of what people miss

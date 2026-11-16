@@ -3,7 +3,7 @@ title: Dependencies
 description: Every package, SDK, GitHub Action, MCP server, or outside service you add is code you didn't write and now depend on. Check it before it's in.
 ---
 
-**Triggered by:** adding a package, SDK, CLI, GitHub Action, MCP server, or third-party service.
+**Triggered by:** adding or upgrading a package, SDK, CLI, framework, runtime, GitHub Action, MCP server, or third-party service.
 
 Run the full check on anything unfamiliar or suggested by an agent. A well-known package like `zod` or `react` only needs to be the right name and actually needed.
 
@@ -14,6 +14,7 @@ Run the full check on anything unfamiliar or suggested by an agent. A well-known
 - **Check that someone maintains it.** Look for recent releases and responses to issues. Leave out anything archived or deprecated.
 - **Lock it.** Commit the lockfile and install with `npm ci` in CI, so every machine gets the same versions.
 - **Check the license.** Make sure it allows how you'll use the code.
+- **Upgrade on purpose.** Before a major version, read its changelog and migration guide. Afterwards, use the app, not just the build: a codemod can compile cleanly and still change what caching, routing, or middleware does.
 
 ## When stakes rise
 
@@ -29,6 +30,7 @@ Run the full check on anything unfamiliar or suggested by an agent. A well-known
 - A dependency abandoned three years ago, with an open security issue.
 - A huge library pulled in for one function.
 - A GitHub Action on `@main` that changes under you.
+- A side project nobody touches, sitting on a framework version with a published security hole.
 - An MCP server holding a full-access production token.
 - A service with no export, chosen for its free tier.
 
