@@ -1,6 +1,6 @@
 ---
 name: learn
-description: Help Tommy learn from what his agents built. Walk through a PR and check his understanding before merge, catch him up on recent agent work, or set up a piece for him to write himself. Use only when he asks for one of these. Not for reviewing code for defects (use review-change) or explaining a new concept from scratch (use explain).
+description: Help the user learn from what their agents built. Walk through a PR and check their understanding before merge, catch them up on recent agent work, or set up a piece for them to write themselves. Use only when they ask for one of these. Not for reviewing code for defects (use review-change) or explaining a new concept from scratch (use explain).
 metadata:
   title: Learn
   example: 'Walk me through this PR and quiz me before I merge.'
@@ -8,7 +8,7 @@ metadata:
 
 # Learn
 
-Make sure Tommy can explain what his agents built without the code in front of him. Agent memory isn't his learning. Follow the [rules for every task](../README.md#rules-for-every-task) and the study mode in [Learning](../../profile/learning.md#how-tommy-learns): explain, he recalls, you correct. [Learning while agents write the code](../../core/guides/learning-with-agents.md) explains why.
+Make sure the user can explain what their agents built without the code in front of them. Agent memory isn't their learning. Follow the [rules for every task](../README.md#rules-for-every-task) and the study mode in [Learning](../../profile/learning.md#how-tommy-learns): explain, they recall, you correct. [Learning while agents write the code](../../core/guides/learning-with-agents.md) explains why.
 
 ## Pick the mode
 
@@ -18,24 +18,24 @@ Make sure Tommy can explain what his agents built without the code in front of h
 
 ## Walkthrough
 
-Walk the decisions in the diff and its PR description, not the files, then ask three to five questions he answers from memory: why this approach, what fails if something specific goes wrong, and where he'd look if it broke. No multiple choice, and don't answer them yourself.
+Walk the decisions in the diff and its PR description, not the files, then ask three to five questions they answer from memory: why this approach, what fails if something specific goes wrong, and where they'd look if it broke. No multiple choice, and don't answer them yourself.
 
-When he answers, in whatever shape, grade every claim against the code in that same reply. Confirm what's right, and correct each miss with the line or test that proves it. Corrections come first. The record comes last, in a line. Keep the whole thing under ten minutes, and if he skips the questions, name what he didn't check.
+When they answer, in whatever shape, grade every claim against the code in that same reply. Confirm what's right, and correct each miss with the line or test that proves it. Corrections come first. The record comes last, in a line. Keep the whole thing under ten minutes, and if they skip the questions, name what they didn't check.
 
 ## Catch-up
 
 1. List the PRs merged since the last catch-up (the newest date in `LEARNING.md`), with `gh pr list --state merged --search "merged:>=YYYY-MM-DD"` or `git log` on main.
 2. Collect their "Worth learning" items and group them by concept.
-3. Teach the one or two that matter most: a concept that keeps coming up, one in a safety-floor area (auth, data, money, models that take actions), or one he got wrong before. Link a guide if one exists. Offer a walkthrough of any PR he's fuzzy on.
-4. End with one recall question from an older record in `LEARNING.md`. He answers before you show anything.
+3. Teach the one or two that matter most: a concept that keeps coming up, one in a safety-floor area (auth, data, money, models that take actions), or one they got wrong before. Link a guide if one exists. Offer a walkthrough of any PR they're fuzzy on.
+4. End with one recall question from an older record in `LEARNING.md`. They answer before you show anything.
 
 ## Own a piece
 
-The agent building the feature leaves the core decision for Tommy: one `TODO(human)` with the context, constraints, and a failing test that defines done. Do it at most once per feature, where it's worth his time, ideally in a safety-floor area. When he's done, review his code and give one useful insight.
+The agent building the feature leaves the core decision for the user: one `TODO(human)` with the context, constraints, and a failing test that defines done. Do it at most once per feature, where it's worth their time, ideally in a safety-floor area. When they're done, review their code and give one useful insight.
 
 ## Records
 
-Keep records in `LEARNING.md` at the project root. Only this skill writes to it, so parallel agents don't collide. In a public repo, add it to `.gitignore` unless he's said to commit it, and say so once. Write a record only when he shows understanding: a correct answer, an unprompted explanation, or a corrected misconception.
+Keep records in `LEARNING.md` at the project root. Only this skill writes to it, so parallel agents don't collide. In a public repo, add it to `.gitignore` unless they've said to commit it, and say so once. Write a record only when they show understanding: a correct answer, an unprompted explanation, or a corrected misconception.
 
 ```
 ## 2026-10-06: Idempotency keys for retried POSTs
@@ -43,10 +43,10 @@ Keep records in `LEARNING.md` at the project root. Only this skill writes to it,
 - Evidence: walkthrough of PR #14. Missed key retention, corrected.
 ```
 
-If a concept shows up across projects, or he misses it twice, say so: "This could be a SWE OS guide: <title>."
+If a concept shows up across projects, or they miss it twice, say so: "This could be a SWE OS guide: <title>."
 
 ## Stop rules
 
-- Only quiz when Tommy asked for this skill. Never quiz during normal work.
+- Only quiz when the user asked for this skill. Never quiz during normal work.
 - If a PR has nothing worth learning, say so and stop.
-- Never write a record for understanding he didn't demonstrate.
+- Never write a record for understanding they didn't demonstrate.

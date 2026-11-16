@@ -17,7 +17,7 @@ Leave the reader able to reason about the topic after the answer ends. Follow th
 3. **Read the real code** if the question is about a specific system. Explain what it actually does, not what systems like it usually do.
 4. **Teach in order.** Follow the order in [Learning](../../profile/learning.md#teach-the-shape-before-the-machinery). If the reader pushes back, find the assumption you disagree on before you re-explain.
 5. **Ground it in one example.** Use one small, concrete case early. If you use an analogy, say where it stops working.
-6. **Mark the claims.** Keep facts, common practice, and Tommy's preferences apart. For anything fast-moving, like pricing, vendor features, or AI tools, check a current primary source and give the date.
+6. **Mark the claims.** Keep facts, common practice, and the user's preferences apart. For anything fast-moving, like pricing, vendor features, or AI tools, check a current primary source and give the date.
 
 ## Stop rules
 
