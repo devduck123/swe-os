@@ -179,7 +179,7 @@ test('the track map remembers the stops you read, until you reset it', async ({
   await page.goto('/guides/');
 
   const progress = page.locator('[data-track-progress]');
-  await expect(progress.getByText('2 of 22 read')).toBeVisible();
+  await expect(progress.getByText('2 of 23 read')).toBeVisible();
   const read = page.locator('.track-stop[data-read]');
   await expect(read).toHaveCount(2);
   await expect(read.getByRole('link')).toHaveText([
@@ -195,7 +195,7 @@ test('the track map remembers the stops you read, until you reset it', async ({
     progress.getByRole('link', { name: 'Start at stop 1' }),
   ).toBeFocused();
   await page.reload();
-  await expect(progress.getByText('of 22 read')).toBeHidden();
+  await expect(progress.getByText('of 23 read')).toBeHidden();
   await expect(
     progress.getByRole('link', { name: 'Start at stop 1' }),
   ).toBeVisible();

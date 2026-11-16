@@ -42,20 +42,21 @@ The stops follow the lifecycle of real work. Each stage is a few stops.
 
 16. [Shipping changes you can undo](shipping-changes-you-can-undo.md): CI, previews, flags, and rollbacks.
 17. [Database changes without downtime](database-changes-without-downtime.md): because rolling back code doesn't roll back data.
+18. [Going public](going-public.md): link previews, search, email that arrives, and a privacy page before the first signup.
 
 ### Operate
 
-18. [Knowing it broke before your users do](knowing-it-broke.md): the smallest observability setup that actually helps.
-19. [When production breaks anyway](when-production-breaks.md): stop the damage, debug from evidence, and restore from backups you've tested.
-20. [Performance and cost](performance-and-cost.md): measure first, then fix the bottleneck you actually have.
+19. [Knowing it broke before your users do](knowing-it-broke.md): the smallest observability setup that actually helps.
+20. [When production breaks anyway](when-production-breaks.md): stop the damage, debug from evidence, and restore from backups you've tested.
+21. [Performance and cost](performance-and-cost.md): measure first, then fix the bottleneck you actually have.
 
 ### Improve
 
-21. [Learning while agents write the code](learning-with-agents.md): how to keep getting better while agents do the typing.
+22. [Learning while agents write the code](learning-with-agents.md): how to keep getting better while agents do the typing.
 
 ### Put it together
 
-22. [The side-project stack](../recipes/side-project-stack.md): all of it, in one stack you can ship this weekend.
+23. [The side-project stack](../recipes/side-project-stack.md): all of it, in one stack you can ship this weekend.
 
 ## Beyond the track
 
