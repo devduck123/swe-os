@@ -8,7 +8,7 @@ SWE OS is a slightly opinionated guide to building and designing software, writt
 
 ## Learn
 
-Start with [the track](https://tommy-swe-os.vercel.app/guides/): 23 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Each stop is a short page: the idea, the things people and their agents tend to miss, and how I do it. Not a course. The links at the bottom go deeper.
+Start with [the track](https://tommy-swe-os.vercel.app/guides/): 27 stops from "what's the difference?" to "here's the stack I'd ship, and why", following real work from understanding the problem to running it in production. Each stop is a short page: the idea, the things people and their agents tend to miss, and how I do it. Not a course. The links at the bottom go deeper.
 
 ## Use it with an agent
 
@@ -28,7 +28,7 @@ git clone https://github.com/devduck123/swe-os ~/swe-os
 
 **Claude Code: install the plugin.** The skills then trigger on their own, with no prompt to paste. In Claude Code, run `/plugin marketplace add devduck123/swe-os`, then `/plugin install swe-os@swe-os`. It updates when a new version is released.
 
-The agent picks a skill (shape, start, build, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Start a fresh agent session for each feature: `PROJECT.md` carries the plan between sessions, and a long session re-reads everything it has done on every message. In one test build, that made the later messages cost 5–10× the early ones. Your project's own `AGENTS.md` always wins.
+The agent picks a skill (shape, start, build, refactor, debug, review, explain, or learn), then loads only the concerns and guides the task needs. Start a fresh agent session for each feature: `PROJECT.md` carries the plan between sessions, and a long session re-reads everything it has done on every message. In one test build, that made the later messages cost 5–10× the early ones. Your project's own `AGENTS.md` always wins.
 
 ## Adopt it in a project
 
@@ -44,11 +44,11 @@ The pin applies when agents read the site or a clone. The plugin uses whichever 
 
 | Path                                              | What it is                                                     |
 | ------------------------------------------------- | -------------------------------------------------------------- |
-| [core/guides/](core/guides/README.md)             | The track: 23 stops across the software lifecycle.             |
+| [core/guides/](core/guides/README.md)             | The track: 27 stops across the software lifecycle.             |
 | [core/recipes/](core/recipes/README.md)           | Whole setups, like the side-project stack.                     |
 | [core/principles.md](core/principles.md)          | Fourteen rules of engineering judgment.                        |
 | [core/concerns/](core/concerns/README.md)         | What a feature can get wrong, and how deep to go on each risk. |
-| [skills/](skills/README.md)                       | Seven agent workflows. The entry point for agents.             |
+| [skills/](skills/README.md)                       | Eight agent workflows. The entry point for agents.             |
 | [profile/](profile/tommy.md)                      | Who I am, my voice, how I learn, and my default stack.         |
 | [templates/project/](templates/project/AGENTS.md) | Starter `AGENTS.md`, `PROJECT.md`, and `CLAUDE.md`.            |
 | [evals/](evals/README.md)                         | A/B scenarios for testing whether this improves agent work.    |

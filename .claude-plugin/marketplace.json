@@ -6,7 +6,7 @@
     {
       "name": "swe-os",
       "source": "./",
-      "description": "Seven workflow skills: shape, start, build, debug, review, explain, and learn. They load SWE OS's concerns, guides, and profile as each task needs them."
+      "description": "Eight workflow skills: shape, start, build, refactor, debug, review, explain, and learn. They load SWE OS's concerns, guides, and profile as each task needs them."
     }
   ]
 }

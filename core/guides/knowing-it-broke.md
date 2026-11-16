@@ -2,7 +2,7 @@
 title: Knowing it broke before your users do
 description: If finding out what broke, for whom, and why takes a user's email or a new log line and a redeploy, you don't have observability yet.
 stage: operate
-track: 19
+track: 22
 concerns: [observability, reliability]
 freshness: durable
 status: draft

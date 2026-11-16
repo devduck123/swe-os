@@ -2,7 +2,7 @@
 title: Going public
 description: Shipping is when the code works. Launching is when strangers can find it, trust it, and hear from you, and that part has its own traps.
 stage: ship
-track: 18
+track: 20
 concerns: [launch, privacy]
 freshness: durable
 status: draft

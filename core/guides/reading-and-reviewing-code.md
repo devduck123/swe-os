@@ -2,7 +2,7 @@
 title: Reading and reviewing code you didn't write
 description: An agent can write a 600-line PR in minutes, and whether it's good is still your call. Don't merge what you can't explain.
 stage: verify
-track: 15
+track: 17
 concerns: [testing, security]
 freshness: durable
 status: draft

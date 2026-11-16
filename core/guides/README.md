@@ -23,40 +23,44 @@ The stops follow the lifecycle of real work. Each stage is a few stops.
 5. [Data that stays correct](data-that-stays-correct.md): constraints, transactions, and indexes do the remembering for you.
 6. [Trust boundaries](trust-boundaries.md): validate what comes in, and make sure every user only touches what's theirs.
 7. [Timeouts, retries, and idempotency](timeouts-retries-idempotency.md): what happens when the network doesn't cooperate.
+8. [Caching without stale data](caching-without-stale-data.md): every cache needs an answer to what clears it.
 
 ### Build
 
-8. [Local first, then managed services](local-first-then-managed.md): run everything on your laptop on day one, then add free tiers one service at a time.
-9. [What a complete frontend feature includes](complete-frontend-features.md): why "matches the screenshot" isn't done.
-10. [Accessibility in practice](accessibility-in-practice.md): keyboards, screen readers, zoom, and the five-minute check.
-11. [AI features in production](ai-features-in-production.md): untrusted output, prompt injection, cost, and quality you can measure.
-12. [Secrets and safety when agents write your code](secrets-and-agent-safety.md): keeping keys, data, and your bill out of trouble.
-13. [Background jobs and webhooks](background-jobs-and-webhooks.md): work outside the request, without running it twice or never.
+9. [Local first, then managed services](local-first-then-managed.md): run everything on your laptop on day one, then add free tiers one service at a time.
+10. [What a complete frontend feature includes](complete-frontend-features.md): why "matches the screenshot" isn't done.
+11. [Accessibility in practice](accessibility-in-practice.md): keyboards, screen readers, zoom, and the five-minute check.
+12. [AI features in production](ai-features-in-production.md): untrusted output, prompt injection, cost, and quality you can measure.
+13. [Secrets and safety when agents write your code](secrets-and-agent-safety.md): keeping keys, data, and your bill out of trouble.
+14. [Running several agents at once](several-agents.md): worktrees, ports, migrations, and what each session costs.
+15. [Background jobs and webhooks](background-jobs-and-webhooks.md): work outside the request, without running it twice or never.
 
 ### Verify
 
-14. [How you know it works](how-you-know-it-works.md): tests that buy confidence, not coverage numbers.
-15. [Reading and reviewing code you didn't write](reading-and-reviewing-code.md): including everything your agents wrote.
+16. [How you know it works](how-you-know-it-works.md): tests that buy confidence, not coverage numbers.
+17. [Reading and reviewing code you didn't write](reading-and-reviewing-code.md): including everything your agents wrote.
 
 ### Ship
 
-16. [Shipping changes you can undo](shipping-changes-you-can-undo.md): CI, previews, flags, and rollbacks.
-17. [Database changes without downtime](database-changes-without-downtime.md): because rolling back code doesn't roll back data.
-18. [Going public](going-public.md): link previews, search, email that arrives, and a privacy page before the first signup.
+18. [Shipping changes you can undo](shipping-changes-you-can-undo.md): CI, previews, flags, and rollbacks.
+19. [Database changes without downtime](database-changes-without-downtime.md): because rolling back code doesn't roll back data.
+20. [Going public](going-public.md): link previews, search, email that arrives, and a privacy page before the first signup.
+21. [Shipping a desktop app](shipping-a-desktop-app.md): signing, auto-update, and the old versions you can't take back.
 
 ### Operate
 
-19. [Knowing it broke before your users do](knowing-it-broke.md): the smallest observability setup that actually helps.
-20. [When production breaks anyway](when-production-breaks.md): stop the damage, debug from evidence, and restore from backups you've tested.
-21. [Performance and cost](performance-and-cost.md): measure first, then fix the bottleneck you actually have.
+22. [Knowing it broke before your users do](knowing-it-broke.md): the smallest observability setup that actually helps.
+23. [When production breaks anyway](when-production-breaks.md): stop the damage, debug from evidence, and restore from backups you've tested.
+24. [Performance and cost](performance-and-cost.md): measure first, then fix the bottleneck you actually have.
 
 ### Improve
 
-22. [Learning while agents write the code](learning-with-agents.md): how to keep getting better while agents do the typing.
+25. [Keeping an agent-built codebase healthy](keeping-a-codebase-healthy.md): duplicates, dead code, and cleanup nobody schedules.
+26. [Learning while agents write the code](learning-with-agents.md): how to keep getting better while agents do the typing.
 
 ### Put it together
 
-23. [The side-project stack](../recipes/side-project-stack.md): all of it, in one stack you can ship this weekend.
+27. [The side-project stack](../recipes/side-project-stack.md): all of it, in one stack you can ship this weekend.
 
 ## Beyond the track
 

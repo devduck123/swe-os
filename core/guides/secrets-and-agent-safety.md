@@ -2,7 +2,7 @@
 title: Secrets and safety when agents write your code
 description: A secret lets whoever holds it act as you, and agents give it new places to leak.
 stage: build
-track: 12
+track: 13
 concerns: [security, ai-features, dependencies, deployment]
 freshness: durable
 status: draft
