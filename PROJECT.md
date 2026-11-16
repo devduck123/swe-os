@@ -15,6 +15,8 @@ What's in it:
 
 ## Next
 
+**Evals are paused for budget** (2026-11-15). Tommy's plan is smaller now, and a round costs $25 to $55, so items 4 to 6 and 9 wait. The first round back: the full suite at the current version, with a third arm that gets only a short "verify it, test a failure path, keep it small" prompt, then the UI and feature scenarios again with build-feature's self-critique removed.
+
 1. **Tommy reviews the short track.** All 22 stops are `status: draft`. He reads them, keeps or cuts misses, and rewrites the "How I do it" lines in his own words.
 2. **Tommy refines the About me pages.** He reviews `profile/tommy.md`, `voice.md`, `writing.md`, `learning.md`, and `design.md`, and proposes changes so they match how he actually talks, writes, and wants his agents to work. Fold them in as he says them.
 3. **Tommy finishes the landing page.** The redesign shipped in v0.6.0. The hero is reviewed: new copy, and the duck and its robot agent sharing a book on the dock. Still to review, live: "The parts the happy path hides", "Point your agent here", the trail, and the stop pages. Then the 404 and empty states get poses.
