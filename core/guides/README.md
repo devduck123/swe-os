@@ -71,7 +71,7 @@ More stops get written when real projects need them, fundamentals before tools: 
 Every stop is written as me (see [Voice](../../profile/voice.md#know-which-voice-youre-in)), in the same shape:
 
 - **The idea,** in two to four sentences.
-- **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Durable truths, not product details. No code.
+- **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Durable truths, not product details. No code. Name a product only as an example: its current API, versions, and prices are for the agent to look up, because they change faster than a page gets reviewed.
 - **How I do it:** my default, in one line.
 - **Ask your agent:** one plain prompt that puts the stop to work in your project.
 - **Go deeper:** one to three links to the best place to learn the mechanics.
