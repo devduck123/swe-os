@@ -30,7 +30,7 @@ If none fit, work normally and still follow the rules below. If a request spans 
 
 ## Rules for every task
 
-1. **The user and the project come first.** Explicit instructions and the project's own `AGENTS.md` override anything in SWE OS.
+1. **The user and the project come first.** Explicit instructions and the project's own `AGENTS.md` override anything in SWE OS. The profile is the user's taste: it's where you start, not a limit. When you'd do something differently and better, propose it and say what it buys.
 2. **Load only what you need.** Read the skill and the concerns and guides it sends you to, not the whole OS. Read them one at a time: a tool that reads several files at once can cut one short without saying so.
 3. **Done means you saw it work.** Report what you ran and what it showed. Never claim what you didn't see. Test what you started from your own checkout: a server already running may be another session's old code.
 4. **Keep moving on reversible work.** When a question doesn't block code you could undo, make the most likely assumption, say it, build, and ask at the end. A plan with open questions is not a deliverable when the user asked for a feature. The exception is a new product's look when you can't tell [what the product is](../profile/design.md#start-from-what-the-product-is): a wrong guess there means rebuilding it, so ask one question first.
