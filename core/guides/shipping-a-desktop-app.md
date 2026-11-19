@@ -16,7 +16,7 @@ A website you can fix by deploying again. A desktop app lives on other people's 
 - **Every version you ship stays shipped.** People keep the build they downloaded for years unless the app updates itself. Add auto-update before the first public release, or everyone on it is stuck there.
 - **Old versions keep calling your server.** Any API, license check, or download link the app uses has to keep working for every version still installed. Send the app version with each request so you know when one can retire.
 - **Crashes happen where you can't see them.** There are no server logs on someone's laptop. Turn on crash reporting, and ask before sending anything that identifies the person.
-- **Permissions are a user journey.** Accessibility, screen recording, and file access are granted in System Settings, not by a button in your app. Explain why before the prompt, and handle a denied or revoked permission.
+- **Permissions are a user journey.** The system asks, not your app, and some, like accessibility and screen recording, can only be turned on in System Settings. Explain why before the prompt, and handle a denied or revoked permission.
 - **Your build machine lies.** It already trusts your certificate and has every permission granted. Test the downloaded build on a machine that has never run the app.
 - **The App Store trades a cut for less work.** It handles signing, updates, and payments, but reviews every release and sandboxes the app, and some utilities can't work inside the sandbox.
 

@@ -12,7 +12,7 @@ description: Putting a site, page, or signup in front of strangers, and what has
 - A signup form says what happens next, keeps out the easy bots without a CAPTCHA first (a hidden field, a rate limit), and records when and where each person signed up.
 - Any personal data, even one email address, gets a privacy page. It says what you keep, why, who else sees it, and how to get removed. The form links to it.
 - Decide what you'll measure before launch, and set it up before the link goes out. Prefer analytics that don't set cookies, so you don't need a banner.
-- A commercial product doesn't run on a host's plan that forbids commercial use, like Vercel Hobby.
+- A commercial product doesn't run on a host's plan that forbids commercial use.
 
 ## When stakes rise
 

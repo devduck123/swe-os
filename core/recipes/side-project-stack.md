@@ -28,18 +28,18 @@ This is the stack I'd use to build a real web app alone. Every piece is managed,
 
 ## Easy to miss
 
-- **Vercel's free plan is non-commercial.** Taking payments or running ads counts, so move to Pro before you charge anyone. Its cron (scheduled jobs) runs only once a day.
+- **A free plan can rule out what you're building.** Some hosts' free plans are non-commercial, and payments or ads count. Some run scheduled jobs (cron) only a few times a day. Check the current terms first.
 - **Free tiers stop; paid tiers bill.** Over a free limit, a feature usually turns off until the period resets, which is an outage. On a paid plan it keeps running and billing, so set a spend cap, not just an alert.
-- **A database that never sleeps burns the free compute.** Neon's free plan counts hours awake, and sleeps when idle. A health check or scheduled job that queries it every few minutes keeps it awake, and the free hours run out mid-month. Supabase's free plan has the opposite trap: it pauses a project that sits quiet.
-- **Listing files is metered.** Blob counts uploads and every request for a list of your files against a small monthly allowance. Save each file's URL in Postgres on upload and read it from there.
+- **Free databases meter time awake, or pause when idle.** A health check every few minutes can use up the free hours mid-month, and a quiet week can get a project paused. Know which yours does.
+- **File storage meters operations, not just bytes.** Uploads and requests for a list of your files can count against a small monthly allowance. Save each file's URL in Postgres on upload and read it from there.
 - **Serverless runs many copies of your app at once.** Each copy has its own memory, so a rate limit kept there, like five login attempts a minute, is really five per copy. Keep counts like that in Postgres, where every copy sees one count.
-- **Email limits bite on launch day.** Free email plans cap sends per day, and verification emails fail past it. Supabase's built-in email only reaches your own team.
+- **Email limits bite on launch day.** Free email plans cap sends per day, and verification emails fail past it. A backend's built-in auth email may be meant for testing only.
 - **Free backups go back hours, or not at all.** Once it's real users' data, longer backup history is the first upgrade I'd pay for.
 - **Your vendor accounts are the real way in.** Whoever gets into GitHub, Vercel, the database, Stripe, email, or your domain registrar skips every check in your code. Turn on MFA (a second step after the password) on each before the first real user.
 
 **How I do it:** this stack with MFA everywhere from day one, then one upgrade at a time for a reason I can name. Before each, I know how I'd leave: `pg_dump`, Postgres's standard export, moves the data anywhere, and Drizzle doesn't care who hosts it.
 
-**Ask your agent:** "Check this app against the free-tier limits of every service it uses and tell me which breaks first if a thousand people show up tomorrow. Then list every account that needs MFA, and where to set a spend cap on each."
+**Ask your agent:** "Check this app against the current free-tier limits of every service it uses and tell me which breaks first if a thousand people show up tomorrow. Then list every account that needs MFA, and where to set a spend cap on each."
 
 ## Go deeper
 

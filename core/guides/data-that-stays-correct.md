@@ -17,7 +17,7 @@ Your database is the one part of your app that remembers. Code gets rewritten, o
 - **Writes that belong together go in one transaction.** If the function dies between saving the order and lowering the stock, both are wrong. A transaction groups writes so they all land or none do.
 - **Keep the network out of transactions.** A payment call inside one makes other writes wait, and if it fails, the database can undo its writes but not a sent email.
 - **Deleting a row strands whatever pointed at it.** A foreign key, a rule that a column points at a row that exists, makes the database refuse the delete or remove the rows that depend on it too.
-- **Fine with 20 rows, unusable with 500,000.** An index is a lookup the database keeps so it can find rows without reading them all. Postgres doesn't add one for foreign keys, and tiny dev data hides the gap. Seed a few thousand fake rows, then read the query plan, the database's account of how it ran a query. If it reads every row, you're missing an index.
+- **Fine with 20 rows, unusable with 500,000.** An index is a lookup the database keeps so it can find rows without reading them all. Postgres doesn't add one for foreign keys, and tiny dev data hides the gap. Seed tens of thousands of rows and read the query plan, the database's account of how it ran a query. Reading every row to find a few means a missing index.
 - **A calendar day isn't a timestamp.** Store "today" as the user's local date, or an 11:50 p.m. check-in lands on tomorrow.
 - **Money is integer cents.** In JavaScript, 0.1 + 0.2 isn't 0.3. Store 1999 with a currency.
 
