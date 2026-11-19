@@ -206,11 +206,14 @@ function runCheck(args, cwd, home) {
   });
 }
 
-function gitInfo(work) {
+// The agent's repo can carry its own Git config, and some settings run commands, so these
+// reads get the arm's empty home and short environment too.
+function gitInfo(work, home) {
   const git = (...args) => {
     try {
       return execFileSync('git', args, {
         cwd: work,
+        env: runEnv(home),
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
       }).trim();
@@ -300,7 +303,7 @@ function saveArm(a) {
     cost: sumOf(a.turns, 'cost'),
     seconds: sumOf(a.turns, 'seconds'),
     turns: a.turns,
-    git: gitInfo(a.work),
+    git: gitInfo(a.work, a.home),
   };
   writeFileSync(join(root, `${a.arm}.json`), JSON.stringify(data, null, 2));
   return data;
