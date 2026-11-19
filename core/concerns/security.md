@@ -10,11 +10,10 @@ description: Who can do what, what input you trust, and where secrets live.
 
 - Name the trust boundaries: where does data come from someone you don't control?
 - Validate on the server. The UI is a convenience, not a control.
-- Check authorization in every server action and route handler: is this user allowed to touch _this_ record? Each one is a public endpoint, so a check only in middleware (`proxy.ts` in Next.js 16) isn't enough. See [trust boundaries](../guides/trust-boundaries.md).
+- Check authorization in every server action and route handler: is this user allowed to touch _this_ record? Each one is a public endpoint, so a check only in middleware isn't enough. See [trust boundaries](../guides/trust-boundaries.md).
 - Verify webhook signatures before parsing the body.
-- On Supabase, turn on row-level security (RLS) for every exposed table, and keep the `service_role` or secret (`sb_secret_...`) key out of client code. Both bypass RLS.
+- If the browser talks to the database directly, as with Supabase, turn on row-level security (RLS) for every exposed table, and keep any key that bypasses it out of client code.
 - Keep secrets out of client code, logs, error messages, Git, and agent chats. Load them from the environment. Variables with a public prefix (`NEXT_PUBLIC_`, `VITE_`, `EXPO_PUBLIC_`) ship to the browser or the app, where anyone can read them.
-- Turn on MFA for every account that can deploy, read production data, or move money: GitHub, hosting, the database, payments, email, and the domain registrar. Keep the recovery codes somewhere you can reach without your phone. The email account that resets all the others, and the domain it's on, guard everything, so they get the strongest protection.
 - Give agents and tools their own scoped, dev-only keys. Production keys live only in the hosting platform. See [secrets and agent safety](../guides/secrets-and-agent-safety.md).
 - Use parameterized queries and the framework's escaping. Never build SQL or HTML by string concatenation.
 

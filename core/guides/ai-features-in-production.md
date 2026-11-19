@@ -12,7 +12,7 @@ A model call is an API call to a third party that's slow, charges by the token (
 
 ## Easy to miss
 
-- **Model output is untrusted input.** Check structured output with a schema, a description of the shape you expect (Zod is one), because raw parsing breaks when the model adds "Sure! Here's the JSON:". Render it as text, never as HTML or code.
+- **Model output is untrusted input.** Check structured output with a schema, a description of the shape you expect (Zod is one), because a reply can still miss a field or invent one. Render it as text, never as HTML or code.
 - **A cut-off answer still looks like success.** A reply that hit the token limit stops mid-sentence, and one blocked by the provider's safety filter can arrive as a 200. Every response says why it stopped. Check it before you use the reply.
 - **The model can't tell your instructions from the email's.** If it reads a user's inbox, an email can steer it. That's prompt injection, and no prompt reliably stops it. The danger is an agent (a model that takes actions) with private data, untrusted content, and a way to send things out. Remove one: give the step that reads untrusted text no tools, and have a person confirm anything that sends, pays, or deletes.
 - **A markdown image is a way out.** Injected text can have the model write an image whose URL ends with the user's data. Showing it makes the browser send that data to the attacker's server. Don't render remote images from model output.

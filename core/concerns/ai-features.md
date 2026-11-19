@@ -12,7 +12,7 @@ description: What goes wrong when a product calls a language model, and how to s
 - **Treat the output as untrusted input.** Validate structured output against a schema, like Zod, before you use it. Handle refusals, empty answers, malformed JSON, and responses cut off at the token limit.
 - **Keep keys on the server.** Call the model from your backend, never from the browser.
 - **Bound every call.** Set a timeout and a small retry budget, and show the user a real fallback when the model fails. Stream long responses so the screen doesn't look frozen.
-- **Cap the cost.** Set max output tokens per call, and put auth and rate limits in front of any endpoint that calls a paid model. Set a per-user or daily limit. The simplest hard cap is a monthly spend limit in the provider's console.
+- **Cap the cost.** Set max output tokens per call, and put auth and rate limits in front of any endpoint that calls a paid model. Set a per-user or daily limit. If the provider offers a monthly spend limit, set one: it's the simplest hard cap.
 - **Mind what you send.** Don't send personal data or secrets to a provider unless the feature needs it and the provider's terms allow it.
 
 ## When stakes rise

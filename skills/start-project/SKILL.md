@@ -18,7 +18,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 4. **Protect secrets from the first commit.**
    - Make sure `.gitignore` covers `.env*` except `.env.example` before any secret exists.
    - If the project has environment variables, create `.env.example` listing each one with no value, with server and client variables clearly separated. A static site with none doesn't need one.
-   - Add a secret scan in CI, on pull requests. Since `main` only moves through PRs, that covers every commit, and it avoids a trap: the gitleaks action fails on any push that includes the repo's first commit, because it scans from that commit's parent. A local pre-commit hook is optional: offer it, don't require it, and never make the README depend on it. On a private repo, that's the real guard. GitHub's push protection is on by default only for your pushes to public repos, and turning it on for a private repo needs paid GitHub Secret Protection.
+   - Add a secret scan in CI, on pull requests. Since `main` only moves through PRs, that covers every commit, and it avoids a trap: the gitleaks action fails on any push that includes the repo's first commit, because it scans from that commit's parent. A local pre-commit hook is optional: offer it, don't require it, and never make the README depend on it. Check what the Git host's own secret protection covers for this repo and plan, since it differs between public and private repos.
    - Never write a real key into a file, a commit, or the chat. Read [secrets and safety](../../core/guides/secrets-and-agent-safety.md).
 5. **Make it reproducible.** Pin the runtime (`.nvmrc` or equivalent) and commit the lockfile. Write the run steps into the README.
 6. **Add the quality gates.** Formatter, linter, typecheck, and a test runner with one smoke test, all behind a single `check` script. Browser tests start their own server on a port of their own and never reuse one that's already running, since a stale server from another session tests old code. Stop any server you start.
@@ -40,7 +40,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 
 **Evidence.** The fresh-clone run and its `check` output. The secret scanner catching a fake key.
 
-**For you to do.** Accounts to create, env vars to fill, and settings to turn on (a ruleset on `main` requiring a PR and `check`, which needs GitHub Pro on a private repo; push protection for a public repo; Dependabot alerts and security updates, so a quiet project still gets patched; the host's preview deploys), with links.
+**For you to do.** Accounts to create, env vars to fill, and settings to turn on (a ruleset on `main` requiring a PR and `check`; the Git host's secret protection; dependency alerts and security updates, so a quiet project still gets patched; the host's preview deploys; MFA on every account that can deploy, read production data, or move money, with recovery codes reachable without a phone), with links. Say which of these the user's plan doesn't include.
 
 **Deferred.** What was left out on purpose, and the trigger to add it. Also written in PROJECT.md.
 
