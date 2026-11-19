@@ -12,7 +12,7 @@ A web app for a book club of 8 to 15 people, in seven turns: shape it, set up Ne
 
 - **Two arms, one difference.** Each arm builds in its own empty temp folder named `book-club`. B gets `--add-dir` to a snapshot of the current commit, and each of its scripted turns starts with "Use Tommy's SWE OS at <the snapshot>…". A gets the same messages without that line.
 - **A fresh session per turn.** Each scripted turn starts a new `claude -p` session in the same folder, the way SWE OS tells people to work: one session per feature, with the README, AGENTS.md, and PROJECT.md carrying context between them. Turns after the first start with the same line in both arms: "You're continuing work on this project in a new session. Read the project's README, AGENTS.md, and PROJECT.md if they exist before starting." Answers to an agent's questions resume that turn's session. See [why](#why-fresh-sessions).
-- **The same setup as the scenario evals.** Same model, tools, and isolation flags as the [harness](../harness/run.mjs), from the shared [common.mjs](../harness/common.mjs). Pushing, `gh`, deploys, and Docker are denied in both arms.
+- **The same setup as the scenario evals.** Same model, tools, isolation flags, and empty home folder as the [harness](../harness/run.mjs), from the shared [common.mjs](../harness/common.mjs). Each arm keeps one home folder across its sessions, and the checks that run its code get one too. Pushing, `gh`, deploys, and Docker are denied in both arms. See [what that isolation does and doesn't stop](../README.md#run-a-round).
 - **Turns alternate A, B, A, B.** Both arms run one at a time, so their local databases and dev servers can't collide on a port. If the budget runs out, both arms stop at the same turn.
 - **A simulated user answers questions, never with a nudge.** See [below](#the-simulated-user).
 - **A failed message doesn't end the build.** If a message runs out of its per-message budget or times out (45 minutes), the next turn continues, like a person would. A login failure or a usage limit stops everything.
@@ -75,7 +75,7 @@ node evals/project/run.mjs --fixed-answers                 # answer questions wi
 node evals/project/run.mjs --grade evals/project/results/<date>   # redo checks and reviews
 ```
 
-Run it from a normal terminal, not inside Claude Code. It uses whatever account `claude` is logged into.
+Run it from a normal terminal, not inside Claude Code, with `CLAUDE_CODE_OAUTH_TOKEN` set (`claude setup-token` makes one).
 
 ## Costs
 
