@@ -14,6 +14,7 @@ import {
 import { dirname, join, relative, resolve } from 'node:path';
 import { frontmatter, repoPath, root, routeFor } from '../src/lib/routes.mjs';
 import { rewriteHref } from '../src/lib/remark-repo-links.mjs';
+import { trackProblems } from '../src/lib/track.mjs';
 
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const markdownIn = (dir) =>
@@ -96,10 +97,10 @@ for (const id of concerns) {
     `core/concerns/${id}.md is not in the routing table`,
   );
 }
-// 4. Guides and recipes carry a status, and the track has one page per position, all linked
-//    from the track page.
+// 4. Guides and recipes carry a status, and every stop's track number and stage match where the
+//    track page lists it.
 const trackPage = read('core/guides/README.md');
-const seenTrack = new Map();
+const trackStops = [];
 for (const file of [
   ...markdownIn('core/guides'),
   ...markdownIn('core/recipes'),
@@ -145,28 +146,29 @@ for (const file of [
       /^\*\*Ask your agent:\*\* /m.test(misses),
       `${file}: add an "**Ask your agent:**" line after "How I do it"`,
     );
+    // The caps core/guides/README.md states in "How a stop is built". The recipe that closes
+    // the track gets more room.
     const links = body.split('## Go deeper')[1].match(/^- \[/gm) ?? [];
+    const maxLinks = isRecipe ? 4 : 3;
     assert(
-      links.length >= 1 && links.length <= 4,
-      `${file}: "Go deeper" needs 1 to 4 links, has ${links.length}`,
+      links.length >= 1 && links.length <= maxLinks,
+      `${file}: "Go deeper" needs 1 to ${maxLinks} links, has ${links.length}`,
     );
     const words = body.split(/\s+/).filter(Boolean).length;
     const cap = isRecipe ? 700 : 450;
     assert(words <= cap, `${file}: ${words} words, over the ${cap}-word cap`);
-    assert(
-      !seenTrack.has(data.track),
-      `${file} and ${seenTrack.get(data.track)} share track ${data.track}`,
-    );
-    seenTrack.set(data.track, file);
-    const href = file.startsWith('core/guides/')
-      ? file.split('/').at(-1)
-      : `../recipes/${file.split('/').at(-1)}`;
-    assert(
-      trackPage.includes(`](${href})`),
-      `${file} is on the track but not linked from core/guides/README.md`,
-    );
+    trackStops.push({
+      file,
+      href: isRecipe
+        ? `../recipes/${file.split('/').at(-1)}`
+        : file.split('/').at(-1),
+      track: data.track,
+      stage: data.stage,
+    });
   }
 }
+const problems = trackProblems(trackPage, trackStops);
+assert(problems.length === 0, problems.join('\n'));
 
 // 5. The plugin's version is the release version. Installed plugins only update when it changes.
 const { version } = JSON.parse(read('package.json'));
