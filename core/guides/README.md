@@ -76,4 +76,4 @@ Every stop is written as me (see [Voice](../../profile/voice.md#know-which-voice
 - **Ask your agent:** one plain prompt that puts the stop to work in your project.
 - **Go deeper:** one to three links to the best place to learn the mechanics.
 
-A stop stays under 450 words. If a topic needs more, it's probably two stops, or the depth belongs in a link. AI can draft a stop. It stays a draft until a person has checked the claims and made them their own.
+A stop is 450 words at most. If a topic needs more, it's probably two stops, or the depth belongs in a link. The recipe at the end of the track ties the stops into one stack, so it gets more room: up to 700 words and four links. AI can draft a stop. It stays a draft until a person has checked the claims and made them their own.
