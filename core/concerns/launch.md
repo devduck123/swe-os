@@ -16,7 +16,7 @@ description: Putting a site, page, or signup in front of strangers, and what has
 
 ## When stakes rise
 
-- Sending email: send from a domain you own, with SPF, DKIM, and DMARC set, a day or more before the first big send. Put one-click unsubscribe on everything that isn't a receipt. Send a test to Gmail and Outlook and check it lands in the inbox.
+- Sending email: look up what your email provider and the big inbox providers currently require, days before the first big send, and check that a test lands in the inbox.
 - Waitlists get double opt-in: the address confirms before you send it anything else.
 - Find every limit an announcement can hit: daily email sends, function runs, database connections, model spend. Know what happens at each one.
 - Turn on auto-renew and the registrar lock for the domain.
@@ -26,7 +26,6 @@ description: Putting a site, page, or signup in front of strangers, and what has
 
 - The social card shows a preview URL, an old title, or the framework's default image, and the platform cached the first version it fetched.
 - The `vercel.app` address competes with the real domain in search.
-- Launch email lands in spam because the domain was set up that morning.
 - Analytics added the day after launch, so the one spike goes uncounted.
 - Waitlist emails sit in a table with no record of consent and no way to export them.
 

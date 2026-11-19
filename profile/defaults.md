@@ -5,7 +5,7 @@ freshness: fast-moving
 reviewed: 2026-10-06
 ---
 
-This is what I reach for on my own projects. Treat it as a reference for the kind of tooling I like, not a lockfile: typed, managed, well documented, pleasant to work with, and easy for an agent to drive. I'm open to something newer when the DX is genuinely better, so suggest it, and say what it buys over the default. Versions and pricing move fast, so check current docs before relying on either.
+This is what I reach for on my own projects. Treat it as a reference for the kind of tooling I like, not a lockfile: typed, managed, well documented, pleasant to work with, and easy for an agent to drive.
 
 In an existing repo, its stack wins. In a work repo, the project's own rules and stack win over everything here.
 

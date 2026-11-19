@@ -44,7 +44,7 @@ The stops follow the lifecycle of real work. Each stage is a few stops.
 
 18. [Shipping changes you can undo](shipping-changes-you-can-undo.md): CI, previews, flags, and rollbacks.
 19. [Database changes without downtime](database-changes-without-downtime.md): because rolling back code doesn't roll back data.
-20. [Going public](going-public.md): link previews, search, email that arrives, and a privacy page before the first signup.
+20. [Going public](going-public.md): link previews, icons, search, and a privacy page before the first signup.
 21. [Shipping a desktop app](shipping-a-desktop-app.md): signing, auto-update, and the old versions you can't take back.
 
 ### Operate
@@ -71,7 +71,7 @@ More stops get written when real projects need them, fundamentals before tools: 
 Every stop is written as me (see [Voice](../../profile/voice.md#know-which-voice-youre-in)), in the same shape:
 
 - **The idea,** in two to four sentences.
-- **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Durable truths, not product details. No code.
+- **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Durable truths, not product details. No code. Name a product only as an example: its current API, versions, and prices are for the agent to look up, because they change faster than a page gets reviewed.
 - **How I do it:** my default, in one line.
 - **Ask your agent:** one plain prompt that puts the stop to work in your project.
 - **Go deeper:** one to three links to the best place to learn the mechanics.
