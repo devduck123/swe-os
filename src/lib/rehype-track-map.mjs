@@ -6,16 +6,7 @@
 // Two things here need Astro components, so the plugin leaves an empty `<span data-slot>` for
 // src/components/MarkdownContent.astro to fill: the reading progress and each stage's duck pose.
 import { repoPath } from './routes.mjs';
-
-const stages = [
-  'understand',
-  'design',
-  'build',
-  'verify',
-  'ship',
-  'operate',
-  'improve',
-];
+import { stages } from './track.mjs';
 
 const el = (tagName, properties, children = []) => ({
   type: 'element',

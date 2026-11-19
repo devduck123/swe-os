@@ -36,7 +36,7 @@ Rounds 1–3 found and fixed four harness bugs (B could read reviewer notes, a l
 
 ## Run a round
 
-The harness runs every scenario headless with Claude Code, once without SWE OS (A) and once with it (B). Then it grades each run blind and writes `evals/results/<date>/summary.md`. It uses whatever account `claude` is logged into, and stops at the budget, measured in API-equivalent dollars.
+The harness runs every scenario headless with Claude Code, once without SWE OS (A) and once with it (B). Then it grades each run blind and writes `evals/results/<date>/summary.md`. Runs log in with `CLAUDE_CODE_OAUTH_TOKEN` (`claude setup-token` makes one), since they don't get your home folder, and the harness stops at the budget, measured in API-equivalent dollars.
 
 ```sh
 node evals/harness/run.mjs --dry-run                 # what would run, spends nothing
@@ -52,7 +52,7 @@ How it keeps the comparison fair:
 
 - **Same setup for both arms.** Each run starts in a fresh temp copy of its fixture from `evals/fixtures/`, with the same model, tools, and flags. User settings, skills, plugins, and MCP servers are off for both (`--setting-sources project,local --disable-slash-commands --strict-mcp-config`).
 - **One difference.** B's first message starts with "Use Tommy's SWE OS at <a snapshot of the current commit>…". A gets the task alone.
-- **Nothing escapes the temp folder.** Pushing, `gh`, deploys, Docker, and the Supabase and EAS CLIs are denied in both arms.
+- **Runs don't get your logins.** Each run gets an empty home folder and only the environment it needs: `PATH`, language and terminal settings, a proxy if you set one, and Claude's own token and settings. So `gh`, `vercel`, `supabase`, `npm`, and `git` find no account to act as, and commits are by `dev`. It isn't a sandbox: the network works, and a command can still read your files by their full path. On macOS the keychain and `~/.ssh` don't go through the home folder, so a run that goes looking for them can still find them. Pushing, `gh`, deploys, Docker, and the Supabase and EAS CLIs are also denied by name, so an agent that tries them gets a refusal it can report. Graders, the learner test, and the project eval's checks get the same treatment. Rounds before November 18 ran with your home folder and environment, and with npm's cache warm, so their times aren't comparable.
 - **Blocked commands are counted.** Each run records what the permission settings refused. Graders see that list and don't count a blocked check against the agent, and the summary shows the average per arm. Rounds before November 11 also blocked harmless helpers like `cd`, `head`, and `sleep`, so a check written as `cd site && …` failed. That hit runs without SWE OS hardest when they tried to look at their page, so read older Verification gaps with that in mind.
 - **The same answers for both.** When a scenario's starting state says "if asked", the harness answers once, the same way for both arms.
 - **Graded blind.** Graders run from a neutral temp folder, since a run's own folder is named after its arm. Its path is hidden from them too, since an agent's commands include it. Rounds before November 5 didn't hide it, so a grader could see the arm's letter in those commands, though not what the letter meant. The grader sees the task, the reviewer-only notes, the rubric, the commands the agent ran, its replies with SWE OS tells stripped, and the diff. It never sees which arm it's grading.
