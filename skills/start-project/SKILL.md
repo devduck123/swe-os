@@ -22,10 +22,10 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
    - Never write a real key into a file, a commit, or the chat. Read [secrets and safety](../../core/guides/secrets-and-agent-safety.md).
 5. **Make it reproducible.** Pin the runtime (`.nvmrc` or equivalent) and commit the lockfile. Write the run steps into the README.
 6. **Add the quality gates.** Formatter, linter, typecheck, and a test runner with one smoke test, all behind a single `check` script. Browser tests start their own server on a port of their own and never reuse one that's already running, since a stale server from another session tests old code. Stop any server you start.
-7. **Add CI and the first PR.** Run `check` on every PR. Make a first commit on `main`, then put the setup on a branch as the first PR, so `main` only ever moves through PRs. Push `main` before any other branch: the first branch pushed becomes the repo's default, and Vercel deploys production from it. `gh repo create --source . --push` pushes only the branch you're on, so run it from `main`. With no remote yet, leave both ready to push.
-8. **Plan the deploy.** A website goes on Vercel unless the project already uses another host. Give the user the steps in your report: import the repo at https://vercel.com/new, keep the framework it detects, check that the production branch is `main`, and every PR gets a preview URL. They create the project; you don't.
+7. **Add CI and the first PR.** Run `check` on every PR. Make a first commit on `main`, the one direct commit [rule 14](../README.md#rules-for-every-task) allows since a new repo has nothing to branch from, then put the setup on a branch as the first PR, so `main` only ever moves through PRs. Push `main` before any other branch: the first branch pushed becomes the repo's default, and hosts deploy production from it. `gh repo create --source . --push` pushes only the branch you're on, so run it from `main`. With no remote yet, leave both ready to push.
+8. **Plan the deploy.** A website goes on the host in the [defaults](../../profile/defaults.md) unless the project already uses another. Give the user the steps in your report: connect the repo, check that the production branch is `main`, and confirm every PR gets a preview URL. They create the project; you don't.
 9. **Keep it local first.** `npm run dev`, or the equivalent, works with seed data and no paid service. Add external services later, one at a time, as features need them. See [local first, then managed services](../../core/guides/local-first-then-managed.md).
-10. **Verify from scratch.** Clone into a temporary directory outside the project (`mktemp -d`), follow only the README, and confirm `check` passes. Delete the clone afterwards. Then try committing a fake secret and confirm the scan blocks it.
+10. **Verify from scratch.** Clone into a temporary directory outside the project (`mktemp -d`), follow only the README, and confirm `check` passes. Delete the clone afterwards. Then run the scanner CI uses on a scratch folder outside the repo holding a fake key, and confirm it catches it. Never commit one, even fake.
 
 ## Stop rules
 
@@ -38,7 +38,7 @@ Give a new repo everything a vibe-coded one is missing on day one, and nothing i
 ```
 **Set up.** The stack, with one line on why for each piece.
 
-**Evidence.** The fresh-clone run and its `check` output. The CI secret scan catching a fake key.
+**Evidence.** The fresh-clone run and its `check` output. The secret scanner catching a fake key.
 
 **For you to do.** Accounts to create, env vars to fill, and settings to turn on (a ruleset on `main` requiring a PR and `check`, which needs GitHub Pro on a private repo; push protection for a public repo; Dependabot alerts and security updates, so a quiet project still gets patched; the host's preview deploys), with links.
 

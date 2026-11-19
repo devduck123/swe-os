@@ -17,8 +17,8 @@
 
 ## Assets
 
-| Asset        | What it is                                      | Where it's used             |
-| ------------ | ----------------------------------------------- | --------------------------- |
-| <Mascot>     | <components/brand/Mascot.tsx>                   | <Header, empty states, 404> |
-| Favicon      | <app/icon.svg, plus a 180px app/apple-icon.png> | Browser tabs, home screens  |
-| Social image | <app/opengraph-image.png, 1200×630>             | Shared links                |
+| Asset        | What it is                                                                     | Where it's used             |
+| ------------ | ------------------------------------------------------------------------------ | --------------------------- |
+| <Mascot>     | <components/brand/Mascot.tsx>                                                  | <Header, empty states, 404> |
+| Favicon      | <an SVG icon and a 180px Apple touch icon, where the framework looks for them> | Browser tabs, home screens  |
+| Social image | <app/opengraph-image.png, 1200×630>                                            | Shared links                |

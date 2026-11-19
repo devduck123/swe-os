@@ -9,7 +9,7 @@ description: What happens when the things you depend on are slow, down, or only 
 ## Minimum bar
 
 - Every network call has a timeout you chose. Browser `fetch`, axios, and many other clients have none by default.
-- Retry only operations that are safe to repeat, a few times at most, with backoff.
+- Retry only operations that are safe to repeat: once while a person waits, a few times with backoff in background work.
 - Show failures to the user honestly. Don't spin forever or pretend it worked.
 - Tell transient failures (timeout, 503, 429) apart from permanent ones (400, 404). Don't retry the permanent ones.
 
