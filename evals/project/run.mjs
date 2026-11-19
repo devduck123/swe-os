@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // The project eval: a person builds a whole app with Claude Code, once without SWE OS (A) and
 // once with it (B). Each scripted turn starts a fresh session by default, the way SWE OS says to
-// work. Then each final repo is installed, tested, built, and reviewed blind. Runs on whatever
-// Claude account the `claude` CLI is logged into. Start it from a normal terminal, not inside a
-// Claude Code session. See README.md.
+// work. Then each final repo is installed, tested, built, and reviewed blind. Runs log in with
+// CLAUDE_CODE_OAUTH_TOKEN, since each gets an empty home folder (see runEnv in
+// ../harness/common.mjs). Start it from a normal terminal, not inside a Claude Code session.
+// See README.md.
 //
 //   node evals/project/run.mjs                        both arms, $120 budget, $12 per message
 //   node evals/project/run.mjs --sessions one         every turn in one long session per arm
@@ -31,10 +32,11 @@ import {
   DENIED,
   ISOLATION,
   asksQuestion,
+  checkReady,
   claude,
   pointer,
-  refuseNested,
   repo,
+  runEnv,
   snapshotSweos,
   stopReasonFor,
 } from '../harness/common.mjs';
@@ -157,14 +159,15 @@ const reviewerArgs = (prompt, resume) => [
 ];
 
 // npm install, npm test, npm run build. Each gets its own process group, so a timeout or a
-// database a test left running gets killed with it.
-function runCheck(args, cwd) {
+// database a test left running gets killed with it. The agent wrote what these run, so they get
+// the same empty home folder and short environment as the agent did.
+function runCheck(args, cwd, home) {
   return new Promise((done) => {
     const t0 = Date.now();
     const child = spawn('npm', args, {
       cwd,
       detached: true,
-      env: { ...process.env, CI: '1', NEXT_TELEMETRY_DISABLED: '1' },
+      env: runEnv(home, { CI: '1', NEXT_TELEMETRY_DISABLED: '1' }),
     });
     let out = '';
     const keep = (chunk) => (out = (out + chunk).slice(-20_000));
@@ -286,8 +289,8 @@ function saveArm(a) {
     verbatimSymlinks: true,
     filter: notCopied,
   });
-  for (const file of readdirSync(a.home).filter((f) => f.endsWith('.jsonl')))
-    cpSync(join(a.home, file), join(dir, file));
+  for (const file of readdirSync(a.temp).filter((f) => f.endsWith('.jsonl')))
+    cpSync(join(a.temp, file), join(dir, file));
   writeFileSync(join(dir, 'transcript.md'), transcript(a.arm, a.turns));
   const data = {
     arm: a.arm,
@@ -306,7 +309,10 @@ function saveArm(a) {
 async function gradeArm(arm, data, sweos) {
   const dir = join(root, 'runs', arm);
   // A neutral folder name: the reviewer sees its working directory, which shouldn't say A or B.
-  const copy = join(mkdtempSync(join(tmpdir(), 'review-')), PROJECT);
+  const temp = mkdtempSync(join(tmpdir(), 'review-'));
+  const copy = join(temp, PROJECT);
+  // The checks and the reviewer share a home, and the reviewer's follow-up resumes its session.
+  const home = join(temp, 'home');
   cpSync(join(dir, 'repo'), copy, {
     recursive: true,
     verbatimSymlinks: true,
@@ -314,7 +320,7 @@ async function gradeArm(arm, data, sweos) {
   data.blindedLines = blindRepo(copy, sweos);
   data.checks = {};
   for (const [name, args] of Object.entries(CHECKS)) {
-    data.checks[name] = await runCheck(args, copy);
+    data.checks[name] = await runCheck(args, copy, home);
     console.log(
       `${arm} ${data.checks[name].command}: ${data.checks[name].ok ? 'pass' : 'FAIL'}, ${data.checks[name].seconds}s`,
     );
@@ -331,9 +337,7 @@ async function gradeArm(arm, data, sweos) {
     reviewerArgs(prompt),
     copy,
     join(dir, 'review-transcript.jsonl'),
-    {
-      timeoutMs: 30 * 60_000,
-    },
+    { timeoutMs: 30 * 60_000, home },
   );
   spent += r.cost;
   stopReason = stopReasonFor(r.error) ?? stopReason;
@@ -346,7 +350,7 @@ async function gradeArm(arm, data, sweos) {
       reviewerArgs(completeReviewPrompt(gaps), r.sessionId),
       copy,
       join(dir, 'review-transcript-2.jsonl'),
-      { timeoutMs: 10 * 60_000 },
+      { timeoutMs: 10 * 60_000, home },
     );
     spent += more.cost;
     cost += more.cost;
@@ -359,7 +363,7 @@ async function gradeArm(arm, data, sweos) {
   console.log(
     `${arm} review: $${cost.toFixed(2)}${data.review.error ? `, ERROR ${data.review.error.slice(0, 120)}` : ''}`,
   );
-  rmSync(dirname(copy), { recursive: true, force: true });
+  rmSync(temp, { recursive: true, force: true });
   writeFileSync(join(root, `${arm}.json`), JSON.stringify(data, null, 2));
 }
 
@@ -408,7 +412,7 @@ if (opts['dry-run']) {
   process.exit(0);
 }
 
-refuseNested();
+checkReady();
 
 if (opts.grade) {
   const info = JSON.parse(readFileSync(join(root, 'round.json'), 'utf8'));
@@ -446,14 +450,16 @@ console.log(
   `Project eval ${started}: ${PROJECT} on SWE OS ${commit}, budget $${budget}.`,
 );
 
-// Each arm builds in its own empty folder, named like a real project, never "A" or "B".
+// Each arm builds in its own empty folder, named like a real project, never "A" or "B", with a
+// home folder next to it that every message in the arm shares, since sessions are saved there.
 const arms = ['A', 'B'].map((arm) => {
-  const home = mkdtempSync(join(tmpdir(), 'project-'));
-  const work = join(home, PROJECT);
+  const temp = mkdtempSync(join(tmpdir(), 'project-'));
+  const work = join(temp, PROJECT);
   mkdirSync(work);
   return {
     arm,
-    home,
+    temp,
+    home: join(temp, 'home'),
     work,
     session: null,
     turns: [],
@@ -486,8 +492,8 @@ async function send(a, text, kind, scripted) {
       prompt,
     ],
     a.work,
-    join(a.home, `transcript-${n}.jsonl`),
-    { timeoutMs: TURN_TIMEOUT },
+    join(a.temp, `transcript-${n}.jsonl`),
+    { timeoutMs: TURN_TIMEOUT, home: a.home },
   );
   a.session = r.sessionId ?? (newSession ? null : a.session);
   a.model ??= r.model;
@@ -526,7 +532,7 @@ async function userAnswer(a, t) {
   const r = await claude(
     userArgs(prompt),
     dir,
-    join(a.home, `user-${t.n}.jsonl`),
+    join(a.temp, `user-${t.n}.jsonl`),
     { timeoutMs: 5 * 60_000 },
   );
   rmSync(dir, { recursive: true, force: true });
@@ -594,7 +600,7 @@ for (const [i, text] of project.turns.entries()) {
 
 const saved = Object.fromEntries(arms.map((a) => [a.arm, saveArm(a)]));
 // The saved copies are enough. The temp folders hold installed packages, often over 500 MB.
-for (const a of arms) rmSync(a.home, { recursive: true, force: true });
+for (const a of arms) rmSync(a.temp, { recursive: true, force: true });
 rmSync(dirname(sweos), { recursive: true, force: true });
 info.spent = spent;
 spent = 0;
