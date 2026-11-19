@@ -1,6 +1,9 @@
 name: Check
+# Once per PR commit, and again when it lands on main. A push trigger for every branch ran each
+# PR commit twice.
 on:
   push:
+    branches: [main]
   pull_request:
 permissions:
   contents: read

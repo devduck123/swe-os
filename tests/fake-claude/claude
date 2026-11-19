@@ -2,7 +2,8 @@
 // A stand-in for the `claude` CLI, so tests can run the project eval end to end for free.
 // It prints stream-json like `claude -p --output-format stream-json`, builds a tiny app on the
 // setup turn, plays the simulated user, and answers reviews with JSON. Every call is logged to
-// $FAKE_CLAUDE_LOG with its session, so tests can tell a new session from a resumed one.
+// $FAKE_CLAUDE_LOG with its session, so tests can tell a new session from a resumed one, and
+// with its HOME and the names (never the values) of its environment variables.
 //
 //   FAKE_CLAUDE_FAIL=limit        every call hits a usage limit
 //   FAKE_CLAUDE_ASK=always        every agent reply ends with a design question
@@ -30,7 +31,15 @@ const log = (entry) =>
   process.env.FAKE_CLAUDE_LOG &&
   appendFileSync(
     process.env.FAKE_CLAUDE_LOG,
-    JSON.stringify({ args, cwd, session, resumed: !!resume, ...entry }) + '\n',
+    JSON.stringify({
+      args,
+      cwd,
+      session,
+      resumed: !!resume,
+      home: process.env.HOME,
+      env: Object.keys(process.env),
+      ...entry,
+    }) + '\n',
   );
 
 say({
@@ -147,7 +156,8 @@ if (prompt.includes('Set up the project')) {
         name: 'book-club',
         private: true,
         scripts: {
-          test: 'node -e "console.log(\'tests pass\')"',
+          // What a check running this sees, so tests can tell it got an empty home folder.
+          test: "node -e \"console.log('tests pass, HOME ' + process.env.HOME + ', parent variable ' + (process.env.PARENT_ONLY_CANARY ?? 'unseen'))\"",
           build: 'node -e "console.log(\'built\')"',
         },
       },

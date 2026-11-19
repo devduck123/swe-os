@@ -192,3 +192,17 @@ test('a session limit stops the round instead of counting as a run', async () =>
   assert.ok(stopReasonFor('usage_limit_reached'));
   assert.equal(stopReasonFor('Build failed: missing semicolon'), null);
 });
+
+test("--only refuses a scenario name it doesn't know, and lists the real ones", async () => {
+  const { spawnSync } = await import('node:child_process');
+  const r = spawnSync(
+    process.execPath,
+    ['evals/harness/run.mjs', '--dry-run', '--only', 'overhead,overheard'],
+    { encoding: 'utf8' },
+  );
+  assert.notEqual(r.status, 0);
+  assert.match(
+    r.stderr,
+    /no scenario called overheard\. The scenarios are overhead, /,
+  );
+});

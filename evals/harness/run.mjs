@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Runs the evals headless with Claude Code: each scenario once without SWE OS (A) and once with
-// it (B), then grades every run blind and writes a summary. Runs on whatever Claude account the
-// `claude` CLI is logged into. Start it from a normal terminal, not inside a Claude Code session.
+// it (B), then grades every run blind and writes a summary. Runs log in with
+// CLAUDE_CODE_OAUTH_TOKEN, since each gets an empty home folder (see runEnv in common.mjs).
+// Start it from a normal terminal, not inside a Claude Code session.
 //
 //   node evals/harness/run.mjs                      every scenario, 1 rep, $50 budget
 //   node evals/harness/run.mjs --only overhead,secrets --reps 3 --budget 20
@@ -34,9 +35,9 @@ import {
   DENIED,
   ISOLATION,
   asksQuestion,
+  checkReady,
   claude,
   pointer,
-  refuseNested,
   repo,
   section,
   snapshotSweos,
@@ -130,6 +131,9 @@ function restoreDotfiles(work) {
 async function runOne(s, arm, rep, root, sweos) {
   const dir = join(root, 'runs', `${s.id}-${arm}-${rep}`);
   const work = setUp(s, dir);
+  // One home for every turn, since the session lives there. Outside the run's folder, so it isn't
+  // copied back, and named at random, since its path shows up in commands the grader reads.
+  const home = mkdtempSync(join(root, 'home-'));
   const base = [
     '-p',
     '--output-format',
@@ -156,7 +160,9 @@ async function runOne(s, arm, rep, root, sweos) {
       '--',
       prompt,
     ];
-    const r = await claude(args, work, join(dir, `transcript-${i + 1}.jsonl`));
+    const r = await claude(args, work, join(dir, `transcript-${i + 1}.jsonl`), {
+      home,
+    });
     session = r.sessionId ?? session;
     spent += r.cost;
     turns.push({ sent: text, ...r });
@@ -190,6 +196,8 @@ async function runOne(s, arm, rep, root, sweos) {
     diff = String(e.stdout ?? '');
   }
   writeFileSync(join(dir, 'diff.patch'), diff);
+  // It holds the run's npm cache, which can be hundreds of MB.
+  rmSync(home, { recursive: true, force: true });
   // Imported here so only scenarios with screenshots need a browser installed.
   if (s.capture) {
     const { capture } = await import('./capture.mjs');
@@ -443,7 +451,7 @@ function summarize(root) {
 // ---- main
 // Regrade: grade every run in a past round that has no grade yet, or whose grade failed.
 if (opts.grade) {
-  refuseNested();
+  checkReady();
   const root = resolve(opts.grade);
   const info = JSON.parse(readFileSync(join(root, 'round.json'), 'utf8'));
   for (const name of readdirSync(join(root, 'runs'))) {
@@ -458,6 +466,13 @@ if (opts.grade) {
   process.exit(0);
 }
 
+const unknown = (opts.only?.split(',') ?? []).filter(
+  (id) => !scenarios.some((s) => s.id === id),
+);
+if (unknown.length)
+  throw new Error(
+    `--only names no scenario called ${unknown.join(', ')}. The scenarios are ${scenarios.map((s) => s.id).join(', ')}.`,
+  );
 const picked = opts.only
   ? scenarios.filter((s) => opts.only.split(',').includes(s.id))
   : scenarios;
@@ -519,7 +534,7 @@ if (opts['dry-run']) {
   process.exit(0);
 }
 
-refuseNested();
+checkReady();
 // A fresh temp folder per round, so a rerun never finds an earlier round's files.
 const scratch = mkdtempSync(join(tmpdir(), `swe-os-evals-${started}-`));
 mkdirSync(join(root, 'runs'), { recursive: true });
