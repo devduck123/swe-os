@@ -4,6 +4,10 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+## v0.9.0 (2026-11-19)
+
+Agents now look up what moves fast instead of trusting these pages, and treat my profile as where they start, not a limit. Pages that disagreed now agree, provider details that go stale are gone, and a typical feature loads fewer concern pages. Eval runs no longer get your logins. Evals haven't measured any of it yet.
+
 - **Agents look up what moves fast.** A new rule for every task: when an answer depends on a version, an API, a framework default, a price, or a provider's rule, check the project's installed version and its current docs, and say when an answer is from memory. Stops teach the idea and name a product only as an example.
 - **The profile is taste, not a limit.** Rule 1 now says the profile is where an agent starts: when it would do something differently and better, it proposes that and says what it buys. This used to apply only to the default stack. The accessibility and motion floors in design taste aren't taste, and still hold.
 - **Two stops reviewed.** Going public drops the email-sending bullet, adds favicons and icons, and says what Tommy actually does: Vercel and its analytics for a small project. Caching no longer prescribes a Next.js API or claims what its defaults are. Email-sending rules leave Launch too, for the agent to look up.

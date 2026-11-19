@@ -2,7 +2,7 @@
 
 ## Now
 
-**v0.8.0 released on 2026-11-15.** The site is live at https://tommy-swe-os.vercel.app, and the repo is public under MIT (code and templates) and CC BY 4.0 (writing). Maturity: prototype.
+**v0.9.0 released on 2026-11-19.** The site is live at https://tommy-swe-os.vercel.app, and the repo is public under MIT (code and templates) and CC BY 4.0 (writing). Maturity: prototype.
 
 What's in it:
 
