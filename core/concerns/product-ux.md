@@ -3,11 +3,8 @@ title: Product and UX
 description: Does the feature actually solve the user's problem, from first click to done?
 ---
 
-**Triggered by:** a new user-facing feature, or a change to a user journey.
-
 ## Minimum bar
 
-- Write the outcome in one sentence: who can do what, and how you'll know it worked.
 - Walk the whole journey once: how the user gets there, does the thing, and knows it worked.
 - Use the user's words in labels and messages, not your data model's.
 

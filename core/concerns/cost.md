@@ -3,8 +3,6 @@ title: Cost
 description: What this will cost to run, where the pricing cliffs are, and what stops a surprise bill.
 ---
 
-**Triggered by:** usage-billed services, uploads, model calls, new dependencies, and calls to services you don't own.
-
 ## Minimum bar
 
 - List every billed resource the feature uses: storage, bandwidth, API calls, AI tokens, compute.

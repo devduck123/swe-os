@@ -3,7 +3,6 @@ title: Data and storage
 description: Where data lives, who owns it, what keeps it valid, and how you get it back.
 ---
 
-**Triggered by:** storing data that outlives a request, uploads, schema changes, payments.
 **Floor:** payments and destructive data changes always get "when stakes rise".
 
 ## Minimum bar

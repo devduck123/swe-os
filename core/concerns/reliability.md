@@ -3,7 +3,6 @@ title: Reliability
 description: What happens when the things you depend on are slow, down, or only half-finished.
 ---
 
-**Triggered by:** calls to services you don't own, background work, stored data, payments.
 **Floor:** payments always get "when stakes rise".
 
 ## Minimum bar

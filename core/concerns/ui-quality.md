@@ -3,14 +3,11 @@ title: UI quality
 description: Does the UI hold up on any screen, show every state, look like it belongs, and reuse what already exists?
 ---
 
-**Triggered by:** any UI, including changes to a shared component.
-
 ## Minimum bar
 
 - Check a phone width (about 375px) and a desktop width with real content. No horizontal scrolling or clipped buttons. Long names and empty values don't break the layout.
 - Make touch targets at least 24 by 24px, the WCAG 2.2 AA minimum. Apple recommends 44 by 44 points, a good size for primary actions on touch.
 - Make one thing on the screen obviously most important.
-- Reuse the project's components and its spacing, type, and color tokens. If there are none, pick a small set and stick to it.
 - Make interactive elements look interactive, with hover, focus, active, and disabled states.
 - Design the empty, loading, success, and error states. The first time a user sees your feature, it's probably empty. Error messages say what happened and what to do next, when there is a next step.
 - Check light and dark themes if the project has both.

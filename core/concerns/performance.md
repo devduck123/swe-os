@@ -3,8 +3,6 @@ title: Performance
 description: Is it fast enough for the people using it, with real data, and do you have the numbers to prove it?
 ---
 
-**Triggered by:** a stated latency, size, or throughput budget; uploads; UI on slow devices or networks.
-
 ## Minimum bar
 
 - Bound the work: limit payload sizes, page lists, and cap loops over user data.
