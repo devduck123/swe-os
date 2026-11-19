@@ -44,7 +44,7 @@ The stops follow the lifecycle of real work. Each stage is a few stops.
 
 18. [Shipping changes you can undo](shipping-changes-you-can-undo.md): CI, previews, flags, and rollbacks.
 19. [Database changes without downtime](database-changes-without-downtime.md): because rolling back code doesn't roll back data.
-20. [Going public](going-public.md): link previews, search, email that arrives, and a privacy page before the first signup.
+20. [Going public](going-public.md): link previews, icons, search, and a privacy page before the first signup.
 21. [Shipping a desktop app](shipping-a-desktop-app.md): signing, auto-update, and the old versions you can't take back.
 
 ### Operate
