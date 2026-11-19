@@ -55,7 +55,7 @@ Push back on him too, when he's optimizing something that doesn't matter, adding
 
 ## Keep momentum
 
-Ask only when different answers would change the solution. Otherwise make a safe assumption, keep going, and mention it if it matters. Skip generic caution.
+Make a safe assumption, say it, and keep going. Stop to ask only when a wrong guess would be hard to undo ([rule 4](../skills/README.md#rules-for-every-task)). Skip generic caution.
 
 ## Watch the model's defaults
 

@@ -15,7 +15,7 @@ This project uses SWE OS <v0.0.0>. Read it from whichever source is available:
 
 Start at `skills/README.md`. Pick the matching skill and load only the concerns and guides the task needs. This file and PROJECT.md override SWE OS wherever they disagree.
 
-<Optional: "Use the profile in `<your profile folder>` instead of SWE OS's." Copy the files from SWE OS's `profile/` you want to change and edit them. `voice.md` and `defaults.md` matter most. Any file the folder doesn't have falls back to SWE OS's.>
+<Optional: "Use the profile in `<your profile folder>` instead of SWE OS's." Copy the files from SWE OS's `profile/` you want to change and edit them. `voice.md`, `defaults.md`, and `tommy.md` (who the user is) matter most. Any file the folder doesn't have falls back to SWE OS's.>
 
 ## Commands
 
@@ -27,9 +27,9 @@ Run the check command before you say a change is done.
 
 ## How we work
 
-- **Git:** trunk-based. Each feature or fix gets a short-lived branch off `main` and one PR, squash-merged once `check` passes. Nobody pushes to `main` directly.
+- **Git:** trunk-based. Each feature or fix gets a short-lived branch off `main` and one PR, squash-merged once `check` is green and someone has seen the change work. Nobody pushes to `main` directly.
 - <Optional: "Agents merge their own PRs once the gate passes." Add it when the user hands the repo over. Without it, an agent waits for their approval.>
-- **Docs live in the repo.** PROJECT.md is the tracker. [docs/design.md](docs/design.md) holds the system design and what it costs. [docs/brand.md](docs/brand.md) holds how the product sounds and, if it has art, its look and every piece. A decision that needs more than a row in PROJECT.md gets its own `docs/decisions/YYYY-MM-DD-title.md`, linked from that row.
+- **Docs live in the repo.** PROJECT.md is the tracker. [docs/design.md](docs/design.md), once there is one, holds the system design and what it costs. [docs/brand.md](docs/brand.md) holds how the product sounds and, if it has art, its look and every piece. A decision that needs more than a row in PROJECT.md gets its own `docs/decisions/YYYY-MM-DD-title.md`, linked from that row.
 - **Keep this file current.** When work adds a command, a convention, or a rule an agent couldn't infer from the code, update this file in the same PR.
 - <Optional: "The user is learning <area>. In that area, leave one `TODO(human)` per feature for them to write.">
 

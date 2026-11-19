@@ -73,10 +73,14 @@ Fix the worst problems, then look again. Your report gives an honest read of wha
 
 The art an agent draws for a product is some of the most valuable work in the repo, and the hardest to recreate exactly. Treat it like code: named, kept, and reused.
 
-- **Each piece is a component.** Inline SVG in `components/brand/`, with props for size and pose, colors from theme tokens or `currentColor`, and its animation (reduced motion included) beside it. The favicon and social image go in `public/`.
+- **Each piece is a component.** Inline SVG in `components/brand/`, with props for size and pose, colors from theme tokens or `currentColor`, and its animation (reduced motion included) beside it. The favicon and social image go where the framework looks for them.
 - **One style, written down.** `docs/brand.md` describes the look (the character's proportions, stroke, corners, colors, and motion) and lists every asset in one line: what it is and where it's used. New art follows it. To change the style, change the doc first.
 - **Reuse before drawing new.** Give the mascot a new pose before inventing a second character.
 - **Don't replace or restyle an existing piece** unless asked. Add a variant instead.
+
+## One system per project
+
+Whatever direction you pick, write it down as tokens in the theme file: colors for light and dark, type, radius, shadows, and motion timing. Components use the tokens, never raw hex or one-off values, so the tenth screen matches the first. A site follows the system's theme and has a toggle that remembers the visitor's choice. With shadcn/ui, that's its [theme variables](https://ui.shadcn.com/docs/theming), and new ones go through `@theme inline`.
 
 ## The rules that don't bend
 
@@ -87,7 +91,6 @@ Expressive never costs someone the ability to use the thing.
 - **Motion never blocks.** Nobody waits for an animation to finish before they can act. UI transitions take 150 to 300ms. Animate `opacity` and `transform`, which don't make the page recompute its layout.
 - **Art is accessible and light.** A decorative graphic is hidden from screen readers (`aria-hidden="true"` or empty `alt`), and a meaningful one gets a text alternative. Inline SVG and CSS before big images and heavy animation libraries. The page's main content still loads fast on a phone.
 - **Keyboard and touch work.** Every interactive thing has a visible focus state and works by keyboard. Hover effects are a bonus, never the only way to find a control. Primary touch targets are about 44px.
-- **One system per project.** Whatever direction you pick, write it down as tokens in the theme file: colors for light and dark, type, radius, shadows, and motion timing. Components use the tokens, never raw hex or one-off values, so the tenth screen matches the first. A site follows the system's theme and has a toggle that remembers the visitor's choice. With shadcn/ui, that's its [theme variables](https://ui.shadcn.com/docs/theming), and new ones go through `@theme inline`.
 
 ## Sources
 
