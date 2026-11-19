@@ -1,7 +1,6 @@
 ---
 title: The side-project stack
 description: One app on managed services that a single person can ship this weekend, run for free, and grow without a rewrite, as long as you know where each free tier ends.
-stage: design
 track: 27
 concerns: [deployment, cost, security, data]
 freshness: fast-moving

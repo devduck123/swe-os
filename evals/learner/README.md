@@ -11,7 +11,7 @@ node evals/learner/run.mjs                    # every stop, 2 readers each
 node evals/learner/run.mjs --only 5,6 --readers 3
 ```
 
-Run it from a normal terminal. It uses whatever account the `claude` CLI is logged into, and stops on a failed login or a usage limit. Each run writes `results/<date>/summary.md` and one JSON file per stop with every reader's answers.
+Run it from a normal terminal with `CLAUDE_CODE_OAUTH_TOKEN` set (`claude setup-token` makes one). Each reader runs in an empty folder with an empty home folder, so no `CLAUDE.md` reaches it. Rounds before November 18 ran from this repo, so their readers also got its `CLAUDE.md`. It stops on a failed login or a usage limit. Each run writes `results/<date>/summary.md` and one JSON file per stop with every reader's answers.
 
 ## How to read the numbers
 

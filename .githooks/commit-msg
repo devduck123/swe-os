@@ -1,0 +1,15 @@
+#!/bin/sh
+# This repo is public, so a commit message can't name a private term either. pre-commit checks
+# the files and their names. The terms live in .git/info/private-terms, one per line.
+
+terms="$(git rev-parse --git-common-dir)/info/private-terms"
+[ -s "$terms" ] || exit 0
+patterns=$(mktemp)
+grep -v -e '^[[:space:]]*$' -e '^#' "$terms" > "$patterns"
+# Every line, even ones starting with #: a message given with -m or -F keeps them.
+if [ -s "$patterns" ] && grep -q -i -F -f "$patterns" "$1"; then
+  rm -f "$patterns"
+  echo "commit-msg: the commit message contains a term from .git/info/private-terms." >&2
+  exit 1
+fi
+rm -f "$patterns"

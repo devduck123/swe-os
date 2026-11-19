@@ -4,6 +4,7 @@ import { z } from 'astro/zod';
 import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 import { i18nLoader } from '@astrojs/starlight/loaders';
 import { docPatterns, routeFor } from './lib/routes.mjs';
+import { stages } from './lib/track.mjs';
 
 const idFor = ({ entry }: { entry: string }) => {
   const route = routeFor(entry);
@@ -35,17 +36,7 @@ export const collections = {
             'ai',
           ])
           .optional(),
-        stage: z
-          .enum([
-            'understand',
-            'design',
-            'build',
-            'verify',
-            'ship',
-            'operate',
-            'improve',
-          ])
-          .optional(),
+        stage: z.enum(stages).optional(),
         freshness: z.enum(['durable', 'evolving', 'fast-moving']).optional(),
         // outline: structure only, Tommy writes the prose. draft: written, not yet reviewed by Tommy.
         status: z.enum(['outline', 'draft', 'reviewed']).optional(),
