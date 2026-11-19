@@ -11,7 +11,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import {
   DIMENSIONS,
   PREAMBLE,
@@ -238,7 +238,8 @@ test('the summary puts both arms side by side, serious problems first', () => {
   assert.match(out, /\*\*tests\.\*\* A: \(The reviewer gave no reason\.\)/);
 });
 
-// End to end, with tests/fake-claude/claude standing in for the CLI.
+// End to end, with tests/fake-claude/claude standing in for the CLI. The token is a stand-in
+// too, and PARENT_ONLY_CANARY is a variable no run should see. An env value of undefined unsets it.
 const runner = resolve('evals/project/run.mjs');
 function runEval(args, env = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'project-eval-test-'));
@@ -248,11 +249,15 @@ function runEval(args, env = {}) {
   const { CLAUDECODE, ...rest } = process.env;
   const fullEnv = {
     ...rest,
+    CLAUDE_CODE_OAUTH_TOKEN: 'test-token',
+    PARENT_ONLY_CANARY: 'leaked',
     ...env,
     TMPDIR: temp,
     FAKE_CLAUDE_LOG: log,
     PATH: `${resolve('tests/fake-claude')}:${process.env.PATH}`,
   };
+  for (const [name, value] of Object.entries(fullEnv))
+    if (value === undefined) delete fullEnv[name];
   const result = spawnSync(
     process.execPath,
     [runner, '--out', join(dir, 'out'), ...args],
@@ -339,6 +344,21 @@ e2e('a full run: both arms, every turn, checks, blind reviews, summary', () => {
     ),
   );
   assert.notEqual(firstA.cwd, firstB.cwd);
+  // Every call gets an empty home folder in the temp folder, not the parent's home, and none of
+  // the parent's other variables, so the CLIs an agent runs find no login. Each arm keeps one
+  // home across its sessions, since resuming a session needs the home it was saved in.
+  for (const c of run.calls) {
+    assert(c.home.startsWith(run.temp + sep), c.home);
+    assert(!c.env.includes('PARENT_ONLY_CANARY'));
+    assert(c.env.includes('CLAUDE_CODE_OAUTH_TOKEN'));
+  }
+  const homes = (b) =>
+    new Set(agents.filter((c) => isB(c) === b).map((c) => c.home));
+  assert.equal(homes(false).size, 1);
+  assert.equal(homes(true).size, 1);
+  assert.notEqual([...homes(false)][0], [...homes(true)][0]);
+  for (const u of users)
+    assert(!homes(false).has(u.home) && !homes(true).has(u.home));
   // Reviewers work in neutrally named copies with the tells stripped.
   assert.equal(reviewers.length, 2);
   for (const r of reviewers) {
@@ -364,6 +384,11 @@ e2e('a full run: both arms, every turn, checks, blind reviews, summary', () => {
   );
   const A = JSON.parse(readFileSync(join(run.out, 'A.json'), 'utf8'));
   assert.equal(A.sessions, 'fresh');
+  // The checks run the agent's code, so they get an empty home and a short environment too.
+  assert.match(
+    A.checks.test.tail,
+    /tests pass, HOME \S+review-\w+[\\/]home, parent variable unseen/,
+  );
   assert.deepEqual(
     A.turns.map((t) => t.newSession),
     [true, false, true, true, true, true, true, true],
@@ -491,6 +516,11 @@ e2e('a review missing reasons gets one request to finish it', () => {
   assert.equal(run.status, 0, run.stderr);
   const followups = run.calls.filter((c) => c.role === 'reviewer-followup');
   assert.equal(followups.length, 2);
+  // The follow-up resumes the review's session, so it needs the same home.
+  assert.deepEqual(
+    new Set(followups.map((f) => f.home)),
+    new Set(run.calls.filter((c) => c.role === 'reviewer').map((r) => r.home)),
+  );
   for (const f of followups) {
     assert(f.args.includes('--resume'));
     assert.match(
@@ -503,6 +533,17 @@ e2e('a review missing reasons gets one request to finish it', () => {
     summary,
     /\*\*authorization\.\*\* A: Fake reason for authorization\. B: Fake reason for authorization\./,
   );
+  rmSync(run.dir, { recursive: true });
+});
+
+e2e('a run needs a token, since its home folder has no login', () => {
+  const run = runEval([], {
+    CLAUDE_CODE_OAUTH_TOKEN: undefined,
+    ANTHROPIC_API_KEY: undefined,
+  });
+  assert.notEqual(run.status, 0);
+  assert.match(run.stderr, /Set CLAUDE_CODE_OAUTH_TOKEN/);
+  assert.equal(run.calls.length, 0);
   rmSync(run.dir, { recursive: true });
 });
 

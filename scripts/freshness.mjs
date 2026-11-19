@@ -31,11 +31,18 @@ for (const file of files) {
     stale.push(`- \`${file}\`: last checked ${data.reviewed ?? 'never'}`);
 }
 
-// 2. Outside links that no longer resolve.
+// 2. Outside links that no longer resolve. Reserved example domains (RFC 2606), like
+//    example.com or api.test, are placeholders that were never meant to load.
+const placeholder = (url) =>
+  URL.canParse(url) &&
+  /(^|\.)(example|test|invalid|localhost)$|(^|\.)example\.(com|net|org)$/i.test(
+    new URL(url).hostname,
+  );
 const links = new Map();
 for (const file of files) {
   const text = readFileSync(join(root, file), 'utf8');
   for (const [, url] of text.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)) {
+    if (placeholder(url)) continue;
     if (!links.has(url)) links.set(url, new Set());
     links.get(url).add(file);
   }

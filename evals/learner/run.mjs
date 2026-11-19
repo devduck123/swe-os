@@ -2,18 +2,32 @@
 // The learner test: does each track stop teach its target reader what it means to?
 // Claude reads every stop in character as that reader (see reader.md), with the collapsed
 // "Going deeper" blocks removed, and reports its takeaway, where it got lost, and scores.
-// Runs on whatever account the `claude` CLI is logged into, from a normal terminal.
+// Each reader runs in an empty folder with an empty home folder, like the other evals, and logs
+// in with CLAUDE_CODE_OAUTH_TOKEN. Start it from a normal terminal.
 //
 //   node evals/learner/run.mjs                     every stop, 2 readers each
 //   node evals/learner/run.mjs --only 5,6 --readers 3
-import { spawn } from 'node:child_process';
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { frontmatter } from '../../src/lib/routes.mjs';
+import {
+  ISOLATION,
+  checkReady,
+  claude,
+  repo,
+  stopReasonFor,
+} from '../harness/common.mjs';
 import { mainPath } from './main-path.mjs';
 
-const repo = resolve(import.meta.dirname, '../..');
 const { values: opts } = parseArgs({
   options: {
     only: { type: 'string' },
@@ -22,10 +36,7 @@ const { values: opts } = parseArgs({
     parallel: { type: 'string', default: '4' },
   },
 });
-if (process.env.CLAUDECODE)
-  throw new Error(
-    'Run this from a normal terminal, not inside a Claude Code session.',
-  );
+checkReady();
 
 // The track, in order: every guide or recipe with a `track` number.
 const stops = ['core/guides', 'core/recipes']
@@ -47,43 +58,34 @@ const stops = ['core/guides', 'core/recipes']
 const reader = readFileSync(join(import.meta.dirname, 'reader.md'), 'utf8');
 let spent = 0;
 
-function read(stop) {
+async function read(stop) {
   const prompt = `${reader}\n\n## The stop: ${stop.title}\n\n${mainPath(readFileSync(join(repo, stop.file), 'utf8'))}`;
-  return new Promise((done) => {
-    const args = [
+  // An empty folder: run from the repo, the reader also got this repo's CLAUDE.md.
+  const room = mkdtempSync(join(tmpdir(), 'reader-'));
+  const r = await claude(
+    [
       '-p',
       '--output-format',
-      'json',
+      'stream-json',
+      '--verbose',
       '--tools',
       '',
-      '--setting-sources',
-      'project,local',
-      '--disable-slash-commands',
-      '--strict-mcp-config',
+      ...ISOLATION,
       '--',
       prompt,
-    ];
-    const child = spawn('claude', args, { cwd: repo });
-    let out = '';
-    child.stdout.on('data', (c) => (out += c));
-    child.on('close', () => {
-      let result = {};
-      try {
-        result = JSON.parse(out);
-      } catch {}
-      spent += result.total_cost_usd ?? 0;
-      if (result.is_error || !result.result)
-        return done({ error: (result.result ?? out).slice(0, 300) });
-      const text = result.result.replace(/```(?:json)?/g, '');
-      try {
-        done(
-          JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1)),
-        );
-      } catch {
-        done({ error: `unparseable: ${text.slice(0, 200)}` });
-      }
-    });
-  });
+    ],
+    room,
+  );
+  rmSync(room, { recursive: true, force: true });
+  spent += r.cost;
+  if (r.error || !r.reply)
+    return { error: (r.error || 'no reply').slice(0, 300) };
+  const text = r.reply.replace(/```(?:json)?/g, '');
+  try {
+    return JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
+  } catch {
+    return { error: `unparseable: ${text.slice(0, 200)}` };
+  }
 }
 
 const started = new Date().toISOString().slice(0, 19).replaceAll(':', '');
@@ -99,10 +101,7 @@ await Promise.all(
     while (queue.length && spent < Number(opts.budget)) {
       const stop = queue.shift();
       const r = await read(stop);
-      if (
-        r.error &&
-        /authenticat|OAuth|rate.?limit|usage limit/i.test(r.error)
-      ) {
+      if (stopReasonFor(r.error)) {
         queue.length = 0;
         console.error(`Stopped: ${r.error}`);
         break;

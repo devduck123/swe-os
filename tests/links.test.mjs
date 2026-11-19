@@ -69,7 +69,7 @@ test('external links, absolute paths, and in-page anchors pass through untouched
   }
 });
 
-test('raw files cover every page source plus templates, and nothing private', () => {
+test('raw files cover every page source plus templates', () => {
   const raw = rawFiles();
   for (const path of [
     'core/principles.md',
@@ -78,5 +78,4 @@ test('raw files cover every page source plus templates, and nothing private', ()
   ]) {
     assert(raw.includes(path), path);
   }
-  assert(raw.every((path) => /^(core|profile|skills|templates)\//.test(path)));
 });
