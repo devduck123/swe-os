@@ -3,8 +3,6 @@ title: Deployment
 description: Getting a change from your machine to users, and back out again if it's wrong.
 ---
 
-**Triggered by:** changes to build, config, packaging, or release; schema changes; destructive data changes.
-
 ## Minimum bar
 
 - The build is reproducible: a lockfile, a pinned runtime, one command.

@@ -3,7 +3,6 @@ title: AI features
 description: What goes wrong when a product calls a language model, and how to ship one you can trust, afford, and improve.
 ---
 
-**Triggered by:** calling a language model or other ML API, or acting on what one returns: showing it, storing it, or running the tool calls it asks for.
 **Floor:** a model that can take actions (send, write, buy, delete) or that reads untrusted content alongside private data always gets "when stakes rise", even in a prototype.
 
 ## Minimum bar
@@ -11,7 +10,7 @@ description: What goes wrong when a product calls a language model, and how to s
 - **Check that a model is the right tool.** If plain code can do the job reliably, use code. A model earns its place where the input is messy language or the output needs judgment.
 - **Treat the output as untrusted input.** Validate structured output against a schema, like Zod, before you use it. Handle refusals, empty answers, malformed JSON, and responses cut off at the token limit.
 - **Keep keys on the server.** Call the model from your backend, never from the browser.
-- **Bound every call.** Set a timeout and a small retry budget, and show the user a real fallback when the model fails. Stream long responses so the screen doesn't look frozen.
+- **Bound every call.** Set a timeout, retry at most once while a person waits, and show the user a real fallback when the model fails. Stream long responses so the screen doesn't look frozen.
 - **Cap the cost.** Set max output tokens per call, and put auth and rate limits in front of any endpoint that calls a paid model. Set a per-user or daily limit. If the provider offers a monthly spend limit, set one: it's the simplest hard cap.
 - **Mind what you send.** Don't send personal data or secrets to a provider unless the feature needs it and the provider's terms allow it.
 
@@ -27,7 +26,7 @@ description: What goes wrong when a product calls a language model, and how to s
 ## Common misses
 
 - The API key shipped in the frontend bundle.
-- `JSON.parse(response)` with no validation, which crashes the first time the model adds a sentence before the JSON.
+- `JSON.parse(response)` with no validation, which crashes on the first reply that's cut off or missing a field.
 - An unauthenticated "chat" endpoint that turns into someone else's free model API.
 - A support bot with email-sending tools that a pasted message can instruct.
 - A prompt change shipped because it felt better, with no evals to catch the regression.

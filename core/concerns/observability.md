@@ -3,8 +3,6 @@ title: Observability
 description: When it breaks, can you tell what broke and why, without guessing?
 ---
 
-**Triggered by:** calls to services you don't own, and background or scheduled work.
-
 ## Minimum bar
 
 - Errors carry enough context to find the cause: which operation, which record, what input. Leave out secrets and personal data.

@@ -3,8 +3,6 @@ title: Desktop apps
 description: An app on someone else's computer, in whatever version they installed, that you can't redeploy.
 ---
 
-**Triggered by:** an app people install on their own computer, like a native, Electron, or Tauri app, or a downloadable binary, and anything about how it's built, signed, released, or updated.
-
 ## Minimum bar
 
 - Every public build is signed, and on macOS notarized. Test the downloaded build on a machine that has never run the app, not the one you built it on.

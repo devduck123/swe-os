@@ -3,8 +3,6 @@ title: Accessibility
 description: Can people use it with a keyboard, a screen reader, zoom, or less-than-perfect vision?
 ---
 
-**Triggered by:** any UI.
-
 ## Minimum bar
 
 - Use native elements: `<button>` for actions, `<a>` for navigation, `<label>` tied to every input.

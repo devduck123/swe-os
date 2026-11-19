@@ -3,7 +3,6 @@ title: Security
 description: Who can do what, what input you trust, and where secrets live.
 ---
 
-**Triggered by:** untrusted input, uploads, auth or permissions, secrets, payments, exposed APIs and webhooks, model calls, new dependencies, and calls to outside services.
 **Floor:** secrets, auth, and payments always get "when stakes rise", even in a prototype.
 
 ## Minimum bar

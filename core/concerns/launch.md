@@ -3,8 +3,6 @@ title: Launch
 description: Putting a site, page, or signup in front of strangers, and what has to be true before the link goes out.
 ---
 
-**Triggered by:** a site, page, or signup going public for the first time; a new or changed domain; a form that collects emails from the public.
-
 ## Minimum bar
 
 - Every public page has its own title and description, and a social card that shows up in a real link preview, not just in the code. URLs in metadata are absolute and on the real domain.
@@ -24,9 +22,6 @@ description: Putting a site, page, or signup in front of strangers, and what has
 
 ## Common misses
 
-- The social card shows a preview URL, an old title, or the framework's default image, and the platform cached the first version it fetched.
-- The `vercel.app` address competes with the real domain in search.
-- Analytics added the day after launch, so the one spike goes uncounted.
 - Waitlist emails sit in a table with no record of consent and no way to export them.
 
 ## Why, and more of what people miss

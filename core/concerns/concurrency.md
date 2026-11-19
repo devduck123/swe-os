@@ -3,7 +3,6 @@ title: Concurrency
 description: What happens when two things touch the same data at the same time, or the same work runs twice.
 ---
 
-**Triggered by:** multiple writers to the same state, background jobs, payments.
 **Floor:** payments always get "when stakes rise".
 
 ## Minimum bar

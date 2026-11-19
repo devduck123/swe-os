@@ -3,7 +3,6 @@ title: Payments
 description: Who has paid for what right now, and what happens when that changes.
 ---
 
-**Triggered by:** a checkout, a subscription, a refund, credits, or anything that unlocks because someone paid.
 **Floor:** payments always get "when stakes rise", even in a prototype.
 
 ## Minimum bar

@@ -3,7 +3,6 @@ title: Migrations
 description: Changing a schema or existing data without losing anything or breaking the running app.
 ---
 
-**Triggered by:** schema changes and rewrites of existing data.
 **Floor:** anything that drops or rewrites valuable data always gets "when stakes rise".
 
 ## Minimum bar

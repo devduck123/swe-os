@@ -3,8 +3,6 @@ title: Dependencies
 description: Every package, SDK, GitHub Action, MCP server, or outside service you add is code you didn't write and now depend on. Check it before it's in.
 ---
 
-**Triggered by:** adding or upgrading a package, SDK, CLI, framework, runtime, GitHub Action, MCP server, or third-party service.
-
 Run the full check on anything unfamiliar or suggested by an agent. A well-known package like `zod` or `react` only needs to be the right name and actually needed.
 
 ## Minimum bar

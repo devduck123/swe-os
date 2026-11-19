@@ -3,8 +3,6 @@ title: API contracts
 description: Is the interface other code depends on explicit, validated, and safe to change?
 ---
 
-**Triggered by:** exposing an HTTP API, webhook, CLI, event, or file format that other code or people depend on.
-
 ## Minimum bar
 
 - Define the request and response shapes in one place, with types or a schema.
