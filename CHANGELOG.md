@@ -10,6 +10,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 - **Vibe coder vs. engineer, reviewed.** Its floors now match the concerns page agents follow: sensitive or shared personal data rather than all of it, plus AI that can take actions. Three examples keep their lesson and link to the stops that own the details instead of retelling them. Tommy reads the agent's report and its unspecified decisions, and the diff where it touches a floor.
 - **How a request travels, reviewed.** The stop no longer names Next.js's client directive or env var prefix: client code and browser-exposed variables are public, whatever your framework calls them. The shared-cache bullet, which repeated the caching stop, is now a link to it. How I do it and the agent prompt are shorter, and the CDN link is now Chrome's Network panel guide.
 - **Shape before you build, reviewed.** "One test per done-when line" is said once instead of three times. The agent prompt is one question, since the shape-project skill knows what to ask. Tommy talks a new idea through with an agent and keeps the shape in PROJECT.md.
+- **Simple first, reviewed.** The invented-package and free-tier bullets are gone, since stops 9 and 13 own them. The agent prompt is one question. Tommy adds nothing beyond one app and one database until something is measurably slow or breaks.
 
 ## v0.9.0 (2026-11-19)
 
