@@ -32,7 +32,7 @@ The stops follow the lifecycle of real work. Each stage is a few stops.
 11. [Accessibility in practice](accessibility-in-practice.md): keyboards, screen readers, zoom, and the five-minute check.
 12. [AI features in production](ai-features-in-production.md): untrusted output, prompt injection, cost, and quality you can measure.
 13. [Secrets and safety when agents write your code](secrets-and-agent-safety.md): keeping keys, data, and your bill out of trouble.
-14. [Running several agents at once](several-agents.md): worktrees, ports, migrations, and what each session costs.
+14. [Running several agents at once](several-agents.md): worktrees, ports, migrations, session cost, and your review queue.
 15. [Background jobs and webhooks](background-jobs-and-webhooks.md): work outside the request, without running it twice or never.
 
 ### Verify

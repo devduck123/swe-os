@@ -4,6 +4,8 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **Several agents, reviewed.** The stop no longer claims two agents do a day's work in an hour. It says your review is the bottleneck, to remove a worktree when its PR merges, and that a changelog or tracker conflicts even when the features don't. Routine permission prompts can go to allow rules or an auto-approve mode, and the How I do it line is Tommy's.
+
 ## v0.9.0 (2026-11-19)
 
 Agents now look up what moves fast instead of trusting these pages, and treat my profile as where they start, not a limit. Pages that disagreed now agree, provider details that go stale are gone, and a typical feature loads fewer concern pages. Eval runs no longer get your logins. Evals haven't measured any of it yet.
