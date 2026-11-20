@@ -5,7 +5,7 @@ stage: design
 track: 4
 concerns: [performance, reliability, cost, dependencies]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Build the simplest thing that fully solves today's problem. Every service, layer, or package is something to deploy, secure, upgrade, and debug, whether or not it earns its place. Agents don't weigh that cost unless you ask.
@@ -18,12 +18,10 @@ Build the simplest thing that fully solves today's problem. Every service, layer
 - **Adding is cheap later, removing is a rewrite.** A cache is a small change the week you need it. Folding a separate API back into the app touches everything.
 - **"We might get big" isn't evidence.** A cache is earned by a page you timed as slow even with the right indexes, the lookups a database keeps so it doesn't read every row. A queue, by work that's slow, flaky, and must not be lost. A separate API, by a second client, like a mobile app calling the same backend.
 - **Layers cost reading time.** Each is another file to open before the code that matters, for you and every agent after you.
-- **Every package is code you didn't read.** Agents sometimes invent plausible package names, and attackers register them. Check that it exists with real downloads and recent releases, or skip it if the platform does the job.
-- **A free tier isn't a plan.** Before you pick a service, find where the bill jumps and how you'd get your data out.
 
-**How I do it:** one Next.js app and one Postgres database, and nothing else until `PROJECT.md` names the problem it solves and the number that proves it, like "the schedule page takes 3 seconds with 2,000 classes."
+**How I do it:** one Next.js app and one Postgres database, and nothing else until something is measurably slow or breaks.
 
-**Ask your agent:** "Before you add any service, package, or layer, tell me what problem it solves in this app today and how we'd know. If the answer is 'we might need it later', don't add it, and tell me what's already here that we could remove."
+**Ask your agent:** "Before you add a service, package, or layer, tell me what problem it solves in this app today."
 
 ## Go deeper
 
