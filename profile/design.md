@@ -14,6 +14,10 @@ Then pick the register, which is how serious it should feel. A tool that lives o
 
 If what you can read doesn't answer those questions, ask one short question before you design, like who it's for or how serious it should feel. A wrong guess here costs a rebuild, not a tweak. Don't ask anything you can read for yourself.
 
+## Ask for work they like
+
+On a new product or a redesign, ask the user for links to a few live sites they made or love, unless their profile or a skill already lists them. Open each one and say what you're taking from it. They show a range, not a template. Mine are in a personal `design-references` skill.
+
 ## Go further than the default
 
 Default framework styling shipped as-is isn't a design. Every product gets its own palette, type, shapes, and motion, picked with conviction within its register. Surprise me.
@@ -61,13 +65,6 @@ On my last product page, the biggest fixes came when I asked the agent to review
 - Where does the eye land first, and is that the right thing?
 
 Fix the worst problems, then look again. Your report gives an honest read of what's still weak. "It looks good" isn't a critique.
-
-## What I've liked
-
-- [My portfolio](https://www.ducktommy.com/): a big editorial serif, a dark, quiet [palette](palette.md), one focal visual with a soft glow and slow motion, and room to breathe.
-- This site's landing page: the playful end, a little cute and a little animated, with a mascot.
-- A coming-soon page for a desktop tool, drawn as the desktop itself: the system font, the app's real panels replaying real requests on their own, and the character kept to its app icon and a small scene in the wallpaper.
-- [OpenPacks](https://backpacks-app.vercel.app/): a product screen kept neutral on purpose. That's the floor for a tool, not the goal.
 
 ## Keep the art: it's an asset
 
