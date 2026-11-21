@@ -11,6 +11,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 - **How a request travels, reviewed.** The stop no longer names Next.js's client directive or env var prefix: client code and browser-exposed variables are public, whatever your framework calls them. The shared-cache bullet, which repeated the caching stop, is now a link to it. How I do it and the agent prompt are shorter, and the CDN link is now Chrome's Network panel guide.
 - **Shape before you build, reviewed.** "One test per done-when line" is said once instead of three times. The agent prompt is one question, since the shape-project skill knows what to ask. Tommy talks a new idea through with an agent and keeps the shape in PROJECT.md.
 - **Simple first, reviewed.** The invented-package and free-tier bullets are gone, since stops 9 and 13 own them. The agent prompt is one question. Tommy adds nothing beyond one app and one database until something is measurably slow or breaks.
+- **Data that stays correct, reviewed.** The agent prompt no longer says to seed "a few thousand rows", which contradicted the stop's own "seed tens of thousands". It's now one request: list the data's rules and enforce each in the database. Tommy puts the rules in as constraints and reads query plans when something is slow.
 
 ## v0.9.0 (2026-11-19)
 
