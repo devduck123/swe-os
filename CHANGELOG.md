@@ -14,6 +14,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 - **Data that stays correct, reviewed.** The agent prompt no longer says to seed "a few thousand rows", which contradicted the stop's own "seed tens of thousands". It's now one request: list the data's rules and enforce each in the database. Tommy puts the rules in as constraints and reads query plans when something is slow.
 - **Trust boundaries, reviewed.** "A server action is a public endpoint" no longer names Next.js or a term React has since renamed. It's now "A function the browser can call is a public endpoint", and stop 2's link says the same. The agent prompt asks where one user could reach another's data. Tommy puts the owner in every query, rather than a data access layer.
 - **Timeouts, retries, and idempotency, reviewed.** "Most clients wait forever by default" overclaimed: many have no timeout, and others wait minutes. The agent prompt is a question about calls that never answer or run twice. The How I do it line was already Tommy's.
+- **Local first, then managed services, reviewed.** The How I do it line no longer claims local Postgres, throwaway preview databases, and spend caps everywhere. Tommy runs the dev database locally when that's easy and hosted when it isn't. The misses still teach previews and spend caps. The agent prompt is one question about a fresh clone.
 
 ## v0.9.0 (2026-11-19)
 
