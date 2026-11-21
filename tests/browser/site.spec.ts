@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { readdirSync, readFileSync } from 'node:fs';
 
 const pages = [
   '/',
@@ -148,9 +149,8 @@ test("a stop shows Tommy's note and a duck that hands you the prompt", async ({
   await expect(page.locator('.stop-eyebrow')).toHaveText(
     /Design · stop 7 of \d+/,
   );
-  await expect(page.locator('.page-meta__status summary')).toHaveText(
-    /Draft · not reviewed by Tommy yet/,
-  );
+  // Tommy has reviewed this stop, so it carries no draft note.
+  await expect(page.locator('.page-meta__status')).toHaveCount(0);
 
   const note = page.locator('.stop-note');
   await expect(note).toContainText('How I do it:');
@@ -166,8 +166,21 @@ test("a stop shows Tommy's note and a duck that hands you the prompt", async ({
     'Copied. Paste it to your agent.',
   );
   const copied = await page.evaluate(() => navigator.clipboard.readText());
-  expect(copied).toMatch(/^List every call this app makes/);
-  expect(copied).toMatch(/keyed on the record it belongs to\.$/);
+  expect(copied).toBe(
+    'What happens in this app if a call to another service never answers, or runs twice?',
+  );
+});
+
+test('a stop Tommy has not reviewed says so', async ({ page }) => {
+  // Pick whichever stop is still a draft, so this keeps working as reviews land.
+  const draft = readdirSync('core/guides').find((file) =>
+    /^status: draft$/m.test(readFileSync(`core/guides/${file}`, 'utf8')),
+  );
+  test.skip(!draft, 'every stop has been reviewed');
+  await page.goto(`/guides/${draft!.replace(/\.md$/, '')}/`);
+  await expect(page.locator('.page-meta__status summary')).toHaveText(
+    /Draft · not reviewed by Tommy yet/,
+  );
 });
 
 test('the track map remembers the stops you read, until you reset it', async ({
