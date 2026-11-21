@@ -5,7 +5,7 @@ stage: build
 track: 9
 concerns: [deployment, cost, data, security]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Your laptop is the fastest feedback loop you'll ever have: a change shows up in a second and nothing costs money. Every hosted service you add is another account, another set of keys, and another pricing cliff. So add them one at a time, in the order features ask for them: database, auth, files, email, error tracking, and payments last, because money brings webhooks (the payment provider calling your server when something changes, sometimes late or twice), refunds, and the most ways to be wrong.
@@ -19,9 +19,9 @@ Your laptop is the fastest feedback loop you'll ever have: a change shows up in 
 - **Copying production into previews copies your users.** Database branching, a throwaway copy per preview, is great until real users exist. After that, every preview holds their personal data, so branch from seed data instead.
 - **Free tiers end at a cliff, not a slope.** Find the usage where the bill or the limits jump before you sign up, and set a spend cap, a limit in the provider's billing settings, so a bug can't find it for you.
 
-**How I do it:** Postgres on my laptop (Supabase is Postgres underneath, and its CLI runs it locally) with fake seed data and one setup command, previews on their own throwaway databases, and one hosted service at a time as features need them, each with a spend cap.
+**How I do it:** my dev database runs on my laptop when that's easy, and hosted when a service makes local painful. I add hosted services one at a time, as features need them.
 
-**Ask your agent:** "Make this app run from a fresh clone with one setup command, a local database, and a seed script with realistic fake data. Then check that preview deploys never touch the production database, and tell me where to set a spend cap on each service we use."
+**Ask your agent:** "Can this app run from a fresh clone with one setup command and realistic seed data?"
 
 ## Go deeper
 
