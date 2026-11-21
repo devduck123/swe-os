@@ -17,6 +17,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 - **Timeouts, retries, and idempotency, reviewed.** "Most clients wait forever by default" overclaimed: many have no timeout, and others wait minutes. The agent prompt is a question about calls that never answer or run twice. The How I do it line was already Tommy's.
 - **Local first, then managed services, reviewed.** The How I do it line no longer claims local Postgres, throwaway preview databases, and spend caps everywhere. Tommy runs the dev database locally when that's easy and hosted when it isn't. The misses still teach previews and spend caps. The agent prompt is one question about a fresh clone.
 - **A complete frontend feature, reviewed.** Three misses lead with the outcome instead of prescribing one fix: a dead button explains nothing, refresh shouldn't reset the screen (the URL is the usual way), and times show in the user's zone wherever it's known. The agent prompt is one question. Tommy clicks through the preview on his phone and desktop before merging.
+- **Accessibility in practice, reviewed.** The How I do it line no longer claims a VoiceOver pass: Tommy uses shadcn/ui and native elements, and the agent checks UI changes with the keyboard and axe. A failed submit takes people to what's wrong, with moving focus as one way. The agent prompt is one question. GOV.UK's 2017 tool test was checked: the best tool found 41% of the barriers.
 
 ## v0.9.0 (2026-11-19)
 
