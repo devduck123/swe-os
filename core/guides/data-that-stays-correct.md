@@ -5,7 +5,7 @@ stage: design
 track: 5
 concerns: [data, concurrency, performance]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Your database is the one part of your app that remembers. Code gets rewritten, often by an agent that never saw last month's version. Write what must always be true into the schema, your tables and columns, as constraints, rules the database checks on every write. Bad data rarely throws. You find it weeks later in a refund request.
@@ -21,9 +21,9 @@ Your database is the one part of your app that remembers. Code gets rewritten, o
 - **A calendar day isn't a timestamp.** Store "today" as the user's local date, or an 11:50 p.m. check-in lands on tomorrow.
 - **Money is integer cents.** In JavaScript, 0.1 + 0.2 isn't 0.3. Store 1999 with a currency.
 
-**How I do it:** I ask the agent to list the rules the data must always follow and enforce each one as a constraint, then check each main page's query plan against seeded data.
+**How I do it:** the data's rules go in as database constraints, and I read query plans when something is slow.
 
-**Ask your agent:** "List the rules my data must always follow, like 'stock never goes below zero' or 'one booking per person per class', and enforce each one in the database. Then fill a dev database with a few thousand rows and show me any main query that reads every row."
+**Ask your agent:** "List the rules my data must always follow, like 'stock never goes below zero', and enforce each one in the database."
 
 ## Go deeper
 
