@@ -5,7 +5,7 @@ stage: build
 track: 15
 concerns: [concurrency, reliability, observability]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 A background job is work you promise to do later, outside the request that asked for it. A webhook is someone else's background job calling you, like Stripe posting to your URL when a payment lands. Both can arrive late, twice, or never. If the work is fast and the user needs the result, keep it in the request. Moving it out adds a quieter place to fail.
@@ -17,12 +17,12 @@ A background job is work you promise to do later, outside the request that asked
 - **Anyone can call your webhook URL.** Without checking its signature, a stranger can post a fake "payment succeeded". The signature covers the exact text sent, so check it on the raw body before parsing it as JSON, or the check fails and tempts you to skip it.
 - **Store the event before you answer 200.** Answer first and crash, and the sender never retries. Saving it under the provider's event ID also makes a repeat do nothing.
 - **Events arrive out of order.** "Paid" can land before "created". Treat each event as a nudge to fetch the current state from the provider.
-- **Cron is weaker than it looks.** Cron, your host calling a route on a schedule, won't retry a failed run, can fire twice, and can start before the last run ends. Have each run mark a job as taken in the same statement that picks it, so a second run skips it. The route is public too, so it checks a secret first.
+- **Cron is weaker than it looks.** Cron, your host calling a route on a schedule, won't retry a failed run, can fire twice, and can start before the last run ends. Make sure two runs can't take the same job, for example by marking it taken in the same statement that picks it. The route is public too, so it checks a secret first.
 - **A failure needs somewhere to land.** Count attempts, save the last error, give up after a few, and report it. A growing age on the oldest pending job is the first sign processing stopped.
 
 **How I do it:** a `jobs` table with each job's status, attempts, and last error, and a cron run every few minutes that works through what's pending. When a failure can't wait for the next run, I add a hosted job service that retries for me.
 
-**Ask your agent:** "Find every webhook, cron route, and after-response task in this app. Check webhook signatures on the raw body, put must-happen work in a jobs table two runs can't both claim, and make every job safe to run twice."
+**Ask your agent:** "What in this app has to happen, and what happens if it runs twice or never?"
 
 ## Go deeper
 

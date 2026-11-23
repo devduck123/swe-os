@@ -5,7 +5,7 @@ stage: verify
 track: 17
 concerns: [testing, security]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Reading code is how you find out what's true, not what the agent's summary says. Reviewing is deciding whether a change deserves to exist. Before you merge anything that matters, you should be able to say what it does, why it's built this way, and how it fails. If you can't, you've read it, not reviewed it.
@@ -18,12 +18,12 @@ Reading code is how you find out what's true, not what the agent's summary says.
 - **Agents sound just as sure when they're wrong.** The PR description is a set of claims. Check a few against the code.
 - **Style comments can make a review worse.** Ten notes on naming and none on the missing check still ends in "approved".
 - **Spend attention where a mistake costs most.** Read every line of auth, money, deletes, migrations (files that change the database's structure), and paid API calls. Skim copy and styling.
-- **Big PRs get skimmed, and agents don't feel the cost.** Ask for the database change, the server logic, and the UI as separate PRs, merged in that order.
+- **Big PRs get skimmed, and agents don't feel the cost.** Ask for a big change in pieces, like the database change, the server logic, and the UI, merged in that order.
 - **A finding with a reproduction gets fixed.** A reproduction is the steps that make the bug happen. "Request team 7's export as a user on team 3" ends the argument. "This feels risky" starts one.
 
 **How I do it:** a small PR for every change even when I'm the only reviewer, line by line on anything touching auth, money, deletes, or the database, and a second opinion from a fresh session or a different agent.
 
-**Ask your agent:** "Review this PR as if a stranger wrote it. For every route it touches, tell me who can call it and what stops them from touching someone else's records, and give me a request that proves each problem you find."
+**Ask your agent:** "Review this PR as if a stranger wrote it. What could go wrong, and what request proves it?"
 
 ## Go deeper
 

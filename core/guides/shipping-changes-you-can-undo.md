@@ -5,7 +5,7 @@ stage: ship
 track: 18
 concerns: [deployment, testing]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Every change breaks something eventually. What you control is how big the break is and how fast you can take it back. Merge two weeks of work at once and finding what broke means guess, redeploy, check, repeat. Ship it as eight small PRs and the bad one goes out alone, with a 60-line diff to read.
@@ -14,13 +14,12 @@ Every change breaks something eventually. What you control is how big the break 
 
 - **A rollback undoes code, not consequences.** Putting the previous deploy back is one click on most hosts. Sent emails, charged cards, and rewritten rows stay. Before merging anything that writes, sends, or charges, ask what's still wrong if you roll back in ten minutes.
 - **The old code keeps serving while the new one deploys.** The migration often runs first, so it has to work with the code in production now ([database changes without downtime](database-changes-without-downtime.md)).
-- **A preview is only as safe as what it talks to.** A preview is the test copy of your site your host builds for each PR. With production's database and live payment keys, which move real money, "delete account" on a half-finished branch deletes a real account.
 - **A fresh machine catches what yours hides.** A tool installed only on your laptop or an untracked `.env` makes it work there. CI, the checks that run on a clean server for every PR, installs the exact versions in your lockfile (`package-lock.json`), so it fails where production would.
 - **A feature flag doubles the paths.** A flag, a switch that turns a feature on without a deploy, means the code runs both ways, and both have to work. Delete it once the feature is fully on.
 
-**How I do it:** a short-lived branch and a PR for every change, a `check` that has to pass before merge, a preview with its own database that I click through on my phone, and one critical flow tried on the real site after each deploy.
+**How I do it:** a short-lived branch and a PR for every change, a `check` that has to pass before merge, and a preview I click through on my phone and my desktop.
 
-**Ask your agent:** "Set this project up so every PR runs our checks on a clean machine and can't merge until they pass, and every preview gets its own database and test payment keys. Then walk me through rolling back a bad deploy."
+**Ask your agent:** "If this deploy goes wrong, how do I roll it back, and what would still be wrong after?"
 
 ## Go deeper
 
