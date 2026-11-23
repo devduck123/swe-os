@@ -5,7 +5,7 @@ stage: ship
 track: 19
 concerns: [migrations, data, deployment]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Code is easy to undo. Data isn't. A migration, a script that changes your database's structure, changes the one thing every version of your app shares. So a rename, drop, or type change goes out across several releases: add the new thing, copy the data, switch the code, then drop the old thing.
@@ -21,7 +21,7 @@ Code is easy to undo. Data isn't. A migration, a script that changes your databa
 
 **How I do it:** I read the SQL migration in every PR, and nothing that renames, retypes, or drops a column ships in one step.
 
-**Ask your agent:** "Write every change to an existing table as a SQL migration with a lock timeout at the top. Plan any rename, type change, or drop as add, copy, switch, drop, one PR per step, and fill big tables in small batches."
+**Ask your agent:** "Which of these migrations could break the code that's running now, or lock a big table?"
 
 ## Go deeper
 

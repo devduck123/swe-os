@@ -5,7 +5,7 @@ stage: operate
 track: 24
 concerns: [performance, cost]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Performance work is finding the one slow thing and fixing that thing. Cost work does the same for the bill. Both start with a number, not a hunch. Optimize the wrong thing and you've added complexity to a page that's just as slow.
@@ -18,9 +18,9 @@ Performance work is finding the one slow thing and fixing that thing. Cost work 
 - **An alert doesn't stop a bill.** A budget email at 2 a.m. doesn't stop a runaway loop. A spend cap that pauses the service does.
 - **Estimate the bad month.** Multiply users by how often each one triggers a paid call by what a call costs, then by 10. Then price one bot at 10 requests a second for a day: 864,000 calls.
 
-**How I do it:** when something's slow I measure and fix the query before touching caching, and before shipping anything billed per use, like AI calls or emails, I put the 10x estimate in the PR and set the provider's spend cap.
+**How I do it:** when something's slow, I have the agent measure it and fix the query before anyone touches caching.
 
-**Ask your agent:** "Before you add any cache, time each step of this slow page and show me the queries it runs, checking for a missing index or a query per row. Then list every service here that bills per use, estimate a bad month for each, and tell me where to set a hard spend cap."
+**Ask your agent:** "What's the slowest page in this app, and what's the most a bad month could cost?"
 
 ## Go deeper
 

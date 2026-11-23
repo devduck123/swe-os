@@ -5,7 +5,7 @@ stage: operate
 track: 23
 concerns: [reliability, data, observability]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 When production breaks, the order is: stop the damage, understand it, fix it, then make sure it can't happen the same way again. The other half is backups. A bad deploy rolls back in a minute. Lost data comes back only if a backup covers the right moment and you know how to restore it.
@@ -19,9 +19,9 @@ When production breaks, the order is: stop the damage, understand it, fix it, th
 - **The cheapest restore is the one you skip.** Soft-delete: mark rows deleted instead of removing them, and remove them for real on a schedule. Have the code refuse any delete that would hit more than, say, 100 rows. A filter bug then hits a wall instead of the whole table.
 - **"Be more careful" changes nothing.** In the write-up afterward, a postmortem, ask why the system made the mistake easy, not who made it. Each fix is a check in code that blocks it, a test, or an alert.
 
-**How I do it:** before launch I know my stop buttons, soft-delete what users create, and do one restore drill: restore a backup into a copy and check that yesterday's rows are there. After anything that hits users, I ship at least one change from the postmortem.
+**How I do it:** before launch I know my stop buttons: rolling back a deploy and switching a feature off. For backups I rely on the host's, and I haven't run a restore drill yet.
 
-**Ask your agent:** "Show me every way to stop this app fast: rolling back a deploy, switching a feature off, and pausing each background job. Then walk me through restoring yesterday's database into a copy, and switch deletes of user data to soft-delete."
+**Ask your agent:** "How would I stop this app fast if it started losing data, and how would I get yesterday's data back?"
 
 ## Go deeper
 

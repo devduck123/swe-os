@@ -5,7 +5,7 @@ stage: operate
 track: 22
 concerns: [observability, reliability]
 freshness: durable
-status: draft
+status: reviewed
 ---
 
 Observability means you can answer three questions from data you already collected: is it broken, for whom, and why. For one person, the setup is small. You need it the moment strangers use the app, or it does anything you can't watch happen.
@@ -20,9 +20,9 @@ Observability means you can answer three questions from data you already collect
 - **Logs leak.** Request bodies hold passwords, tokens, and emails, and logs get copied to more places than your database. Log IDs, not contents.
 - **An alert that cries wolf hides the real one.** Every alert should mean "stop and do something". Break each alerted thing once on purpose and watch it fire.
 
-**How I do it:** before the first real user, I set up Sentry with source maps and releases, a request ID on every log line, one uptime check, and a daily email with yesterday's signups, payments, and failed jobs.
+**How I do it:** before the first real user, I set up error tracking and one uptime check.
 
-**Ask your agent:** "Set up Sentry with source maps and the commit on every error, give every request an ID that shows up in the logs and on the error page, and add a heartbeat check to each scheduled job. Then send me a daily email with yesterday's signups, payments, and failed jobs."
+**Ask your agent:** "If this app broke tonight, how would I find out, and how fast?"
 
 ## Go deeper
 
