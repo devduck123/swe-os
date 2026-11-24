@@ -4,6 +4,10 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+## v0.10.0 (2026-11-23)
+
+Tommy reviewed every stop of the track. Each How I do it line is now what he actually does, each agent prompt is one short question, and misses lead with what users see instead of one required fix. Repeats live in one place, stops teach the idea rather than one framework's names, and design taste asks for work you like instead of listing Tommy's sites. Evals haven't measured any of it yet.
+
 - **Agents ask for work you like.** On a new product or a redesign, design taste now has the agent ask for a few live sites you made or love, unless your profile or a skill lists them, and say what it takes from each. Tommy's own list moved from the "What I've liked" section to a personal skill, so the public page doesn't name private or client work.
 - **Several agents, reviewed.** The stop no longer claims two agents do a day's work in an hour. It says your review is the bottleneck, to remove a worktree when its PR merges, and that a changelog or tracker conflicts even when the features don't. Routine permission prompts can go to allow rules or an auto-approve mode, and the How I do it line is Tommy's.
 - **Desktop apps, reviewed.** Shipping a desktop app no longer states Apple's current signing rules or App Store terms. It says unsigned apps look like malware on macOS and Windows, to look up each platform's rules well before launch, and that a store trades control for less work. A new miss, from building a Mac utility: macOS ties each permission to the app's signature, so a build signed differently each time loses its grants on every rebuild. Its How I do it line is where Tommy actually is, since he hasn't shipped one yet.
