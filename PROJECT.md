@@ -15,7 +15,7 @@ What's in it:
 
 ## Next
 
-1. **Tommy refines the About me pages.** He reviewed `profile/tommy.md` on November 25. Still to go: `voice.md`, `writing.md`, `learning.md`, and `design.md`, so they match how he actually talks, writes, and wants his agents to work. Fold changes in as he says them.
+1. **Tommy refines the About me pages.** He reviewed `profile/tommy.md` and `voice.md` on November 25. Still to go: `writing.md`, `learning.md`, and `design.md`, so they match how he actually talks, writes, and wants his agents to work. Fold changes in as he says them.
 2. **Tommy finishes the landing page.** The redesign shipped in v0.6.0. The hero is reviewed: new copy, and the duck and its robot agent sharing a book on the dock. Still to review, live: "The parts the happy path hides", "Point your agent here", the trail, and the stop pages. Then the 404 and empty states get poses.
 3. **Real use.** In November, a coming-soon page for a desktop tool was built by Claude Code over seven PRs and by Codex in two rounds. SWE OS made both reliable, but every taste and product call came from Tommy, and v0.6.0 shipped what the two build records taught. It moved to v0.8.0 on 2026-11-15, which fixed a stale social card description. Next: build its next real piece, the app's release setup, which tests the Desktop apps page. Then build something with data and accounts. Audit each one the same way.
 4. **Real readers.** The site now meets the Launch concern: a social card on every page, `robots.txt` pointing at the sitemap, previews kept out of search, and analytics in production builds. Tommy turns on Web Analytics in the Vercel dashboard, then shares the site with a few people who build with AI.
