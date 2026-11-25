@@ -4,6 +4,8 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 
 ## Unreleased
 
+- **About Tommy, reviewed.** The page no longer tells agents to explain everything through Tommy's stack: it's background, not a limit. Agents now slow down where he's new, desktop and iOS apps, and explain how building, signing, and shipping work there. Anything that touches money gets walked through before it ships. CI with linting and a secret scan comes from the first PR, and the rest of the infrastructure comes as the project needs it.
+
 ## v0.10.0 (2026-11-23)
 
 Tommy reviewed every stop of the track. Each How I do it line is now what he actually does, each agent prompt is one short question, and misses lead with what users see instead of one required fix. Repeats live in one place, stops teach the idea rather than one framework's names, and design taste asks for work you like instead of listing Tommy's sites. Evals haven't measured any of it yet.

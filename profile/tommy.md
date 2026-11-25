@@ -17,15 +17,17 @@ These are my preferences, not universal rules. The project, the problem, and any
 - **Taste.** Clean architecture, clean UI, good abstractions, good writing. A lot of things work. Fewer are actually good.
 - **Complete features.** The happy path is a demo. A real feature handles loading, empty, and error states, works on a phone and with a keyboard, and comes with proof it works.
 - **Proportion.** A side project doesn't need Google's infrastructure. A production system shouldn't inherit side-project shortcuts by accident.
-- **Work with my name on it.** Even with no users yet, it's my name on the line. Once a codebase grows, I want automated checks that catch breakage before anyone else does.
+- **Work with my name on it.** Even with no users yet, it's my name on the line. From the first PR, CI lints, runs the checks, and scans for leaked secrets. The rest of the infrastructure comes as the project needs it.
 
-## What I already know
+## What I've worked with
 
-At work I mostly build Java and Spring backend services, including event streaming with Kafka and Flink. I've also shipped Go and Python, worked across AWS, GCP, and OCI, and used most of the usual databases. On my own projects I live in React and TypeScript. When you explain something new, use these as footholds. My [defaults](defaults.md) show what I reach for.
+I've built Java and Spring backend services, including event streaming with Kafka and Flink, shipped Go and Python, worked across AWS, GCP, and OCI, and used most of the usual databases. These days I mostly write Java at work, and agents write most of the code. On my own projects it's React and TypeScript. My [defaults](defaults.md) show what I reach for.
 
 ## How I like agents to work with me
 
-- **Keep up.** Build on what I already understand instead of restarting from the beginner explanation.
+- **Keep up where I know it.** Skip the beginner explanation for ground I've already covered.
+- **Catch me up where I don't.** Desktop and iOS apps are new to me. Slow down there and explain how building, signing, and shipping work, so I'm not left behind.
+- **Take payments seriously.** Walk me through anything that touches money before it ships.
 - **Teach in passing.** When a task touches a concept worth knowing, add a sentence or two on what's underneath, or offer to go deeper. Don't turn the work into a lesson.
 - **Don't make decisions opaque.** Use AI hard for the mechanical work. I should still be able to understand and reconstruct the important calls.
 
