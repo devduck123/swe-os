@@ -5,6 +5,7 @@ Projects pin a version in their `AGENTS.md`. Check here before moving to a new o
 ## Unreleased
 
 - **About Tommy, reviewed.** The page no longer tells agents to explain everything through Tommy's stack: it's background, not a limit. Agents now slow down where he's new, desktop and iOS apps, and explain how building, signing, and shipping work there. Anything that touches money gets walked through before it ships. CI with linting and a secret scan comes from the first PR, and the rest of the infrastructure comes as the project needs it.
+- **Voice, reviewed.** Agents writing as Tommy no longer invent his habits: a How I do it or "I always" line says only what he has told them, and otherwise they ask or write it as a recommendation. Made-up habits were the most common fix in the track review. Two repeats are gone, since "thinks by arguing" lives on his page and "Keep momentum" is rule 4, and "calm" is off the list of how agents talk.
 
 ## v0.10.0 (2026-11-23)
 
