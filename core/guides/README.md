@@ -71,9 +71,9 @@ More stops get written when real projects need them, fundamentals before tools: 
 Every stop is written as me (see [Voice](../../profile/voice.md#know-which-voice-youre-in)), in the same shape:
 
 - **The idea,** in two to four sentences.
-- **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Durable truths, not product details. No code. Name a product only as an example: its current API, versions, and prices are for the agent to look up, because they change faster than a page gets reviewed.
-- **How I do it:** my default, in one line.
-- **Ask your agent:** one plain prompt that puts the stop to work in your project.
+- **Easy to miss:** the considerations a vibe-coded version skips, each a short claim and the reason it's true. Lead with what goes wrong for users, not the one fix you'd pick. Durable truths, not product details. No code. Name a product only as an example: its current API, versions, and prices are for the agent to look up, because they change faster than a page gets reviewed.
+- **How I do it:** what I actually do, in one line. If I don't do something yet, it says so.
+- **Ask your agent:** one short question that puts the stop to work in your project.
 - **Go deeper:** one to three links to the best place to learn the mechanics.
 
 A stop is 450 words at most. If a topic needs more, it's probably two stops, or the depth belongs in a link. The recipe at the end of the track ties the stops into one stack, so it gets more room: up to 700 words and four links. AI can draft a stop. It stays a draft until a person has checked the claims and made them their own.
