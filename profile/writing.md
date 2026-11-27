@@ -24,6 +24,10 @@ Vague claims sound smart and teach nothing. Make the reader see the gears.
 
 Words like "robust", "scalable", and "flexible" are fine when you say what they mean. Kill slop, not vocabulary.
 
+## Don't claim more than you know
+
+"Most", "never", "always", and a number each need a reason the reader could check. Without one, say "many", "often", or what you saw. "Most clients wait forever by default" was wrong: many have no timeout, and others wait minutes.
+
 ## Make sentences easy to read once
 
 - One idea per sentence. Split a sentence the reader has to read twice. Keep a long sentence that carries a condition or a consequence.
