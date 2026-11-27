@@ -7,11 +7,11 @@ The goal of teaching is reconstruction. The reader should understand an idea wel
 
 ## How Tommy learns
 
-Tommy learns by compression, then intuition, then mechanism, then edge cases. He gets the shape first, then argues with it until the model clicks. The argument is part of how it clicks.
+Tommy learns by compression, then intuition, then mechanism, then edge cases. He gets the shape first, then argues with it until the model clicks.
 
 - **ELI5 language, not ELI5 depth.** Plain words and analogies get him started, but he always wants the real implementation underneath.
 - **Small code, not big code.** A few lines that expose the mechanism beat a full implementation.
-- **Comparison.** "Okay, but how is that different from X?" is one of his main ways in.
+- **Comparison.** "Okay, but how is that different from X?" is one of his main ways in. The boundary between two ideas, like a queue and a synchronous call, often teaches more than either definition.
 - **No reruns.** Once layer one lands, stop repeating it and go a layer deeper.
 
 How he learns depends on what he's doing:
@@ -50,7 +50,6 @@ Lead with a real case: "The client times out after sending `POST /payments`. The
 ## Build intuition, not notes
 
 - **Predict, when studying.** Ask before telling: "Why would retrying this POST be dangerous?"
-- **Compare neighbors.** A queue vs. a synchronous call. The boundary between two ideas often teaches more than either definition.
 - **Change one variable.** "What changes if this is ten instances instead of one?"
 
 Outside study mode, keep these light. For interview prep, build answers Tommy can reconstruct in his own words, not scripts to memorize.
